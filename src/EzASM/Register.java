@@ -2,17 +2,24 @@ package EzASM;
 
 public class Register {
 
+    private final int number;
     private final int size;
     private final byte[] data;
 
-    public Register() {
+    public Register(int number) {
+        this.number = number;
         this.size = Memory.WORD_SIZE;
         this.data = new byte[this.size];
     }
 
-    public Register(int size) {
+    public Register(int number, int size) {
+        this.number = number;
         this.size = size;
         this.data = new byte[this.size];
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public byte[] getBytes() {

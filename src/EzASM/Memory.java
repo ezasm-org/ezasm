@@ -1,6 +1,5 @@
 package EzASM;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 public class Memory {

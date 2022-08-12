@@ -1,5 +1,8 @@
 package EzASM;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Registers {
 
     private static final int REGISTERS_COUNT = 32;
@@ -9,68 +12,94 @@ public class Registers {
     private final Register[] fp_registers;
 
     // Base registers
-    public static final int ZERO = 0;
-    public static final int PC = 1;
-    public static final int SP = 2;
-    public static final int RA = 3;
-    public static final int ARG1 = 4;
-    public static final int ARG2 = 5;
-    public static final int ARG3 = 6;
-    public static final int RETURN1 = 7;
-    public static final int RETURN2 = 8;
-    public static final int RETURN3 = 9;
+    public static final String ZERO = "0";
+    public static final String PC = "PC";
+    public static final String SP = "SP";
+    public static final String RA = "RA";
+    public static final String ARG1 = "ARG1";
+    public static final String ARG2 = "ARG2";
+    public static final String ARG3 = "ARG3";
+    public static final String RETURN1 = "R1";
+    public static final String RETURN2 = "R2";
+    public static final String RETURN3 = "R3";
 
-    public static final int S0 = 10;
-    public static final int S1 = 11;
-    public static final int S2 = 12;
-    public static final int S3 = 13;
-    public static final int S4 = 14;
-    public static final int S5 = 15;
-    public static final int S6 = 16;
-    public static final int S7 = 17;
-    public static final int S8 = 18;
-    public static final int S9 = 19;
+    public static final String S0 = "S0";
+    public static final String S1 = "S1";
+    public static final String S2 = "S2";
+    public static final String S3 = "S3";
+    public static final String S4 = "S4";
+    public static final String S5 = "S5";
+    public static final String S6 = "S6";
+    public static final String S7 = "S7";
+    public static final String S8 = "S8";
+    public static final String S9 = "S9";
 
-    public static final int T0 = 20;
-    public static final int T1 = 21;
-    public static final int T2 = 22;
-    public static final int T3 = 23;
-    public static final int T4 = 24;
-    public static final int T5 = 25;
-    public static final int T6 = 26;
-    public static final int T7 = 27;
-    public static final int T8 = 28;
-    public static final int T9 = 29;
+    public static final String T0 = "T0";
+    public static final String T1 = "T1";
+    public static final String T2 = "T2";
+    public static final String T3 = "T3";
+    public static final String T4 = "T4";
+    public static final String T5 = "T5";
+    public static final String T6 = "T6";
+    public static final String T7 = "T7";
+    public static final String T8 = "T8";
+    public static final String T9 = "T9";
 
-    public static final int LO = 30;
-    public static final int HI = 31;
+    public static final String LO = "LO";
+    public static final String HI = "HI";
 
     // Floating point registers
-    public static final int FS0 = 0;
-    public static final int FS1 = 1;
-    public static final int FS2 = 2;
-    public static final int FS3 = 3;
-    public static final int FS4 = 4;
-    public static final int FS5 = 5;
-    public static final int FS6 = 6;
-    public static final int FS7 = 7;
-    public static final int FS8 = 8;
-    public static final int FS9 = 9;
+    public static final String FS0 = "FS0";
+    public static final String FS1 = "FS1";
+    public static final String FS2 = "FS2";
+    public static final String FS3 = "FS3";
+    public static final String FS4 = "FS4";
+    public static final String FS5 = "FS5";
+    public static final String FS6 = "FS6";
+    public static final String FS7 = "FS7";
+    public static final String FS8 = "FS8";
+    public static final String FS9 = "FS9";
 
-    public static final int FT0 = 10;
-    public static final int FT1 = 11;
-    public static final int FT2 = 12;
-    public static final int FT3 = 13;
-    public static final int FT4 = 14;
-    public static final int FT5 = 15;
-    public static final int FT6 = 16;
-    public static final int FT7 = 17;
-    public static final int FT8 = 18;
-    public static final int FT9 = 19;
+    public static final String FT0 = "FT0";
+    public static final String FT1 = "FT1";
+    public static final String FT2 = "FT2";
+    public static final String FT3 = "FT3";
+    public static final String FT4 = "FT4";
+    public static final String FT5 = "FT5";
+    public static final String FT6 = "FT6";
+    public static final String FT7 = "FT7";
+    public static final String FT8 = "FT8";
+    public static final String FT9 = "FT9";
 
-    public static final int FLO = 20;
-    public static final int FHI = 21;
+    public static final String FLO = "FLO";
+    public static final String FHI = "FHI";
 
+    private static Map<String, Register> reg = new HashMap<>();
+
+    private static void init() {
+        reg = new HashMap<>();
+        reg.put(ZERO, new Register(0));
+        reg.put(PC, new Register(1));
+        reg.put(SP, new Register(2));
+        reg.put(RA, new Register(3));
+        reg.put(ARG1, new Register(4));
+        reg.put(ARG2, new Register(5));
+        reg.put(ARG3, new Register(6));
+        reg.put(RETURN1, new Register(7));
+        reg.put(RETURN2, new Register(8));
+        reg.put(RETURN3, new Register(9));
+        reg.put(S0, new Register(10));
+        reg.put(S1, new Register(11));
+        reg.put(S2, new Register(12));
+        reg.put(S3, new Register(13));
+        reg.put(S4, new Register(14));
+        reg.put(S5, new Register(15));
+        reg.put(S6, new Register(16));
+        reg.put(S0, new Register(17));
+        reg.put(S0, new Register(18));
+        reg.put(S0, new Register(19));
+
+    }
 
     public Registers() {
         registers = new Register[REGISTERS_COUNT];
