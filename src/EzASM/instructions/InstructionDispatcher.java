@@ -6,6 +6,7 @@ import EzASM.instructions.exception.InstructionDispatchException;
 import EzASM.instructions.impl.ArithmeticInstructions;
 import EzASM.parsing.Line;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -60,8 +61,8 @@ public class InstructionDispatcher {
 
     private void loadInstructionHandler(DispatchInstruction instruction) {
         try {
-            var constructor = instruction.getParent().getDeclaredConstructor(Simulator.class);
-            var inst = constructor.newInstance(this.simulator);
+            Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(Simulator.class);
+            Object inst = constructor.newInstance(this.simulator);
             this.instructionHandlerInstances.put(instruction.getParent(), inst);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -70,10 +71,10 @@ public class InstructionDispatcher {
     }
 
     public void execute(Line line) throws InstructionDispatchException {
-        var dispatch = instructions.get(line.getInstruction().getText());
+        DispatchInstruction dispatch = instructions.get(line.getInstruction().getText());
         if (dispatch == null) throw new IllegalInstructionException(line.getInstruction().getText());
 
-        var object = this.instructionHandlerInstances.get(dispatch.getParent());
+        Object object = this.instructionHandlerInstances.get(dispatch.getParent());
         // TODO assume loaded for now
         assert object != null;
 

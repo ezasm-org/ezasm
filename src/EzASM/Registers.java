@@ -1,15 +1,14 @@
 package EzASM;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Registers {
 
     private static final int REGISTERS_COUNT = 32;
     private static final int FP_REGISTERS_COUNT = 22;
+    private static final int TOTAL_REGISTERS = REGISTERS_COUNT + FP_REGISTERS_COUNT;
 
     private final Register[] registers;
-    private final Register[] fp_registers;
 
     // Base registers
     public static final String ZERO = "0";
@@ -74,84 +73,177 @@ public class Registers {
     public static final String FLO = "FLO";
     public static final String FHI = "FHI";
 
-    private static Map<String, Register> reg = new HashMap<>();
+    private static Map<String, Integer> registerByString;
+    private static final int FLOAT_OFFSET = REGISTERS_COUNT;
 
     private static void init() {
-        reg = new HashMap<>();
-        reg.put(ZERO, new Register(0));
-        reg.put(PC, new Register(1));
-        reg.put(SP, new Register(2));
-        reg.put(RA, new Register(3));
-        reg.put(ARG1, new Register(4));
-        reg.put(ARG2, new Register(5));
-        reg.put(ARG3, new Register(6));
-        reg.put(RETURN1, new Register(7));
-        reg.put(RETURN2, new Register(8));
-        reg.put(RETURN3, new Register(9));
-        reg.put(S0, new Register(10));
-        reg.put(S1, new Register(11));
-        reg.put(S2, new Register(12));
-        reg.put(S3, new Register(13));
-        reg.put(S4, new Register(14));
-        reg.put(S5, new Register(15));
-        reg.put(S6, new Register(16));
-        reg.put(S0, new Register(17));
-        reg.put(S0, new Register(18));
-        reg.put(S0, new Register(19));
+        registerByString = new HashMap<>(TOTAL_REGISTERS);
+        addRegister(ZERO, 0);
+        addRegister(PC, 1);
+        addRegister(SP, 2);
+        addRegister(RA, 3);
+        addRegister(ARG1, 4);
+        addRegister(ARG2, 5);
+        addRegister(ARG3, 6);
+        addRegister(RETURN1, 7);
+        addRegister(RETURN2, 8);
+        addRegister(RETURN3, 9);
 
+        addRegister(S0, 10);
+        addRegister(S1, 11);
+        addRegister(S2, 12);
+        addRegister(S3, 13);
+        addRegister(S4, 14);
+        addRegister(S5, 15);
+        addRegister(S6, 16);
+        addRegister(S7, 17);
+        addRegister(S8, 18);
+        addRegister(S9, 19);
+
+        addRegister(T0, 20);
+        addRegister(T1, 21);
+        addRegister(T2, 22);
+        addRegister(T3, 23);
+        addRegister(T4, 24);
+        addRegister(T5, 25);
+        addRegister(T6, 26);
+        addRegister(T7, 27);
+        addRegister(T8, 28);
+        addRegister(T9, 29);
+
+        addRegister(LO, 30);
+        addRegister(HI, 31);
+
+        addRegister(FS0, 0 + FLOAT_OFFSET);
+        addRegister(FS1, 1 + FLOAT_OFFSET);
+        addRegister(FS2, 2 + FLOAT_OFFSET);
+        addRegister(FS3, 3 + FLOAT_OFFSET);
+        addRegister(FS4, 4 + FLOAT_OFFSET);
+        addRegister(FS5, 5 + FLOAT_OFFSET);
+        addRegister(FS6, 6 + FLOAT_OFFSET);
+        addRegister(FS7, 7 + FLOAT_OFFSET);
+        addRegister(FS8, 8 + FLOAT_OFFSET);
+        addRegister(FS9, 9 + FLOAT_OFFSET);
+
+        addRegister(FT0, 10 + FLOAT_OFFSET);
+        addRegister(FT1, 11 + FLOAT_OFFSET);
+        addRegister(FT2, 12 + FLOAT_OFFSET);
+        addRegister(FT3, 13 + FLOAT_OFFSET);
+        addRegister(FT4, 14 + FLOAT_OFFSET);
+        addRegister(FT5, 15 + FLOAT_OFFSET);
+        addRegister(FT6, 16 + FLOAT_OFFSET);
+        addRegister(FT7, 17 + FLOAT_OFFSET);
+        addRegister(FT8, 18 + FLOAT_OFFSET);
+        addRegister(FT9, 19 + FLOAT_OFFSET);
+
+        addRegister(FLO, 20 + FLOAT_OFFSET);
+        addRegister(FHI, 21 + FLOAT_OFFSET);
+    }
+
+    static {
+        init();
+    }
+
+    private static void addRegister(String name, int number) {
+        assert number < TOTAL_REGISTERS && number >= 0;
+        registerByString.put(name, number);
+    }
+
+    public static boolean isRegister(String register) {
+        return registerByString.containsKey(register);
+    }
+
+    public static boolean isRegister(int register) {
+        return registerByString.containsValue(register);
+    }
+
+    public static int getRegisterNumber(String register) {
+        if(!registerByString.containsKey(register)) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
+        }
+        return registerByString.get(register);
     }
 
     public Registers() {
-        registers = new Register[REGISTERS_COUNT];
-        fp_registers = new Register[FP_REGISTERS_COUNT];
+        registers = new Register[TOTAL_REGISTERS];
+        for(Integer i : registerByString.values()) {
+            registers[i] = new Register(i);
+        }
     }
 
     public byte[] getBytes(int register) {
-        if(register < 0 || register > REGISTERS_COUNT) {
-            // Error: no such register
-            return null;
+        if(register < 0 || register > TOTAL_REGISTERS) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
         }
         return registers[register].getBytes();
     }
 
     public long getLong(int register) {
-        if(register < 0 || register > REGISTERS_COUNT) {
-            // Error: no such register
-            return 0;
+        if(register < 0 || register > TOTAL_REGISTERS) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
         }
         return registers[register].getLong();
     }
 
     public double getDouble(int register) {
-        if(register < 0 || register > FP_REGISTERS_COUNT) {
-            // Error: no such register
-            return 0;
+        if(register < 0 || register > TOTAL_REGISTERS) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
         }
-        return fp_registers[register].getDouble();
+        return registers[register].getDouble();
     }
 
     public void setBytes(int register, byte[] data) {
-        if(register < 0 || register > REGISTERS_COUNT) {
-            // Error: no such register
-            return;
+        if(register < 0 || register > TOTAL_REGISTERS) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
         }
         registers[register].setBytes(data);
     }
 
     public void setLong(int register, long data) {
-        if(register < 0 || register > REGISTERS_COUNT) {
-            // Error: no such register
-            return;
+        if(register < 0 || register > TOTAL_REGISTERS) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
         }
         registers[register].setLong(data);
     }
 
     public void setDouble(int register, double data) {
-        if(register < 0 || register > FP_REGISTERS_COUNT) {
-            // Error: no such register
-            return;
+        if(register < 0 || register > TOTAL_REGISTERS) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
         }
-        fp_registers[register].setDouble(data);
+        registers[register].setDouble(data);
     }
 
+    public Register getRegister(int register) {
+        if(register < 0 || register > TOTAL_REGISTERS) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
+        }
+        return registers[register];
+    }
+
+    public Register getRegister(String register) {
+        return getRegister(getRegisterNumber(register));
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < registers.length - 1; ++i) {
+            sb.append(registers[i]);
+            if(i % 9 == 8) {
+                sb.append('\n');
+            } else {
+                sb.append(' ');
+            }
+        }
+        sb.append(registers[registers.length-1]);
+        return sb.toString();
+    }
 }

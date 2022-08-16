@@ -1,6 +1,5 @@
 package EzASM.instructions.targets.input;
 
-import EzASM.Registers;
 import EzASM.Simulator;
 
 import java.util.Arrays;
@@ -16,13 +15,13 @@ public class RegisterInput extends AbstractInput {
 
     @Override
     public byte[] get(Simulator simulator) {
-        var val = simulator.getRegister(register).getBytes();
+        byte[] val = simulator.getRegister(register).getBytes();
         return Arrays.copyOf(val, val.length);
     }
 
     public void mutate(Simulator simulator, Function<byte[], byte[]> mutator) {
-        var val = simulator.getRegister(register).getBytes();
-        var mutate = mutator.apply(val);
+        byte[] val = simulator.getRegister(register).getBytes();
+        byte[] mutate = mutator.apply(val);
         simulator.getRegister(register).setBytes(mutate);
     }
 

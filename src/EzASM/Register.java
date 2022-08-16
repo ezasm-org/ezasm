@@ -2,23 +2,15 @@ package EzASM;
 
 public class Register {
 
-    private final int number;
-    private final int size;
+    private final long number;
     private final byte[] data;
 
-    public Register(int number) {
+    public Register(long number) {
         this.number = number;
-        this.size = Memory.WORD_SIZE;
-        this.data = new byte[this.size];
+        this.data = new byte[Memory.WORD_SIZE];
     }
 
-    public Register(int number, int size) {
-        this.number = number;
-        this.size = size;
-        this.data = new byte[this.size];
-    }
-
-    public int getNumber() {
+    public long getNumber() {
         return number;
     }
 
@@ -46,4 +38,8 @@ public class Register {
         setBytes(Conversion.doubleToBytes(data));
     }
 
+    @Override
+    public String toString() {
+        return String.format("%2d: 0x%s", number, Long.toString(getLong(), 16));
+    }
 }

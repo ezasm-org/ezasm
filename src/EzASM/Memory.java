@@ -41,6 +41,7 @@ public class Memory {
         return alloc + OFFSET;
     }
 
+    // Allocate with check based on stack pointer
     public int allocate(int bytes, int sp) {
         if(alloc + bytes + OFFSET > sp) {
             // Error: Attempted to allocate onto the stack
@@ -52,6 +53,7 @@ public class Memory {
         return addr + OFFSET;
     }
 
+    // Allocate without check based on stack pointer
     public int allocate(int bytes) {
         int addr = alloc;
         alloc = alloc + bytes;
@@ -114,6 +116,7 @@ public class Memory {
         address = address - OFFSET;
         if(maxSize < 0) {
             System.out.println("Error: max string size cannot be less than zero");
+            return;
         }
         if(address < 0 || (address + data.getBytes().length) >= this.size) {
             // Error: address is out of bounds
