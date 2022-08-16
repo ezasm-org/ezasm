@@ -5,8 +5,16 @@ public class Line {
     private final InstructionToken instruction;
     private final RegisterToken storeRegister;
     private final RightHandToken[] arguments;
+    // TODO add line number maybe
 
-    public Line(String instruction, String storeRegister, String[] arguments) {
+
+    public Line(String instruction, String storeRegister, String[] arguments) throws ParseException {
+        if(!Tokenizer.isRegister(storeRegister)) {
+            // TODO add instruction checking
+            throw new ParseException("Error parsing register '" + storeRegister + "'");
+        }
+
+
         this.instruction = new InstructionToken(instruction);
         this.storeRegister = new RegisterToken(storeRegister);
         this.arguments = new RightHandToken[arguments.length];
@@ -17,6 +25,8 @@ public class Line {
                 this.arguments[i] = new RegisterToken(arguments[i]);
             } else if(Tokenizer.isDereference(arguments[i])) {
                 this.arguments[i] = new DereferenceToken(arguments[i]);
+            } else {
+                throw new ParseException("Error parsing token '" + arguments[i] + "'");
             }
         }
     }
