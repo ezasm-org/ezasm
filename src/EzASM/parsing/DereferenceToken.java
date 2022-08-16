@@ -9,7 +9,7 @@ public class DereferenceToken extends RightHandToken {
         super(text);
         int first = text.indexOf('(');
         int last = text.indexOf(')');
-        offset = Long.parseLong(text.substring(0, text.indexOf('(')));
+        offset = Long.parseLong(text.substring(0, first));
         register = text.substring(first + 1, last);
     }
 

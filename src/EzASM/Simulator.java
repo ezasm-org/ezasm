@@ -1,5 +1,7 @@
 package EzASM;
 
+import EzASM.parsing.Line;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +12,7 @@ public class Simulator {
     private Memory memory;
     private Registers registers;
 
-    private List<String> lines;
+    private List<Line> lines;
     private Map<String, Integer> labels;
 
     public Simulator() {

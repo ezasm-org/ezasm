@@ -38,4 +38,20 @@ public class Tokenizer {
                 && (isAlNum(token.substring(0, first))) && isRegister(token.substring(first + 1, last));
     }
 
+    public static boolean isImmediate(String token) {
+        if(!isNumeric(token)) return false;
+        try {
+            Long.parseLong(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isLabel(String token) {
+        int colon = token.indexOf(':');
+        return (colon == token.charAt(token.length()-1) && isAlNum(token.substring(0, colon)));
+
+    }
+
 }
