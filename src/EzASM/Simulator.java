@@ -26,4 +26,8 @@ public class Simulator {
 
     }
 
+    public Register getRegister(int register) {
+        throw new RuntimeException("Not implemented");
+    }
+
 }
