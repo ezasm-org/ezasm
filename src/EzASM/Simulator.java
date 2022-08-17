@@ -8,6 +8,7 @@ import EzASM.parsing.ParseException;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Simulator {
 
@@ -105,8 +106,27 @@ public class Simulator {
         }
     }
 
+    public void runLinesFromStart(AtomicBoolean paused) throws ParseException {
+        for(int i = 0; i < lines.size() && !Thread.interrupted(); ++i) {
+            while(paused.get()) {
+                try {
+                    Thread.sleep(SimulationThread.SLEEP_INTERVAL);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+            executeLine(lines.get(i));
+            int currentSP = validateSP();
+            if(currentSP == i) {
+                sp.setLong(currentSP+1);
+            } else {
+                i = currentSP;
+            }
+        }
+    }
+
     public void runLinesFromStart() throws ParseException {
-        for(int i = 0; i < lines.size(); ++i) {
+        for(int i = 0; i < lines.size() && !Thread.interrupted(); ++i) {
             executeLine(lines.get(i));
             int currentSP = validateSP();
             if(currentSP == i) {

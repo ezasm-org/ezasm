@@ -1,5 +1,6 @@
 package EzASM;
 
+import EzASM.gui.Window;
 import EzASM.instructions.InstructionDispatcher;
 import org.apache.commons.cli.*;
 
@@ -85,17 +86,13 @@ public class Main {
             }
             cli.startSimulation();
         } else {
-            gui(sim, filepath);
+            Window.instantiate(sim);
         }
     }
 
     private static void errorArgs(String message) {
         System.err.println(message);
         System.exit(1);
-    }
-
-    private static void gui(Simulator sim, String file) {
-
     }
 
     public static void test() {
