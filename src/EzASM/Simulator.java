@@ -1,6 +1,5 @@
 package EzASM;
 
-import EzASM.instructions.DispatchInstruction;
 import EzASM.instructions.InstructionDispatcher;
 import EzASM.instructions.exception.InstructionDispatchException;
 import EzASM.parsing.Lexer;
@@ -24,11 +23,10 @@ public class Simulator {
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
         instructionDispatcher = new InstructionDispatcher(this);
-        System.out.println(registers);
     }
 
     public void readLine(String line) throws ParseException {
-        line = line.trim().replaceAll("\s+", " ");
+        line = line.trim().replaceAll("[\s,]+", " ");
         if(Lexer.isComment(line)) return;
         if(Lexer.isLabel(line)) {
             labels.putIfAbsent(line, lines.size());
@@ -55,6 +53,10 @@ public class Simulator {
 
     public Register getRegister(String register) {
         return registers.getRegister(register);
+    }
+
+    public String registryToString() {
+        return registers.toString();
     }
 
 }

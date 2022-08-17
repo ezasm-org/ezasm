@@ -1,7 +1,6 @@
 package EzASM.instructions;
 
 import EzASM.Conversion;
-import EzASM.Registers;
 import EzASM.instructions.targets.input.ImmediateInput;
 import EzASM.instructions.targets.input.RegisterInput;
 import EzASM.instructions.targets.output.RegisterOutput;

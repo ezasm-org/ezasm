@@ -40,6 +40,10 @@ public class Register {
 
     @Override
     public String toString() {
-        return String.format("%2d: 0x%s", number, Long.toString(getLong(), 16));
+        return String.format("%2d: 0x%016X", number, getLong());
+    }
+
+    public String toDecimalString() {
+        return String.format("%2d: %d", number, getLong());
     }
 }

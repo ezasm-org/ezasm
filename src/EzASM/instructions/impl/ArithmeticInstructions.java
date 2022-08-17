@@ -3,6 +3,7 @@ package EzASM.instructions.impl;
 import EzASM.Conversion;
 import EzASM.Simulator;
 import EzASM.instructions.Instruction;
+import EzASM.instructions.exception.IllegalArgumentException;
 import EzASM.instructions.targets.input.AbstractInput;
 import EzASM.instructions.targets.input.ImmediateInput;
 import EzASM.instructions.targets.input.RegisterInput;
@@ -20,10 +21,15 @@ public class ArithmeticInstructions {
     }
 
     private void arithmetic(BinaryOperator<Long> op, AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        long res = Stream.of(input1, input2)
-                .map((AbstractInput r) -> r.get(this.simulator))
-                .map(Conversion::bytesToLong)
-                .reduce(0L, op);
+        // Does not work well for operations besides add/sub/or/sll/srl
+        // Needs identity value for action (i.e. identity (op) input1 (op) input2 = output)
+        // Easier to apply operation manually
+//        long res = Stream.of(input1, input2)
+//                .map((AbstractInput r) -> r.get(this.simulator))
+//                .map(Conversion::bytesToLong)
+//                .reduce(0L, op);
+//
+        long res = op.apply(Conversion.bytesToLong(input1.get(simulator)), Conversion.bytesToLong(input2.get(simulator)));
         output.set(this.simulator, Conversion.longToBytes(res));
     }
 
@@ -44,6 +50,9 @@ public class ArithmeticInstructions {
 
     @Instruction
     public void div(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
+        if(Conversion.bytesToLong(input2.get(simulator)) == 0) {
+            throw new IllegalArgumentException();
+        }
         arithmetic((a, b) -> a / b, input1, input2, output);
     }
 

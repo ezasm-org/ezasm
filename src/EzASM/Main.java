@@ -1,16 +1,24 @@
 package EzASM;
 
+import EzASM.instructions.InstructionDispatcher;
 import EzASM.parsing.ParseException;
 
 public class Main {
 
     // Temporary tests
     public static void main(String[] args) throws ParseException {
+        System.out.println(InstructionDispatcher.getInstructions().keySet());
         Simulator sim = new Simulator();
-        sim.readLine("add $s0 $s1 100");
-        System.out.println(sim.getRegister("s0"));
-        sim.readLine("add $s1 $s0 $s0");
-        System.out.println(sim.getRegister("s1"));
+        sim.readLine("add $s0 $0 -69");
+        sim.readLine("add $s1 $0 420");
+        sim.readLine("mul $s3 $s0 $s1");
+        sim.readLine("div $s3 $s3 $s1");
+        sim.readLine("slr $s4 $s3 4");
+        System.out.println(sim.getRegister("s0").toDecimalString());
+        System.out.println(sim.getRegister("s1").toDecimalString());
+        System.out.println(sim.getRegister("s3").toDecimalString());
+
+        System.out.println(sim.registryToString());
 
         Memory mem = new Memory();
         int location = mem.allocate(8);
