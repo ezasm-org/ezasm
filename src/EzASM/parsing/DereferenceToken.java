@@ -7,6 +7,7 @@ public class DereferenceToken extends RightHandToken {
 
     public DereferenceToken(String text) {
         super(text);
+        assert Lexer.isDereference(text);
         int first = text.indexOf('(');
         int last = text.indexOf(')');
         offset = Long.parseLong(text.substring(0, first));

@@ -1,11 +1,10 @@
 package EzASM;
 
+import EzASM.parsing.Lexer;
 import EzASM.parsing.Line;
+import EzASM.parsing.ParseException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Simulator {
 
@@ -23,8 +22,21 @@ public class Simulator {
         System.out.println(registers);
     }
 
-    public void readLine(String line) {
-
+    public void readLine(String line) throws ParseException {
+        line = line.trim().replaceAll("\s+", " ");
+        if(Lexer.isComment(line)) return;
+        if(Lexer.isLabel(line)) {
+            labels.putIfAbsent(line, lines.size());
+        }
+        String[] tokens = line.split("[ ,]");
+        if(tokens.length < 2) {
+            // ERROR too few tokens to be a line
+            throw new ParseException("Too few tokens found: likely an incomplete line");
+        }
+        String[] args = Arrays.copyOfRange(tokens, 2, tokens.length);
+        Line lexed = new Line(tokens[0], tokens[1], args);
+        System.out.println(lexed);
+        lines.add(lexed);
     }
 
     public Register getRegister(int register) {

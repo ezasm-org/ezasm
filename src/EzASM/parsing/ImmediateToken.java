@@ -6,6 +6,7 @@ public class ImmediateToken extends RightHandToken {
 
     public ImmediateToken(String text) {
         super(text);
+        assert Lexer.isImmediate(text);
         this.value = Long.parseLong(text);
     }
 

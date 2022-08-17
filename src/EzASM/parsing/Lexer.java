@@ -1,9 +1,12 @@
 package EzASM.parsing;
 
-public class Tokenizer {
+import EzASM.Registers;
+import EzASM.instructions.InstructionDispatcher;
+
+public class Lexer {
 
     private static boolean isAlNum(char c) {
-        return isNumeric(c) || (c > 'A' && c < 'Z') || (c > 'a' && c < 'z') || (c == '_');
+        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_');
     }
 
     private static boolean isAlNum(String text) {
@@ -14,7 +17,7 @@ public class Tokenizer {
     }
 
     private static boolean isNumeric(char c) {
-        return c > '0' && c < '9';
+        return c >= '0' && c <= '9';
     }
 
     private static boolean isNumeric(String text) {
@@ -27,8 +30,17 @@ public class Tokenizer {
         return true;
     }
 
+    public static boolean isComment(String line) {
+        return line.startsWith("#");
+    }
+
+    public static boolean isLabel(String line) {
+        int colon = line.indexOf(':');
+        return (colon == line.charAt(line.length()-1) && isAlNum(line.substring(0, colon)));
+    }
+
     public static boolean isRegister(String token) {
-        return token.startsWith("$") && token.length() > 1 && isNumeric(token.substring(1)) ;
+        return token.startsWith("$") && token.length() > 1 && Registers.isRegister(token.substring(1)) ;
     }
 
     public static boolean isDereference(String token) {
@@ -48,10 +60,10 @@ public class Tokenizer {
         }
     }
 
-    public static boolean isLabel(String token) {
-        int colon = token.indexOf(':');
-        return (colon == token.charAt(token.length()-1) && isAlNum(token.substring(0, colon)));
-
+    public static boolean isInstruction(String token) {
+        System.out.println(InstructionDispatcher.getInstructions());
+        return InstructionDispatcher.getInstructions().contains(token);
     }
+
 
 }

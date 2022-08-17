@@ -146,11 +146,11 @@ public class Registers {
 
     private static void addRegister(String name, int number) {
         assert number < TOTAL_REGISTERS && number >= 0;
-        registerByString.put(name, number);
+        registerByString.put(name.toLowerCase(), number);
     }
 
     public static boolean isRegister(String register) {
-        return registerByString.containsKey(register);
+        return registerByString.containsKey(register.toLowerCase());
     }
 
     public static boolean isRegister(int register) {
@@ -243,7 +243,9 @@ public class Registers {
                 sb.append(' ');
             }
         }
-        sb.append(registers[registers.length-1]);
+        if(registers.length > 0) {
+            sb.append(registers[registers.length - 1]);
+        }
         return sb.toString();
     }
 }

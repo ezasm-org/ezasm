@@ -6,8 +6,7 @@ public class RegisterToken extends RightHandToken {
 
     public RegisterToken(String text) {
         super(text);
-        assert text.charAt(0) == '$';
-        assert text.length() > 1;
+        assert Lexer.isRegister(text);
         this.register = text.substring(1);
     }
 
