@@ -1,5 +1,8 @@
 package EzASM;
 
+import EzASM.instructions.DispatchInstruction;
+import EzASM.instructions.InstructionDispatcher;
+import EzASM.instructions.exception.InstructionDispatchException;
 import EzASM.parsing.Lexer;
 import EzASM.parsing.Line;
 import EzASM.parsing.ParseException;
@@ -10,6 +13,7 @@ public class Simulator {
 
     private final Memory memory;
     private final Registers registers;
+    private final InstructionDispatcher instructionDispatcher;
 
     private final List<Line> lines;
     private final Map<String, Integer> labels;
@@ -19,6 +23,7 @@ public class Simulator {
         this.registers = new Registers();
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
+        instructionDispatcher = new InstructionDispatcher(this);
         System.out.println(registers);
     }
 
@@ -31,12 +36,17 @@ public class Simulator {
         String[] tokens = line.split("[ ,]");
         if(tokens.length < 2) {
             // ERROR too few tokens to be a line
-            throw new ParseException("Too few tokens found: likely an incomplete line");
+            throw new ParseException("Too few tokens found: likely an incomplete statement");
         }
         String[] args = Arrays.copyOfRange(tokens, 2, tokens.length);
         Line lexed = new Line(tokens[0], tokens[1], args);
         System.out.println(lexed);
         lines.add(lexed);
+        try {
+            instructionDispatcher.execute(lexed);
+        } catch (InstructionDispatchException e) {
+            e.printStackTrace();
+        }
     }
 
     public Register getRegister(int register) {

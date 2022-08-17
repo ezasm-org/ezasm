@@ -21,7 +21,7 @@ public class ArithmeticInstructions {
 
     private void arithmetic(BinaryOperator<Long> op, AbstractInput input1, AbstractInput input2, AbstractOutput output) {
         long res = Stream.of(input1, input2)
-                .map(r -> r.get(this.simulator))
+                .map((AbstractInput r) -> r.get(this.simulator))
                 .map(Conversion::bytesToLong)
                 .reduce(0L, op);
         output.set(this.simulator, Conversion.longToBytes(res));

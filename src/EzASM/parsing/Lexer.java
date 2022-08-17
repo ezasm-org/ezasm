@@ -61,8 +61,8 @@ public class Lexer {
     }
 
     public static boolean isInstruction(String token) {
-        System.out.println(InstructionDispatcher.getInstructions());
-        return InstructionDispatcher.getInstructions().contains(token);
+        System.out.println(InstructionDispatcher.getInstructions().keySet());
+        return InstructionDispatcher.getInstructions().containsKey(token);
     }
 
 

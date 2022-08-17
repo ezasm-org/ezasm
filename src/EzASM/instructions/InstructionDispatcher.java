@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Set;
 
 public class InstructionDispatcher {
 
@@ -43,14 +42,12 @@ public class InstructionDispatcher {
         instructions.put(method.getName().toLowerCase(), new DispatchInstruction(parent, method));
     }
 
-    public static Set<String> getInstructions() {
-        return instructions.keySet();
+    public static HashMap<String, DispatchInstruction> getInstructions() {
+        return instructions;
     }
 
     private final HashMap<Class<?>, Object> instructionHandlerInstances = new HashMap<>();
     private final Simulator simulator;
-
-
 
     public InstructionDispatcher(Simulator simulator) {
         this.simulator = simulator;

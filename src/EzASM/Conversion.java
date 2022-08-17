@@ -4,36 +4,20 @@ import java.nio.ByteBuffer;
 
 public class Conversion {
 
-    private static final ByteBuffer longBuffer = ByteBuffer.allocate(Long.BYTES);
-
     public static byte[] longToBytes(long data) {
-        longBuffer.putLong(data);
-        byte[] out = longBuffer.array();
-        longBuffer.clear();
-        return out;
+        return ByteBuffer.wrap(new byte[8]).putLong(data).array();
     }
 
     public static long bytesToLong(byte[] data) {
-        longBuffer.put(data);
-        longBuffer.flip();//need flip
-        long out = longBuffer.getLong();
-        longBuffer.clear();
-        return out;
+        return ByteBuffer.wrap(data).getLong();
     }
 
     public static byte[] doubleToBytes(double data) {
-        longBuffer.putDouble(data);
-        byte[] out = longBuffer.array();
-        longBuffer.clear();
-        return out;
+        return ByteBuffer.wrap(new byte[8]).putDouble(data).array();
     }
 
     public static double bytesToDouble(byte[] data) {
-        longBuffer.put(data);
-        longBuffer.flip();//need flip
-        double out = longBuffer.getDouble();
-        longBuffer.clear();
-        return out;
+        return ByteBuffer.wrap(data).getDouble();
     }
 
     public static byte[] stringToBytes(String data) {
