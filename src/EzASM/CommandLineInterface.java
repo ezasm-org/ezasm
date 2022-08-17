@@ -1,23 +1,21 @@
 package EzASM;
 
-import EzASM.parsing.ParseException;
-
-import java.util.Scanner;
-
 public class CommandLineInterface {
 
     private final Simulator simulator;
-    private Thread simulationThread;
+    private final SimulationThread simulationThread;
     private final boolean cli;
 
     public CommandLineInterface(Simulator simulator) {
         this.simulator = simulator;
         this.cli = true;
+        this.simulationThread = new SimulationThread(simulator);
     }
 
     public CommandLineInterface(Simulator simulator, String file) {
         this.simulator = simulator;
         this.cli = false;
+        this.simulationThread = new SimulationThread(simulator);
         try {
             this.simulator.readFile(file);
         } catch (EzASM.parsing.ParseException e) {
@@ -26,57 +24,19 @@ public class CommandLineInterface {
     }
 
     public void startSimulation() {
-        stopSimulation();
         if(cli) {
-            startCliInput();
+            runFromCliInput();
         } else {
-            startSimulationFromBeginning();
+            runLinesFromBeginning();
         }
     }
 
-    public void startCliInput() {
-        simulationThread = new Thread(() -> {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("> ");
-                while (scanner.hasNext()){
-                    try {
-                        simulator.executeLine(scanner.nextLine());
-                    } catch (EzASM.parsing.ParseException e) {
-                        System.err.println(e.getMessage());
-                    }
-                    System.out.print("> ");
-                }
-        });
-        simulationThread.start();
+    public void runFromCliInput() {
+        simulationThread.runFromCliInput();
     }
 
-    private void startSimulationFromBeginning() {
-        simulationThread = new Thread(() -> {
-            try {
-                simulator.runLinesFromStart();
-                System.out.println(simulator.registryToString());
-            } catch (ParseException e) {
-                System.err.println(e.getMessage());
-            }
-        });
-        simulationThread.start();
-    }
-
-    public void runOneLine() {
-        stopSimulation();
-        simulationThread = new Thread(() -> {
-            try {
-                simulator.runOneLine();
-            } catch (ParseException e) {
-                System.err.println(e.getMessage());
-            }
-        });
-        simulationThread.start();
-
-    }
-
-    public void stopSimulation() {
-        if(simulationThread != null) simulationThread.interrupt();
+    private void runLinesFromBeginning() {
+        simulationThread.runLinesFromStart();
     }
 
 }
