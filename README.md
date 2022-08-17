@@ -39,15 +39,14 @@ Register can have a char in it, or a pointer to a string
 
 ### Instructions: 
 Arithmetic \
-add sub mul div and or xor sll srl - command (reg1/imm1) (reg2/imm2) (store register) \
-not (reg1/imm1) (store register) \
+add sub mul div and or xor sll slr - command (store register) (reg1/imm1) (reg2/imm2) \
+not (store register) (reg1/imm1) \
 inc/dec (reg1, increments or decrements the value in that register by 1) \
-inc/dec (reg1) (immediate, increments or decrements the immediate) 
 
 load/store heap-ish \
 mv (reg1) (reg2) \
-load (ptr) (register) \
-store (ptr) (register/immediate) 
+load (register) (ptr) \
+store (register/immediate) (ptr) 
 
 Function \
 call (line number / label, equivalent to ‘jal’) \
@@ -65,8 +64,7 @@ strcat (ptr) (ptr) \
 strcat (ptr) (ptr) (number of characters) 
 
 ### System call instructions: 
-alloc (register/immediate number of words) (register destination) \
-alloc (register/immediate number of words, store in return register) 
+alloc (register destination) (register/immediate number of words) \
 
 printi (register/immediate, integer interpretation) \
 printf (register/immediate, float interpretation) \
@@ -79,17 +77,11 @@ readf (register) \
 readc (register) \
 reads (register with ptr) (size of buffer) 
 
-exit \
 exit (register/immediate return value) 
 
 ### Syntax:
 Whitespace - INSTRUCTION ARG1 ARG2 … “\n” \
 (and) Delimiter - INSTRUCTION ARG1, ARG2, … ; \
 replace syntax with whitespace at runtime \
-Dereference ptr - x86 style \
-[(expr)] \
-Where expr can be a register +/- an immediate \
-add temp0, [temp2] \
-xor [stack-8] temp2 \
-Label - “LABEL_NAME:” \
-Comment - “#” 
+Label - line only contains “LABEL_NAME:” \
+Comment - line starts with “#” 
