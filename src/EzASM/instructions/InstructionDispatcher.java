@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Set;
 
 public class InstructionDispatcher {
 
@@ -30,7 +31,7 @@ public class InstructionDispatcher {
 
         Arrays.stream(clazz.getDeclaredMethods())
                 .map(c -> {
-                    if (c.getDeclaredAnnotation(Instruction.class) != null) {
+                    if (c.isAnnotationPresent(Instruction.class)) {
                         return c;
                     } else return null;
                 })
@@ -40,6 +41,10 @@ public class InstructionDispatcher {
 
     private static void registerInstruction(Class<?> parent, Method method) {
         instructions.put(method.getName().toLowerCase(), new DispatchInstruction(parent, method));
+    }
+
+    public static Set<String> getInstructions() {
+        return instructions.keySet();
     }
 
     private final HashMap<Class<?>, Object> instructionHandlerInstances = new HashMap<>();
