@@ -26,7 +26,6 @@ public class DispatchInstruction {
     public void invoke(Object parent, Line line) {
 
         Object[] args = new Object[line.getArguments().length + 1];
-        // TODO convert tokens to instruction targets
 
         args[args.length-1] = new RegisterOutput(line.getStoreRegister().getRegisterNumber());
 

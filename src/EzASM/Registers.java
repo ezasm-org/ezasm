@@ -165,10 +165,10 @@ public class Registers {
         return registerByString.get(register);
     }
 
-    public Registers() {
+    public Registers(int wordSize) {
         registers = new Register[TOTAL_REGISTERS];
         for(Integer i : registerByString.values()) {
-            registers[i] = new Register(i);
+            registers[i] = new Register(i, wordSize);
         }
     }
 

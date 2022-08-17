@@ -31,19 +31,23 @@ public class Lexer {
     }
 
     public static boolean isComment(String line) {
+        if(line.length() < 1) return false;
         return line.startsWith("#");
     }
 
     public static boolean isLabel(String line) {
+        if(line.length() < 1) return false;
         int colon = line.indexOf(':');
         return (colon == line.charAt(line.length()-1) && isAlNum(line.substring(0, colon)));
     }
 
     public static boolean isRegister(String token) {
+        if(token.length() < 1) return false;
         return token.startsWith("$") && token.length() > 1 && Registers.isRegister(token.substring(1)) ;
     }
 
     public static boolean isDereference(String token) {
+        if(token.length() < 5) return false;
         int first = token.indexOf('(');
         int last = token.indexOf(')');
         return (first != -1) && (last != -1) && (first == token.lastIndexOf('(')) && (last == token.lastIndexOf(')'))
@@ -51,6 +55,7 @@ public class Lexer {
     }
 
     public static boolean isImmediate(String token) {
+        if(token.length() < 1) return false;
         if(!isNumeric(token)) return false;
         try {
             Long.parseLong(token);

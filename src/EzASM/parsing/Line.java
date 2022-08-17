@@ -15,7 +15,6 @@ public class Line {
             throw new ParseException("Error parsing instruction '" + instruction + "'");
         }
 
-
         this.instruction = new InstructionToken(instruction);
         this.storeRegister = new RegisterToken(storeRegister);
         this.arguments = new RightHandToken[arguments.length];
@@ -24,8 +23,9 @@ public class Line {
                 this.arguments[i] = new ImmediateToken(arguments[i]);
             } else if(Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterToken(arguments[i]);
-            } else if(Lexer.isDereference(arguments[i])) {
-                this.arguments[i] = new DereferenceToken(arguments[i]);
+                // Old code for parsing a dereference
+//            } else if(Lexer.isDereference(arguments[i])) {
+//                this.arguments[i] = new DereferenceToken(arguments[i]);
             } else {
                 throw new ParseException("Error parsing token '" + arguments[i] + "'");
             }

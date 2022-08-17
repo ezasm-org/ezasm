@@ -80,7 +80,7 @@ public class ArithmeticInstructions {
     }
 
     @Instruction
-    public void slr(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
+    public void srl(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
         arithmetic((a, b) -> a >> b, input1, input2, output);
     }
 

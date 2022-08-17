@@ -5,9 +5,9 @@ public class Register {
     private final long number;
     private final byte[] data;
 
-    public Register(long number) {
+    public Register(long number, int wordSize) {
         this.number = number;
-        this.data = new byte[Memory.WORD_SIZE];
+        this.data = new byte[wordSize];
     }
 
     public long getNumber() {
@@ -27,7 +27,7 @@ public class Register {
     }
 
     public void setBytes(byte[] data) {
-        System.arraycopy(data, 0, this.data, 0, Memory.WORD_SIZE);
+        System.arraycopy(data, 0, this.data, 0, this.data.length);
     }
 
     public void setLong(long data) {

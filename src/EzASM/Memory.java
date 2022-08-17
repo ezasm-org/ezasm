@@ -4,33 +4,35 @@ import java.util.Arrays;
 
 public class Memory {
 
-    public static final int WORD_SIZE = 8;
-
-    private static final int DEFAULT_SIZE = 0x1_0000;
+    public static final int DEFAULT_MEMORY_SIZE = 0x1_0000;
+    public static final int DEFAULT_WORD_SIZE = 8;
     private static final int OFFSET = 0x1_0000;
 
-    private final int size;
+    public final int WORD_SIZE;
+    private final int MEMORY_SIZE;
     private final byte[] memory;
     private int alloc;
 
     public Memory() {
-        this.size = DEFAULT_SIZE * WORD_SIZE;
-        this.memory = new byte[size];
+        this.WORD_SIZE = DEFAULT_WORD_SIZE;
+        this.MEMORY_SIZE = DEFAULT_MEMORY_SIZE * WORD_SIZE;
+        this.memory = new byte[MEMORY_SIZE];
         this.alloc = 0;
     }
 
-    public Memory(int size) {
-        this.size = size * WORD_SIZE;
-        this.memory = new byte[this.size];
+    public Memory(int wordSize, int memorySize) {
+        this.WORD_SIZE = wordSize;
+        this.MEMORY_SIZE = memorySize * this.WORD_SIZE;
+        this.memory = new byte[this.MEMORY_SIZE];
         this.alloc = 0;
     }
 
     public int size() {
-        return size;
+        return MEMORY_SIZE;
     }
 
     public int initialStackPointer() {
-        return size + OFFSET;
+        return MEMORY_SIZE + OFFSET;
     }
 
     public int initialHeapPointer() {
@@ -62,7 +64,7 @@ public class Memory {
 
     public byte[] read(int address, int count) {
         address = address - OFFSET;
-        if(address < 0 || (address + count) >= this.size) {
+        if(address < 0 || (address + count) >= this.MEMORY_SIZE) {
             // Error: address is out of bounds
             System.out.println("Error: possible read out of bounds with address" + address);
             return null;
@@ -80,7 +82,7 @@ public class Memory {
         if(maxSize < 0) {
             System.out.println("Error: max string size cannot be less than zero");
         }
-        if(address < 0 || (address + maxSize) >= this.size) {
+        if(address < 0 || (address + maxSize) >= this.MEMORY_SIZE) {
             // Error: address is out of bounds
             System.out.println("Error: possible read out of bounds with address " + address);
             return null;
@@ -99,7 +101,7 @@ public class Memory {
 
     public void write(int address, byte[] data) {
         address = address - OFFSET;
-        if(address < 0 || (address + data.length) >= this.size) {
+        if(address < 0 || (address + data.length) >= this.MEMORY_SIZE) {
             // Error: address is out of bounds
             System.out.println("Error: address is out of bounds");
             return;
@@ -118,7 +120,7 @@ public class Memory {
             System.out.println("Error: max string size cannot be less than zero");
             return;
         }
-        if(address < 0 || (address + data.getBytes().length) >= this.size) {
+        if(address < 0 || (address + data.getBytes().length) >= this.MEMORY_SIZE) {
             // Error: address is out of bounds
             System.out.println("Error: address is out of bounds");
             return;
