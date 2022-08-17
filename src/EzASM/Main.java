@@ -10,8 +10,8 @@ public class Main {
     // Temporary tests
     public static void main(String[] args) {
         //test();
-        testFile();
-        //handleArgs(args);
+        //testFile();
+        handleArgs(args);
     }
 
     public static void handleArgs(String[] args) {
@@ -75,8 +75,15 @@ public class Main {
         if(commandLine.hasOption(fileOption)) {
             filepath = commandLine.getOptionValue(fileOption);
         }
+
         if(commandLine.hasOption(windowlessOption)) {
-            cli(sim, filepath);
+            CommandLineInterface cli = null;
+            if(filepath.equals("")) {
+                cli = new CommandLineInterface(sim);
+            } else {
+                cli = new CommandLineInterface(sim, filepath);
+            }
+            cli.startSimulation();
         } else {
             gui(sim, filepath);
         }
@@ -84,27 +91,7 @@ public class Main {
 
     private static void errorArgs(String message) {
         System.err.println(message);
-
-    }
-
-    private static void cli(Simulator sim, String file) {
-        if(file.equals("")) {
-            Scanner scanner = new Scanner(System.in);
-            while(scanner.hasNext()) {
-                try {
-                    sim.executeLine(scanner.nextLine());
-                } catch (EzASM.parsing.ParseException e) {
-                    System.err.println(e.getMessage());
-                }
-            }
-        } else {
-            try {
-                sim.readFile(file);
-                sim.runLinesFromStart();
-            } catch (EzASM.parsing.ParseException e) {
-                e.printStackTrace();
-            }
-        }
+        System.exit(1);
     }
 
     private static void gui(Simulator sim, String file) {

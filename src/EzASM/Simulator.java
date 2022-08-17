@@ -14,6 +14,7 @@ public class Simulator {
     private final Memory memory;
     private final Registers registers;
     private final InstructionDispatcher instructionDispatcher;
+    private final Register sp;
 
     private final List<Line> lines;
     private final Map<String, Integer> labels;
@@ -23,6 +24,7 @@ public class Simulator {
         this.registers = new Registers(this.memory.WORD_SIZE);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
+        sp = registers.getRegister("sp");
         instructionDispatcher = new InstructionDispatcher(this);
     }
 
@@ -31,6 +33,7 @@ public class Simulator {
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
+        sp = registers.getRegister("sp");
         instructionDispatcher = new InstructionDispatcher(this);
     }
 
@@ -103,15 +106,24 @@ public class Simulator {
     }
 
     public void runLinesFromStart() throws ParseException {
-        Register sp = registers.getRegister("sp");
         for(int i = 0; i < lines.size(); ++i) {
             executeLine(lines.get(i));
-            if(sp.getLong() == i) {
-                sp.setLong(i+1);
+            int currentSP = validateSP();
+            if(currentSP == i) {
+                sp.setLong(currentSP+1);
             } else {
-                i = (int) sp.getLong();
+                i = currentSP;
             }
         }
+    }
+
+    public void runOneLine() throws ParseException {
+        int lineNumber = validateSP();
+        executeLine(lines.get(lineNumber));
+        int currentSP = validateSP();
+        if(currentSP == lineNumber) {
+            sp.setLong(currentSP + 1);
+        } // otherwise the PC was set by the program to a certain line and should be read as such
     }
 
     public Register getRegister(int register) {
@@ -124,6 +136,16 @@ public class Simulator {
 
     public String registryToString() {
         return registers.toString();
+    }
+
+    public int validateSP() {
+        long number = sp.getLong();
+        if(number > lines.size() || number < 0) {
+            // Guaranteed invalid SP
+            // TODO handle better
+            throw new RuntimeException();
+        }
+        return (int) number;
     }
 
 }
