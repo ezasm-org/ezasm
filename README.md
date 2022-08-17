@@ -12,7 +12,6 @@ Perhaps allow using 30+31 as a single 128 bit register with special instructions
 Stack and Heap size: 8192 bytes (can be changed in program arguments / config)
 
 Registers \
-0-31 \
 0 : ZERO \
 1 : instruction line number \
 2 : stack ptr \
