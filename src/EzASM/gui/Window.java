@@ -7,12 +7,12 @@ import java.awt.*;
 
 /**
  * The main graphical user interface of the program.
- * A singleton which holds all the necessary GUI components.
+ * A singleton which holds all the necessary GUI components and one relevant simulator.
  */
 public class Window {
 
     private static Window instance;
-    private final Simulator simulator;
+    private Simulator simulator;
 
     private JFrame app;
 
@@ -28,7 +28,7 @@ public class Window {
      * @return the instance.
      */
     public static Window getInstance() {
-        if(instance == null) return null;
+        if(instance == null) instance = new Window(new Simulator());
         return instance;
     }
 
@@ -39,15 +39,6 @@ public class Window {
      */
     public static boolean hasInstance() {
         return instance != null;
-    }
-
-    /**
-     * Instantiates the GUI with the given simulator.
-     *
-     * @param simulator the simulator to use.
-     */
-    public static void instantiate(Simulator simulator) {
-        instance = new Window(simulator);
     }
 
     /**
@@ -67,6 +58,20 @@ public class Window {
         app.setVisible(true);
     }
 
+    /**
+     * Sets the simulator used by the GUI if ever needed.
+     *
+     * @param simulator the simulator to use.
+     */
+    public void setSimulator(Simulator simulator) {
+        this.simulator = simulator;
+    }
+
+    /**
+     * Returns the current simulator in use.
+     *
+     * @return the current simulator in use.
+     */
     public Simulator getSimulator() {
         return simulator;
     }
