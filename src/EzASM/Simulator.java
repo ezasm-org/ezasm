@@ -16,17 +16,19 @@ public class Simulator {
     private final Memory memory;
     private final Registers registers;
     private final InstructionDispatcher instructionDispatcher;
-    private final Register sp;
+    private final Register pc;
 
     private final List<Line> lines;
     private final Map<String, Integer> labels;
+
+    private long delayMS = 500L;
 
     public Simulator() {
         this.memory = new Memory();
         this.registers = new Registers(this.memory.WORD_SIZE);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
-        sp = registers.getRegister("sp");
+        pc = registers.getRegister("pc");
         instructionDispatcher = new InstructionDispatcher(this);
     }
 
@@ -35,7 +37,7 @@ public class Simulator {
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
-        sp = registers.getRegister("sp");
+        pc = registers.getRegister("pc");
         instructionDispatcher = new InstructionDispatcher(this);
     }
 
@@ -117,36 +119,45 @@ public class Simulator {
                     break;
                 }
             }
-            executeLine(lines.get(i));
-            int currentSP = validateSP();
-            if(currentSP == i) {
-                sp.setLong(currentSP+1);
-            } else {
-                i = currentSP;
+            i = executeLineInLoop(i);
+            try {
+                Thread.sleep(delayMS);
+            } catch (InterruptedException e) {
+                break;
             }
-            Window.updateAll();
+            System.out.println(registryToString());
         }
     }
 
     public void runLinesFromStart() throws ParseException {
         for(int i = 0; i < lines.size() && !Thread.interrupted(); ++i) {
-            executeLine(lines.get(i));
-            int currentSP = validateSP();
-            if(currentSP == i) {
-                sp.setLong(currentSP+1);
-            } else {
-                i = currentSP;
+            i = executeLineInLoop(i);
+            try {
+                Thread.sleep(delayMS);
+            } catch (InterruptedException e) {
+                break;
             }
-            Window.updateAll();
         }
     }
 
+    private int executeLineInLoop(int i) throws ParseException {
+        executeLine(lines.get(i));
+        int currentSP = validatePC();
+        if(currentSP == i) {
+            pc.setLong(currentSP+1);
+        } else {
+            i = currentSP;
+        }
+        Window.updateAll();
+        return i;
+    }
+
     public void runOneLine() throws ParseException {
-        int lineNumber = validateSP();
+        int lineNumber = validatePC();
         executeLine(lines.get(lineNumber));
-        int currentSP = validateSP();
+        int currentSP = validatePC();
         if(currentSP == lineNumber) {
-            sp.setLong(currentSP + 1);
+            pc.setLong(currentSP + 1);
         } // otherwise the PC was set by the program to a certain line and should be read as such
         Window.updateAll();
     }
@@ -163,8 +174,8 @@ public class Simulator {
         return registers.toString();
     }
 
-    private int validateSP() {
-        long number = sp.getLong();
+    private int validatePC() {
+        long number = pc.getLong();
         if(number > lines.size() || number < 0) {
             // Guaranteed invalid SP
             // TODO handle better

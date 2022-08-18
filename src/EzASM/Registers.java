@@ -12,7 +12,7 @@ public class Registers {
     private final Register[] registers;
 
     // Base registers
-    public static final String ZERO = "0";
+    public static final String ZERO = "ZERO";
     public static final String PC = "PC";
     public static final String SP = "SP";
     public static final String RA = "RA";

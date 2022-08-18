@@ -85,7 +85,7 @@ public class SimulationThread {
                 System.err.println(e.getMessage());
                 System.err.flush();
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(SLEEP_INTERVAL);
                 } catch (InterruptedException ignored) {
                     break;
                 }

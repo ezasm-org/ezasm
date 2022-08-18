@@ -18,6 +18,7 @@ public class Window {
     private RegisterTable table;
 
     protected Window(Simulator simulator) {
+        instance = this;
         this.simulator = simulator;
         initialize();
     }
@@ -29,7 +30,19 @@ public class Window {
      * @return the instance.
      */
     public static Window getInstance() {
-        if(instance == null) instance = new Window(new Simulator());
+        if(instance == null) return null;
+        return instance;
+    }
+
+    /**
+     * Generate the singleton instance if it does not exist.
+     * Just return the existing instance otherwise.
+     *
+     * @param simulator the simulator to use.
+     * @return the instance.
+     */
+    public static Window getInstance(Simulator simulator) {
+        if(instance == null) new Window(simulator);
         return instance;
     }
 
@@ -60,12 +73,6 @@ public class Window {
         app.validate();
         app.pack();
         app.setVisible(true);
-
-        try {
-            Thread.sleep(1000);
-            simulator.executeLine("add $t0 $t0 20");
-            table.update();
-        } catch (Exception ignored) {}
     }
 
     /**
@@ -90,7 +97,7 @@ public class Window {
      * Updates all UI elements if they exist.
      */
     public static void updateAll() {
-        if(instance == null || instance.simulator == null || instance.table == null) return;
+        if(instance == null || instance.table == null) return;
         instance.table.update();
     }
 

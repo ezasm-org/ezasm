@@ -4,8 +4,6 @@ import EzASM.Registers;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 
 public class RegisterTable extends JPanel {
@@ -63,7 +61,7 @@ public class RegisterTable extends JPanel {
         public Object getValueAt(int row, int col) {
             if(col == 0) {
                 // labels
-                return Registers.getRegisterName(row);
+                return "$" + Registers.getRegisterName(row);
             } else if(col == 1) {
                 // values
                 return registers.getRegister(row).getLong();

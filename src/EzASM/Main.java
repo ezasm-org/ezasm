@@ -84,7 +84,13 @@ public class Main {
             }
             cli.startSimulation();
         } else {
-            Window.getInstance().setSimulator(sim);
+            Window.getInstance(sim);
+            try {
+                Thread.sleep(1000);
+                sim.executeLine("add $t0 $t0 20");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

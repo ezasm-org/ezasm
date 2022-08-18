@@ -27,15 +27,15 @@ public class Register {
     }
 
     public void setBytes(byte[] data) {
-        System.arraycopy(data, 0, this.data, 0, this.data.length);
+        if(number != 0) System.arraycopy(data, 0, this.data, 0, this.data.length);
     }
 
     public void setLong(long data) {
-        setBytes(Conversion.longToBytes(data));
+        if(number != 0) setBytes(Conversion.longToBytes(data));
     }
 
     public void setDouble(double data) {
-        setBytes(Conversion.doubleToBytes(data));
+        if(number != 0) setBytes(Conversion.doubleToBytes(data));
     }
 
     @Override
