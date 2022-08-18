@@ -1,5 +1,6 @@
 package EzASM;
 
+import EzASM.gui.Window;
 import EzASM.instructions.InstructionDispatcher;
 import EzASM.instructions.exception.InstructionDispatchException;
 import EzASM.parsing.Lexer;
@@ -65,6 +66,7 @@ public class Simulator {
         if(line == null) return;
         try {
             instructionDispatcher.execute(line);
+            Window.updateAll();
         } catch (InstructionDispatchException e) {
             throw new ParseException(e.getMessage());
         }
@@ -122,6 +124,7 @@ public class Simulator {
             } else {
                 i = currentSP;
             }
+            Window.updateAll();
         }
     }
 
@@ -134,6 +137,7 @@ public class Simulator {
             } else {
                 i = currentSP;
             }
+            Window.updateAll();
         }
     }
 
@@ -144,6 +148,7 @@ public class Simulator {
         if(currentSP == lineNumber) {
             sp.setLong(currentSP + 1);
         } // otherwise the PC was set by the program to a certain line and should be read as such
+        Window.updateAll();
     }
 
     public Register getRegister(int register) {
@@ -158,7 +163,7 @@ public class Simulator {
         return registers.toString();
     }
 
-    public int validateSP() {
+    private int validateSP() {
         long number = sp.getLong();
         if(number > lines.size() || number < 0) {
             // Guaranteed invalid SP
@@ -166,6 +171,14 @@ public class Simulator {
             throw new RuntimeException();
         }
         return (int) number;
+    }
+
+    public Registers getRegisters() {
+        return registers;
+    }
+
+    public Memory getMemory() {
+        return memory;
     }
 
 }

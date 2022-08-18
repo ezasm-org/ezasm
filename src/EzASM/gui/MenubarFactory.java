@@ -38,6 +38,7 @@ public class MenubarFactory {
         menubar.add(menu);
 
         addMenuItem(menu, LOAD);
+        addMenuItem(menu, SAVE);
         menu.addSeparator();
         addMenuItem(menu, EXIT);
 

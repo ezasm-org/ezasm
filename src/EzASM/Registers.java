@@ -1,5 +1,6 @@
 package EzASM;
 
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 public class Registers {
@@ -74,10 +75,12 @@ public class Registers {
     public static final String FHI = "FHI";
 
     private static Map<String, Integer> registerByString;
+    private static Map<Integer, String> registerByInt;
     private static final int FLOAT_OFFSET = REGISTERS_COUNT;
 
     private static void init() {
         registerByString = new HashMap<>(TOTAL_REGISTERS);
+        registerByInt = new HashMap<>(TOTAL_REGISTERS);
         addRegister(ZERO, 0);
         addRegister(PC, 1);
         addRegister(SP, 2);
@@ -147,14 +150,20 @@ public class Registers {
     private static void addRegister(String name, int number) {
         assert number < TOTAL_REGISTERS && number >= 0;
         registerByString.put(name.toLowerCase(), number);
+        registerByInt.put(number, name.toLowerCase());
     }
 
     public static boolean isRegister(String register) {
-        return registerByString.containsKey(register.toLowerCase());
+        if(registerByString.containsKey(register.toLowerCase())) return true;
+        try {
+            int attempt = Integer.parseInt(register);
+            return isRegister(attempt);
+        } catch (Exception ignored) {}
+        return false;
     }
 
     public static boolean isRegister(int register) {
-        return registerByString.containsValue(register);
+        return registerByInt.containsKey(register);
     }
 
     public static int getRegisterNumber(String register) {
@@ -163,6 +172,14 @@ public class Registers {
             throw new RuntimeException();
         }
         return registerByString.get(register);
+    }
+
+    public static String getRegisterName(int register) {
+        if(!registerByInt.containsKey(register)) {
+            // TODO add appropriate exception
+            throw new RuntimeException();
+        }
+        return registerByInt.get(register);
     }
 
     public Registers(int wordSize) {
@@ -230,6 +247,10 @@ public class Registers {
 
     public Register getRegister(String register) {
         return getRegister(getRegisterNumber(register));
+    }
+
+    public Register[] getRegisters() {
+        return registers;
     }
 
     @Override

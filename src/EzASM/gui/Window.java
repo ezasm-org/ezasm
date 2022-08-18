@@ -15,6 +15,7 @@ public class Window {
     private Simulator simulator;
 
     private JFrame app;
+    private RegisterTable table;
 
     protected Window(Simulator simulator) {
         this.simulator = simulator;
@@ -53,9 +54,18 @@ public class Window {
         app.add(ToolbarFactory.makeToolbar(), BorderLayout.PAGE_START);
 
         //app.add(main content, BorderLayout.CENTER);
+        table = new RegisterTable(simulator.getRegisters());
+        app.add(table, BorderLayout.EAST);
 
+        app.validate();
         app.pack();
         app.setVisible(true);
+
+        try {
+            Thread.sleep(1000);
+            simulator.executeLine("add $t0 $t0 20");
+            table.update();
+        } catch (Exception ignored) {}
     }
 
     /**
@@ -74,6 +84,14 @@ public class Window {
      */
     public Simulator getSimulator() {
         return simulator;
+    }
+
+    /**
+     * Updates all UI elements if they exist.
+     */
+    public static void updateAll() {
+        if(instance == null || instance.simulator == null || instance.table == null) return;
+        instance.table.update();
     }
 
 }

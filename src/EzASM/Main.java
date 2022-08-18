@@ -4,8 +4,6 @@ import EzASM.gui.Window;
 import EzASM.instructions.InstructionDispatcher;
 import org.apache.commons.cli.*;
 
-import java.util.Scanner;
-
 public class Main {
 
     // Temporary tests
@@ -86,7 +84,7 @@ public class Main {
             }
             cli.startSimulation();
         } else {
-            Window.instantiate(sim);
+            Window.getInstance().setSimulator(sim);
         }
     }
 
