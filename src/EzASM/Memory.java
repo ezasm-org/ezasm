@@ -27,6 +27,11 @@ public class Memory {
         this.alloc = 0;
     }
 
+    public void reset() {
+        Arrays.fill(memory, (byte) 0);
+        alloc = 0;
+    }
+
     public int size() {
         return MEMORY_SIZE;
     }

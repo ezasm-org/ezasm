@@ -184,8 +184,14 @@ public class Registers {
 
     public Registers(int wordSize) {
         registers = new Register[TOTAL_REGISTERS];
-        for(Integer i : registerByString.values()) {
+        for(Integer i : registerByInt.keySet()) {
             registers[i] = new Register(i, wordSize);
+        }
+    }
+
+    public void reset() {
+        for(Integer i : registerByInt.keySet()) {
+            registers[i].setLong(0);
         }
     }
 

@@ -17,7 +17,7 @@ public class CommandLineInterface {
         this.cli = false;
         this.simulationThread = new SimulationThread(simulator);
         try {
-            this.simulator.readFile(file);
+            this.simulator.readMultiLineString(file);
         } catch (EzASM.parsing.ParseException e) {
             System.err.println(e.getMessage());
         }

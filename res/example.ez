@@ -6,3 +6,22 @@ add $t0 1 0
 
 add $t0 $t0 $t0
 # value should be 2
+
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0
+add $t0 $t0 $t0

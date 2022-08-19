@@ -7,7 +7,6 @@ import EzASM.parsing.Lexer;
 import EzASM.parsing.Line;
 import EzASM.parsing.ParseException;
 
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,6 +38,21 @@ public class Simulator {
         this.labels = new HashMap<>();
         pc = registers.getRegister("pc");
         instructionDispatcher = new InstructionDispatcher(this);
+    }
+
+    public void resetMemory() {
+        memory.reset();
+        registers.reset();
+    }
+
+    public void resetAll() {
+        resetMemory();
+        lines.clear();
+        labels.clear();
+    }
+
+    public boolean isDone() {
+        return pc.getLong() == lines.size();
     }
 
     public Line readLine(String line) throws ParseException {
@@ -78,31 +92,22 @@ public class Simulator {
         executeLine(readLine(line));
     }
 
-    public void readFile(String filepath) throws ParseException {
-        File file = new File(filepath);
-        if(!file.exists() || !file.canRead() ) {
-            throw new ParseException("Could not load specified file");
-        }
+    public void readMultiLineString(String content) throws ParseException {
         List<String> linesRead = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            int r = reader.read();
-            do {
-                char c = (char) r;
-                if (c == '\n' || c == ';') {
-                    if(sb.length() > 0) {
-                        linesRead.add(sb.toString());
-                        sb.delete(0, sb.length());
-                    }
-                } else {
-                    sb.append(c);
+        content = content + "\n";
+
+        for(int i = 0; i < content.length(); ++i) {
+            char c = content.charAt(i);
+            if (c == '\n' || c == ';') {
+                if(sb.length() > 0) {
+                    linesRead.add(sb.toString());
+                    sb.delete(0, sb.length());
                 }
-                r = reader.read();
-            } while (r != -1);
-        } catch (IOException e) {
-            throw new ParseException(e.getMessage());
+            } else {
+                sb.append(c);
+            }
         }
 
         for(int i = 0; i < linesRead.size(); ++i) {
@@ -111,26 +116,27 @@ public class Simulator {
     }
 
     public void runLinesFromStart(AtomicBoolean paused) throws ParseException {
-        for(int i = 0; i < lines.size() && !Thread.interrupted(); ++i) {
+        for(int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
             while(paused.get()) {
                 try {
                     Thread.sleep(SimulationThread.SLEEP_INTERVAL);
                 } catch (InterruptedException e) {
-                    break;
+                    return;
                 }
             }
+            i = validatePC();
+            if(isDone()) return;
             i = executeLineInLoop(i);
             try {
                 Thread.sleep(delayMS);
             } catch (InterruptedException e) {
-                break;
+                return;
             }
-            System.out.println(registryToString());
         }
     }
 
     public void runLinesFromStart() throws ParseException {
-        for(int i = 0; i < lines.size() && !Thread.interrupted(); ++i) {
+        for(int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
             i = executeLineInLoop(i);
             try {
                 Thread.sleep(delayMS);

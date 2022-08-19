@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SimulationThread {
 
     private Thread worker;
+    private Thread callbackWorker;
     private final Simulator simulator;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean paused = new AtomicBoolean(false);
@@ -18,8 +19,9 @@ public class SimulationThread {
     }
 
     public void interrupt() {
-        running.set(false);
         worker.interrupt();
+        running.set(false);
+        paused.set(false);
     }
 
     private void start(Runnable target) {
@@ -28,6 +30,9 @@ public class SimulationThread {
             paused.set(false);
             worker = new Thread(target);
             worker.start();
+            if(callbackWorker != null) {
+                callbackWorker.start();
+            }
         }
     }
 
@@ -92,5 +97,19 @@ public class SimulationThread {
             }
             System.out.print("> ");
         }
+    }
+
+    public void setCompletionCallback(Runnable runnable) {
+        assert runnable != null;
+        callbackWorker = new Thread(() -> {
+                try {
+                    worker.join();
+                    runnable.run();
+                } catch (Exception e) {
+                    System.err.println("Unable to perform callback function");
+                }
+                callbackWorker = null;
+        });
+
     }
 }

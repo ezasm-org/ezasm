@@ -12,18 +12,20 @@ import java.awt.event.ActionListener;
 public class ToolbarFactory {
 
     private static final String START   =  "  Start  ";
+    private static final String STOP    = "   Stop   ";
     private static final String PAUSE   =  "  Pause  ";
     private static final String RESUME  = "  Resume  ";
     private static final String STEP    = "   Step   ";
-    private static final String RESTART = " Restart ";
+    private static final String RESET   =  "  Reset  ";
 
     private static final ToolbarActionListener actionListener = new ToolbarActionListener();
 
     private static JButton startButton;
+    private static JButton stopButton;
     private static JButton pauseButton;
     private static JButton resumeButton;
     private static JButton stepButton;
-    private static JButton restartButton;
+    private static JButton resetButton;
 
 
     /**
@@ -36,9 +38,11 @@ public class ToolbarFactory {
         toolbar.setFloatable(false);
 
         addButton(toolbar, START);
+        addButton(toolbar, STOP);
         addButton(toolbar, PAUSE);
         addButton(toolbar, RESUME);
         addButton(toolbar, STEP);
+        addButton(toolbar, RESET);
 
         toolbar.validate();
 
@@ -69,10 +73,23 @@ public class ToolbarFactory {
         switch (text) {
             case STEP -> stepButton = button;
             case START -> startButton = button;
+            case STOP -> stopButton = button;
             case PAUSE -> pauseButton = button;
             case RESUME -> resumeButton = button;
-            case RESTART -> restartButton = button;
+            case RESET -> resetButton = button;
         }
+    }
+
+    public static void handleProgramCompletion() {
+        stepButton.setEnabled(false);
+        startButton.setEnabled(true);
+        stopButton.setEnabled(false);
+        pauseButton.setEnabled(false);
+        resumeButton.setEnabled(false);
+        resetButton.setEnabled(true);
+
+        Window.getInstance().getSimulationThread().interrupt();
+        Window.getInstance().setEditable(true);
     }
 
     /**
@@ -84,55 +101,104 @@ public class ToolbarFactory {
             switch (e.getActionCommand()) {
                 case STEP -> step();
                 case START -> start();
+                case STOP -> stop();
                 case PAUSE -> pause();
                 case RESUME -> resume();
-                case RESTART -> restart();
+                case RESET -> reset();
                 default -> System.err.printf("Button '%s' not yet implemented", e.getActionCommand());
             }
         }
 
         private static void step() {
+            if(Window.getInstance().getEditable()) {
+                Window.getInstance().setEditable(false);
+                try {
+                    Window.getInstance().parseText();
+                } catch (ParseException e) {
+                    // TODO handle
+                    Window.getInstance().setEditable(true);
+                    throw new RuntimeException();
+                }
+            }
+            if(Window.getInstance().getSimulator().isDone()) return;
             try {
                 Window.getInstance().getSimulator().runOneLine();
-            } catch (ParseException ex) {
+                if(Window.getInstance().getSimulator().isDone()) {
+                    Window.getInstance().handleProgramCompletion();
+                }
+            } catch (ParseException e) {
                 // TODO handle
-                throw new RuntimeException(ex);
+                throw new RuntimeException(e);
             }
         }
 
         private static void start() {
             stepButton.setEnabled(false);
             startButton.setEnabled(false);
+            stopButton.setEnabled(true);
             pauseButton.setEnabled(true);
             resumeButton.setEnabled(false);
+            resetButton.setEnabled(true);
 
-            // TODO parse and start the simulation
             // Run the content of the current file
+            try {
+                if(Window.getInstance().getEditable()) {
+                    Window.getInstance().setEditable(false);
+                    Window.getInstance().parseText();
+                }
+                Window.getInstance().getSimulationThread().setCompletionCallback(() -> Window.getInstance().handleProgramCompletion());
+                Window.getInstance().getSimulationThread().runLinesFromStart();
+            } catch (ParseException e) {
+                stop();
+                // TODO handle
+                throw new RuntimeException();
+            }
+        }
+
+        private static void stop() {
+            // Should be started
+            handleProgramCompletion();
+            stepButton.setEnabled(true);
         }
 
         private static void pause() {
             // Should be STARTED
             stepButton.setEnabled(true);
             startButton.setEnabled(false);
+            stopButton.setEnabled(true);
             pauseButton.setEnabled(false);
             resumeButton.setEnabled(true);
-            // TODO pause the simulation
+            resetButton.setEnabled(true);
+
+            Window.getInstance().getSimulationThread().pause();
         }
 
         private static void resume() {
             // Should be PAUSED
             stepButton.setEnabled(true);
             startButton.setEnabled(false);
+            stopButton.setEnabled(true);
             pauseButton.setEnabled(true);
             resumeButton.setEnabled(false);
-            // TODO pause the simulation
+            resetButton.setEnabled(true);
+
+            Window.getInstance().getSimulationThread().resume();
         }
 
-        private static void restart() {
-            // TODO dispose of currently running code
+        private static void reset() {
+            Window.getInstance().getSimulationThread().interrupt();
+            stepButton.setEnabled(true);
+            startButton.setEnabled(true);
+            stopButton.setEnabled(false);
+            pauseButton.setEnabled(false);
+            resumeButton.setEnabled(false);
+            resetButton.setEnabled(true);
 
-            start();
+            Window.getInstance().getSimulator().resetAll();
+            Window.updateAll();
+            Window.getInstance().setEditable(true);
         }
+
     }
 
 }

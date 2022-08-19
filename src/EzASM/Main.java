@@ -4,6 +4,9 @@ import EzASM.gui.Window;
 import EzASM.instructions.InstructionDispatcher;
 import org.apache.commons.cli.*;
 
+import javax.swing.*;
+import java.io.File;
+
 public class Main {
 
     // Temporary tests
@@ -84,13 +87,15 @@ public class Main {
             }
             cli.startSimulation();
         } else {
-            Window.getInstance(sim);
-            try {
-                Thread.sleep(1000);
-                sim.executeLine("add $t0 $t0 20");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            SwingUtilities.invokeLater(() -> {
+                Window.getInstance(sim);
+            });
+//            try {
+//                Thread.sleep(1000);
+//                sim.executeLine("add $t0 $t0 20");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -130,7 +135,8 @@ public class Main {
         try {
             Simulator sim = new Simulator();
             System.out.println(System.getProperty("user.dir"));
-            sim.readFile("res/example.ez");
+            String content = IO.readFile(new File("res/example.ez"));
+            sim.readMultiLineString(content);
             sim.runLinesFromStart();
             System.out.println(sim.registryToString());
         } catch (Exception e) {

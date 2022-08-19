@@ -10,7 +10,7 @@ public class RegisterTable extends JPanel {
 
     private JTable table;
     private Registers registers;
-    private static final Dimension MIN_SIZE = new Dimension(200, 400);
+    private static final Dimension MIN_SIZE = new Dimension(150, 2000);
     private static final Dimension MAX_SIZE = new Dimension(200, 2000);
 
     public RegisterTable(Registers registers) {
@@ -18,10 +18,10 @@ public class RegisterTable extends JPanel {
         this.registers = registers;
         initTable();
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setMinimumSize(table.getSize());
         scrollPane.setPreferredSize(table.getPreferredSize());
+        setPreferredSize(new Dimension(MAX_SIZE.width, getHeight()));
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
@@ -35,7 +35,6 @@ public class RegisterTable extends JPanel {
         table = new JTable();
         AbstractTableModel model = new RegistersTableModel(registers);
         table.setModel(model);
-        table.setMinimumSize(MIN_SIZE);
     }
 
     private class RegistersTableModel extends AbstractTableModel {

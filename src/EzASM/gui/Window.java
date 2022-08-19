@@ -1,6 +1,8 @@
 package EzASM.gui;
 
+import EzASM.SimulationThread;
 import EzASM.Simulator;
+import EzASM.parsing.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,13 +15,18 @@ public class Window {
 
     private static Window instance;
     private Simulator simulator;
+    private SimulationThread simulationThread;
 
     private JFrame app;
+    private JToolBar toolbar;
+    private JMenuBar menubar;
+    private EditorPane editor;
     private RegisterTable table;
 
     protected Window(Simulator simulator) {
         instance = this;
         this.simulator = simulator;
+        this.simulationThread = new SimulationThread(this.simulator);
         initialize();
     }
 
@@ -63,12 +70,17 @@ public class Window {
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setMinimumSize(new Dimension(800, 600));
 
-        app.setJMenuBar(MenubarFactory.makeMenuBar());
-        app.add(ToolbarFactory.makeToolbar(), BorderLayout.PAGE_START);
-
-        //app.add(main content, BorderLayout.CENTER);
+        menubar = MenubarFactory.makeMenuBar();
+        toolbar = ToolbarFactory.makeToolbar();
+        editor = new EditorPane();
         table = new RegisterTable(simulator.getRegisters());
+
+        app.setJMenuBar(menubar);
+        app.add(toolbar, BorderLayout.PAGE_START);
+        app.add(editor, BorderLayout.CENTER);
         app.add(table, BorderLayout.EAST);
+
+        ToolbarFactory.setButtonsEnabled(true);
 
         app.validate();
         app.pack();
@@ -101,4 +113,27 @@ public class Window {
         instance.table.update();
     }
 
+    public void parseText() throws ParseException {
+        simulator.resetAll();
+        updateAll();
+        simulator.readMultiLineString(editor.getText());
+    }
+
+    public SimulationThread getSimulationThread() {
+        return simulationThread;
+    }
+
+    public void setEditable(boolean value) {
+        editor.setEditable(value);
+    }
+
+    public boolean getEditable() {
+        return editor.getEditable();
+    }
+
+    public void handleProgramCompletion() {
+        ToolbarFactory.handleProgramCompletion();
+        System.out.println("** Program finished **");
+        editor.setEditable(true);
+    }
 }
