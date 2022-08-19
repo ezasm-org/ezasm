@@ -1,0 +1,9 @@
+# initialize the numbers
+add $t0 0 0
+add $t1 0 1
+
+# do the fibonacci!
+add $t2 $t1 $t0
+add $t0 $t1 0
+add $t1 $t2 0
+sub $pc $pc 3

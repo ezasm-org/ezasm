@@ -167,15 +167,24 @@ public class Registers {
     }
 
     public static int getRegisterNumber(String register) {
-        if(!registerByString.containsKey(register)) {
+        if(!isRegister(register)) {
             // TODO add appropriate exception
             throw new RuntimeException();
         }
+        try {
+            int attempt = Integer.parseInt(register);
+            if(isRegister(attempt)) {
+                return attempt;
+            } else {
+                // TODO add appropriate exception
+                throw new RuntimeException();
+            }
+        } catch (Exception ignored) {}
         return registerByString.get(register);
     }
 
     public static String getRegisterName(int register) {
-        if(!registerByInt.containsKey(register)) {
+        if(!isRegister(register)) {
             // TODO add appropriate exception
             throw new RuntimeException();
         }

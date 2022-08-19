@@ -133,8 +133,7 @@ public class Window {
 
     public void handleProgramCompletion() {
         ToolbarFactory.handleProgramCompletion();
-        System.out.println("** Program finished **");
-        editor.setEditable(true);
+        System.out.println("** Program terminated normally **");
     }
 
     public void setText(String content) {

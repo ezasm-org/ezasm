@@ -19,7 +19,9 @@ public class SimulationThread {
     }
 
     public void interrupt() {
-        worker.interrupt();
+        if(worker != null) {
+            worker.interrupt();
+        }
         running.set(false);
         paused.set(false);
     }
@@ -44,8 +46,8 @@ public class SimulationThread {
         paused.set(false);
     }
 
-    private void awaitTermination() {
-        while(worker.isAlive()) {
+    public void awaitTermination() {
+        while(worker != null && worker.isAlive()) {
             try {
                 Thread.sleep(SLEEP_INTERVAL);
             } catch (InterruptedException ignored) {}

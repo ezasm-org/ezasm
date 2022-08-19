@@ -81,14 +81,13 @@ public class ToolbarFactory {
     }
 
     public static void handleProgramCompletion() {
-        stepButton.setEnabled(false);
+        stepButton.setEnabled(true);
         startButton.setEnabled(true);
         stopButton.setEnabled(false);
         pauseButton.setEnabled(false);
         resumeButton.setEnabled(false);
         resetButton.setEnabled(true);
 
-        Window.getInstance().getSimulationThread().interrupt();
         Window.getInstance().setEditable(true);
     }
 
@@ -125,9 +124,12 @@ public class ToolbarFactory {
                 Window.getInstance().getSimulator().runOneLine();
                 if(Window.getInstance().getSimulator().isDone()) {
                     Window.getInstance().handleProgramCompletion();
+                } else {
+                    resetButton.setEnabled(true);
                 }
             } catch (ParseException e) {
                 // TODO handle
+                System.out.println("** Program terminated abnormally");
                 throw new RuntimeException(e);
             }
         }
@@ -157,6 +159,9 @@ public class ToolbarFactory {
 
         private static void stop() {
             // Should be started
+            Window.getInstance().getSimulationThread().interrupt();
+            Window.getInstance().getSimulationThread().awaitTermination();
+
             handleProgramCompletion();
             stepButton.setEnabled(true);
         }
@@ -187,16 +192,11 @@ public class ToolbarFactory {
 
         private static void reset() {
             Window.getInstance().getSimulationThread().interrupt();
-            stepButton.setEnabled(true);
-            startButton.setEnabled(true);
-            stopButton.setEnabled(false);
-            pauseButton.setEnabled(false);
-            resumeButton.setEnabled(false);
-            resetButton.setEnabled(true);
+            Window.getInstance().getSimulationThread().awaitTermination();
 
             Window.getInstance().getSimulator().resetAll();
             Window.updateAll();
-            Window.getInstance().setEditable(true);
+            handleProgramCompletion();
         }
 
     }
