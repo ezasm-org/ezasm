@@ -1,10 +1,13 @@
 package EzASM.gui;
 
+import EzASM.FileIO;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * A factory which generates a menu bar to add to the application.
@@ -33,7 +36,7 @@ public class MenubarFactory {
         /*
          * SIMULATION
          */
-        menu = new JMenu("Simulation");
+        menu = new JMenu("File");
         menu.getAccessibleContext().setAccessibleDescription("Actions related to the simulation");
         menubar.add(menu);
 
@@ -68,8 +71,13 @@ public class MenubarFactory {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
                 case SAVE: {
-                    File file = chooseFile();
-                    if(file != null && file.canWrite()) {
+                    JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                    fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                    fileChooser.setSelectedFile(new File("code.ez"));
+                    FileIO.filterFileChooser(fileChooser);
+                    int fileChooserOption = fileChooser.showSaveDialog(null);
+                    if(fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
                         boolean overwrite = true;
                         if(file.exists()) {
                             // File exists, prompt user to overwrite
@@ -82,15 +90,34 @@ public class MenubarFactory {
                             overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
                         }
                         if(overwrite) {
-                            // TODO save text from text editor pane to file
+                            try {
+                                FileIO.writeFile(file, Window.getInstance().getText());
+                            } catch (IOException ex) {
+                                // TODO handle
+                                ex.printStackTrace();
+                                throw new RuntimeException();
+                            }
                         }
                     }
                     break;
                 }
                 case LOAD: {
-                    File file = chooseFile();
-                    if(file != null && file.exists() && file.canRead()) {
-                        // TODO add text from file to text editor pane
+                    JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                    System.getProperty("user.home");
+                    fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                    FileIO.filterFileChooser(fileChooser);
+                    int fileChooserOption = fileChooser.showOpenDialog(null);
+                    if(fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        if(file != null && file.exists() && file.canRead()) {
+                            try {
+                                String content = FileIO.readFile(file);
+                                Window.getInstance().setText(content);
+                            } catch (IOException ex) {
+                                // TODO handle
+                                throw new RuntimeException();
+                            }
+                        }
                     }
                     break;
                 }
@@ -105,17 +132,6 @@ public class MenubarFactory {
                     break;
                 }
             }
-        }
-
-        private static File chooseFile() {
-            JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-            System.getProperty("user.home");
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-            int fileChooserOption = fileChooser.showOpenDialog(null);
-            if(fileChooserOption == JFileChooser.APPROVE_OPTION) {
-                return fileChooser.getSelectedFile();
-            }
-            return null;
         }
     }
 

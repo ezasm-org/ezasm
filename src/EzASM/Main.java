@@ -9,8 +9,8 @@ import java.io.File;
 
 public class Main {
 
-    // Temporary tests
     public static void main(String[] args) {
+        // Temporary tests
         //test();
         //testFile();
         handleArgs(args);
@@ -135,7 +135,7 @@ public class Main {
         try {
             Simulator sim = new Simulator();
             System.out.println(System.getProperty("user.dir"));
-            String content = IO.readFile(new File("res/example.ez"));
+            String content = FileIO.readFile(new File("res/example.ez"));
             sim.readMultiLineString(content);
             sim.runLinesFromStart();
             System.out.println(sim.registryToString());

@@ -136,4 +136,12 @@ public class Window {
         System.out.println("** Program finished **");
         editor.setEditable(true);
     }
+
+    public void setText(String content) {
+        editor.setText(content);
+    }
+
+    public String getText() {
+        return editor.getText();
+    }
 }
