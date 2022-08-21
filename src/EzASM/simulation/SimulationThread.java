@@ -1,4 +1,4 @@
-package EzASM;
+package EzASM.simulation;
 
 import EzASM.parsing.ParseException;
 

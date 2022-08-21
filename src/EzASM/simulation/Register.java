@@ -1,4 +1,6 @@
-package EzASM;
+package EzASM.simulation;
+
+import EzASM.Conversion;
 
 public class Register {
 

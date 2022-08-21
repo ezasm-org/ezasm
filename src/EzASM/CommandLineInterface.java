@@ -1,5 +1,8 @@
 package EzASM;
 
+import EzASM.simulation.SimulationThread;
+import EzASM.simulation.Simulator;
+
 public class CommandLineInterface {
 
     private final Simulator simulator;

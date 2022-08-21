@@ -1,7 +1,7 @@
 package EzASM.instructions.impl;
 
 import EzASM.Conversion;
-import EzASM.Simulator;
+import EzASM.simulation.Simulator;
 import EzASM.instructions.Instruction;
 import EzASM.instructions.exception.IllegalArgumentException;
 import EzASM.instructions.targets.input.AbstractInput;
@@ -11,7 +11,6 @@ import EzASM.instructions.targets.output.AbstractOutput;
 import EzASM.instructions.targets.output.RegisterOutput;
 
 import java.util.function.BinaryOperator;
-import java.util.stream.Stream;
 
 public class ArithmeticInstructions {
 

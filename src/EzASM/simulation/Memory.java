@@ -1,4 +1,6 @@
-package EzASM;
+package EzASM.simulation;
+
+import EzASM.Conversion;
 
 import java.util.Arrays;
 

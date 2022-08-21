@@ -1,7 +1,7 @@
 package EzASM.gui;
 
-import EzASM.SimulationThread;
-import EzASM.Simulator;
+import EzASM.simulation.SimulationThread;
+import EzASM.simulation.Simulator;
 import EzASM.parsing.ParseException;
 
 import javax.swing.*;

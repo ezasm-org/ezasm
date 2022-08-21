@@ -1,6 +1,6 @@
 package EzASM.parsing;
 
-import EzASM.Registers;
+import EzASM.simulation.Registers;
 import EzASM.instructions.InstructionDispatcher;
 
 import java.util.ArrayList;

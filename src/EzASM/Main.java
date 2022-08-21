@@ -2,6 +2,8 @@ package EzASM;
 
 import EzASM.gui.Window;
 import EzASM.instructions.InstructionDispatcher;
+import EzASM.simulation.Memory;
+import EzASM.simulation.Simulator;
 import org.apache.commons.cli.*;
 
 import javax.swing.*;

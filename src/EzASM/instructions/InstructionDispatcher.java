@@ -1,6 +1,6 @@
 package EzASM.instructions;
 
-import EzASM.Simulator;
+import EzASM.simulation.Simulator;
 import EzASM.instructions.exception.IllegalInstructionException;
 import EzASM.instructions.exception.InstructionDispatchException;
 import EzASM.instructions.impl.ArithmeticInstructions;

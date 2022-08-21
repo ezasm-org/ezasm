@@ -1,6 +1,6 @@
 package EzASM.instructions.targets.output;
 
-import EzASM.Simulator;
+import EzASM.simulation.Simulator;
 
 public class RegisterOutput extends AbstractOutput {
 

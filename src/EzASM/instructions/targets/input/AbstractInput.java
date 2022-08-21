@@ -1,6 +1,6 @@
 package EzASM.instructions.targets.input;
 
-import EzASM.Simulator;
+import EzASM.simulation.Simulator;
 
 public abstract class AbstractInput {
 

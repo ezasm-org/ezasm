@@ -1,6 +1,6 @@
 package EzASM.instructions.targets.input;
 
-import EzASM.Simulator;
+import EzASM.simulation.Simulator;
 
 import java.util.Arrays;
 import java.util.function.Function;

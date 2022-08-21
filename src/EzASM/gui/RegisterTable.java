@@ -1,6 +1,6 @@
 package EzASM.gui;
 
-import EzASM.Registers;
+import EzASM.simulation.Registers;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;

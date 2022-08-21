@@ -1,6 +1,6 @@
 package EzASM.parsing;
 
-import EzASM.Registers;
+import EzASM.simulation.Registers;
 
 /**
  * A token which represents a register within the registers.

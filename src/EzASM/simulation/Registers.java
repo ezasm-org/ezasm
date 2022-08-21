@@ -1,6 +1,5 @@
-package EzASM;
+package EzASM.simulation;
 
-import java.beans.PropertyChangeListener;
 import java.util.*;
 
 public class Registers {
