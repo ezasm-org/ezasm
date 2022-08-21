@@ -70,26 +70,26 @@ public class MenubarFactory {
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
-                case SAVE: {
+                case SAVE -> {
                     JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                     fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                     fileChooser.setSelectedFile(new File("code.ez"));
                     FileIO.filterFileChooser(fileChooser);
                     int fileChooserOption = fileChooser.showSaveDialog(null);
-                    if(fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
                         File file = fileChooser.getSelectedFile();
                         boolean overwrite = true;
-                        if(file.exists()) {
+                        if (file.exists()) {
                             // File exists, prompt user to overwrite
                             int confirmDialogOption = JOptionPane.showConfirmDialog(null,
                                     "The given file '" + file.getName() + "' already exits.\n" +
                                             "Would you like to overwrite it?",
-                                        "File Already Exists",
+                                    "File Already Exists",
                                     JOptionPane.YES_NO_OPTION,
                                     JOptionPane.QUESTION_MESSAGE);
                             overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
                         }
-                        if(overwrite) {
+                        if (overwrite) {
                             try {
                                 FileIO.writeFile(file, Window.getInstance().getText());
                             } catch (IOException ex) {
@@ -99,17 +99,16 @@ public class MenubarFactory {
                             }
                         }
                     }
-                    break;
                 }
-                case LOAD: {
+                case LOAD -> {
                     JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                     System.getProperty("user.home");
                     fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                     FileIO.filterFileChooser(fileChooser);
                     int fileChooserOption = fileChooser.showOpenDialog(null);
-                    if(fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
                         File file = fileChooser.getSelectedFile();
-                        if(file != null && file.exists() && file.canRead()) {
+                        if (file != null && file.exists() && file.canRead()) {
                             try {
                                 String content = FileIO.readFile(file);
                                 Window.getInstance().setText(content);
@@ -119,17 +118,16 @@ public class MenubarFactory {
                             }
                         }
                     }
-                    break;
                 }
-                case EXIT: {
+                case EXIT -> {
                     System.exit(0);
                 }
-                case CONFIG: {
-                    break;
+                case CONFIG -> {
+                    // TODO implement configuration
+                    throw new RuntimeException("Unimplemented feature");
                 }
-                default: {
+                default -> {
                     System.err.printf("'%s' action is not yet defined\n", e.getActionCommand());
-                    break;
                 }
             }
         }

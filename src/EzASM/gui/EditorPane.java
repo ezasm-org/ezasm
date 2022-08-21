@@ -6,12 +6,19 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+/**
+ * The editor pane within the GUI. Allows the user to type code or edit loaded code.
+ */
 public class EditorPane extends JPanel {
 
-    private JTextArea textArea;
+    private final JTextArea textArea;
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
+    /**
+     * Creates a text edit field with an "Undo Manager" to undo the user's actions with
+     * CTRL + Z or redo those undid actions with CTRL + SHIFT + Z or CTRL + Y.
+     */
     public EditorPane() {
         super();
         textArea = new JTextArea();
@@ -63,18 +70,34 @@ public class EditorPane extends JPanel {
         add(scrollPane);
     }
 
+    /**
+     * Sets the editable state of the text field based on the boolean given.
+     * @param value true to be editable, false to not be editable.
+     */
     public void setEditable(boolean value) {
         textArea.setEnabled(value);
     }
 
+    /**
+     * Gets the truth value of whether the editor can be typed in.
+     * @return true if the editor can be typed in currently, false otherwise.
+     */
     public boolean getEditable() {
         return textArea.isEnabled();
     }
 
+    /**
+     * Gets the text content of the text editor.
+     * @return the text content of the text editor.
+     */
     public String getText() {
         return textArea.getText();
     }
 
+    /**
+     * Sets the text of the editor to the given content.
+     * @param content the text to set the text within the editor to.
+     */
     public void setText(String content) {
         textArea.setText(content);
     }

@@ -6,18 +6,28 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 
+/**
+ * The GUI display table of the registers. Has a scroll pane embedded.
+ */
 public class RegisterTable extends JPanel {
 
-    private JTable table;
-    private Registers registers;
+    private final JTable table;
+    private final Registers registers;
     private static final Dimension MIN_SIZE = new Dimension(150, 2000);
     private static final Dimension MAX_SIZE = new Dimension(200, 2000);
 
+    /**
+     * Given the registers, construct a table which displays the names and values of each one.
+     * @param registers the registers to read from.
+     */
     public RegisterTable(Registers registers) {
         super();
         this.registers = registers;
-        initTable();
+        table = new JTable();
+        AbstractTableModel model = new RegistersTableModel(registers);
+        table.setModel(model);
         JScrollPane scrollPane = new JScrollPane(table);
+
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(table.getPreferredSize());
@@ -27,20 +37,19 @@ public class RegisterTable extends JPanel {
         add(scrollPane);
     }
 
+    /**
+     * Forcibly refreshes the display of the table
+     */
     public void update() {
         table.updateUI();
     }
 
-    private void initTable() {
-        table = new JTable();
-        AbstractTableModel model = new RegistersTableModel(registers);
-        table.setModel(model);
-    }
-
+    /**
+     * Helper model class to inform the TableModel of how to construct and read from itself.
+     */
     private class RegistersTableModel extends AbstractTableModel {
 
-        private String[] columns = { "Register", "Value" };
-
+        private static final String[] columns = { "Register", "Value" };
 
         private final Registers registers;
 
