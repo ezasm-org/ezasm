@@ -4,6 +4,9 @@
 Trevor Brunette\
 trevorbrunette@gmail.com
 
+Kate Vandermolen\
+CerulanLumina@users.noreply.github.com
+
 ## Scripts
 
 ### Program scripts for Linux:
