@@ -13,6 +13,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Contains a mapping of all instruction String names and their corresponding DispatchInstruction.
+ */
 public class InstructionDispatcher {
 
     private static final HashMap<String, DispatchInstruction> instructions = new HashMap<>();
