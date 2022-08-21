@@ -20,7 +20,7 @@ CerulanLumina@users.noreply.github.com
 
 ## Introduction
 
-The goal of this project is to create a small-instruction-set programming language interpreter written in Java with a GUI interface for inspecting the current state of the environment. This simple and interpreted language would be able to demonstrate the concepts of a lower level assembly language while still being easier to write. The instructions would be intuitive and simple compared to MIPS (e.g., no system calls or immediate limits) and act upon virtual registers akin to other assembly languages.
+The goal of this project is to create a small-instruction-set programming language interpreter written in Java with a GUI interface for inspecting the current state of the environment. This simple interpreted language would be able to demonstrate the concepts of a lower level assembly language while still being easier to write. The instructions would be intuitive and simple compared to MIPS (e.g., no system calls or immediate limits) and act upon virtual registers akin to other assembly languages.
 
 The user is able to either run a file containing instructions (a program) or enter instructions line by line. The results of these instructions would be resultant on the GUI would list the state of all of the registers, the past/current/upcoming instructions, and the program memory.
 
@@ -31,7 +31,7 @@ This software was developed and tested using a 64-bit Arch Linux system with Jav
 ## Implementation details:
 
 8-byte words (64-bit integer, 64-bit float) \
-Stack and Heap size: 8192 bytes (can be changed in program arguments / config)
+Stack and Heap size: 8192 bytes (can be changed in program arguments)
 
 Registers \
 0 : ZERO \
@@ -60,7 +60,7 @@ Register can have a char in it, or a pointer to a string
 
 ### Instructions: 
 Arithmetic \
-add sub mul div and or xor sll slr - command (store register) (reg1/imm1) (reg2/imm2) \
+add sub mul div and or xor sll srl - command (store register) (reg1/imm1) (reg2/imm2) \
 not (store register) (reg1/imm1) \
 inc/dec (reg1, increments or decrements the value in that register by 1) \
 

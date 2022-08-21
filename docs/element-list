@@ -6,3 +6,4 @@ EzASM.instructions.impl
 EzASM.instructions.targets.input
 EzASM.instructions.targets.output
 EzASM.parsing
+EzASM.simulation
