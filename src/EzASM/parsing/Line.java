@@ -5,7 +5,6 @@ public class Line {
     private final InstructionToken instruction;
     private final RegisterToken storeRegister;
     private final RightHandToken[] arguments;
-    // TODO add line number maybe
 
     public Line(String instruction, String storeRegister, String[] arguments) throws ParseException {
         if(!Lexer.isRegister(storeRegister)) {

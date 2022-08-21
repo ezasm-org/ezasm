@@ -167,6 +167,7 @@ public class Registers {
     }
 
     public static int getRegisterNumber(String register) {
+        register = register.toLowerCase();
         if(!isRegister(register)) {
             // TODO add appropriate exception
             throw new RuntimeException();

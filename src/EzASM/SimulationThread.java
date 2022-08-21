@@ -76,7 +76,7 @@ public class SimulationThread {
 
     private void runnableRunLinesFromStart() {
         try {
-            simulator.runLinesFromStart(paused);
+            simulator.runLinesFromPC(paused);
         } catch (ParseException e) {
             System.err.println(e.getMessage());
         }

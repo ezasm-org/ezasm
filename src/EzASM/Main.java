@@ -131,7 +131,7 @@ public class Main {
             System.out.println(System.getProperty("user.dir"));
             String content = FileIO.readFile(new File("res/example.ez"));
             sim.readMultiLineString(content);
-            sim.runLinesFromStart();
+            sim.runLinesFromPC();
             System.out.println(sim.registryToString());
         } catch (Exception e) {
             e.printStackTrace();

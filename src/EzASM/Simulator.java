@@ -10,6 +10,9 @@ import EzASM.parsing.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * The main controller class. Manages the memory, registers, and lines.
+ */
 public class Simulator {
 
     private final Memory memory;
@@ -27,7 +30,7 @@ public class Simulator {
         this.registers = new Registers(this.memory.WORD_SIZE);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
-        pc = registers.getRegister("pc");
+        pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
     }
 
@@ -36,7 +39,7 @@ public class Simulator {
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
-        pc = registers.getRegister("pc");
+        pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
     }
 
@@ -56,26 +59,13 @@ public class Simulator {
     }
 
     public Line readLine(String line) throws ParseException {
-        line = line.replaceAll("[\s,;]+", " ").trim();
-        if(Lexer.isComment(line)) return null;
-        if(Lexer.isLabel(line)) {
-            labels.putIfAbsent(line, lines.size());
-            return null;
-        }
-        String[] tokens = line.split("[ ,]");
-        if(tokens.length == 0) {
-            // Empty line
-            return null;
-        } else if(tokens.length < 2) {
-            // ERROR too few tokens to be a line
-            throw new ParseException(String.format("Too few tokens found: '%s' is likely an incomplete statement", line));
-        }
-
-        String[] args = Arrays.copyOfRange(tokens, 2, tokens.length);
-        Line lexed = new Line(tokens[0], tokens[1], args);
-        System.out.println(lexed);
+        Line lexed = Lexer.parseLine(line, labels, lines.size());
         lines.add(lexed);
         return lexed;
+    }
+
+    public void readMultiLineString(String content) throws ParseException {
+        lines.addAll(Lexer.parseLines(content, labels));
     }
 
     public void executeLine(Line line) throws ParseException {
@@ -92,30 +82,7 @@ public class Simulator {
         executeLine(readLine(line));
     }
 
-    public void readMultiLineString(String content) throws ParseException {
-        List<String> linesRead = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-
-        content = content + "\n";
-
-        for(int i = 0; i < content.length(); ++i) {
-            char c = content.charAt(i);
-            if (c == '\n' || c == ';') {
-                if(sb.length() > 0) {
-                    linesRead.add(sb.toString());
-                    sb.delete(0, sb.length());
-                }
-            } else {
-                sb.append(c);
-            }
-        }
-
-        for(int i = 0; i < linesRead.size(); ++i) {
-            readLine(linesRead.get(i));
-        }
-    }
-
-    public void runLinesFromStart(AtomicBoolean paused) throws ParseException {
+    public void runLinesFromPC(AtomicBoolean paused) throws ParseException {
         for(int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
             while(paused.get()) {
                 try {
@@ -135,7 +102,7 @@ public class Simulator {
         }
     }
 
-    public void runLinesFromStart() throws ParseException {
+    public void runLinesFromPC() throws ParseException {
         for(int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
             i = executeLineInLoop(i);
             try {
@@ -144,18 +111,6 @@ public class Simulator {
                 break;
             }
         }
-    }
-
-    private int executeLineInLoop(int i) throws ParseException {
-        executeLine(lines.get(i));
-        int currentSP = validatePC();
-        if(currentSP == i) {
-            pc.setLong(currentSP+1);
-        } else {
-            i = currentSP;
-        }
-        Window.updateAll();
-        return i;
     }
 
     public void runOneLine() throws ParseException {
@@ -168,6 +123,28 @@ public class Simulator {
         Window.updateAll();
     }
 
+    private int executeLineInLoop(int i) throws ParseException {
+        executeLine(lines.get(i));
+        int currentPC = validatePC();
+        if(currentPC == i) {
+            pc.setLong(currentPC+1);
+        } else {
+            i = currentPC;
+        }
+        Window.updateAll();
+        return i;
+    }
+
+    private int validatePC() {
+        long number = pc.getLong();
+        if(number < 0 || number > lines.size()) {
+            // Guaranteed invalid SP
+            // TODO handle better
+            throw new RuntimeException();
+        }
+        return (int) number;
+    }
+
     public Register getRegister(int register) {
         return registers.getRegister(register);
     }
@@ -178,16 +155,6 @@ public class Simulator {
 
     public String registryToString() {
         return registers.toString();
-    }
-
-    private int validatePC() {
-        long number = pc.getLong();
-        if(number > lines.size() || number < 0) {
-            // Guaranteed invalid SP
-            // TODO handle better
-            throw new RuntimeException();
-        }
-        return (int) number;
     }
 
     public Registers getRegisters() {
