@@ -4,8 +4,17 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.*;
 
+/**
+ * A utility class to provide file I/O functionality.
+ */
 public class FileIO {
 
+    /**
+     * Reads the text from a given file.
+     * @param file the file to read from.
+     * @return the text read.
+     * @throws IOException if an error occurred reading from the file.
+     */
     public static String readFile(File file) throws IOException {
         if(!file.exists() || !file.canRead() ) {
             throw new IOException("Could not load specified file");
@@ -18,12 +27,22 @@ public class FileIO {
         return sb.toString();
     }
 
+    /**
+     * Writes the given content to the given file.
+     * @param file the file to write to.
+     * @param content the String to write.
+     * @throws IOException if an error occurred writing to the file.
+     */
     public static void writeFile(File file, String content) throws IOException {
         FileWriter writer = new FileWriter(file);
         writer.write(content);
         writer.close();
     }
 
+    /**
+     * Initializes a JFileChooser with the file types which could be associated with code for an EzASM program.
+     * @param fileChooser the JFileChooser to act on.
+     */
     public static void filterFileChooser(JFileChooser fileChooser) {
         FileFilter ezasm = new QuickFileFilter(".ez", "EzASM file");
         FileFilter plain = new QuickFileFilter(".txt", "Text file");
@@ -32,7 +51,9 @@ public class FileIO {
         fileChooser.setFileFilter(ezasm);
     }
 
-
+    /**
+     * Helper class to generate a file filter based on an extension and a description.
+     */
     private static class QuickFileFilter extends FileFilter {
 
         private final String extension;

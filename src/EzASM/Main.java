@@ -1,16 +1,22 @@
 package EzASM;
 
-import EzASM.gui.Window;
 import EzASM.instructions.InstructionDispatcher;
 import EzASM.simulation.Memory;
 import EzASM.simulation.Simulator;
-import org.apache.commons.cli.*;
 
-import javax.swing.*;
 import java.io.File;
 
+import static EzASM.Arguments.handleArgs;
+
+/**
+ * The main entrypoint of the program.
+ */
 public class Main {
 
+    /**
+     * The main function entrypoint of the program
+     * @param args the program arguments.
+     */
     public static void main(String[] args) {
         // Temporary tests
         //test();
@@ -18,89 +24,10 @@ public class Main {
         handleArgs(args);
     }
 
-    public static void handleArgs(String[] args) {
-        Options options = new Options();
-
-        Option windowlessOption = new Option("w", "windowless", false,
-                "Starts the program in windowless mode \n(default: disabled)");
-        options.addOption(windowlessOption);
-
-        Option fileOption = new Option("f", "file", true,
-                "EzASM code file path to open");
-        fileOption.setArgName("path");
-        options.addOption(fileOption);
-
-        Option memoryOption = new Option("m", "memory", true,
-                "The number of words to allocate space for on the stack and heap each, " +
-                        "must be larger than 0 (default 65536)");
-        options.addOption(memoryOption);
-        memoryOption.setArgName("words");
-
-        Option wordSizeOption = new Option("s", "word-size", true,
-                "The size in bytes of a word (default: 8)");
-        options.addOption(wordSizeOption);
-        wordSizeOption.setArgName("word size");
-
-        CommandLineParser parser = new DefaultParser();
-        CommandLine commandLine = null;
-
-        try {
-            commandLine = parser.parse(options, args);
-        } catch (org.apache.commons.cli.ParseException e) {
-            errorArgs(e.getMessage());
-        }
-
-        int memorySize = 0;
-        int wordSize = 0;
-
-        if(commandLine.hasOption(memoryOption)) {
-            String memoryString = commandLine.getOptionValue(memoryOption);
-            try {
-                memorySize = Integer.parseInt(memoryString);
-            } catch (Exception e) {
-                errorArgs("Unable to parse given word size");
-            }
-        } else {
-            memorySize = Memory.DEFAULT_MEMORY_WORDS;
-        }
-        if(commandLine.hasOption(wordSizeOption)) {
-            String wordSizeString = commandLine.getOptionValue(wordSizeOption);
-            try {
-                wordSize = Integer.parseInt(wordSizeString);
-            } catch (Exception e) {
-                errorArgs("Unable to parse given word size");
-            }
-        } else {
-            wordSize = Memory.DEFAULT_WORD_SIZE;
-        }
-
-        Simulator sim = new Simulator(wordSize, memorySize);
-        String filepath = "";
-        if(commandLine.hasOption(fileOption)) {
-            filepath = commandLine.getOptionValue(fileOption);
-        }
-
-        if(commandLine.hasOption(windowlessOption)) {
-            CommandLineInterface cli = null;
-            if(filepath.equals("")) {
-                cli = new CommandLineInterface(sim);
-            } else {
-                cli = new CommandLineInterface(sim, filepath);
-            }
-            cli.startSimulation();
-        } else {
-            SwingUtilities.invokeLater(() -> {
-                Window.getInstance(sim);
-            });
-        }
-    }
-
-    private static void errorArgs(String message) {
-        System.err.println(message);
-        System.exit(1);
-    }
-
-    public static void test() {
+    /**
+     * A simple test cases for the program.
+     */
+    private static void test() {
         try {
             System.out.println(InstructionDispatcher.getInstructions().keySet());
             Simulator sim = new Simulator();
@@ -127,10 +54,12 @@ public class Main {
         }
     }
 
-    public static void testFile() {
+    /**
+     * Tests reading a program from a given file.
+     */
+    private static void testFile() {
         try {
             Simulator sim = new Simulator();
-            System.out.println(System.getProperty("user.dir"));
             String content = FileIO.readFile(new File("res/example.ez"));
             sim.readMultiLineString(content);
             sim.runLinesFromPC();
