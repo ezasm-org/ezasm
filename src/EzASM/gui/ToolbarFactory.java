@@ -149,7 +149,7 @@ public class ToolbarFactory {
                     Window.getInstance().parseText();
                 }
                 Window.getInstance().getSimulationThread().setCompletionCallback(() -> Window.getInstance().handleProgramCompletion());
-                Window.getInstance().getSimulationThread().runLinesFromStart();
+                Window.getInstance().getSimulationThread().runLinesFromPC();
             } catch (ParseException e) {
                 stop();
                 // TODO handle

@@ -39,7 +39,7 @@ public class CommandLineInterface {
     }
 
     private void runLinesFromBeginning() {
-        simulationThread.runLinesFromStart();
+        simulationThread.runLinesFromPC();
     }
 
 }

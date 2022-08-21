@@ -61,7 +61,7 @@ public class Main {
                 errorArgs("Unable to parse given word size");
             }
         } else {
-            memorySize = Memory.DEFAULT_MEMORY_SIZE;
+            memorySize = Memory.DEFAULT_MEMORY_WORDS;
         }
         if(commandLine.hasOption(wordSizeOption)) {
             String wordSizeString = commandLine.getOptionValue(wordSizeOption);
@@ -113,7 +113,7 @@ public class Main {
             System.out.println(sim.getRegister("s1").toDecimalString());
             System.out.println(sim.getRegister("s3").toDecimalString());
 
-            System.out.println(sim.registryToString());
+            System.out.println(sim.getRegisters().toString());
 
             Memory mem = new Memory();
             int location = mem.allocate(8);
@@ -134,7 +134,7 @@ public class Main {
             String content = FileIO.readFile(new File("res/example.ez"));
             sim.readMultiLineString(content);
             sim.runLinesFromPC();
-            System.out.println(sim.registryToString());
+            System.out.println(sim.getRegisters().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

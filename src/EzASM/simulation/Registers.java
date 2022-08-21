@@ -2,6 +2,10 @@ package EzASM.simulation;
 
 import java.util.*;
 
+/**
+ * Represents all system registers within an array.
+ * Provides access to them by name and by reference number.
+ */
 public class Registers {
 
     private static final int REGISTERS_COUNT = 32;
@@ -77,6 +81,10 @@ public class Registers {
     private static Map<Integer, String> registerByInt;
     private static final int FLOAT_OFFSET = REGISTERS_COUNT;
 
+    /**
+     * Initialization function for the registers.
+     * Creates both mapping of register number to String and vice-versa.
+     */
     private static void init() {
         registerByString = new HashMap<>(TOTAL_REGISTERS);
         registerByInt = new HashMap<>(TOTAL_REGISTERS);
@@ -142,16 +150,32 @@ public class Registers {
         addRegister(FHI, 21 + FLOAT_OFFSET);
     }
 
+    /*
+     * Initializes the registers and mappings in a static context whenever this code is loaded.
+     * This prevents the register mappings from ever being null.
+     */
     static {
         init();
     }
 
+    /**
+     * Adds a given register to the static register mappings.
+     * @param name the name of the register to add.
+     * @param number the reference number of the register to add.
+     */
     private static void addRegister(String name, int number) {
         assert number < TOTAL_REGISTERS && number >= 0;
         registerByString.put(name.toLowerCase(), number);
         registerByInt.put(number, name.toLowerCase());
     }
 
+    /**
+     * Checks if a given String matches any of the registers.
+     * Can be the named register notation or the numerical register notation to check.
+     * The register attempt given should not have the '$' at the start of the String.
+     * @param register the String representing the register.
+     * @return true if the register is valid, false otherwise.
+     */
     public static boolean isRegister(String register) {
         if(registerByString.containsKey(register.toLowerCase())) return true;
         try {
@@ -161,10 +185,20 @@ public class Registers {
         return false;
     }
 
+    /**
+     * Checks if a given register reference number matches any of the registers.
+     * @param register the number reference of to check.
+     * @return true if the register is valid, false otherwise.
+     */
     public static boolean isRegister(int register) {
         return registerByInt.containsKey(register);
     }
 
+    /**
+     * Gets a register number based on the register's name or a text representation of its number.
+     * @param register the register to seek.
+     * @return the register number found.
+     */
     public static int getRegisterNumber(String register) {
         register = register.toLowerCase();
         if(!isRegister(register)) {
@@ -183,6 +217,11 @@ public class Registers {
         return registerByString.get(register);
     }
 
+    /**
+     * Gets a register's name based on its reference number.
+     * @param register the register reference number to search.
+     * @return the register name found.
+     */
     public static String getRegisterName(int register) {
         if(!isRegister(register)) {
             // TODO add appropriate exception
@@ -191,6 +230,10 @@ public class Registers {
         return registerByInt.get(register);
     }
 
+    /**
+     * Constructs the system registers based on a given word size.
+     * @param wordSize the given word size in bytes.
+     */
     public Registers(int wordSize) {
         registers = new Register[TOTAL_REGISTERS];
         for(Integer i : registerByInt.keySet()) {
@@ -198,60 +241,20 @@ public class Registers {
         }
     }
 
+    /**
+     * Sets the values of all bytes of all registers to zero.
+     */
     public void reset() {
         for(Integer i : registerByInt.keySet()) {
             registers[i].setLong(0);
         }
     }
 
-    public byte[] getBytes(int register) {
-        if(register < 0 || register > TOTAL_REGISTERS) {
-            // TODO add appropriate exception
-            throw new RuntimeException();
-        }
-        return registers[register].getBytes();
-    }
-
-    public long getLong(int register) {
-        if(register < 0 || register > TOTAL_REGISTERS) {
-            // TODO add appropriate exception
-            throw new RuntimeException();
-        }
-        return registers[register].getLong();
-    }
-
-    public double getDouble(int register) {
-        if(register < 0 || register > TOTAL_REGISTERS) {
-            // TODO add appropriate exception
-            throw new RuntimeException();
-        }
-        return registers[register].getDouble();
-    }
-
-    public void setBytes(int register, byte[] data) {
-        if(register < 0 || register > TOTAL_REGISTERS) {
-            // TODO add appropriate exception
-            throw new RuntimeException();
-        }
-        registers[register].setBytes(data);
-    }
-
-    public void setLong(int register, long data) {
-        if(register < 0 || register > TOTAL_REGISTERS) {
-            // TODO add appropriate exception
-            throw new RuntimeException();
-        }
-        registers[register].setLong(data);
-    }
-
-    public void setDouble(int register, double data) {
-        if(register < 0 || register > TOTAL_REGISTERS) {
-            // TODO add appropriate exception
-            throw new RuntimeException();
-        }
-        registers[register].setDouble(data);
-    }
-
+    /**
+     * Gets the register corresponding to the reference number.
+     * @param register the reference number of the register to get.
+     * @return the register obtained.
+     */
     public Register getRegister(int register) {
         if(register < 0 || register > TOTAL_REGISTERS) {
             // TODO add appropriate exception
@@ -260,14 +263,27 @@ public class Registers {
         return registers[register];
     }
 
+    /**
+     * Gets the register corresponding to the given name.
+     * @param register the name of the register to get.
+     * @return the register obtained.
+     */
     public Register getRegister(String register) {
         return getRegister(getRegisterNumber(register));
     }
 
+    /**
+     * Gets the list of all registers.
+     * @return the list of all registers.
+     */
     public Register[] getRegisters() {
         return registers;
     }
 
+    /**
+     * Gets a string representing the current state of the system registers.
+     * @return a string representing the current state of the system registers.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
