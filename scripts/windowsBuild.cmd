@@ -23,7 +23,7 @@ del scripts\sources.txt
 echo PASSED
 echo Compressing jarfile...
 cd bin
-jar cvfm %DIR%\scripts\manifest.txt out.jar EzASM\* ..\lib\commons-cli-1.5.0.jar || exit
+jar cvfm out.jar %DIR%\scripts\manifest.txt EzASM\* ..\lib\commons-cli-1.5.0.jar || exit
 echo PASSED
 
 cd %PASTDIR%
