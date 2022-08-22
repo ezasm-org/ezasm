@@ -166,4 +166,12 @@ public class Window {
     public boolean getEditable() {
         return editor.getEditable();
     }
+
+    /**
+     * Handles the parse exception by printing the message to the terminal.
+     * @param e the exception to handle.
+     */
+    public void handleParseException(ParseException e) {
+        System.err.println(e.getMessage());
+    }
 }

@@ -133,7 +133,11 @@ public class Lexer {
         }
 
         String[] args = Arrays.copyOfRange(tokens, 2, tokens.length);
-        return new Line(tokens[0], tokens[1], args);
+        try {
+            return new Line(tokens[0], tokens[1], args);
+        } catch (ParseException e) {
+            throw new ParseException(String.format("%s on line %d", e.getMessage(), number+1));
+        }
     }
 
     /**
@@ -166,7 +170,7 @@ public class Lexer {
         for(int i = 0; i < linesRead.size(); ++i) {
             Line lexed = parseLine(linesRead.get(i), labels, i);
             if(lexed != null) {
-                linesLexed.add(parseLine(linesRead.get(i), labels, i));
+                linesLexed.add(lexed);
             }
         }
         return linesLexed;

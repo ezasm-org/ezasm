@@ -115,9 +115,8 @@ public class ToolbarFactory {
                     Window.getInstance().parseText();
                     System.out.println("** Program starting **");
                 } catch (ParseException e) {
-                    // TODO handle
                     Window.getInstance().setEditable(true);
-                    throw new RuntimeException();
+                    Window.getInstance().handleParseException(e);
                 }
             }
             if(Window.getInstance().getSimulator().isDone()) {
@@ -129,9 +128,8 @@ public class ToolbarFactory {
                 Window.getInstance().getSimulator().runOneLine();
                 resetButton.setEnabled(true);
             } catch (ParseException e) {
-                // TODO handle
+                Window.getInstance().handleParseException(e);
                 System.out.println("** Program terminated abnormally **");
-                throw new RuntimeException(e);
             }
         }
 
@@ -154,8 +152,7 @@ public class ToolbarFactory {
                 Window.getInstance().getSimulationThread().runLinesFromPC();
             } catch (ParseException e) {
                 stop();
-                // TODO handle
-                throw new RuntimeException();
+                Window.getInstance().handleParseException(e);
             }
         }
 
