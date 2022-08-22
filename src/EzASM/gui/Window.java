@@ -125,7 +125,9 @@ public class Window {
      */
     public void handleProgramCompletion() {
         ToolbarFactory.handleProgramCompletion();
-        if(simulator.isDone()) {
+        if(simulator.isErrored()) {
+            System.out.println("** Program terminated due to an error **");
+        } else if(simulator.isDone()) {
             System.out.println("** Program terminated normally **");
         } else {
             System.out.println("** Program terminated forcefully **");

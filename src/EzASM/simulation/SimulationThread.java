@@ -53,7 +53,7 @@ public class SimulationThread {
             paused.set(false);
             worker = new Thread(target);
             worker.start();
-            if(callbackWorker != null && callbackWorker.getState() == Thread.State.RUNNABLE) {
+            if(callbackWorker != null && callbackWorker.getState() == Thread.State.NEW) {
                 callbackWorker.start();
             }
         }
@@ -160,6 +160,8 @@ public class SimulationThread {
         callbackWorker = new Thread(() -> {
                 try {
                     worker.join();
+                    running.set(false);
+                    paused.set(false);
                     runnable.run();
                 } catch (Exception e) {
                     System.err.println("Unable to perform callback function");

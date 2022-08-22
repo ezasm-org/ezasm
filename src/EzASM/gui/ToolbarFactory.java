@@ -113,23 +113,24 @@ public class ToolbarFactory {
                 Window.getInstance().setEditable(false);
                 try {
                     Window.getInstance().parseText();
+                    System.out.println("** Program starting **");
                 } catch (ParseException e) {
                     // TODO handle
                     Window.getInstance().setEditable(true);
                     throw new RuntimeException();
                 }
             }
-            if(Window.getInstance().getSimulator().isDone()) return;
+            if(Window.getInstance().getSimulator().isDone()) {
+                Window.getInstance().setEditable(true);
+                Window.getInstance().handleProgramCompletion();
+                return;
+            }
             try {
                 Window.getInstance().getSimulator().runOneLine();
-                if(Window.getInstance().getSimulator().isDone()) {
-                    Window.getInstance().handleProgramCompletion();
-                } else {
-                    resetButton.setEnabled(true);
-                }
+                resetButton.setEnabled(true);
             } catch (ParseException e) {
                 // TODO handle
-                System.out.println("** Program terminated abnormally");
+                System.out.println("** Program terminated abnormally **");
                 throw new RuntimeException(e);
             }
         }
@@ -147,6 +148,7 @@ public class ToolbarFactory {
                 if(Window.getInstance().getEditable()) {
                     Window.getInstance().setEditable(false);
                     Window.getInstance().parseText();
+                    System.out.println("** Program starting **");
                 }
                 Window.getInstance().getSimulationThread().setCompletionCallback(() -> Window.getInstance().handleProgramCompletion());
                 Window.getInstance().getSimulationThread().runLinesFromPC();
@@ -163,7 +165,6 @@ public class ToolbarFactory {
             Window.getInstance().getSimulationThread().awaitTermination();
 
             handleProgramCompletion();
-            stepButton.setEnabled(true);
         }
 
         private static void pause() {
