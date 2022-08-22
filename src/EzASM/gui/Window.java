@@ -171,7 +171,7 @@ public class Window {
      * Handles the parse exception by printing the message to the terminal.
      * @param e the exception to handle.
      */
-    public void handleParseException(ParseException e) {
+    public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
     }
 }
