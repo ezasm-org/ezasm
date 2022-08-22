@@ -22,14 +22,14 @@ public class DispatchInstruction {
     private final Method invocationTarget;
 
     /**
-     * The parent class of the method that corresponds to the instruction
+     * The parent class of the method that corresponds to the instruction.
      */
     private final Class<?> parent;
 
     /**
-     * Create a new dispatchable instruction based on a method with specific parameters and its parent class
-     * @param parent The parent class
-     * @param invocationTarget the method for which to deduce operands for instructions and compile into a dispatchable instruction
+     * Create a new dispatchable instruction based on a method with specific parameters and its parent class.
+     * @param parent the parent class.
+     * @param invocationTarget the method for which to deduce operands for instructions and compile into a dispatchable instruction.
      */
     public DispatchInstruction(Class<?> parent, Method invocationTarget) {
         this.parent = parent;
@@ -37,17 +37,17 @@ public class DispatchInstruction {
     }
 
     /**
-     * Gets the parent class of the instruction (the instruction handler)
-     * @return A Class object corresponding to the parent class
+     * Gets the parent class of the instruction (the instruction handler).
+     * @return a Class object corresponding to the parent class.
      */
     public Class<?> getParent() {
         return parent;
     }
 
     /**
-     * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound method)
-     * @param parent The parent instruction handler. An instance of {@link DispatchInstruction#getParent()}.
-     * @param line The parsed line to interpret
+     * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound method).
+     * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#getParent()}.
+     * @param line the parsed line to interpret.
      */
     public void invoke(Object parent, Line line) {
 

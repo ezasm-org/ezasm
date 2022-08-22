@@ -20,7 +20,7 @@ import java.util.Objects;
 public class InstructionDispatcher {
 
     /**
-     * The internal backing map for Strings and loaded instructions
+     * The internal backing map for Strings and loaded instructions.
      */
     private static final HashMap<String, DispatchInstruction> instructions = new HashMap<>();
 
@@ -55,9 +55,9 @@ public class InstructionDispatcher {
 
     /**
      * Registers a single instruction. The method is assumed to be annotated with {@link Instruction} at this point.
-     * This function deduces the operands based on the method's parameters (TODO)
-     * @param parent The parent class of the method
-     * @param method The method to register as an instruction
+     * This function deduces the operands based on the method's parameters (TODO).
+     * @param parent The parent class of the method.
+     * @param method The method to register as an instruction.
      */
     private static void registerInstruction(Class<?> parent, Method method) {
         instructions.put(method.getName().toLowerCase(), new DispatchInstruction(parent, method));
@@ -65,7 +65,7 @@ public class InstructionDispatcher {
 
     /**
      * Retrieves the map of registered instructions.
-     * @return The Map of registered Instructions
+     * @return the map of registered Instructions.
      */
     public static Map<String, DispatchInstruction> getInstructions() {
         // TODO immutable map
@@ -75,7 +75,7 @@ public class InstructionDispatcher {
 
     /**
      * Stores instances of the classes that implement the instructions. For every instantiated InstructionDispatcher,
-     * there's a set of instances that manage the instructions. This allows us to bind the Simulator to the instructions
+     * there's a set of instances that manage the instructions. This allows us to bind the Simulator to the instructions.
      */
     private final HashMap<Class<?>, Object> instructionHandlerInstances = new HashMap<>();
 
@@ -86,8 +86,8 @@ public class InstructionDispatcher {
     private final Simulator simulator;
 
     /**
-     * Create a new Instruction Dispatcher, and bind it to an existing {@link Simulator}
-     * @param simulator The simulator to bind to
+     * Create a new Instruction Dispatcher, and bind it to an existing {@link Simulator}.
+     * @param simulator the simulator to bind to.
      */
     public InstructionDispatcher(Simulator simulator) {
         this.simulator = simulator;
@@ -95,7 +95,7 @@ public class InstructionDispatcher {
     }
 
     /**
-     * For all registered instructions, load an instance for each handler and bind it to a simulator
+     * For all registered instructions, load an instance for each handler and bind it to a simulator.
      */
     private void loadInstructionHandlers() {
         InstructionDispatcher.instructions.values().stream()
@@ -104,8 +104,8 @@ public class InstructionDispatcher {
     }
 
     /**
-     * Load an instance of an instruction handler for an instruction (or skip if already cached)
-     * @param instruction The registered instruction to load an instance for
+     * Load an instance of an instruction handler for an instruction (or skip if already cached).
+     * @param instruction the registered instruction to load an instance for.
      */
     private void loadInstructionHandler(DispatchInstruction instruction) {
         try {
@@ -120,7 +120,7 @@ public class InstructionDispatcher {
 
     /**
      * Execute an instruction based on a parsed line.
-     * @param line The parsed line
+     * @param line the parsed line.
      * @throws InstructionDispatchException when a parsed line cannot be interpreted as a function.
      * This could be an {@link IllegalInstructionException} if the instruction is unrecognized, or an
      * {@link EzASM.instructions.exception.IllegalArgumentException IllegalArgumentException} if the provided parsed arguments cannot
