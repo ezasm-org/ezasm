@@ -60,45 +60,45 @@ Register can have a char in it, or a pointer to a string
 
 ### Instructions: 
 Arithmetic \
-add sub mul div and or xor sll srl - command (store register) (reg1/imm1) (reg2/imm2) \
-not (store register) (reg1/imm1) \
-inc/dec (reg1, increments or decrements the value in that register by 1) \
+`add` `sub` `mul` `div` `and` `or` `xor` `sll` `srl` - command (store register) (reg1/imm1) (reg2/imm2) \
+`not` (store register) (reg1/imm1) \
+`inc` `dec` (reg1, increments or decrements the value in that register by 1) \
 
-load/store heap-ish \
-mv (reg1) (reg2) \
-load (register) (ptr) \
-store (register/immediate) (ptr) 
+`load` `store` heap-ish \
+`mv` (reg1) (reg2) \
+`load` (register) (ptr) \
+`store` (register/immediate) (ptr) 
 
 Function \
-call (line number / label, equivalent to ‘jal’) \
-return (0-3 registers / immediate arguments copied into return registers) 
+`call` (line number / label, equivalent to ‘jal’) \
+`return` (0-3 registers / immediate arguments copied into return registers) 
 
 Jump (and conditional jump) \
-j(ump) (line number / label) \
-jal (line number / label, puts line number in return register) \
-bne beq blt bgt ble bge - command (reg1/imm1) (reg2/imm2) (line number / label) 
+`j`(ump) (line number / label) \
+`jal` (line number / label, puts line number in return register) \
+`bne` `beq` `blt` `bgt` `ble` `bge` - command (reg1/imm1) (reg2/imm2) (line number / label) 
 
 String manip (first argument is source, second is destination) \
-strlen (ptr, stores value in return register) \
-strcpy (ptr) (ptr) (second ptr buffer size) \
-strcat (ptr) (ptr) \
-strcat (ptr) (ptr) (number of characters) 
+`strlen` (ptr, stores value in return register) \
+`strcpy` (ptr) (ptr) (second ptr buffer size) \
+`strcat` (ptr) (ptr) \
+`strcat` (ptr) (ptr) (number of characters) 
 
 ### System call instructions: 
-alloc (register destination) (register/immediate number of words) \
+`alloc` (register destination) (register/immediate number of words) \
 
-printi (register/immediate, integer interpretation) \
-printf (register/immediate, float interpretation) \
-printc (register/immediate ASCII, char interpretation) \
-prints (register/inline ptr to Cstring, string interpretation) \
-prints (register/inline ptr to Cstring, string interpretation) (number of bytes to print) 
+`printi` (register/immediate, integer interpretation) \
+`printf` (register/immediate, float interpretation) \
+`printc` (register/immediate ASCII, char interpretation) \
+`prints` (register/inline ptr to Cstring, string interpretation) \
+`prints` (register/inline ptr to Cstring, string interpretation) (number of bytes to print) 
 
-readi (register) \
-readf (register) \
-readc (register) \
-reads (register with ptr) (size of buffer) 
+`readi` (register) \
+`readf` (register) \
+`readc` (register) \
+`reads` (register with ptr) (size of buffer) 
 
-exit (register/immediate return value) 
+`exit` (register/immediate return value) 
 
 ### Syntax:
 Whitespace - `INSTRUCTION ARG1 ARG2 … <newline>` \
