@@ -2,4 +2,3 @@
 *.iml
 /out/
 bin/**/*
-docs/**/*
