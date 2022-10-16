@@ -25,12 +25,12 @@ public class Main {
         // Temporary tests
         //test();
         //testFile();
-        //handleArgs(args);
+        handleArgs(args);
 
-        String in = FileIO.readFile(new File("C:\\Code\\EzASM\\examples\\example.ez"));
-        FileOutputStream out = new FileOutputStream("C:\\Code\\EzASM\\examples\\example.elf");
-
-        Assembler.assemble(in, out);
+//        String in = FileIO.readFile(new File("C:\\Code\\EzASM\\examples\\example.ez"));
+//        FileOutputStream out = new FileOutputStream("C:\\Code\\EzASM\\examples\\example.elf");
+//
+//        Assembler.assemble(in, out);
     }
 
     /**
