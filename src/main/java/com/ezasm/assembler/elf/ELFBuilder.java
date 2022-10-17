@@ -12,47 +12,59 @@ import static com.ezasm.assembler.elf.ELF.*;
 
 public class ELFBuilder {
     private Header header;
-    private ArrayList<Program> programs;
-    private ArrayList<String> programNames;
     private ArrayList<Section> sections;
     private ArrayList<String> sectionNames;
 
     public ELFBuilder(ArrayList<List<Byte>> sections, Map<String, Integer> sectionNames) {
         this.header = new ELF.Header();
-        programs = new ArrayList<>();
-        programNames = new ArrayList<>();
         this.sections = new ArrayList<>();
         this.sectionNames = new ArrayList<>();
-
-        ELF.Section nullEntry = new ELF.Section();
-        nullEntry.header = new ELF.Section.Header();
-        nullEntry.data = new byte[0];
-
-        addSection(nullEntry, "NULL");
 
         String[] sectionNamesTemp = new String[sectionNames.size()];
 
         sectionNames.forEach((s, i) -> sectionNamesTemp[i] = s);
+
+        int addr = 0x10000;
+
+        Section nullSection = new Section();
+        nullSection.data = new byte[0];
+        nullSection.header = new Section.Header();
+        nullSection.header.addr = 0;
+        nullSection.header.entrySize = 0;
+        nullSection.header.type = 0;
+        nullSection.header.offset = 0;
+        nullSection.header.addrAlign = 0;
+        nullSection.header.flags = 0;
+        nullSection.header.size = 0;
+        nullSection.header.info = 0;
+        nullSection.header.link = 0;
+
+        addSection(nullSection, "NULL");
 
         for (int i = 0; i < sections.size(); i++) {
             Section section = new Section();
             section.data = Bytes.toArray(sections.get(i));
             section.header = new Section.Header();
             section.header.type = 0x1; // Program data
-            section.header.addrAlign = 16;
+            section.header.addrAlign = 1;
             section.header.flags = 0x4 | 0x2 | 0x1; // executable, allocated, and writeable
-            section.header.addr = 0;
+            section.header.addr = addr;
             addSection(section, sectionNamesTemp[i]);
+
+            addr += section.data.length;
         }
     }
 
     public void write(FileOutputStream os) throws IOException {
         createStringTable();
+        Program program = createProgramHeader();
 
-        header.phNum = (byte)programs.size();
+        header.phNum = 1;
         header.shNum = (byte)sections.size();
 
         header.shStrI = (short) (sections.size() - 1);
+
+        header.entry = 0x10000 + header.hSize + header.phEntrySize + sections.size() * header.shEntrySize;
 
         int filePos = 0;
         int dataSize = 0;
@@ -60,20 +72,29 @@ public class ELFBuilder {
             dataSize += section.data.length;
         }
 
+        program.header.offset = header.hSize + header.phEntrySize + sections.size() * header.shEntrySize;
+        program.header.virtAddr = 0x10000 + header.hSize + header.phEntrySize + sections.size() * header.shEntrySize;
+        program.header.physAddr = 0x10000 + header.hSize + header.phEntrySize + sections.size() * header.shEntrySize;
+        program.header.fileSize = dataSize - sections.get(header.shStrI).data.length;
+        program.header.memSize = dataSize - sections.get(header.shStrI).data.length;
+
         byte[] data = new byte[dataSize];
 
         for (int i = 0; i < sections.size(); i++) {
             System.arraycopy(sections.get(i).data, 0, data, filePos, sections.get(i).data.length);
-            sections.get(i).header.offset = header.hSize + programs.size() * header.phEntrySize + sections.size() * header.shEntrySize + filePos;
+            sections.get(i).header.offset = header.hSize + header.phEntrySize + sections.size() * header.shEntrySize + filePos;
+            sections.get(i).header.addr += sections.get(i).header.offset;
             sections.get(i).header.size = sections.get(i).data.length;
             filePos += sections.get(i).data.length;
         }
 
-        byte[] headers = new byte[header.hSize + programs.size() * header.phEntrySize + sections.size() * header.shEntrySize];
+        byte[] headers = new byte[header.hSize + header.phEntrySize + sections.size() * header.shEntrySize];
         System.arraycopy(header.getBytes(), 0, headers, 0, header.hSize);
+        System.arraycopy(program.header.getBytes(), 0, headers, header.hSize, header.phEntrySize);
         for (int i = 0; i < sections.size(); i++) {
-            System.arraycopy(sections.get(i).header.getBytes(), 0, headers, header.hSize + i * header.shEntrySize, header.shEntrySize);
+            System.arraycopy(sections.get(i).header.getBytes(), 0, headers, header.hSize + header.phEntrySize + i * header.shEntrySize, header.shEntrySize);
         }
+
 
         os.write(headers);
         os.write(data);
@@ -128,5 +149,17 @@ public class ELFBuilder {
         }
 
         sections.add(entry);
+    }
+
+    private Program createProgramHeader() {
+        Program program = new Program();
+        program.header = new Program.Header();
+        program.header.type = 1;
+        program.header.physAddr = 0x10000;
+        program.header.virtAddr = 0x10000;
+        program.header.align = 0x10000;
+        program.header.flags = 7; //Read Write Exec
+
+        return program;
     }
 }

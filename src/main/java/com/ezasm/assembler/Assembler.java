@@ -64,6 +64,11 @@ public class Assembler extends EzASMBaseListener {
     public static final Map<String, Byte> registers;
 
     /**
+     * Internal state machine component containing the final offset of each section in {@link #sections}.
+     */
+    private ArrayList<Long> sectionLocations;
+
+    /**
      * Internal {@link Map} containing defined named sections and their index in {@link #sections}.
      */
     private Map<String, Integer> sectionNames;
@@ -104,6 +109,13 @@ public class Assembler extends EzASMBaseListener {
                         (char)((Argument.Immediate.Integer)args1.get(2)).value())))
                 ),
                 Argument.Register.class, Argument.Register.class, Argument.Immediate.Integer.class));
+
+        instructions.put("j", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteJInstruction((byte)0b000010,
+                        ((Argument.Immediate.Label)args1.get(0)).id())
+                ))),
+                Argument.Immediate.Label.class));
+
 
         instructions.put(".section", new InstructionDispatcher(args1 ->
                 new LinkedList<>(List.of((Directive)(
@@ -164,6 +176,7 @@ public class Assembler extends EzASMBaseListener {
         // Setup write offset and label map for new section
         labels.add(new HashMap<>());
         offsets.add(0);
+        sectionLocations.add(0L);
 
         // Return new section's index in sections
         return sections.size() - 1;
@@ -208,6 +221,17 @@ public class Assembler extends EzASMBaseListener {
         labels.get(currentSection).put(id, offsets.get(currentSection));
     }
 
+    public long getLabel(String id) {
+        for (int i = 0; i < labels.size(); i++) {
+            if (labels.get(i).containsKey(id)) {
+                System.out.println(labels.get(i).get(id) + sectionLocations.get(i));
+                System.out.println(offsets.get(currentSection) + sectionLocations.get(currentSection));
+                return (labels.get(i).get(id) + sectionLocations.get(i));
+            }
+        }
+        throw new RuntimeException("Failed to resolve label '" + id + "'");
+    }
+
     /**
      * Parses each expression in an EzASM program and executes all generated {@link Directive Directives}.
      * @param ctx the parse tree
@@ -217,9 +241,10 @@ public class Assembler extends EzASMBaseListener {
         // Setup state machine.
         sections = new ArrayList<>();
         sectionNames = new HashMap<>();
+        sectionLocations = new ArrayList<>();
         directives = new LinkedList<>();
-        labels = new ArrayList<>();
         offsets = new ArrayList<>();
+        labels = new ArrayList<>();
         currentSection = addSection("text");
 
         // Parse all expressions in program.
@@ -228,10 +253,25 @@ public class Assembler extends EzASMBaseListener {
             enterExpr(expr);
         }
 
+
+        for (Directive dir : directives) {
+            // Increment section offset based on size of directive.
+            // Directive size indicates how many bytes will be added to the output when the directive is executed.
+            offsets.set(currentSection, offsets.get(currentSection) + dir.size());
+        }
+
+        long location = 0x10000L;
+        for (int i = 0; i < sections.size(); i++) {
+            sectionLocations.set(i, location);
+            System.out.println(location);
+            location += (offsets.get(i) / 16L + 1L) * 16L;
+        }
+
         // Execute all generated directives sequentially using a separate pass for each priority level.
         // Start with priority 0 and continue doing passes until all directives have been executed.
         int priority = 0;
         while (!directives.isEmpty()) {
+            offsets.replaceAll(i -> 0);
             Iterator<Directive> it = directives.iterator();
             while(it.hasNext()) {
                 Directive dir = it.next();
@@ -245,6 +285,7 @@ public class Assembler extends EzASMBaseListener {
                 // Directive size indicates how many bytes will be added to the output when the directive is executed.
                 offsets.set(currentSection, offsets.get(currentSection) + dir.size());
             }
+
             priority++;
         }
     }
@@ -261,7 +302,7 @@ public class Assembler extends EzASMBaseListener {
     public void enterExpr(ExprContext ctx) {
         // Parse based on expression type
         if (ctx.LabelDef() != null) {
-            addLabel(ctx.LabelDef().getText().substring(0, ctx.LabelDef().getText().length() - 1));
+            directives.add(new Directive.CreateLabel(ctx.LabelDef().getText().substring(0, ctx.LabelDef().getText().length() - 1)));
         } else {
             String instruction = ctx.Identifier().getText();
 

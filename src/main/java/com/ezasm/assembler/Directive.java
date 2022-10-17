@@ -137,4 +137,28 @@ public sealed interface Directive {
             return 4;
         }
     }
+
+    /**
+     * A Directive that writes a MIPS instruction in the current section of an {@link Assembler} instance using the MIPS Jump encoding.
+     * @param opcode the MIPS opcode number
+     * @param label the label value to be encoded.
+     */
+    record WriteJInstruction(byte opcode, String label) implements Directive {
+        @Override
+        public void invoke(Assembler assembler) {
+            long immediate = assembler.getLabel(label);
+            int instruction = (int)(immediate >> 2) | ((int)opcode << 26);
+            assembler.writeData(instruction);
+        }
+
+        @Override
+        public int priority() {
+            return 1;
+        }
+
+        @Override
+        public int size() {
+            return 4;
+        }
+    }
 }
