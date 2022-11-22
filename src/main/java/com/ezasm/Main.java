@@ -32,7 +32,8 @@ public class Main {
         FileOutputStream out = new FileOutputStream("C:\\Code\\EzASM\\src\\main\\resources\\out.elf");
 
         Assembler.assemble(in, out);
-        EzASMRuntime.run();
+        EzASMRuntime runtime = new EzASMRuntime();
+        runtime.run();
     }
 
     /**

@@ -11,7 +11,10 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class EzASMRuntime {
-    public static void run()
+    private Process gdb;
+    private Process qemu;
+
+    public void run()
             throws URISyntaxException,
             ZipException,
             IOException
@@ -22,13 +25,9 @@ public class EzASMRuntime {
         uri = getJarURI();
         qemuEXE = getFile(uri, "runtime/qemu/qemu-system-mips.exe");
 
-        final URI gdbEXE;
+        final URI gdbEXE = getFile(uri, "runtime/gdb.exe");
 
-        gdbEXE = getFile(uri, "runtime/gdb.exe");
-
-        final URI elfEXE;
-
-        elfEXE = getFile(uri, "out.elf");
+        final URI elfEXE = getFile(uri, "out.elf");
 
         ProcessBuilder qemu = new ProcessBuilder(qemuEXE.getPath(), "-device", "loader,file=./out.elf,cpu-num=0", "-monitor", "stdio");
         System.out.println(String.join(" ", qemu.command().toArray(new String[0])));
@@ -36,8 +35,12 @@ public class EzASMRuntime {
         ProcessBuilder gdb = new ProcessBuilder(gdbEXE.getPath());
         qemu.inheritIO();
 
-        qemu.start();
-        //gdb.start();
+        this.qemu = qemu.start();
+        this.gdb = gdb.start();
+    }
+
+    public boolean isAlive() {
+        return qemu.isAlive() && gdb.isAlive();
     }
 
     private static URI getJarURI()
