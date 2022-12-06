@@ -4,8 +4,10 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -17,9 +19,11 @@ public class EzASMRuntime {
             IOException
     {
         final URI uri;
-        final URI qemuEXE;
 
         uri = getJarURI();
+
+        final URI qemuEXE;
+
         qemuEXE = getFile(uri, "runtime/qemu/qemu-system-mips.exe");
 
         final URI gdbEXE;
@@ -28,15 +32,22 @@ public class EzASMRuntime {
 
         final URI elfEXE;
 
-        elfEXE = getFile(uri, "out.elf");
+        //elfEXE = getFile(uri, "out.elf");
 
-        ProcessBuilder qemu = new ProcessBuilder(qemuEXE.getPath(), "-device", "loader,file=./out.elf,cpu-num=0", "-monitor", "stdio");
-        System.out.println(String.join(" ", qemu.command().toArray(new String[0])));
-        qemu.directory(new File(uri));
-        ProcessBuilder gdb = new ProcessBuilder(gdbEXE.getPath());
+        ProcessBuilder qemu = new ProcessBuilder(Paths.get(qemuEXE).toString(), "-device", "loader,file=\"" + Paths.get("out.elf").toAbsolutePath() + "\",cpu-num=0", "-monitor", "stdio");
+        System.out.println(String.join(" ", qemu.command()));
+        qemu.directory(Paths.get(".").toFile());
+        qemu.redirectErrorStream(true);
+        ProcessBuilder gdb = new ProcessBuilder(Paths.get(gdbEXE).toString());
         qemu.inheritIO();
 
-        qemu.start();
+
+
+        Process qemuProc = qemu.start();
+
+        while(qemuProc.isAlive());
+
+        System.out.println(qemuProc.exitValue());
         //gdb.start();
     }
 
@@ -99,7 +110,7 @@ public class EzASMRuntime {
         final InputStream zipStream;
         OutputStream fileStream;
 
-        tempFile = File.createTempFile(fileName, Long.toString(System.currentTimeMillis()));
+        tempFile = File.createTempFile(fileName, Long.toString(System.currentTimeMillis()), Paths.get("qemu/").toFile());
         tempFile.deleteOnExit();
         entry    = zipFile.getEntry(fileName);
 

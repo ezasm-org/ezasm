@@ -28,8 +28,8 @@ public class Main {
         //testFile();
         //handleArgs(args);
 
-        String in = FileIO.readFile(new File("C:\\Code\\EzASM\\examples\\example.ez"));
-        FileOutputStream out = new FileOutputStream("C:\\Code\\EzASM\\src\\main\\resources\\out.elf");
+        String in = FileIO.readFile(new File(args[0]));
+        FileOutputStream out = new FileOutputStream("out.elf");
 
         Assembler.assemble(in, out);
         EzASMRuntime.run();
@@ -38,6 +38,7 @@ public class Main {
     /**
      * A simple test cases for the program.
      */
+    @Deprecated
     private static void test() {
         try {
             System.out.println(InstructionDispatcher.getInstructions().keySet());

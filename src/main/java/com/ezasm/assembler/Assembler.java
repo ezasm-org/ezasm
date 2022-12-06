@@ -95,10 +95,19 @@ public class Assembler extends EzASMBaseListener {
 
         instructions.put("add", new InstructionDispatcher(args1 ->
                 new LinkedList<>(List.of((Directive)(new Directive.WriteRInstruction((byte)0b100000,
-                            (byte)((Argument.Register)args1.get(0)).id(),
                             (byte)((Argument.Register)args1.get(1)).id(),
                             (byte)((Argument.Register)args1.get(2)).id(),
+                            (byte)((Argument.Register)args1.get(0)).id(),
                             (byte)0)))
+                ),
+                Argument.Register.class, Argument.Register.class, Argument.Register.class));
+
+        instructions.put("addu", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteRInstruction((byte)0b100001,
+                        (byte)((Argument.Register)args1.get(1)).id(),
+                        (byte)((Argument.Register)args1.get(2)).id(),
+                        (byte)((Argument.Register)args1.get(0)).id(),
+                        (byte)0)))
                 ),
                 Argument.Register.class, Argument.Register.class, Argument.Register.class));
 
@@ -110,11 +119,61 @@ public class Assembler extends EzASMBaseListener {
                 ),
                 Argument.Register.class, Argument.Register.class, Argument.Immediate.Integer.class));
 
+        instructions.put("addiu", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteIInstruction((byte)0b001001,
+                        (byte)((Argument.Register)args1.get(1)).id(),
+                        (byte)((Argument.Register)args1.get(0)).id(),
+                        (char)((Argument.Immediate.Integer)args1.get(2)).value())))
+                ),
+                Argument.Register.class, Argument.Register.class, Argument.Immediate.Integer.class));
+
+        instructions.put("and", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteRInstruction((byte)0b100100,
+                        (byte)((Argument.Register)args1.get(1)).id(),
+                        (byte)((Argument.Register)args1.get(2)).id(),
+                        (byte)((Argument.Register)args1.get(0)).id(),
+                        (byte)0)))
+                ),
+                Argument.Register.class, Argument.Register.class, Argument.Register.class));
+
+        instructions.put("andi", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteIInstruction((byte)0b001100,
+                        (byte)((Argument.Register)args1.get(1)).id(),
+                        (byte)((Argument.Register)args1.get(0)).id(),
+                        (char)((Argument.Immediate.Integer)args1.get(2)).value())))
+                ),
+                Argument.Register.class, Argument.Register.class, Argument.Immediate.Integer.class));
+
+        instructions.put("or", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteRInstruction((byte)0b100101,
+                        (byte)((Argument.Register)args1.get(1)).id(),
+                        (byte)((Argument.Register)args1.get(2)).id(),
+                        (byte)((Argument.Register)args1.get(0)).id(),
+                        (byte)0)))
+                ),
+                Argument.Register.class, Argument.Register.class, Argument.Register.class));
+
+        instructions.put("ori", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteIInstruction((byte)0b001101,
+                        (byte)((Argument.Register)args1.get(1)).id(),
+                        (byte)((Argument.Register)args1.get(0)).id(),
+                        (char)((Argument.Immediate.Integer)args1.get(2)).value())))
+                ),
+                Argument.Register.class, Argument.Register.class, Argument.Immediate.Integer.class));
+
         instructions.put("j", new InstructionDispatcher(args1 ->
                 new LinkedList<>(List.of((Directive)(new Directive.WriteJInstruction((byte)0b000010,
                         ((Argument.Immediate.Label)args1.get(0)).id())
                 ))),
                 Argument.Immediate.Label.class));
+
+        instructions.put("beq", new InstructionDispatcher(args1 ->
+                new LinkedList<>(List.of((Directive)(new Directive.WriteBranchInstruction((byte)0b000100,
+                        (byte)((Argument.Register)args1.get(1)).id(),
+                        (byte)((Argument.Register)args1.get(0)).id(),
+                        ((Argument.Immediate.Label)args1.get(2)).id())))
+                ),
+                Argument.Register.class, Argument.Register.class, Argument.Immediate.Label.class));
 
 
         instructions.put(".section", new InstructionDispatcher(args1 ->
@@ -232,6 +291,16 @@ public class Assembler extends EzASMBaseListener {
         throw new RuntimeException("Failed to resolve label '" + id + "'");
     }
 
+    public long getLabelOffset(String id) {
+        for (int i = 0; i < labels.size(); i++) {
+            if (labels.get(i).containsKey(id)) {
+                System.out.println("Offset: " + (labels.get(i).get(id) + sectionLocations.get(i) - (offsets.get(currentSection) + sectionLocations.get(currentSection))));
+                return (labels.get(i).get(id) + sectionLocations.get(i) - (offsets.get(currentSection) + sectionLocations.get(currentSection) + 4));
+            }
+        }
+        throw new RuntimeException("Failed to resolve label '" + id + "'");
+    }
+
     /**
      * Parses each expression in an EzASM program and executes all generated {@link Directive Directives}.
      * @param ctx the parse tree
@@ -260,7 +329,7 @@ public class Assembler extends EzASMBaseListener {
             offsets.set(currentSection, offsets.get(currentSection) + dir.size());
         }
 
-        long location = 0x10000L;
+        long location = 0x10000L + 52L + 0x20L + (sections.size() + 2) * 0x28L;
         for (int i = 0; i < sections.size(); i++) {
             sectionLocations.set(i, location);
             System.out.println(location);

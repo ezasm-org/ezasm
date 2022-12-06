@@ -149,6 +149,7 @@ public sealed interface Directive {
             long immediate = assembler.getLabel(label);
             int instruction = (int)(immediate >> 2) | ((int)opcode << 26);
             assembler.writeData(instruction);
+            assembler.writeData(0);
         }
 
         @Override
@@ -158,7 +159,27 @@ public sealed interface Directive {
 
         @Override
         public int size() {
-            return 4;
+            return 8;
+        }
+    }
+
+    record WriteBranchInstruction(byte opcode, byte first, byte second, String label) implements Directive {
+        @Override
+        public void invoke(Assembler assembler) {
+            long immediate = assembler.getLabelOffset(label);
+            int instruction = (int)(immediate >> 2) | ((int)second << 16) | ((int)first << 21) | ((int)opcode << 26);
+            assembler.writeData(instruction);
+            assembler.writeData(0);
+        }
+
+        @Override
+        public int priority() {
+            return 1;
+        }
+
+        @Override
+        public int size() {
+            return 8;
         }
     }
 }
