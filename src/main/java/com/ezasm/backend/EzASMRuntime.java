@@ -35,7 +35,7 @@ public class EzASMRuntime {
         //elfEXE = getFile(uri, "out.elf");
 
         ProcessBuilder qemu = new ProcessBuilder(Paths.get(qemuEXE).toString(), "-device", "loader,file=\"" + Paths.get("out.elf").toAbsolutePath() + "\",cpu-num=0", "-monitor", "stdio");
-        System.out.println(String.join(" ", qemu.command()));
+
         qemu.directory(Paths.get(".").toFile());
         qemu.redirectErrorStream(true);
         ProcessBuilder gdb = new ProcessBuilder(Paths.get(gdbEXE).toString());
@@ -44,8 +44,7 @@ public class EzASMRuntime {
 
 
         Process qemuProc = qemu.start();
-
-        while(qemuProc.isAlive());
+        while (qemuProc.isAlive());
 
         System.out.println(qemuProc.exitValue());
         //gdb.start();

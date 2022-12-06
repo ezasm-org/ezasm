@@ -283,8 +283,8 @@ public class Assembler extends EzASMBaseListener {
     public long getLabel(String id) {
         for (int i = 0; i < labels.size(); i++) {
             if (labels.get(i).containsKey(id)) {
-                System.out.println(labels.get(i).get(id) + sectionLocations.get(i));
-                System.out.println(offsets.get(currentSection) + sectionLocations.get(currentSection));
+//                System.out.println(labels.get(i).get(id) + sectionLocations.get(i));
+//                System.out.println(offsets.get(currentSection) + sectionLocations.get(currentSection));
                 return (labels.get(i).get(id) + sectionLocations.get(i));
             }
         }
@@ -294,7 +294,7 @@ public class Assembler extends EzASMBaseListener {
     public long getLabelOffset(String id) {
         for (int i = 0; i < labels.size(); i++) {
             if (labels.get(i).containsKey(id)) {
-                System.out.println("Offset: " + (labels.get(i).get(id) + sectionLocations.get(i) - (offsets.get(currentSection) + sectionLocations.get(currentSection))));
+//                System.out.println("Offset: " + (labels.get(i).get(id) + sectionLocations.get(i) - (offsets.get(currentSection) + sectionLocations.get(currentSection))));
                 return (labels.get(i).get(id) + sectionLocations.get(i) - (offsets.get(currentSection) + sectionLocations.get(currentSection) + 4));
             }
         }
@@ -332,7 +332,6 @@ public class Assembler extends EzASMBaseListener {
         long location = 0x10000L + 52L + 0x20L + (sections.size() + 2) * 0x28L;
         for (int i = 0; i < sections.size(); i++) {
             sectionLocations.set(i, location);
-            System.out.println(location);
             location += (offsets.get(i) / 16L + 1L) * 16L;
         }
 
