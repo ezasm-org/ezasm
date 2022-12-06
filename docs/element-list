@@ -2,6 +2,8 @@ com.ezasm
 com.ezasm.assembler
 com.ezasm.assembler.elf
 com.ezasm.assembler.parser
+com.ezasm.backend
+com.ezasm.backend.parser
 com.ezasm.gui
 com.ezasm.instructions
 com.ezasm.instructions.exception
