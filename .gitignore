@@ -2,3 +2,4 @@
 *.iml
 /out/
 bin/**/*
+/src/main/resources/runtime/
