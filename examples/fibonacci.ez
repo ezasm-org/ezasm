@@ -1,9 +1,21 @@
 # initialize the numbers
-add $t0 0 0
-add $t1 0 1
+ori $t0 $zero 0
+ori $t1 $zero 1
+ori $t2 $zero 0
+ori $t3 $zero 0
+ori $t4 $zero 9
 
 # do the fibonacci!
-add $t2 $t1 $t0
-add $t0 $t1 0
-add $t1 $t2 0
-sub $pc $pc 3
+fib:
+    beq $t3 $t4 end
+
+    add $t2 $t1 $t0
+    ori $t0 $t1 0
+    ori $t1 $t2 0
+
+    addiu $t3 $t3 1
+
+    j fib
+
+end:
+    j end
