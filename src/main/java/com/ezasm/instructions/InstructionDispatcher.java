@@ -1,6 +1,5 @@
 package com.ezasm.instructions;
 
-import com.ezasm.assembler.Directive;
 import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.exception.IllegalArgumentException;

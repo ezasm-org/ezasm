@@ -7,26 +7,15 @@ trevorbrunette@gmail.com
 Kate Vandermolen\
 CerulanLumina@users.noreply.github.com
 
-## Scripts
+## Building
 
-### Program scripts for Linux:
-`scripts/linuxBuild.sh` - uses the installed JDK (in `$PATH`) to compile the program and javadocs; also makes jar file.\
-`scripts/linuxRun.sh` - runs the program with the installed JRE (in `$PATH`) using the given parameters.
-
-
-### Program scripts for Windows:
-`scripts/windowsBuild.cmd` - uses the installed JDK (in `%PATH%`) to compile the program and javadocs; also makes jar file.\
-`scripts/windowsRun.cmd` - runs the program with the installed JRE (in `%PATH%`) using the given parameters.
+TODO
 
 ## Introduction
 
 The goal of this project is to create a small-instruction-set programming language interpreter written in Java with a GUI interface for inspecting the current state of the environment. This simple interpreted language would be able to demonstrate the concepts of a lower level assembly language while still being easier to write. The instructions would be intuitive and simple compared to MIPS (e.g., no system calls or immediate limits) and act upon virtual registers akin to other assembly languages.
 
 The user is able to either run a file containing instructions (a program) or enter instructions line by line. The results of these instructions would be resultant on the GUI would list the state of all of the registers, the past/current/upcoming instructions, and the program memory.
-
-### Development
-This software was developed and tested using a 64-bit Arch Linux system with Java 17 (openJDK 17.0.4+8 x64)
-
 
 ## Implementation details:
 
