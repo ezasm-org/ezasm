@@ -1,7 +1,7 @@
-.section text
-
 # testing program
-addi $t0 $zero 1
+add $t0 0 0
+add $t0 0 1
+add $t0 1 0
 # value should be 1
 
 add $t0 $t0 $t0
@@ -25,7 +25,3 @@ add $t0 $t0 $t0
 add $t0 $t0 $t0
 add $t0 $t0 $t0
 add $t0 $t0 $t0
-
-loop:
-
-j loop
