@@ -1,7 +1,11 @@
-.section text
-
 # testing program
+<<<<<<< HEAD
 add $t0 $zero 1
+=======
+add $t0 0 0
+add $t0 0 1
+add $t0 1 0
+>>>>>>> cd29b21ee49a2e2dcecb2b71af02bd537bc36b04
 # value should be 1
 
 add $t0 $t0 $t0
@@ -24,5 +28,9 @@ add $t0 $t0 $t0
 add $t0 $t0 $t0
 add $t0 $t0 $t0
 add $t0 $t0 $t0
+<<<<<<< HEAD
 add $t0 $t0 $t0
 
+=======
+add $t0 $t0 $t0
+>>>>>>> cd29b21ee49a2e2dcecb2b71af02bd537bc36b04

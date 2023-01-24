@@ -1,4 +1,5 @@
 # initialize the numbers
+<<<<<<< HEAD
 or $t0 $zero 0
 or $t1 $zero 1
 or $t2 $zero 0
@@ -19,3 +20,13 @@ fib:
 
 end:
   j end
+=======
+add $t0 0 0
+add $t1 0 1
+
+# do the fibonacci!
+add $t2 $t1 $t0
+add $t0 $t1 0
+add $t1 $t2 0
+sub $pc $pc 3
+>>>>>>> cd29b21ee49a2e2dcecb2b71af02bd537bc36b04
