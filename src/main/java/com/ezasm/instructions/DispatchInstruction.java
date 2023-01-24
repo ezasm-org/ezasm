@@ -4,7 +4,6 @@ import com.ezasm.Conversion;
 import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.input.RegisterInput;
 import com.ezasm.instructions.targets.output.RegisterOutput;
-import com.ezasm.parsing.*;
 import com.ezasm.parsing.ImmediateToken;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.RegisterToken;

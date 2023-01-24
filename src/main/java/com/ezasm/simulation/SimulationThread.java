@@ -147,6 +147,7 @@ public class SimulationThread {
             }
             System.out.print("> ");
         }
+        scanner.close();
     }
 
     /**

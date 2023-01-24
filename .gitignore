@@ -3,3 +3,5 @@
 /out/
 bin/**/*
 /src/main/resources/runtime/
+target/classes
+out.elf

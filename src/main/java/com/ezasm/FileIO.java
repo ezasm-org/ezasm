@@ -24,6 +24,7 @@ public class FileIO {
         reader.lines().forEachOrdered( line -> {
             sb.append(line).append(System.lineSeparator());
         });
+        reader.close();
         return sb.toString();
     }
 
