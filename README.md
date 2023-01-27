@@ -9,7 +9,23 @@ CerulanLumina@users.noreply.github.com
 
 ## Building
 
-TODO
+Clone this repository somehow, either download the source from GitHub or run `git clone https://github.com/TrevorBrunette/EzASM` from the command line.
+
+### Building from source through the command line:
+
+Install Apache Maven \
+cd into the EzASM directory \
+Run `mvn compile assembly:single` will build an executable .jar file in the target directory \
+Run that jar wile with a command like `java -jar target/*.jar`
+
+### Building using an IDE (Intellij IDEA):
+
+Open Intellij and select open project \
+Navigate to the EzASM folder and open it \
+Navigate to the `src/main/java/com/ezasm/Main.java` file \
+Run that file with the play button
+
+
 
 ## Introduction
 
@@ -95,3 +111,4 @@ Delimiter - `INSTRUCTION ARG1, ARG2, … ;` \
 replace syntax with whitespace at runtime \
 Label - line only contains `LABEL_NAME:` \
 Comment - line starts with `#` 
+
