@@ -15,13 +15,15 @@ Clone this repository somehow, either download the source from GitHub or run `gi
 
 Install Apache Maven \
 cd into the EzASM directory \
-Run `mvn compile assembly:single` will build an executable .jar file in the target directory \
-Run that jar wile with a command like `java -jar target/*.jar`
+Run `mvn compile assembly:single` will build an executable .jar file in the `target` directory \
+Run that jar file with `java -jar target/*.jar`
 
 ### Building using an IDE (Intellij IDEA):
 
 Open Intellij and select open project \
 Navigate to the EzASM folder and open it \
+Wait for the files to be indexed \
+An SDK has to be set if one is not detected automatically (use version 17 at a minimum)
 Navigate to the `src/main/java/com/ezasm/Main.java` file \
 Run that file with the play button
 
