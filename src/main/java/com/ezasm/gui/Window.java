@@ -96,9 +96,10 @@ public class Window {
     /**
      * Updates all UI elements if they exist.
      */
-    public static void updateAll() {
+    public static void updateAll(int PC) {
         if(instance == null || instance.table == null) return;
         instance.table.update();
+        instance.editor.updateHighlight(PC);
     }
 
     /**
@@ -107,7 +108,7 @@ public class Window {
      */
     public void parseText() throws ParseException {
         simulator.resetAll();
-        updateAll();
+        updateAll(0);
         simulator.readMultiLineString(editor.getText());
     }
 
@@ -149,6 +150,7 @@ public class Window {
     public String getText() {
         return editor.getText();
     }
+
 
     /**
      * Enable or disable the ability of the user to edit the text pane.

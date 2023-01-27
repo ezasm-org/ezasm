@@ -193,7 +193,7 @@ public class ToolbarFactory {
             Window.getInstance().getSimulationThread().awaitTermination();
 
             Window.getInstance().getSimulator().resetAll();
-            Window.updateAll();
+            Window.updateAll(0);
             handleProgramCompletion();
         }
 

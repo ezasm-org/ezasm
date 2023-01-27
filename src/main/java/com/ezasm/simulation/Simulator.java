@@ -116,7 +116,7 @@ public class Simulator {
         if(line == null) return;
         try {
             instructionDispatcher.execute(line);
-            Window.updateAll();
+            Window.updateAll(validatePC());
         } catch (InstructionDispatchException e) {
             throw new ParseException(e.getMessage());
         }
@@ -184,7 +184,7 @@ public class Simulator {
         if(currentSP == lineNumber) {
             pc.setLong(currentSP + 1);
         } // otherwise the PC was set by the program to a certain line and should be read as such
-        Window.updateAll();
+        Window.updateAll(validatePC());
     }
 
     /**
@@ -201,7 +201,7 @@ public class Simulator {
         } else {
             i = currentPC;
         }
-        Window.updateAll();
+        Window.updateAll(validatePC());
         return i;
     }
 
