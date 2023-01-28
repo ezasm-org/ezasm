@@ -1,5 +1,3 @@
 .idea
 *.iml
-/out/
-bin/**/*
-/src/main/resources/runtime/
+/target/
