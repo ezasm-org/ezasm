@@ -1,11 +1,13 @@
 package com.ezasm.gui;
 
+import com.ezasm.parsing.Line;
 import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 /**
  * The main graphical user interface of the program.

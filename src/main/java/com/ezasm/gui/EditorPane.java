@@ -1,5 +1,7 @@
 package com.ezasm.gui;
 
+import com.ezasm.parsing.Line;
+
 import javax.swing.*;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
@@ -112,6 +114,6 @@ public class EditorPane extends JPanel {
      */
     public void updateHighlight(int line) {
         removeHighlights(textArea);
-        highlight(textArea, line, yellowHighlighter);
+        if (line >= 0) highlight(textArea, yellowHighlighter, line);
     }
 }

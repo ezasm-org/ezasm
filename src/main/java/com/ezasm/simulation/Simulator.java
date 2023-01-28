@@ -147,14 +147,14 @@ public class Simulator {
                     return;
                 }
             }
-            i = validatePC();
-            if(isDone()) return;
-            i = executeLineInLoop(i);
             try {
                 Thread.sleep(delayMS);
             } catch (InterruptedException e) {
                 return;
             }
+            i = validatePC();
+            if(isDone()) return;
+            i = executeLineInLoop(i);
         }
     }
 
@@ -252,5 +252,16 @@ public class Simulator {
     public Memory getMemory() {
         return memory;
     }
+
+
+    /**
+     * Gets the list of parsed lines
+     * @return the list of parsed lines
+     */
+    public List<Line> getLines() {
+        return lines;
+    }
+
+
 
 }

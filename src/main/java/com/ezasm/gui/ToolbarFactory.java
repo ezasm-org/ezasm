@@ -160,6 +160,7 @@ public class ToolbarFactory {
             // Should be started
             Window.getInstance().getSimulationThread().interrupt();
             Window.getInstance().getSimulationThread().awaitTermination();
+            Window.updateAll(-1);
 
             handleProgramCompletion();
         }
@@ -193,7 +194,7 @@ public class ToolbarFactory {
             Window.getInstance().getSimulationThread().awaitTermination();
 
             Window.getInstance().getSimulator().resetAll();
-            Window.updateAll(0);
+            Window.updateAll(-1);
             handleProgramCompletion();
         }
 
