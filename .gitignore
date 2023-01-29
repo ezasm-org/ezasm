@@ -4,3 +4,4 @@
 bin/**/*
 /src/main/resources/runtime/
 target/
+.gitignore
