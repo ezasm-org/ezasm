@@ -33,25 +33,20 @@ public class Window {
     }
 
     /**
-     * Generate the singleton instance if it does not exist.
-     * Just returns the existing instance otherwise.
-     * Returns null if a simulator has not yet been provided.
+     * Return the existing instance.
+     * Returns null if a simulator has not yet been provided through <code>instantiate</code>.
      * @return the instance.
      */
     public static Window getInstance() {
-        if(instance == null) return null;
         return instance;
     }
 
     /**
-     * Generate the singleton instance if it does not exist.
-     * Just returns the existing instance otherwise.
+     * Generate the singleton Window instance if it does not exist.
      * @param simulator the simulator to use.
-     * @return the instance.
      */
-    public static Window getInstance(Simulator simulator) {
+    public static void instantiate(Simulator simulator) {
         if(instance == null) new Window(simulator);
-        return instance;
     }
 
     /**
