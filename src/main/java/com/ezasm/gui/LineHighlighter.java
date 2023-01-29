@@ -50,12 +50,12 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
     }
 
     public static void removeHighlights(JTextComponent textComp) {
-        Highlighter hilite = textComp.getHighlighter();
-        Highlighter.Highlight[] hilites = hilite.getHighlights();
+        Highlighter highlight = textComp.getHighlighter();
+        Highlighter.Highlight[] highlights = highlight.getHighlights();
 
-        for (int i = 0; i < hilites.length; i++) {
-            if (hilites[i].getPainter() instanceof LineHighlighter) {
-                hilite.removeHighlight(hilites[i]);
+        for (int i = 0; i < highlights.length; i++) {
+            if (highlights[i].getPainter() instanceof LineHighlighter) {
+                highlight.removeHighlight(highlights[i]);
             }
         }
     }
