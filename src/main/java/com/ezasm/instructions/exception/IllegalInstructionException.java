@@ -8,7 +8,9 @@ public class IllegalInstructionException extends InstructionDispatchException {
 
     /**
      * Basic constructor of the exception with the given message.
-     * @param message the message to send.
+     *
+     * @param message
+     *            the message to send.
      */
     public IllegalInstructionException(String message) {
         this.message = message;
@@ -16,6 +18,7 @@ public class IllegalInstructionException extends InstructionDispatchException {
 
     /**
      * The message to return when the requested.
+     *
      * @return the corresponding message with an identifying prefix.
      */
     @Override

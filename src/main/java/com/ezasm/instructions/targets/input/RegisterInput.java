@@ -14,7 +14,9 @@ public class RegisterInput extends AbstractInput {
 
     /**
      * Constructs the input based on the register reference number.
-     * @param register the register reference number.
+     *
+     * @param register
+     *            the register reference number.
      */
     public RegisterInput(int register) {
         this.register = register;
@@ -22,7 +24,10 @@ public class RegisterInput extends AbstractInput {
 
     /**
      * Gets the value stored within the register.
-     * @param simulator the program simulator.
+     *
+     * @param simulator
+     *            the program simulator.
+     *
      * @return the value stored within the register.
      */
     @Override
@@ -33,8 +38,11 @@ public class RegisterInput extends AbstractInput {
 
     /**
      * Mutates the register according to the mutator function given.
-     * @param simulator the program simulator.
-     * @param mutator the mutator function.
+     *
+     * @param simulator
+     *            the program simulator.
+     * @param mutator
+     *            the mutator function.
      */
     public void mutate(Simulator simulator, Function<byte[], byte[]> mutator) {
         byte[] val = simulator.getRegister(register).getBytes();

@@ -9,7 +9,10 @@ public class Conversion {
 
     /**
      * Converts a long into its corresponding bytes.
-     * @param data the long to convert.
+     *
+     * @param data
+     *            the long to convert.
+     *
      * @return the byte data representation of the long.
      */
     public static byte[] longToBytes(long data) {
@@ -18,7 +21,10 @@ public class Conversion {
 
     /**
      * Converts an array of bytes into the corresponding long.
-     * @param data the array of bytes to convert.
+     *
+     * @param data
+     *            the array of bytes to convert.
+     *
      * @return the long representation of that data.
      */
     public static long bytesToLong(byte[] data) {
@@ -27,7 +33,10 @@ public class Conversion {
 
     /**
      * Converts a double into its corresponding bytes.
-     * @param data the double to convert.
+     *
+     * @param data
+     *            the double to convert.
+     *
      * @return the byte data representation of the double.
      */
     public static byte[] doubleToBytes(double data) {
@@ -36,7 +45,10 @@ public class Conversion {
 
     /**
      * Converts an array of bytes into the corresponding double.
-     * @param data the array of bytes to convert.
+     *
+     * @param data
+     *            the array of bytes to convert.
+     *
      * @return the double representation of that data.
      */
     public static double bytesToDouble(byte[] data) {
@@ -45,7 +57,10 @@ public class Conversion {
 
     /**
      * Converts a String into its corresponding bytes.
-     * @param data the String to convert.
+     *
+     * @param data
+     *            the String to convert.
+     *
      * @return the byte data representation of the String.
      */
     public static byte[] stringToBytes(String data) {
@@ -54,7 +69,10 @@ public class Conversion {
 
     /**
      * Converts an array of bytes into the corresponding double.
-     * @param data the array of bytes to convert.
+     *
+     * @param data
+     *            the array of bytes to convert.
+     *
      * @return the double representation of that data.
      */
     public static String bytesToString(byte[] data) {
