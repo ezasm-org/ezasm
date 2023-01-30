@@ -14,7 +14,7 @@ import java.util.Map;
 public class Lexer {
 
     private static boolean isAlNum(char c) {
-        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_');
+        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_') || (c == '-');
     }
 
     private static boolean isAlNum(String text) {
@@ -49,15 +49,16 @@ public class Lexer {
     }
 
     /**
-     * Determines if a line is a label or not.
-     * @param line the line of text in question.
-     * @return true if the line is a label, false otherwise;
+     * Determines if a token is a label or not.
+     * @param token the token of text in question.
+     * @return true if the token is a label, false otherwise;
      */
-    public static boolean isLabel(String line) {
-        if(line.length() < 1) return false;
-        int colon = line.indexOf(':');
-        if (colon == -1) return isAlNum(line) && !InstructionDispatcher.getInstructions().containsKey(line);
-        return (colon == line.charAt(line.length()-1)) && isAlNum(line.substring(0, colon));
+    public static boolean isLabel(String token) {
+        if(token.length() < 1) return false;
+        int colon = token.indexOf(':');
+        // Implementation for labels without colons
+        // if (colon == -1) return isAlNum(token) && !InstructionDispatcher.getInstructions().containsKey(token);
+        return (colon == token.length()-1) && isAlNum(token.substring(0, colon));
     }
 
     /**
@@ -117,7 +118,7 @@ public class Lexer {
      * @throws ParseException if the line could not be properly parsed.
      */
     public static Line parseLine(String line, Map<String, Integer> labels, int number) throws ParseException {
-        line = line.replaceAll("[\s,;]+", " ").trim();
+        line = line.replaceAll("[\s\t,;]+", " ").trim();
         if (line.length() == 0) return null;
         if(Lexer.isComment(line)) return null;
         if(Lexer.isLabel(line)) {
