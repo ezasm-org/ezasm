@@ -34,13 +34,14 @@ public class EditorPane extends JPanel {
         textArea.setDisabledTextColor(Color.DARK_GRAY);
         UndoManager manager = new UndoManager();
         textArea.getDocument().addUndoableEditListener(manager);
+
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             public String getText(){
                 Element root = textArea.getDocument().getDefaultRootElement();
                 int length = textArea.getDocument().getLength();
-                String result = "1\n";
-                for(int i = 2; i <= root.getElementIndex(length)+1; i++){
-                    result += i+"\n";
+                String result = "1" + System.getProperty("line.separator");
+                for(int i = 2; i <= root.getElementIndex(length)+1; i++){ //+1 fixes an off-by-1 error
+                    result += i + System.getProperty("line.separator");
                 }
                 return result;
             }
@@ -62,6 +63,7 @@ public class EditorPane extends JPanel {
 
 
         });
+
         textArea.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {}
