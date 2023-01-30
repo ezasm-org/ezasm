@@ -1,6 +1,9 @@
 package com.ezasm.gui;
 
 import javax.swing.*;
+import javax.swing.text.Element;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,6 +15,7 @@ import java.awt.event.KeyListener;
 public class EditorPane extends JPanel {
 
     private final JTextArea textArea;
+    private final JTextArea lineNumbers;
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
@@ -21,6 +25,8 @@ public class EditorPane extends JPanel {
      */
     public EditorPane() {
         super();
+        lineNumbers = new JTextArea("1");
+        lineNumbers.setBackground(Color.LIGHT_GRAY);
         textArea = new JTextArea();
         textArea.setEditable(true);
         textArea.setLineWrap(false);
@@ -28,6 +34,34 @@ public class EditorPane extends JPanel {
         textArea.setDisabledTextColor(Color.DARK_GRAY);
         UndoManager manager = new UndoManager();
         textArea.getDocument().addUndoableEditListener(manager);
+        textArea.getDocument().addDocumentListener(new DocumentListener() {
+            public String getText(){
+                Element root = textArea.getDocument().getDefaultRootElement();
+                int length = textArea.getDocument().getLength();
+                String result = "1\n";
+                for(int i = 2; i <= root.getElementIndex(length)+1; i++){
+                    result += i+"\n";
+                }
+                return result;
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e){
+                lineNumbers.setText(getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e){
+                lineNumbers.setText(getText());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e){
+                lineNumbers.setText(getText());
+            }
+
+
+        });
         textArea.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {}
@@ -61,6 +95,7 @@ public class EditorPane extends JPanel {
 
 
         JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setRowHeaderView(lineNumbers);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setMinimumSize(textArea.getSize());
