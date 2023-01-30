@@ -8,15 +8,13 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import static com.ezasm.gui.LineHighlighter.highlight;
 import static com.ezasm.gui.LineHighlighter.removeHighlights;
 
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
 public class EditorPane extends JPanel {
-    static LineHighlighter yellowHighlighter = new LineHighlighter(
-            Color.YELLOW);
+    LineHighlighter yellowHighlighter;
     private final JTextArea textArea;
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
@@ -114,6 +112,10 @@ public class EditorPane extends JPanel {
      */
     public void updateHighlight(int line) {
         removeHighlights(textArea);
-        if (line >= 0) highlight(textArea, yellowHighlighter, line);
+        if (line >= 0) yellowHighlighter.highlight(textArea, line);
+    }
+
+    public void reset_highlighter() {
+        yellowHighlighter = new LineHighlighter(Color.YELLOW, textArea);
     }
 }

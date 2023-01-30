@@ -107,6 +107,7 @@ public class Window {
         simulator.resetAll();
         updateAll(0);
         simulator.readMultiLineString(editor.getText());
+        instance.editor.reset_highlighter();
     }
 
     /**

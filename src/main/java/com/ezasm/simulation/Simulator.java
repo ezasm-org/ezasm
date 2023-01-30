@@ -254,14 +254,5 @@ public class Simulator {
     }
 
 
-    /**
-     * Gets the list of parsed lines
-     * @return the list of parsed lines
-     */
-    public List<Line> getLines() {
-        return lines;
-    }
-
-
 
 }
