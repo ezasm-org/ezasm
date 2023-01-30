@@ -7,7 +7,6 @@ import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.impl.ArithmeticInstructions;
 import com.ezasm.parsing.Line;
-import com.google.common.collect.ImmutableMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -70,11 +69,11 @@ public class InstructionDispatcher {
     }
 
     /**
-     * Retrieves the map of registered instructions.
+     * Retrieves the map of registered instructions as immutable.
      * @return the map of registered Instructions.
      */
     public static Map<String, DispatchInstruction> getInstructions() {
-        return ImmutableMap.copyOf(instructions);
+        return Collections.unmodifiableMap(instructions);
     }
 
     /**
