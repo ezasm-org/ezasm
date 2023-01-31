@@ -24,7 +24,7 @@ public class Simulator {
     private final Map<String, Integer> labels;
 
     // The delay in ms before the next instruction is read
-    private long delayMS = 20L;
+    private long delayMS = 500L;
 
     /**
      * Constructs a Simulator with the default specifications.
@@ -43,12 +43,11 @@ public class Simulator {
      * @param wordSize the size of words in bytes for the program.
      * @param memorySize the size of the memory in words for the program.
      */
-    public Simulator(int wordSize, int memorySize, long delay) {
+    public Simulator(int wordSize, int memorySize) {
         this.memory = new Memory(wordSize, memorySize);
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
-        this.delayMS = delay;
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
     }

@@ -17,7 +17,6 @@ public class Arguments {
      * @param args the program arguments.
      */
     public static void handleArgs(String[] args) {
-        Config config = new Config();
         Options options = new Options();
 
         Option windowlessOption = new Option("w", "windowless", false,
@@ -73,7 +72,7 @@ public class Arguments {
             wordSize = Memory.DEFAULT_WORD_SIZE;
         }
 
-        Simulator sim = new Simulator(wordSize, memorySize, config.getSimSpeed());
+        Simulator sim = new Simulator(wordSize, memorySize);
         String filepath = "";
         if(commandLine.hasOption(fileOption)) {
             filepath = commandLine.getOptionValue(fileOption);
@@ -89,7 +88,7 @@ public class Arguments {
             cli.startSimulation();
         } else {
             SwingUtilities.invokeLater(() -> {
-                Window.instantiate(sim, config);
+                Window.getInstance(sim);
             });
         }
     }
