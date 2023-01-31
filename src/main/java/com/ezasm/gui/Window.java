@@ -2,6 +2,7 @@ package com.ezasm.gui;
 
 import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
+import com.ezasm.Config;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
@@ -17,39 +18,36 @@ public class Window {
     private final Simulator simulator;
     private final SimulationThread simulationThread;
 
+    private Config config;
     private JFrame app;
     private JToolBar toolbar;
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
 
-    protected Window(Simulator simulator) {
+    protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
         this.simulationThread = new SimulationThread(this.simulator);
+        this.config = config;
         initialize();
     }
 
     /**
-     * Generate the singleton instance if it does not exist.
-     * Just returns the existing instance otherwise.
-     * Returns null if a simulator has not yet been provided.
+     * Return the existing instance.
+     * Returns null if a simulator has not yet been provided through <code>instantiate</code>.
      * @return the instance.
      */
     public static Window getInstance() {
-        if(instance == null) return null;
         return instance;
     }
 
     /**
-     * Generate the singleton instance if it does not exist.
-     * Just returns the existing instance otherwise.
+     * Generate the singleton Window instance if it does not exist.
      * @param simulator the simulator to use.
-     * @return the instance.
      */
-    public static Window getInstance(Simulator simulator) {
-        if(instance == null) new Window(simulator);
-        return instance;
+    public static void instantiate(Simulator simulator, Config config) {
+        if(instance == null) new Window(simulator, config);
     }
 
     /**
@@ -70,7 +68,7 @@ public class Window {
 
         menubar = MenubarFactory.makeMenuBar();
         toolbar = ToolbarFactory.makeToolbar();
-        editor = new EditorPane();
+        editor = new EditorPane(config);
         table = new RegisterTable(simulator.getRegisters());
 
         app.setJMenuBar(menubar);
