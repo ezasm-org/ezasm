@@ -2,6 +2,9 @@ package com.ezasm.gui;
 
 import javax.swing.*;
 import javax.swing.undo.UndoManager;
+
+import com.ezasm.Config;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -19,9 +22,11 @@ public class EditorPane extends JPanel {
      * Creates a text edit field with an "Undo Manager" to undo the user's actions with
      * CTRL + Z or redo those undid actions with CTRL + SHIFT + Z or CTRL + Y.
      */
-    public EditorPane() {
+    public EditorPane(Config config) {
         super();
+        Font font = new Font("Liberation Mono", Font.PLAIN, config.getFontSize());
         textArea = new JTextArea();
+        textArea.setFont(font);
         textArea.setEditable(true);
         textArea.setLineWrap(false);
         textArea.setMinimumSize(MIN_SIZE);

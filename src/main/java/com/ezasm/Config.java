@@ -32,7 +32,7 @@ public class Config {
 
     public Config() {
         if (CONFIG_FILE.exists()){
-            readProperties();
+            props = readProperties();
         }
         else{
             props.setProperty(FONT_SIZE, DEFAULT_FONT_SIZE);

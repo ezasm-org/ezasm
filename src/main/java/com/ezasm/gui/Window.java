@@ -2,6 +2,7 @@ package com.ezasm.gui;
 
 import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
+import com.ezasm.Config;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
@@ -17,16 +18,18 @@ public class Window {
     private final Simulator simulator;
     private final SimulationThread simulationThread;
 
+    private Config config;
     private JFrame app;
     private JToolBar toolbar;
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
 
-    protected Window(Simulator simulator) {
+    protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
         this.simulationThread = new SimulationThread(this.simulator);
+        this.config = config;
         initialize();
     }
 
@@ -43,8 +46,8 @@ public class Window {
      * Generate the singleton Window instance if it does not exist.
      * @param simulator the simulator to use.
      */
-    public static void instantiate(Simulator simulator) {
-        if(instance == null) new Window(simulator);
+    public static void instantiate(Simulator simulator, Config config) {
+        if(instance == null) new Window(simulator, config);
     }
 
     /**
@@ -65,7 +68,7 @@ public class Window {
 
         menubar = MenubarFactory.makeMenuBar();
         toolbar = ToolbarFactory.makeToolbar();
-        editor = new EditorPane();
+        editor = new EditorPane(config);
         table = new RegisterTable(simulator.getRegisters());
 
         app.setJMenuBar(menubar);
