@@ -28,9 +28,10 @@ public class EditorPane extends JPanel {
      */
     public EditorPane(Config config) {
         super();
+        Font font = new Font("Liberation Mono", Font.PLAIN, config.getFontSize());
         lineNumbers = new JTextArea("1");
         lineNumbers.setBackground(Color.LIGHT_GRAY);
-        Font font = new Font("Liberation Mono", Font.PLAIN, config.getFontSize());
+        lineNumbers.setFont(font);
         textArea = new JTextArea();
         textArea.setFont(font);
         textArea.setEditable(true);
