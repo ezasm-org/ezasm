@@ -11,9 +11,10 @@ public class RegisterToken extends RightHandToken {
     private final int number;
 
     /**
-     * Constructs a register token based on the given text.
-     * Assumes that the given text has already been validated to be a register.
-     * Must begin with '$' and have the suffix contained within the registers list.
+     * Constructs a register token based on the given text. Assumes that the given
+     * text has already been validated to be a register. Must begin with '$' and
+     * have the suffix contained within the registers list.
+     *
      * @param text the register.
      */
     public RegisterToken(String text) {
@@ -24,7 +25,9 @@ public class RegisterToken extends RightHandToken {
     }
 
     /**
-     * Gets the register text corresponding to this register token (without the '$').
+     * Gets the register text corresponding to this register token (without the
+     * '$').
+     *
      * @return the register text (without the '$')
      */
     public String getRegister() {
@@ -33,6 +36,7 @@ public class RegisterToken extends RightHandToken {
 
     /**
      * Gets the number of the register specified by this token.
+     *
      * @return the number of the register specified by this token.
      */
     public int getRegisterNumber() {

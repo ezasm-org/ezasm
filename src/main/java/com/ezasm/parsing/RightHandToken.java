@@ -8,6 +8,7 @@ public abstract class RightHandToken extends Token {
 
     /**
      * Stores the token text.
+     *
      * @param text the token text to store.
      */
     public RightHandToken(String text) {

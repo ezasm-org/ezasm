@@ -17,7 +17,9 @@ public class RegisterTable extends JPanel {
     private static final Dimension MAX_SIZE = new Dimension(200, 2000);
 
     /**
-     * Given the registers, construct a table which displays the names and values of each one.
+     * Given the registers, construct a table which displays the names and values of
+     * each one.
+     *
      * @param registers the registers to read from.
      */
     public RegisterTable(Registers registers) {
@@ -45,7 +47,8 @@ public class RegisterTable extends JPanel {
     }
 
     /**
-     * Helper model class to inform the TableModel of how to construct and read from itself.
+     * Helper model class to inform the TableModel of how to construct and read from
+     * itself.
      */
     private class RegistersTableModel extends AbstractTableModel {
 
@@ -67,10 +70,10 @@ public class RegisterTable extends JPanel {
         }
 
         public Object getValueAt(int row, int col) {
-            if(col == 0) {
+            if (col == 0) {
                 // labels
                 return "$" + Registers.getRegisterName(row);
-            } else if(col == 1) {
+            } else if (col == 1) {
                 // values
                 return registers.getRegister(row).getLong();
             } else {
@@ -80,7 +83,8 @@ public class RegisterTable extends JPanel {
         }
 
         @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        }
 
         @Override
         public boolean isCellEditable(int row, int col) {

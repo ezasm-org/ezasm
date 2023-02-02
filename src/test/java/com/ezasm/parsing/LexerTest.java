@@ -60,7 +60,7 @@ class LexerTest {
 
     @Test
     void isInstruction() {
-        for(String instruction : InstructionDispatcher.getInstructions().keySet()) {
+        for (String instruction : InstructionDispatcher.getInstructions().keySet()) {
             assertTrue(Lexer.isInstruction(instruction));
         }
         assertFalse(Lexer.isInstruction("add0"));
@@ -69,6 +69,7 @@ class LexerTest {
     }
 
     private static final Map<String, Integer> map = new HashMap<>();
+
     private static boolean testLineAgainstString(Line line, String string) {
         try {
             Line newline = Lexer.parseLine(string, map, 0);
@@ -84,7 +85,7 @@ class LexerTest {
     @Test
     void parseLine() {
         try {
-            Line line = new Line("add", "$s0", new String[]{"$t0", "1"});
+            Line line = new Line("add", "$s0", new String[] { "$t0", "1" });
             assertTrue(testLineAgainstString(line, "add $s0 $t0 1"));
             assertTrue(testLineAgainstString(line, "add $s0,$t0,1"));
             assertTrue(testLineAgainstString(line, " \t\t  add $s0 $t0 1   "));
@@ -99,7 +100,8 @@ class LexerTest {
             assertFalse(testLineAgainstString(line, ""));
 
             assertFalse(testLineAgainstString(line, ""));
-        } catch (ParseException ignored) {}
+        } catch (ParseException ignored) {
+        }
     }
 
     @Test
@@ -110,10 +112,10 @@ class LexerTest {
         assertThrows(ParseException.class, () -> {
             Lexer.parseLine("add $s0 $s1 ABC", map, 0);
         });
-        /* Will not work until issue #30 is resolved
-        assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add $s0 $s1", map, 0);
-        });*/
+        /*
+         * Will not work until issue #30 is resolved assertThrows(ParseException.class,
+         * () -> { Lexer.parseLine("add $s0 $s1", map, 0); });
+         */
         assertThrows(ParseException.class, () -> {
             Lexer.parseLine("add", map, 0);
         });

@@ -3,8 +3,8 @@ package com.ezasm.instructions.targets.input;
 import com.ezasm.simulation.Simulator;
 
 /**
- * The implementation of an "immediate" input to be used inline instead of a register
- * or other input. Is used as a fixed value or constant.
+ * The implementation of an "immediate" input to be used inline instead of a
+ * register or other input. Is used as a fixed value or constant.
  */
 public class ImmediateInput extends AbstractInput {
 
@@ -12,6 +12,7 @@ public class ImmediateInput extends AbstractInput {
 
     /**
      * Constructs the input with the given constant value.
+     *
      * @param value the constant value.
      */
     public ImmediateInput(byte[] value) {
@@ -20,6 +21,7 @@ public class ImmediateInput extends AbstractInput {
 
     /**
      * Gets the constant value of the immediate.
+     *
      * @param simulator the program simulator.
      * @return the constant value.
      */
