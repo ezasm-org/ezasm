@@ -63,8 +63,7 @@ public class Simulator {
     }
 
     /**
-     * Resets the contents of memory and registers as well as stored lines and
-     * labels.
+     * Resets the contents of memory and registers as well as stored lines and labels.
      */
     public void resetAll() {
         resetMemory();

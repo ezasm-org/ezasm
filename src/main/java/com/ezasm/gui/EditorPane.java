@@ -13,8 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- * The editor pane within the GUI. Allows the user to type code or edit loaded
- * code.
+ * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
 public class EditorPane extends JPanel {
 

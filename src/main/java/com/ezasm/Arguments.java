@@ -8,8 +8,7 @@ import org.apache.commons.cli.*;
 import javax.swing.*;
 
 /**
- * Methods to handle the program arguments and begin the program
- * correspondingly.
+ * Methods to handle the program arguments and begin the program correspondingly.
  */
 public class Arguments {
 

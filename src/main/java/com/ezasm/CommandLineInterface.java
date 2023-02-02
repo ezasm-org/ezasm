@@ -45,8 +45,7 @@ public class CommandLineInterface {
     }
 
     /**
-     * Begins the simulation. Starts reading CLI input or reads and executes from
-     * the given file.
+     * Begins the simulation. Starts reading CLI input or reads and executes from the given file.
      */
     public void startSimulation() {
         if (cli) {

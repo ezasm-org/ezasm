@@ -49,7 +49,8 @@ public class Window {
      * @param simulator the simulator to use.
      */
     public static void instantiate(Simulator simulator, Config config) {
-        if(instance == null) new Window(simulator, config);
+        if (instance == null)
+            new Window(simulator, config);
     }
 
     /**

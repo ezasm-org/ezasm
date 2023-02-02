@@ -12,7 +12,6 @@ import javax.swing.border.Border;
 
 import com.ezasm.Config;
 
-
 public class SettingsPopup {
     private static SettingsPopup instance;
 
@@ -33,8 +32,7 @@ public class SettingsPopup {
 
     private Config config;
 
-    private ButtonActionListener buttonActionListener; 
-
+    private ButtonActionListener buttonActionListener;
 
     protected SettingsPopup() {
         instance = this;
@@ -42,24 +40,25 @@ public class SettingsPopup {
         initialize();
     }
 
-    public static SettingsPopup getInstance(){
+    public static SettingsPopup getInstance() {
         return instance;
     }
 
-    public static void instantiate(){
-        if(instance == null) new SettingsPopup();
+    public static void instantiate() {
+        if (instance == null)
+            new SettingsPopup();
     }
 
-    public static boolean hasInstance(){
+    public static boolean hasInstance() {
         return instance != null;
     }
 
-    private void initialize(){
+    private void initialize() {
         buttonActionListener = new ButtonActionListener(config);
         layout = new BorderLayout();
         popup = new JFrame("EzASM Configurator");
         popup.setLayout(layout);
-        popup.setMinimumSize(new Dimension(500,300));
+        popup.setMinimumSize(new Dimension(500, 300));
         popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         themeLabel = new JLabel(THEME);
@@ -80,7 +79,7 @@ public class SettingsPopup {
         grid.add(speedSlider);
         grid.add(themeLabel);
         grid.add(themeInput);
-        
+
         save = new JButton(SAVE);
         resetDefaults = new JButton(RESET);
 
@@ -97,10 +96,10 @@ public class SettingsPopup {
         popup.setVisible(true);
     }
 
-    private static class ButtonActionListener implements ActionListener{
+    private static class ButtonActionListener implements ActionListener {
         private Config config;
 
-        public ButtonActionListener(Config cfg){
+        public ButtonActionListener(Config cfg) {
             super();
             config = cfg;
         }
@@ -109,13 +108,13 @@ public class SettingsPopup {
         public void actionPerformed(ActionEvent e) {
             String action = e.getActionCommand();
             SettingsPopup instance = SettingsPopup.getInstance();
-            if (action.startsWith("Save")){
+            if (action.startsWith("Save")) {
                 instance.config.setFontSize(Integer.parseInt(instance.fontInput.getText()));
                 instance.config.setSimSpeed(instance.speedSlider.getX());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
             }
-            if (action.startsWith("Reset")){
+            if (action.startsWith("Reset")) {
                 instance.config.resetDefaults();
                 instance.fontInput.setText(Config.DEFAULT_FONT_SIZE);
                 instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
