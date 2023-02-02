@@ -9,6 +9,7 @@ public abstract class Token {
 
     /**
      * Stores the text of the token into a local variable.
+     *
      * @param text the text of the token
      */
     public Token(String text) {
@@ -17,6 +18,7 @@ public abstract class Token {
 
     /**
      * Gets the token text.
+     *
      * @return the token text.
      */
     public String getText() {

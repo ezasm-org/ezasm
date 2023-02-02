@@ -3,8 +3,8 @@ package com.ezasm.simulation;
 import java.util.*;
 
 /**
- * Represents all system registers within an array.
- * Provides access to them by name and by reference number.
+ * Represents all system registers within an array. Provides access to them by name and by reference
+ * number.
  */
 public class Registers {
 
@@ -82,8 +82,8 @@ public class Registers {
     private static final int FLOAT_OFFSET = REGISTERS_COUNT;
 
     /**
-     * Initialization function for the registers.
-     * Creates both mapping of register number to String and vice-versa.
+     * Initialization function for the registers. Creates both mapping of register number to String and
+     * vice-versa.
      */
     private static void init() {
         registerByString = new HashMap<>(TOTAL_REGISTERS);
@@ -151,8 +151,8 @@ public class Registers {
     }
 
     /*
-     * Initializes the registers and mappings in a static context whenever this code is loaded.
-     * This prevents the register mappings from ever being null.
+     * Initializes the registers and mappings in a static context whenever this code is loaded. This
+     * prevents the register mappings from ever being null.
      */
     static {
         init();
@@ -160,7 +160,8 @@ public class Registers {
 
     /**
      * Adds a given register to the static register mappings.
-     * @param name the name of the register to add.
+     *
+     * @param name   the name of the register to add.
      * @param number the reference number of the register to add.
      */
     private static void addRegister(String name, int number) {
@@ -170,23 +171,27 @@ public class Registers {
     }
 
     /**
-     * Checks if a given String matches any of the registers.
-     * Can be the named register notation or the numerical register notation to check.
-     * The register attempt given should not have the '$' at the start of the String.
+     * Checks if a given String matches any of the registers. Can be the named register notation or the
+     * numerical register notation to check. The register attempt given should not have the '$' at the
+     * start of the String.
+     *
      * @param register the String representing the register.
      * @return true if the register is valid, false otherwise.
      */
     public static boolean isRegister(String register) {
-        if(registerByString.containsKey(register.toLowerCase())) return true;
+        if (registerByString.containsKey(register.toLowerCase()))
+            return true;
         try {
             int attempt = Integer.parseInt(register);
             return isRegister(attempt);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return false;
     }
 
     /**
      * Checks if a given register reference number matches any of the registers.
+     *
      * @param register the number reference of to check.
      * @return true if the register is valid, false otherwise.
      */
@@ -196,34 +201,37 @@ public class Registers {
 
     /**
      * Gets a register number based on the register's name or a text representation of its number.
+     *
      * @param register the register to seek.
      * @return the register number found.
      */
     public static int getRegisterNumber(String register) {
         register = register.toLowerCase();
-        if(!isRegister(register)) {
+        if (!isRegister(register)) {
             // TODO add appropriate exception
             throw new RuntimeException();
         }
         try {
             int attempt = Integer.parseInt(register);
-            if(isRegister(attempt)) {
+            if (isRegister(attempt)) {
                 return attempt;
             } else {
                 // TODO add appropriate exception
                 throw new RuntimeException();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return registerByString.get(register);
     }
 
     /**
      * Gets a register's name based on its reference number.
+     *
      * @param register the register reference number to search.
      * @return the register name found.
      */
     public static String getRegisterName(int register) {
-        if(!isRegister(register)) {
+        if (!isRegister(register)) {
             // TODO add appropriate exception
             throw new RuntimeException();
         }
@@ -232,11 +240,12 @@ public class Registers {
 
     /**
      * Constructs the system registers based on a given word size.
+     *
      * @param wordSize the given word size in bytes.
      */
     public Registers(int wordSize) {
         registers = new Register[TOTAL_REGISTERS];
-        for(Integer i : registerByInt.keySet()) {
+        for (Integer i : registerByInt.keySet()) {
             registers[i] = new Register(i, wordSize);
         }
     }
@@ -245,18 +254,19 @@ public class Registers {
      * Sets the values of all bytes of all registers to zero.
      */
     public void reset() {
-        for(Integer i : registerByInt.keySet()) {
+        for (Integer i : registerByInt.keySet()) {
             registers[i].setLong(0);
         }
     }
 
     /**
      * Gets the register corresponding to the reference number.
+     *
      * @param register the reference number of the register to get.
      * @return the register obtained.
      */
     public Register getRegister(int register) {
-        if(register < 0 || register > TOTAL_REGISTERS) {
+        if (register < 0 || register > TOTAL_REGISTERS) {
             // TODO add appropriate exception
             throw new RuntimeException();
         }
@@ -265,6 +275,7 @@ public class Registers {
 
     /**
      * Gets the register corresponding to the given name.
+     *
      * @param register the name of the register to get.
      * @return the register obtained.
      */
@@ -274,6 +285,7 @@ public class Registers {
 
     /**
      * Gets the list of all registers.
+     *
      * @return the list of all registers.
      */
     public Register[] getRegisters() {
@@ -282,20 +294,21 @@ public class Registers {
 
     /**
      * Gets a string representing the current state of the system registers.
+     *
      * @return a string representing the current state of the system registers.
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < registers.length - 1; ++i) {
+        for (int i = 0; i < registers.length - 1; ++i) {
             sb.append(registers[i]);
-            if(i % 9 == 8) {
+            if (i % 9 == 8) {
                 sb.append('\n');
             } else {
                 sb.append(' ');
             }
         }
-        if(registers.length > 0) {
+        if (registers.length > 0) {
             sb.append(registers[registers.length - 1]);
         }
         return sb.toString();

@@ -5,8 +5,8 @@ import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
 
 /**
- * A representation of an instance in the command line interface.
- * Stores the current simulation and the simulation thread.
+ * A representation of an instance in the command line interface. Stores the current simulation and
+ * the simulation thread.
  */
 public class CommandLineInterface {
 
@@ -15,8 +15,9 @@ public class CommandLineInterface {
     private final boolean cli;
 
     /**
-     * Constructs a basic CLI based on the given Simulator.
-     * This CLI will read from the terminal until the program is closed or the EOF signal is sent.
+     * Constructs a basic CLI based on the given Simulator. This CLI will read from the terminal until
+     * the program is closed or the EOF signal is sent.
+     *
      * @param simulator the given Simulator.
      */
     public CommandLineInterface(Simulator simulator) {
@@ -27,8 +28,9 @@ public class CommandLineInterface {
 
     /**
      * Constructs a CLI based on the given Simulator for operating on code from a file.
+     *
      * @param simulator the given Simulator.
-     * @param file the file to read code from.
+     * @param file      the file to read code from.
      */
     public CommandLineInterface(Simulator simulator, String file) {
         this.simulator = simulator;
@@ -43,10 +45,11 @@ public class CommandLineInterface {
     }
 
     /**
-     * Begins the simulation. Starts reading CLI input or reads and executes from the given file.
+     * Begins the simulation. Starts reading CLI input or reads and executes from
+     * the given file.
      */
     public void startSimulation() {
-        if(cli) {
+        if (cli) {
             runFromCliInput();
         } else {
             runLinesFromBeginning();

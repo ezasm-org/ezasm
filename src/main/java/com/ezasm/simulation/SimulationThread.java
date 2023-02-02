@@ -6,9 +6,9 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * A thread for modifying a Simulator.
- * Used to ensure that the current thread does not get blocked while executing code.
- * Can only maintain the currently running task; does not have a queue of tasks.
+ * A thread for modifying a Simulator. Used to ensure that the current thread does not get blocked
+ * while executing code. Can only maintain the currently running task; does not have a queue of
+ * tasks.
  */
 public class SimulationThread {
 
@@ -19,13 +19,13 @@ public class SimulationThread {
     private final AtomicBoolean paused = new AtomicBoolean(false);
 
     /**
-     * The sleep interval to wait before doing another action.
-     * Used in the pause busy-wait.
+     * The sleep interval to wait before doing another action. Used in the pause busy-wait.
      */
     public static final int SLEEP_INTERVAL = 50;
 
     /**
      * Constructs a simulation thread based on the given simulator.
+     *
      * @param simulator the simulator to act on.
      */
     public SimulationThread(Simulator simulator) {
@@ -36,7 +36,7 @@ public class SimulationThread {
      * Interrupt the worker thread which should quickly stop its execution.
      */
     public void interrupt() {
-        if(worker != null) {
+        if (worker != null) {
             worker.interrupt();
         }
         running.set(false);
@@ -45,15 +45,16 @@ public class SimulationThread {
 
     /**
      * Starts the thread if it is not already running.
+     *
      * @param target the content to run on the thread.
      */
     private void start(Runnable target) {
-        if(!running.get()) {
+        if (!running.get()) {
             running.set(true);
             paused.set(false);
             worker = new Thread(target);
             worker.start();
-            if(callbackWorker != null && callbackWorker.getState() == Thread.State.NEW) {
+            if (callbackWorker != null && callbackWorker.getState() == Thread.State.NEW) {
                 callbackWorker.start();
             }
         }
@@ -77,10 +78,11 @@ public class SimulationThread {
      * Awaits the termination of the worker thread by busy-waiting.
      */
     public void awaitTermination() {
-        while(worker != null && worker.isAlive()) {
+        while (worker != null && worker.isAlive()) {
             try {
                 Thread.sleep(SLEEP_INTERVAL);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
@@ -133,7 +135,7 @@ public class SimulationThread {
     private void runnableRunFromCLI() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("> ");
-        while (scanner.hasNextLine() && !Thread.interrupted()){
+        while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
                 simulator.executeLine(scanner.nextLine());
             } catch (ParseException e) {
@@ -150,23 +152,24 @@ public class SimulationThread {
     }
 
     /**
-     * Sets the callback function of the current thread to the given function.
-     * Only activates the callback function on the termination of the next thread;
-     * no subsequent threads will use this callback function.
+     * Sets the callback function of the current thread to the given function. Only activates the
+     * callback function on the termination of the next thread; no subsequent threads will use this
+     * callback function.
+     *
      * @param runnable the callback function to execute when the next worker thread dies.
      */
     public void setCompletionCallback(Runnable runnable) {
         assert runnable != null;
         callbackWorker = new Thread(() -> {
-                try {
-                    worker.join();
-                    running.set(false);
-                    paused.set(false);
-                    runnable.run();
-                } catch (Exception e) {
-                    System.err.println("Unable to perform callback function");
-                }
-                callbackWorker = null;
+            try {
+                worker.join();
+                running.set(false);
+                paused.set(false);
+                runnable.run();
+            } catch (Exception e) {
+                System.err.println("Unable to perform callback function");
+            }
+            callbackWorker = null;
         });
 
     }
