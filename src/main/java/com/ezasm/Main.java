@@ -18,6 +18,7 @@ public class Main {
 
     /**
      * The main function entrypoint of the program
+     *
      * @param args the program arguments.
      */
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {

@@ -26,10 +26,12 @@ public class MenubarFactory {
 
     /**
      * Generate the menu bar if it does not already exist and initialize its menus and menu items.
+     *
      * @return the generated or existing menu bar.
      */
     public static JMenuBar makeMenuBar() {
-        if(menubar != null) return menubar;
+        if (menubar != null)
+            return menubar;
         menubar = new JMenuBar();
         JMenu menu;
 
@@ -70,65 +72,63 @@ public class MenubarFactory {
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
-                case SAVE -> {
-                    JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-                    fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                    fileChooser.setSelectedFile(new File("code.ez"));
-                    FileIO.filterFileChooser(fileChooser);
-                    int fileChooserOption = fileChooser.showSaveDialog(null);
-                    if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
-                        boolean overwrite = true;
-                        if (file.exists()) {
-                            // File exists, prompt user to overwrite
-                            int confirmDialogOption = JOptionPane.showConfirmDialog(null,
-                                    "The given file '" + file.getName() + "' already exits.\n" +
-                                            "Would you like to overwrite it?",
-                                    "File Already Exists",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE);
-                            overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
-                        }
-                        if (overwrite) {
-                            try {
-                                FileIO.writeFile(file, Window.getInstance().getText());
-                            } catch (IOException ex) {
-                                // TODO handle
-                                ex.printStackTrace();
-                                throw new RuntimeException();
-                            }
+            case SAVE -> {
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setSelectedFile(new File("code.ez"));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showSaveDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    boolean overwrite = true;
+                    if (file.exists()) {
+                        // File exists, prompt user to overwrite
+                        int confirmDialogOption = JOptionPane.showConfirmDialog(null,
+                                "The given file '" + file.getName() + "' already exits.\n"
+                                        + "Would you like to overwrite it?",
+                                "File Already Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
+                    }
+                    if (overwrite) {
+                        try {
+                            FileIO.writeFile(file, Window.getInstance().getText());
+                        } catch (IOException ex) {
+                            // TODO handle
+                            ex.printStackTrace();
+                            throw new RuntimeException();
                         }
                     }
                 }
-                case LOAD -> {
-                    JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-                    System.getProperty("user.home");
-                    fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                    FileIO.filterFileChooser(fileChooser);
-                    int fileChooserOption = fileChooser.showOpenDialog(null);
-                    if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
-                        if (file != null && file.exists() && file.canRead()) {
-                            try {
-                                String content = FileIO.readFile(file);
-                                Window.getInstance().setText(content);
-                            } catch (IOException ex) {
-                                // TODO handle
-                                throw new RuntimeException();
-                            }
+            }
+            case LOAD -> {
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                System.getProperty("user.home");
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showOpenDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    if (file != null && file.exists() && file.canRead()) {
+                        try {
+                            String content = FileIO.readFile(file);
+                            Window.getInstance().setText(content);
+                        } catch (IOException ex) {
+                            // TODO handle
+                            throw new RuntimeException();
                         }
                     }
                 }
-                case EXIT -> {
-                    System.exit(0);
-                }
-                case CONFIG -> {
-                    // TODO implement configuration
-                    throw new RuntimeException("Unimplemented feature");
-                }
-                default -> {
-                    System.err.printf("'%s' action is not yet defined\n", e.getActionCommand());
-                }
+            }
+            case EXIT -> {
+                System.exit(0);
+            }
+            case CONFIG -> {
+                // TODO implement configuration
+                throw new RuntimeException("Unimplemented feature");
+            }
+            default -> {
+                System.err.printf("'%s' action is not yet defined\n", e.getActionCommand());
+            }
             }
         }
     }

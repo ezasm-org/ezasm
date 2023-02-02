@@ -11,6 +11,7 @@ public class RegisterOutput extends AbstractOutput {
 
     /**
      * Construct the output based on the register reference number.
+     *
      * @param register the register reference number.
      */
     public RegisterOutput(int register) {
@@ -19,8 +20,9 @@ public class RegisterOutput extends AbstractOutput {
 
     /**
      * Sets the value stored within the register.
+     *
      * @param simulator the program simulator.
-     * @param value the value to set.
+     * @param value     the value to set.
      */
     @Override
     public void set(Simulator simulator, byte[] value) {

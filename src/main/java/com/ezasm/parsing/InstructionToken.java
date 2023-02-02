@@ -6,8 +6,9 @@ package com.ezasm.parsing;
 public class InstructionToken extends Token {
 
     /**
-     * Constructs the token based on the given text.
-     * Assumes the text has already been validated to be an instruciton.
+     * Constructs the token based on the given text. Assumes the text has already been validated to be
+     * an instruciton.
+     *
      * @param text the instruction text.
      */
     public InstructionToken(String text) {
