@@ -61,7 +61,8 @@ public class DispatchInstruction {
      */
     public void invoke(Object parent, Line line) {
 
-        // TODO, change construction based on argument types. This will be necessary for deref
+        // TODO, change construction based on argument types. This will be necessary for
+        // deref
         Object[] args = new Object[line.getArguments().length + 1];
 
         args[args.length - 1] = new RegisterOutput(line.getStoreRegister().getRegisterNumber());

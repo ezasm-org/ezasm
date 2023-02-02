@@ -56,7 +56,8 @@ public class FileIO {
     }
 
     /**
-     * Helper class to generate a file filter based on an extension and a description.
+     * Helper class to generate a file filter based on an extension and a
+     * description.
      */
     private static class QuickFileFilter extends FileFilter {
 

@@ -14,7 +14,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Contains a mapping of all instruction String names and their corresponding DispatchInstruction.
+ * Contains a mapping of all instruction String names and their corresponding
+ * DispatchInstruction.
  */
 public class InstructionDispatcher {
 
@@ -100,7 +101,8 @@ public class InstructionDispatcher {
     }
 
     /**
-     * For all registered instructions, load an instance for each handler and bind it to a simulator.
+     * For all registered instructions, load an instance for each handler and bind
+     * it to a simulator.
      */
     private void loadInstructionHandlers() {
         InstructionDispatcher.instructions.values().stream()

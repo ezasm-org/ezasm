@@ -58,7 +58,8 @@ public class MenubarFactory {
         return menubar;
     }
 
-    // Helper method to automate tasks I complete for every menu item (action listener, color, register)
+    // Helper method to automate tasks I complete for every menu item (action
+    // listener, color, register)
     private static void addMenuItem(JMenu menu, String name) {
         JMenuItem item = new JMenuItem(name);
         item.addActionListener(actionListener);

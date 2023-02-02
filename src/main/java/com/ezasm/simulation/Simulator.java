@@ -62,7 +62,8 @@ public class Simulator {
     }
 
     /**
-     * Resets the contents of memory and registers as well as stored lines and labels.
+     * Resets the contents of memory and registers as well as stored lines and
+     * labels.
      */
     public void resetAll() {
         resetMemory();
@@ -197,7 +198,8 @@ public class Simulator {
         int currentSP = validatePC();
         if (currentSP == lineNumber) {
             pc.setLong(currentSP + 1);
-        } // otherwise the PC was set by the program to a certain line and should be read as such
+        } // otherwise the PC was set by the program to a certain line and should be read
+          // as such
         Window.updateAll();
     }
 

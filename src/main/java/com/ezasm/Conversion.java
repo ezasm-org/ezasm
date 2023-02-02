@@ -3,7 +3,8 @@ package com.ezasm;
 import java.nio.ByteBuffer;
 
 /**
- * Utility class which provides functions for converting to and from byte arrays.
+ * Utility class which provides functions for converting to and from byte
+ * arrays.
  */
 public class Conversion {
 

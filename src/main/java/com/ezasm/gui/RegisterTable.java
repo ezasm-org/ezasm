@@ -46,7 +46,8 @@ public class RegisterTable extends JPanel {
     }
 
     /**
-     * Helper model class to inform the TableModel of how to construct and read from itself.
+     * Helper model class to inform the TableModel of how to construct and read from
+     * itself.
      */
     private class RegistersTableModel extends AbstractTableModel {
 

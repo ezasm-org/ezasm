@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A runtime annotation to denote the methods which should be loaded as instructions.
+ * A runtime annotation to denote the methods which should be loaded as
+ * instructions.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

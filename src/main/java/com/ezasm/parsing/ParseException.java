@@ -6,7 +6,8 @@ package com.ezasm.parsing;
 public class ParseException extends Exception {
 
     /**
-     * Default constructor; states that there was an error parsing the line as the message.
+     * Default constructor; states that there was an error parsing the line as the
+     * message.
      */
     public ParseException() {
         super("Error in parsing the given line");

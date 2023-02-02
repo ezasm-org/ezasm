@@ -84,7 +84,8 @@ public class Lexer {
      * Determines if the given token is a dereference expression or not.
      *
      * @param token the token String in question.
-     * @return true if the given token is a valid dereference expression, false otherwise.
+     * @return true if the given token is a valid dereference expression, false
+     *         otherwise.
      */
     public static boolean isDereference(String token) {
         if (token.length() < 5)
