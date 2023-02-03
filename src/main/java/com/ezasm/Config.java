@@ -32,8 +32,8 @@ public class Config {
     public static final String DEFAULT_FONT = "Liberation Mono"; // unclear if this will be allowed to change
 
     // Possible themes
-    private static final String[] THEMEARRAY = { "Light", "Dark", "Purple" };
-    public static final Vector<String> THEMES = new Vector<String>(Arrays.asList(THEMEARRAY));
+    private static final String[] THEME_ARRAY = { "Light", "Dark", "Purple" };
+    public static final Vector<String> THEMES = new Vector<String>(Arrays.asList(THEME_ARRAY));
 
     private Properties props = new Properties();
 
@@ -95,7 +95,7 @@ public class Config {
             properties.load(propReader);
             propReader.close();
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return properties;
     }
