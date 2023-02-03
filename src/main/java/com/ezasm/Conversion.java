@@ -3,12 +3,14 @@ package com.ezasm;
 import java.nio.ByteBuffer;
 
 /**
- * Utility class which provides functions for converting to and from byte arrays.
+ * Utility class which provides functions for converting to and from byte
+ * arrays.
  */
 public class Conversion {
 
     /**
      * Converts a long into its corresponding bytes.
+     *
      * @param data the long to convert.
      * @return the byte data representation of the long.
      */
@@ -18,6 +20,7 @@ public class Conversion {
 
     /**
      * Converts an array of bytes into the corresponding long.
+     *
      * @param data the array of bytes to convert.
      * @return the long representation of that data.
      */
@@ -27,6 +30,7 @@ public class Conversion {
 
     /**
      * Converts a double into its corresponding bytes.
+     *
      * @param data the double to convert.
      * @return the byte data representation of the double.
      */
@@ -36,6 +40,7 @@ public class Conversion {
 
     /**
      * Converts an array of bytes into the corresponding double.
+     *
      * @param data the array of bytes to convert.
      * @return the double representation of that data.
      */
@@ -45,6 +50,7 @@ public class Conversion {
 
     /**
      * Converts a String into its corresponding bytes.
+     *
      * @param data the String to convert.
      * @return the byte data representation of the String.
      */
@@ -54,6 +60,7 @@ public class Conversion {
 
     /**
      * Converts an array of bytes into the corresponding double.
+     *
      * @param data the array of bytes to convert.
      * @return the double representation of that data.
      */

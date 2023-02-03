@@ -8,8 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * The main graphical user interface of the program.
- * A singleton which holds all the necessary GUI components and one relevant simulator.
+ * The main graphical user interface of the program. A singleton which holds all the necessary GUI
+ * components and one relevant simulator.
  */
 public class Window {
 
@@ -31,8 +31,9 @@ public class Window {
     }
 
     /**
-     * Return the existing instance.
-     * Returns null if a simulator has not yet been provided through <code>instantiate</code>.
+     * Return the existing instance. Returns null if a simulator has not yet been provided through
+     * <code>instantiate</code>.
+     *
      * @return the instance.
      */
     public static Window getInstance() {
@@ -41,14 +42,17 @@ public class Window {
 
     /**
      * Generate the singleton Window instance if it does not exist.
+     *
      * @param simulator the simulator to use.
      */
     public static void instantiate(Simulator simulator) {
-        if(instance == null) new Window(simulator);
+        if (instance == null)
+            new Window(simulator);
     }
 
     /**
      * Tells the caller whether the instance has been initialized.
+     *
      * @return true if the instance has been initialized, false otherwise.
      */
     public static boolean hasInstance() {
@@ -82,6 +86,7 @@ public class Window {
 
     /**
      * Returns the current simulator in use.
+     *
      * @return the current simulator in use.
      */
     public Simulator getSimulator() {
@@ -92,12 +97,14 @@ public class Window {
      * Updates all UI elements if they exist.
      */
     public static void updateAll() {
-        if(instance == null || instance.table == null) return;
+        if (instance == null || instance.table == null)
+            return;
         instance.table.update();
     }
 
     /**
      * Parses the current text content of the editor pane.
+     *
      * @throws ParseException if there are any errors lexing the given text.
      */
     public void parseText() throws ParseException {
@@ -107,8 +114,9 @@ public class Window {
     }
 
     /**
-     * Gets the instance's simulation thread for use in staring the async execution of the
-     * simulator's instructions.
+     * Gets the instance's simulation thread for use in staring the async execution of the simulator's
+     * instructions.
+     *
      * @return the SimulationThread instance relevant.
      */
     public SimulationThread getSimulationThread() {
@@ -116,13 +124,14 @@ public class Window {
     }
 
     /**
-     * Handles the program completion and displays a message to the user about the status of the program.
+     * Handles the program completion and displays a message to the user about the status of the
+     * program.
      */
     public void handleProgramCompletion() {
         ToolbarFactory.handleProgramCompletion();
-        if(simulator.isErrored()) {
+        if (simulator.isErrored()) {
             System.out.println("** Program terminated due to an error **");
-        } else if(simulator.isDone()) {
+        } else if (simulator.isDone()) {
             System.out.println("** Program terminated normally **");
         } else {
             System.out.println("** Program terminated forcefully **");
@@ -131,6 +140,7 @@ public class Window {
 
     /**
      * Sets the text of the editor to the given content.
+     *
      * @param content the text to set the text within the editor to.
      */
     public void setText(String content) {
@@ -139,6 +149,7 @@ public class Window {
 
     /**
      * Gets the text content of the text editor.
+     *
      * @return the text content of the text editor.
      */
     public String getText() {
@@ -146,8 +157,9 @@ public class Window {
     }
 
     /**
-     * Enable or disable the ability of the user to edit the text pane.
-     * Text cannot be selected while this is the set to false.
+     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while
+     * this is the set to false.
+     *
      * @param value true to enable, false to disable.
      */
     public void setEditable(boolean value) {
@@ -156,6 +168,7 @@ public class Window {
 
     /**
      * Gets the truth value of whether the editor can be typed in.
+     *
      * @return true if the editor can be typed in currently, false otherwise.
      */
     public boolean getEditable() {
@@ -164,6 +177,7 @@ public class Window {
 
     /**
      * Handles the parse exception by printing the message to the terminal.
+     *
      * @param e the exception to handle.
      */
     public void handleParseException(Exception e) {

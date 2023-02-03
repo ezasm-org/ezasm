@@ -18,8 +18,9 @@ public class Lexer {
     }
 
     private static boolean isAlNum(String text) {
-        for(int i = 0; i < text.length(); ++i) {
-            if(!isAlNum(text.charAt(i))) return false;
+        for (int i = 0; i < text.length(); ++i) {
+            if (!isAlNum(text.charAt(i)))
+                return false;
         }
         return true;
     }
@@ -29,55 +30,66 @@ public class Lexer {
     }
 
     private static boolean isNumeric(String text) {
-        if(text.startsWith("-")) {
+        if (text.startsWith("-")) {
             text = text.substring(1);
         }
-        for(int i = 0; i < text.length(); ++i) {
-            if(!isNumeric(text.charAt(i))) return false;
+        for (int i = 0; i < text.length(); ++i) {
+            if (!isNumeric(text.charAt(i)))
+                return false;
         }
         return true;
     }
 
     /**
      * Determines if the line is a comment or not
+     *
      * @param line the line of text in question.
      * @return true if the line is a comment, false otherwise.
      */
     public static boolean isComment(String line) {
-        if(line.length() < 1) return false;
+        if (line.length() < 1)
+            return false;
         return line.startsWith("#");
     }
 
     /**
      * Determines if a token is a label or not.
+     *
      * @param token the token of text in question.
      * @return true if the token is a label, false otherwise;
      */
     public static boolean isLabel(String token) {
-        if(token.length() < 1) return false;
+        if (token.length() < 1)
+            return false;
         int colon = token.indexOf(':');
         // Implementation for labels without colons
-        // if (colon == -1) return isAlNum(token) && !InstructionDispatcher.getInstructions().containsKey(token);
-        return (colon == token.length()-1) && isAlNum(token.substring(0, colon));
+        // if (colon == -1) return isAlNum(token) &&
+        // !InstructionDispatcher.getInstructions().containsKey(token);
+        return (colon == token.length() - 1) && isAlNum(token.substring(0, colon));
     }
 
     /**
      * Determines if the given token is a register or not.
+     *
      * @param token the token String in question.
      * @return true if the given token is a valid register, false otherwise.
      */
     public static boolean isRegister(String token) {
-        if(token.length() < 1) return false;
-        return token.startsWith("$") && token.length() > 1 && Registers.isRegister(token.substring(1)) ;
+        if (token.length() < 1)
+            return false;
+        return token.startsWith("$") && token.length() > 1 && Registers.isRegister(token.substring(1));
     }
 
     /**
      * Determines if the given token is a dereference expression or not.
+     *
      * @param token the token String in question.
-     * @return true if the given token is a valid dereference expression, false otherwise.
+     * @return true if the given token is a valid dereference expression, false
+     *         otherwise.
      */
     public static boolean isDereference(String token) {
-        if(token.length() < 5) return false;
+        if (token.length() < 5)
+            return false;
         int first = token.indexOf('(');
         int last = token.indexOf(')');
         return (first != -1) && (last != -1) && (first == token.lastIndexOf('(')) && (last == token.lastIndexOf(')'))
@@ -86,12 +98,15 @@ public class Lexer {
 
     /**
      * Determines if the given token is an immediate or not.
+     *
      * @param token the token String in question.
      * @return true if the given token is a valid immediate, false otherwise.
      */
     public static boolean isImmediate(String token) {
-        if(token.length() < 1) return false;
-        if(!isNumeric(token)) return false;
+        if (token.length() < 1)
+            return false;
+        if (!isNumeric(token))
+            return false;
         try {
             Long.parseLong(token);
             return true;
@@ -102,6 +117,7 @@ public class Lexer {
 
     /**
      * Determines if a given token is a valid instruction or not.
+     *
      * @param token the token String in question.
      * @return true if the token is a registered instruction, false otherwise.
      */
@@ -110,42 +126,49 @@ public class Lexer {
     }
 
     /**
-     * Parses the given text as a single line. Meant for use within a simulation of the programming language.
-     * @param line the line of text.
+     * Parses the given text as a single line. Meant for use within a simulation of the programming
+     * language.
+     *
+     * @param line   the line of text.
      * @param labels the mapping of label text to line numbers.
      * @param number the line number of this line.
-     * @return null if the line was empty, a comment, or a label; otherwise returns the line corresponding to the text.
+     * @return null if the line was empty, a comment, or a label; otherwise returns the line
+     *         corresponding to the text.
      * @throws ParseException if the line could not be properly parsed.
      */
     public static Line parseLine(String line, Map<String, Integer> labels, int number) throws ParseException {
         line = line.replaceAll("[\s\t,;]+", " ").trim();
-        if (line.length() == 0) return null;
-        if(Lexer.isComment(line)) return null;
-        if(Lexer.isLabel(line)) {
+        if (line.length() == 0)
+            return null;
+        if (Lexer.isComment(line))
+            return null;
+        if (Lexer.isLabel(line)) {
             labels.putIfAbsent(line, number);
             return null;
         }
         String[] tokens = line.split("[ ,]");
-        if(tokens.length == 0) {
+        if (tokens.length == 0) {
             // Empty line
             return null;
-        } else if(tokens.length < 2) {
+        } else if (tokens.length < 2) {
             // ERROR too few tokens to be a line
-            throw new ParseException(String.format(
-                    "Too few tokens found on line %d: '%s' is likely an incomplete statement", number, line));
+            throw new ParseException(String
+                    .format("Too few tokens found on line %d: '%s' is likely an incomplete statement", number, line));
         }
 
         String[] args = Arrays.copyOfRange(tokens, 2, tokens.length);
         try {
             return new Line(tokens[0], tokens[1], args);
         } catch (ParseException e) {
-            throw new ParseException(String.format("%s on line %d", e.getMessage(), number+1));
+            throw new ParseException(String.format("%s on line %d", e.getMessage(), number + 1));
         }
     }
 
     /**
-     * Parses a String containing multiple lines. Meant for use within a simulation of the programming language.
-     * @param lines the text containing the lines to parse.
+     * Parses a String containing multiple lines. Meant for use within a simulation of the programming
+     * language.
+     *
+     * @param lines  the text containing the lines to parse.
      * @param labels the mapping of label text to line numbers.
      * @return the list of valid lines of code found.
      * @throws ParseException if any line could not be properly parsed.
@@ -158,10 +181,10 @@ public class Lexer {
         lines = lines + "\n";
 
         // individually read lines treating semicolons as line breaks
-        for(int i = 0; i < lines.length(); ++i) {
+        for (int i = 0; i < lines.length(); ++i) {
             char c = lines.charAt(i);
             if (c == '\n' || c == ';') {
-                if(sb.length() > 0) {
+                if (sb.length() > 0) {
                     linesRead.add(sb.toString());
                     sb.delete(0, sb.length());
                 }
@@ -170,9 +193,9 @@ public class Lexer {
             }
         }
 
-        for(int i = 0; i < linesRead.size(); ++i) {
+        for (int i = 0; i < linesRead.size(); ++i) {
             Line lexed = parseLine(linesRead.get(i), labels, i);
-            if(lexed != null) {
+            if (lexed != null) {
                 linesLexed.add(lexed);
             }
         }
