@@ -37,7 +37,7 @@ public class CommandLineInterface {
         this.cli = false;
         this.simulationThread = new SimulationThread(simulator);
         try {
-            this.simulator.readMultiLineString(file);
+            this.simulator.addLines(file);
         } catch (ParseException e) {
             System.err.println(e.getMessage());
             System.exit(1);

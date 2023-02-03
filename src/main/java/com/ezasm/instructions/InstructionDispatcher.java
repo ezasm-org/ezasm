@@ -1,6 +1,7 @@
 package com.ezasm.instructions;
 
 import com.ezasm.instructions.exception.InstructionLoadException;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
@@ -88,14 +89,14 @@ public class InstructionDispatcher {
     /**
      * The bound simulator for this dispatcher.
      */
-    private final Simulator simulator;
+    private final ISimulator simulator;
 
     /**
      * Create a new Instruction Dispatcher, and bind it to an existing {@link Simulator}.
      *
      * @param simulator the simulator to bind to.
      */
-    public InstructionDispatcher(Simulator simulator) {
+    public InstructionDispatcher(ISimulator simulator) {
         this.simulator = simulator;
         loadInstructionHandlers();
     }
@@ -117,7 +118,7 @@ public class InstructionDispatcher {
      */
     private void loadInstructionHandler(DispatchInstruction instruction) {
         try {
-            Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(Simulator.class);
+            Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(ISimulator.class);
             Object inst = constructor.newInstance(this.simulator);
             this.instructionHandlerInstances.put(instruction.getParent(), inst);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException

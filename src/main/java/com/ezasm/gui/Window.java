@@ -110,7 +110,7 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         updateAll();
-        simulator.readMultiLineString(editor.getText());
+        simulator.addLines(editor.getText());
     }
 
     /**
@@ -129,7 +129,7 @@ public class Window {
      */
     public void handleProgramCompletion() {
         ToolbarFactory.handleProgramCompletion();
-        if (simulator.isErrored()) {
+        if (simulator.isErrorPC()) {
             System.out.println("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
             System.out.println("** Program terminated normally **");

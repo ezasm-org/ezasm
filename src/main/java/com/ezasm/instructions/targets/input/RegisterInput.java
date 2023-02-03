@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.input;
 
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -28,8 +28,8 @@ public class RegisterInput extends AbstractInput {
      * @return the value stored within the register.
      */
     @Override
-    public byte[] get(Simulator simulator) {
-        byte[] val = simulator.getRegister(register).getBytes();
+    public byte[] get(ISimulator simulator) {
+        byte[] val = simulator.getRegisters().getRegister(register).getBytes();
         return Arrays.copyOf(val, val.length);
     }
 
@@ -39,10 +39,10 @@ public class RegisterInput extends AbstractInput {
      * @param simulator the program simulator.
      * @param mutator   the mutator function.
      */
-    public void mutate(Simulator simulator, Function<byte[], byte[]> mutator) {
-        byte[] val = simulator.getRegister(register).getBytes();
+    public void mutate(ISimulator simulator, Function<byte[], byte[]> mutator) {
+        byte[] val = simulator.getRegisters().getRegister(register).getBytes();
         byte[] mutate = mutator.apply(val);
-        simulator.getRegister(register).setBytes(mutate);
+        simulator.getRegisters().getRegister(register).setBytes(mutate);
     }
 
 }

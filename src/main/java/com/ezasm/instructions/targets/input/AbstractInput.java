@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.input;
 
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 
 /**
  * The abstract form of an input to an operation. Requires implementing a "get" operation to serve
@@ -14,6 +14,6 @@ public abstract class AbstractInput {
      * @param simulator the program simulator.
      * @return the obtained value.
      */
-    public abstract byte[] get(Simulator simulator);
+    public abstract byte[] get(ISimulator simulator);
 
 }

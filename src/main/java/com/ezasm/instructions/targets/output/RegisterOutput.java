@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.output;
 
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 
 /**
  * The implementation of a register to be used as an output.
@@ -25,7 +25,7 @@ public class RegisterOutput extends AbstractOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(Simulator simulator, byte[] value) {
-        simulator.getRegister(register).setBytes(value);
+    public void set(ISimulator simulator, byte[] value) {
+        simulator.getRegisters().getRegister(register).setBytes(value);
     }
 }

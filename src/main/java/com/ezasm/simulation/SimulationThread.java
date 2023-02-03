@@ -123,7 +123,7 @@ public class SimulationThread {
      */
     private void runnableRunLinesFromPC() {
         try {
-            simulator.runLinesFromPC(paused);
+            simulator.executeProgramFromPC(paused);
         } catch (ParseException e) {
             System.err.println(e.getMessage());
         }
@@ -137,7 +137,7 @@ public class SimulationThread {
         System.out.print("> ");
         while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
-                simulator.executeLine(scanner.nextLine());
+                simulator.runLine(scanner.nextLine());
             } catch (ParseException e) {
                 System.err.println(e.getMessage());
                 System.err.flush();

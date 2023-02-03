@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.output;
 
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 
 /**
  * The abstract form of an input to an operation. Requires implementing a "set" operation to serve
@@ -14,6 +14,6 @@ public abstract class AbstractOutput {
      * @param simulator the program simulator.
      * @param value     the value to set.
      */
-    public abstract void set(Simulator simulator, byte[] value);
+    public abstract void set(ISimulator simulator, byte[] value);
 
 }

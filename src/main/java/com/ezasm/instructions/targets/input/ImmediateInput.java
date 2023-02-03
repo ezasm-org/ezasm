@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.input;
 
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 
 /**
  * The implementation of an "immediate" input to be used inline instead of a register or other
@@ -26,7 +26,7 @@ public class ImmediateInput extends AbstractInput {
      * @return the constant value.
      */
     @Override
-    public byte[] get(Simulator simulator) {
+    public byte[] get(ISimulator simulator) {
         return value;
     }
 }

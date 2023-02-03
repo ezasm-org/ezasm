@@ -1,11 +1,8 @@
 package com.ezasm;
 
-import com.ezasm.instructions.InstructionDispatcher;
-import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.Simulator;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -32,8 +29,8 @@ public class Main {
         try {
             Simulator sim = new Simulator();
             String content = FileIO.readFile(new File("res/example.ez"));
-            sim.readMultiLineString(content);
-            sim.runLinesFromPC();
+            sim.addLines(content);
+            sim.executeProgramFromPC();
             System.out.println(sim.getRegisters().toString());
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,7 +3,6 @@ package com.ezasm.simulation;
 import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
-import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
 
@@ -13,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * The main controller class. Manages the memory, registers, and lines.
  */
-public class Simulator {
+public class Simulator implements ISimulator {
 
     private final Memory memory;
     private final Registers registers;
@@ -24,7 +23,7 @@ public class Simulator {
     private final Map<String, Integer> labels;
 
     // The delay in ms before the next instruction is read
-    private long delayMS = 500L;
+    private long delayMS = 50L;
 
     /**
      * Constructs a Simulator with the default specifications.
@@ -56,7 +55,7 @@ public class Simulator {
     /**
      * Resets the contents of memory and registers.
      */
-    public void resetMemory() {
+    public void resetData() {
         memory.reset();
         registers.reset();
     }
@@ -66,7 +65,7 @@ public class Simulator {
      * labels.
      */
     public void resetAll() {
-        resetMemory();
+        resetData();
         lines.clear();
         labels.clear();
     }
@@ -87,32 +86,27 @@ public class Simulator {
      *
      * @return true if the program counter is in an error state, false otherwise.
      */
-    public boolean isErrored() {
+    public boolean isErrorPC() {
         long line = pc.getLong();
         return line > lines.size() || line < 0;
     }
 
     /**
-     * Parses the given line and returns it. Adds the line to the program as well.
+     * Adds the given line to the program.
      *
-     * @param line the line of text to parse.
-     * @return the generated line.
-     * @throws ParseException if there is an error parsing the line.
+     * @param line the line to add to the program.
      */
-    public Line readLine(String line) throws ParseException {
-        Line lexed = Lexer.parseLine(line, labels, lines.size());
-        lines.add(lexed);
-        return lexed;
+    public void addLine(Line line) {
+        lines.add(line);
     }
 
     /**
      * Parses the given text as a multi-line String. Then adds those lines to the program.
      *
-     * @param content the multi-line string to parse.
-     * @throws ParseException if there was an error in parsing any line.
+     * @param content the collection of Lines to add to the program.
      */
-    public void readMultiLineString(String content) throws ParseException {
-        lines.addAll(Lexer.parseLines(content, labels));
+    public void addLines(Collection<Line> content) {
+        lines.addAll(content);
     }
 
     /**
@@ -121,25 +115,16 @@ public class Simulator {
      * @param line the line to execute.
      * @throws ParseException if there is an error executing the line.
      */
-    public void executeLine(Line line) throws ParseException {
+    public void runLine(Line line) throws ParseException {
         if (line == null)
             return;
         try {
+            lines.add(line);
             instructionDispatcher.execute(line);
             Window.updateAll();
         } catch (InstructionDispatchException e) {
             throw new ParseException(e.getMessage());
         }
-    }
-
-    /**
-     * Executes the given line on the simulator.
-     *
-     * @param line the text representation of the line to execute.
-     * @throws ParseException if there is an error parsing or executing the line.
-     */
-    public void executeLine(String line) throws ParseException {
-        executeLine(readLine(line));
     }
 
     /**
@@ -150,7 +135,7 @@ public class Simulator {
      *               paused.
      * @throws ParseException if there is an error executing any line.
      */
-    public void runLinesFromPC(AtomicBoolean paused) throws ParseException {
+    public void executeProgramFromPC(AtomicBoolean paused) throws ParseException {
         for (int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
             while (paused.get()) {
                 try {
@@ -174,9 +159,8 @@ public class Simulator {
     /**
      * Runs the program to completion or error state from the current state of the PC.
      *
-     * @throws ParseException if there is an error executing any line.
      */
-    public void runLinesFromPC() throws ParseException {
+    public void executeProgramFromPC() throws ParseException {
         for (int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
             i = executeLineInLoop(i);
             try {
@@ -192,9 +176,9 @@ public class Simulator {
      *
      * @throws ParseException if there is an error executing the line.
      */
-    public void runOneLine() throws ParseException {
+    public void executeLineFromPC() throws ParseException {
         int lineNumber = validatePC();
-        executeLine(lines.get(lineNumber));
+        runLine(lines.get(lineNumber));
         int currentSP = validatePC();
         if (currentSP == lineNumber) {
             pc.setLong(currentSP + 1);
@@ -211,7 +195,7 @@ public class Simulator {
      * @throws ParseException if an error occurred within execution.
      */
     private int executeLineInLoop(int i) throws ParseException {
-        executeLine(lines.get(i));
+        runLine(lines.get(i));
         int currentPC = validatePC();
         if (currentPC == i) {
             pc.setLong(currentPC + 1);
