@@ -72,9 +72,9 @@ public class Window {
         app.setMinimumSize(new Dimension(800, 600));
 
         menubar = MenubarFactory.makeMenuBar();
-        toolbar = ToolbarFactory.makeToolbar(config);
-        editor = new EditorPane(config);
-        table = new RegisterTable(simulator.getRegisters(), config);
+        toolbar = ToolbarFactory.makeToolbar();
+        editor = new EditorPane();
+        table = new RegisterTable(simulator.getRegisters());
 
         app.setJMenuBar(menubar);
         app.add(toolbar, BorderLayout.PAGE_START);
@@ -83,30 +83,25 @@ public class Window {
 
         ToolbarFactory.setButtonsEnabled(true);
 
-        applyTheme(config);
+        applyConfiguration(config);
 
         app.validate();
         app.pack();
         app.setVisible(true);
     }
 
-    public void applyTheme(Config config) {
-        Theme theme = null;
-        switch (config.getTheme()) {
-        case "Dark":
-            theme = Theme.Dracula;
-            break;
-        case "Purple":
-            theme = Theme.Purple;
-            break;
-        case "Light":
-            theme = Theme.Light;
-        }
+    public void applyConfiguration(Config config) {
+        Theme theme = switch (config.getTheme()) {
+            case "Dark" -> Theme.Dracula;
+            case "Purple" -> Theme.Purple;
+            case "Light" -> Theme.Light;
+            default -> Theme.Light;
+        };
         app.getContentPane().setBackground(theme.getBackground());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
-        table.applyTheme(config, font, theme);
-        ToolbarFactory.applyTheme(config, font, theme, toolbar);
-        editor.applyTheme(config, font, theme);
+        table.applyTheme(font, theme);
+        ToolbarFactory.applyTheme(font, theme, toolbar);
+        editor.applyTheme(font, theme);
         simulator.setSimulationSpeed(config.getSimSpeed());
     }
 

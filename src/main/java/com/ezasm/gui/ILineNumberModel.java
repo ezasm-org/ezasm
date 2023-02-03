@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 /**
  * To be implemented as a private class contained within the editor class
  */
-public interface LineNumberModel {
+public interface ILineNumberModel {
     /**
      * @return number of lines in the JTextArea
      */

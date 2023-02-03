@@ -13,7 +13,7 @@ import javax.swing.JViewport;
 
 public class LineNumber extends JComponent {
 
-    private LineNumberModel model;
+    private ILineNumberModel model;
 
     int HORIZONTAL_PADDING = 1;
     int VERTICAL_PADDING = 3;
@@ -22,7 +22,7 @@ public class LineNumber extends JComponent {
         super();
     }
 
-    public LineNumber(LineNumberModel model) {
+    public LineNumber(ILineNumberModel model) {
         super();
         this.model = model;
     }
@@ -38,11 +38,9 @@ public class LineNumber extends JComponent {
             return;
         }
         Dimension d = containing.getPreferredSize();
-        if (containing instanceof JViewport) {
-            JViewport vp = (JViewport) containing;
+        if (containing instanceof JViewport vp) {
             Component parent = vp.getParent();
-            if (parent != null && parent instanceof JScrollPane) {
-                JScrollPane scroller = (JScrollPane) parent;
+            if (parent instanceof JScrollPane scroller) {
                 d = scroller.getViewport().getPreferredSize();
             }
         }

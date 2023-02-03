@@ -11,7 +11,7 @@ import java.awt.*;
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
  */
-public class RegisterTable extends JPanel {
+public class RegisterTable extends JPanel implements IThemeable {
 
     private final JTable table;
     private final Registers registers;
@@ -23,7 +23,7 @@ public class RegisterTable extends JPanel {
      *
      * @param registers the registers to read from.
      */
-    public RegisterTable(Registers registers, Config config) {
+    public RegisterTable(Registers registers) {
         super();
         this.registers = registers;
         table = new JTable();
@@ -43,9 +43,9 @@ public class RegisterTable extends JPanel {
     /**
      * Applies the proper theming to the editor area
      */
-    public void applyTheme(Config config, Font font, Theme theme) {
+    public void applyTheme(Font font, Theme theme) {
         this.setBackground(theme.getBackground());
-        table.setRowHeight(config.getFontSize() + 3);
+        table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
         table.getTableHeader().setBackground(theme.getCurrentline());
         table.getTableHeader().setForeground(theme.getForeground());

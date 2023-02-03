@@ -55,9 +55,9 @@ public class Simulator {
     }
 
     /**
-     * Changes simulation speed
+     * Changes the simulation speed.
      *
-     * @param delay ammount of time in milliseconds to wait between instructions
+     * @param delay amount of time in milliseconds to wait between instructions.
      */
     public void setSimulationSpeed(long delay) {
         delayMS = delay;

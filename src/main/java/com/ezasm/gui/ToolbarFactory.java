@@ -37,7 +37,7 @@ public class ToolbarFactory {
      *
      * @return the generated or existing toolbar.
      */
-    public static JToolBar makeToolbar(Config config) {
+    public static JToolBar makeToolbar() {
         JToolBar toolbar = new JToolBar("Simulation Toolbar");
         toolbar.setFloatable(false);
 
@@ -56,7 +56,7 @@ public class ToolbarFactory {
     /**
      * Applies the proper theming to the toolbar
      */
-    public static void applyTheme(Config config, Font font, Theme theme, JToolBar toolbar) {
+    public static void applyTheme(Font font, Theme theme, JToolBar toolbar) {
         toolbar.setBackground(theme.getBackground());
         startButton.setFont(font);
         pauseButton.setFont(font);

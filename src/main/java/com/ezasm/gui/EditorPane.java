@@ -2,12 +2,10 @@ package com.ezasm.gui;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.undo.UndoManager;
 
-import com.ezasm.Config;
 import com.ezasm.Theme;
 
 import java.awt.*;
@@ -17,7 +15,7 @@ import java.awt.event.KeyListener;
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
-public class EditorPane extends JPanel {
+public class EditorPane extends JPanel implements IThemeable {
 
     private final JTextArea textArea;
     private final LineNumber lineNumbers;
@@ -29,7 +27,7 @@ public class EditorPane extends JPanel {
      * Creates a text edit field with an "Undo Manager" to undo the user's actions with CTRL + Z or redo
      * those undid actions with CTRL + SHIFT + Z or CTRL + Y.
      */
-    public EditorPane(Config config) {
+    public EditorPane() {
         super();
 
         textArea = new JTextArea();
@@ -102,36 +100,27 @@ public class EditorPane extends JPanel {
         add(scrollPane);
     }
 
-    private class LineNumberModelImpl implements LineNumberModel {
-
+    private class LineNumberModelImpl implements ILineNumberModel {
         @Override
-
         public int getNumberLines() {
-
             return textArea.getLineCount();
-
         }
 
         @Override
-
         public Rectangle getLineRect(int line) {
-
             try {
                 return textArea.modelToView2D(textArea.getLineStartOffset(line)).getBounds();
-
             } catch (BadLocationException e) {
                 e.printStackTrace();
                 return new Rectangle();
             }
-
         }
-
     }
 
     /**
      * Applies the proper theming to the editor area
      */
-    public void applyTheme(Config config, Font font, Theme theme) {
+    public void applyTheme(Font font, Theme theme) {
         textArea.setBackground(theme.getBackground());
         textArea.setForeground(theme.getForeground());
         textArea.setCaretColor(theme.getForeground());

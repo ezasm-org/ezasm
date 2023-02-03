@@ -5,10 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import com.ezasm.Config;
 
@@ -117,7 +115,7 @@ public class SettingsPopup {
                 instance.config.setSimSpeed(instance.speedSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
-                Window.getInstance().applyTheme(instance.config);
+                Window.getInstance().applyConfiguration(instance.config);
             }
             if (action.startsWith("Reset")) {
                 instance.config.resetDefaults();
