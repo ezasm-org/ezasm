@@ -7,6 +7,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.undo.UndoManager;
 
 import com.ezasm.Config;
+import com.ezasm.Theme;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -28,25 +29,19 @@ public class EditorPane extends JPanel {
      */
     public EditorPane(Config config) {
         super();
-        Font font = new Font("Liberation Mono", Font.PLAIN, config.getFontSize());
-        lineNumbers = new JTextArea("1");
-        lineNumbers.setBackground(Color.LIGHT_GRAY);
-        lineNumbers.setFont(font);
+
         textArea = new JTextArea();
-        textArea.setFont(font);
-        textArea.setEditable(true);
-        textArea.setLineWrap(false);
-        textArea.setMinimumSize(MIN_SIZE);
-        textArea.setDisabledTextColor(Color.DARK_GRAY);
+        lineNumbers = new JTextArea("1");
+
         UndoManager manager = new UndoManager();
         textArea.getDocument().addUndoableEditListener(manager);
 
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             public String getText() {
-                Element root = textArea.getDocument().getDefaultRootElement();
-                int length = textArea.getDocument().getLength();
-                String result = "1" + System.getProperty("line.separator");
-                for (int i = 2; i <= root.getElementIndex(length) + 1; i++) { // +1 fixes an off-by-1 error
+                String text = textArea.getText();
+                long length = text.chars().filter(newline -> newline == '\n').count();
+                String result = "";
+                for (int i = 1; i <= length + 2; i++) { // +1 fixes an off-by-1 error
                     result += i + System.getProperty("line.separator");
                 }
                 return result;
@@ -113,6 +108,23 @@ public class EditorPane extends JPanel {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+    }
+
+    /**
+     * Applies the proper theming to the editor area
+     */
+    public void applyTheme(Config config, Font font, Theme theme) {
+        textArea.setBackground(theme.getBackground());
+        textArea.setForeground(theme.getForeground());
+        textArea.setCaretColor(theme.getForeground());
+        lineNumbers.setBackground(theme.getCurrentline());
+        lineNumbers.setForeground(theme.getForeground().darker());
+        lineNumbers.setFont(font);
+        textArea.setFont(font);
+        textArea.setEditable(true);
+        textArea.setLineWrap(false);
+        textArea.setMinimumSize(MIN_SIZE);
+        textArea.setDisabledTextColor(Color.DARK_GRAY);
     }
 
     /**

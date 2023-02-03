@@ -12,6 +12,9 @@ public class Theme {
     // based on https://github.com/endormi/vscode-2077-theme
     public static Theme Purple = new Theme(0x0d0936, 0x210b66, 0xe4eeff, 0x0098df, 0x0ab2fa, 0x06ad00, 0xffd400,
             0xea00d9, 0x6f46af, 0xee1682, 0xffff99);
+    // based on https://github.com/atom/one-light-syntax
+    public static Theme Light = new Theme(0xfafafa, 0xa0a1a7, 0x383a42, 0x404045, 0x0184bc, 0x28a626, 0x986801,
+            0xd548d3, 0x8c329a, 0xd92020, 0xfffb0f);
 
     public Theme(int bg, int cl, int fg, int cmt, int cyan, int grn, int org, int pnk, int prp, int red, int ylw) {
         BACKGROUND = new Color(bg);

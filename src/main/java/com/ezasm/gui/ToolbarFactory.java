@@ -1,8 +1,12 @@
 package com.ezasm.gui;
 
+import com.ezasm.Config;
+import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
+
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,7 +37,7 @@ public class ToolbarFactory {
      *
      * @return the generated or existing toolbar.
      */
-    public static JToolBar makeToolbar() {
+    public static JToolBar makeToolbar(Config config) {
         JToolBar toolbar = new JToolBar("Simulation Toolbar");
         toolbar.setFloatable(false);
 
@@ -47,6 +51,31 @@ public class ToolbarFactory {
         toolbar.validate();
 
         return toolbar;
+    }
+
+    /**
+     * Applies the proper theming to the toolbar
+     */
+    public static void applyTheme(Config config, Font font, Theme theme, JToolBar toolbar) {
+        toolbar.setBackground(theme.getBackground());
+        startButton.setFont(font);
+        pauseButton.setFont(font);
+        resumeButton.setFont(font);
+        stopButton.setFont(font);
+        resetButton.setFont(font);
+        stepButton.setFont(font);
+        startButton.setBackground(theme.getBackground());
+        pauseButton.setBackground(theme.getBackground());
+        resumeButton.setBackground(theme.getBackground());
+        stopButton.setBackground(theme.getBackground());
+        resetButton.setBackground(theme.getBackground());
+        stepButton.setBackground(theme.getBackground());
+        startButton.setForeground(theme.getForeground());
+        pauseButton.setForeground(theme.getForeground());
+        resumeButton.setForeground(theme.getForeground());
+        stopButton.setForeground(theme.getForeground());
+        resetButton.setForeground(theme.getForeground());
+        stepButton.setForeground(theme.getForeground());
     }
 
     /**

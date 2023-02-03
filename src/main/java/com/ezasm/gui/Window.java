@@ -3,6 +3,7 @@ package com.ezasm.gui;
 import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.Config;
+import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
@@ -71,9 +72,9 @@ public class Window {
         app.setMinimumSize(new Dimension(800, 600));
 
         menubar = MenubarFactory.makeMenuBar();
-        toolbar = ToolbarFactory.makeToolbar();
+        toolbar = ToolbarFactory.makeToolbar(config);
         editor = new EditorPane(config);
-        table = new RegisterTable(simulator.getRegisters());
+        table = new RegisterTable(simulator.getRegisters(), config);
 
         app.setJMenuBar(menubar);
         app.add(toolbar, BorderLayout.PAGE_START);
@@ -82,9 +83,30 @@ public class Window {
 
         ToolbarFactory.setButtonsEnabled(true);
 
+        applyTheme(config);
+
         app.validate();
         app.pack();
         app.setVisible(true);
+    }
+
+    public void applyTheme(Config config) {
+        Theme theme = null;
+        switch (config.getTheme()) {
+        case "Dark":
+            theme = Theme.Dracula;
+            break;
+        case "Purple":
+            theme = Theme.Purple;
+            break;
+        case "Light":
+            theme = Theme.Light;
+        }
+        app.setBackground(theme.getBackground());
+        Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
+        table.applyTheme(config, font, theme);
+        ToolbarFactory.applyTheme(config, font, theme, toolbar);
+        editor.applyTheme(config, font, theme);
     }
 
     /**

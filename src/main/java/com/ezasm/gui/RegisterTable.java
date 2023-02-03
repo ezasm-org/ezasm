@@ -1,5 +1,7 @@
 package com.ezasm.gui;
 
+import com.ezasm.Config;
+import com.ezasm.Theme;
 import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
@@ -21,7 +23,7 @@ public class RegisterTable extends JPanel {
      *
      * @param registers the registers to read from.
      */
-    public RegisterTable(Registers registers) {
+    public RegisterTable(Registers registers, Config config) {
         super();
         this.registers = registers;
         table = new JTable();
@@ -36,6 +38,20 @@ public class RegisterTable extends JPanel {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+    }
+
+    /**
+     * Applies the proper theming to the editor area
+     */
+    public void applyTheme(Config config, Font font, Theme theme) {
+        this.setBackground(theme.getBackground());
+        table.setRowHeight(config.getFontSize() + 3);
+        table.getTableHeader().setOpaque(false);
+        table.getTableHeader().setBackground(theme.getCurrentline());
+        table.getTableHeader().setForeground(theme.getForeground());
+        table.setBackground(theme.getBackground());
+        table.setForeground(theme.getForeground());
+        table.setFont(font);
     }
 
     /**

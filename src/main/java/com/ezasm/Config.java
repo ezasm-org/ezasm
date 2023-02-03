@@ -29,6 +29,7 @@ public class Config {
     public static final String DEFAULT_FONT_SIZE = "12";
     public static final String DEFAULT_SIMULATION_SPEED = "250";
     public static final String DEFAULT_THEME = "Light";
+    public static final String DEFAULT_FONT = "Liberation Mono"; // unclear if this will be allowed to change
 
     // Possible themes
     private static final String[] THEMEARRAY = { "Light", "Dark", "Purple" };

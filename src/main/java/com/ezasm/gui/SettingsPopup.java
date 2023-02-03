@@ -45,7 +45,7 @@ public class SettingsPopup {
     }
 
     public static void instantiate() {
-        if (instance == null)
+        if (instance == null || !instance.popup.isVisible())
             new SettingsPopup();
     }
 
@@ -54,7 +54,7 @@ public class SettingsPopup {
     }
 
     private void initialize() {
-        buttonActionListener = new ButtonActionListener(config);
+        buttonActionListener = new ButtonActionListener();
         layout = new BorderLayout();
         popup = new JFrame("EzASM Configurator");
         popup.setLayout(layout);
@@ -63,6 +63,7 @@ public class SettingsPopup {
 
         themeLabel = new JLabel(THEME);
         themeInput = new JComboBox<String>(Config.THEMES);
+        themeInput.setSelectedItem(config.getTheme());
 
         fontSizeLabel = new JLabel(FONTSIZE);
         speedLabel = new JLabel(SIMULATION_SPEED);
@@ -97,11 +98,9 @@ public class SettingsPopup {
     }
 
     private static class ButtonActionListener implements ActionListener {
-        private Config config;
 
-        public ButtonActionListener(Config cfg) {
+        public ButtonActionListener() {
             super();
-            config = cfg;
         }
 
         @Override
@@ -113,6 +112,7 @@ public class SettingsPopup {
                 instance.config.setSimSpeed(instance.speedSlider.getX());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
+                Window.getInstance().applyTheme(instance.config);
             }
             if (action.startsWith("Reset")) {
                 instance.config.resetDefaults();
