@@ -69,7 +69,7 @@ public class SettingsPopup {
         speedLabel = new JLabel(SIMULATION_SPEED);
 
         fontInput = new JTextField(String.valueOf(config.getFontSize()));
-        speedSlider = new JSlider(50, 500, config.getSimSpeed());
+        speedSlider = new JSlider(10, 1000, config.getSimSpeed());
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
@@ -108,8 +108,13 @@ public class SettingsPopup {
             String action = e.getActionCommand();
             SettingsPopup instance = SettingsPopup.getInstance();
             if (action.startsWith("Save")) {
-                instance.config.setFontSize(Integer.parseInt(instance.fontInput.getText()));
-                instance.config.setSimSpeed(instance.speedSlider.getX());
+                try {
+                    instance.config.setFontSize(Integer.parseInt(instance.fontInput.getText()));
+                } catch (NumberFormatException er) {
+                    JOptionPane.showMessageDialog(new JFrame(), "Bad format for font size, please input a number");
+                    return;
+                }
+                instance.config.setSimSpeed(instance.speedSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
                 Window.getInstance().applyTheme(instance.config);

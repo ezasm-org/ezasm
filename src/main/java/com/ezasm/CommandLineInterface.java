@@ -23,7 +23,7 @@ public class CommandLineInterface {
     public CommandLineInterface(Simulator simulator) {
         this.simulator = simulator;
         this.cli = true;
-        this.simulationThread = new SimulationThread(simulator);
+        this.simulationThread = new SimulationThread(simulator, 250);
     }
 
     /**
@@ -35,7 +35,7 @@ public class CommandLineInterface {
     public CommandLineInterface(Simulator simulator, String file) {
         this.simulator = simulator;
         this.cli = false;
-        this.simulationThread = new SimulationThread(simulator);
+        this.simulationThread = new SimulationThread(simulator, 250);
         try {
             this.simulator.readMultiLineString(file);
         } catch (ParseException e) {

@@ -1,6 +1,7 @@
 package com.ezasm.gui;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -19,7 +20,8 @@ import java.awt.event.KeyListener;
 public class EditorPane extends JPanel {
 
     private final JTextArea textArea;
-    private final JTextArea lineNumbers;
+    private final LineNumber lineNumbers;
+    private final LineNumberModelImpl model = new LineNumberModelImpl();
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
@@ -31,35 +33,25 @@ public class EditorPane extends JPanel {
         super();
 
         textArea = new JTextArea();
-        lineNumbers = new JTextArea("1");
+        lineNumbers = new LineNumber(model);
 
         UndoManager manager = new UndoManager();
         textArea.getDocument().addUndoableEditListener(manager);
 
         textArea.getDocument().addDocumentListener(new DocumentListener() {
-            public String getText() {
-                String text = textArea.getText();
-                long length = text.chars().filter(newline -> newline == '\n').count();
-                String result = "";
-                for (int i = 1; i <= length + 1; i++) { // +1 fixes an off-by-1 error
-                    result += i + System.getProperty("line.separator");
-                }
-                return result;
-            }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
-                lineNumbers.setText(getText());
+                lineNumbers.adjustWidth();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                lineNumbers.setText(getText());
+                lineNumbers.adjustWidth();
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                lineNumbers.setText(getText());
+                lineNumbers.adjustWidth();
             }
 
         });
@@ -108,6 +100,32 @@ public class EditorPane extends JPanel {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+    }
+
+    private class LineNumberModelImpl implements LineNumberModel {
+
+        @Override
+
+        public int getNumberLines() {
+
+            return textArea.getLineCount();
+
+        }
+
+        @Override
+
+        public Rectangle getLineRect(int line) {
+
+            try {
+                return textArea.modelToView2D(textArea.getLineStartOffset(line)).getBounds();
+
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+                return new Rectangle();
+            }
+
+        }
+
     }
 
     /**

@@ -24,7 +24,7 @@ public class Simulator {
     private final Map<String, Integer> labels;
 
     // The delay in ms before the next instruction is read
-    private long delayMS = 20L;
+    private long delayMS = 50L;
 
     /**
      * Constructs a Simulator with the default specifications.
@@ -52,6 +52,15 @@ public class Simulator {
         this.delayMS = delay;
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
+    }
+
+    /**
+     * Changes simulation speed
+     *
+     * @param delay ammount of time in milliseconds to wait between instructions
+     */
+    public void setSimulationSpeed(long delay) {
+        delayMS = delay;
     }
 
     /**

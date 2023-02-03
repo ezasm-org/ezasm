@@ -29,7 +29,7 @@ public class Window {
     protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
-        this.simulationThread = new SimulationThread(this.simulator);
+        this.simulationThread = new SimulationThread(this.simulator, config.getSimSpeed());
         this.config = config;
         initialize();
     }
@@ -102,11 +102,12 @@ public class Window {
         case "Light":
             theme = Theme.Light;
         }
-        app.setBackground(theme.getBackground());
+        app.getContentPane().setBackground(theme.getBackground());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
         table.applyTheme(config, font, theme);
         ToolbarFactory.applyTheme(config, font, theme, toolbar);
         editor.applyTheme(config, font, theme);
+        simulator.setSimulationSpeed(config.getSimSpeed());
     }
 
     /**
