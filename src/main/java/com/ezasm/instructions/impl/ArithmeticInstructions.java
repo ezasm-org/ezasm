@@ -120,6 +120,18 @@ public class ArithmeticInstructions {
     }
 
     /**
+     * The standard xor operation.
+     *
+     * @param input1 the left-hand side of the xor operation.
+     * @param input2 the right-hand side of the xor operation.
+     * @param output the output of the operation.
+     */
+    @Instruction
+    public void xor(AbstractInput input1, AbstractInput input2, AbstractOutput output){
+        arithmetic((a, b) -> a ^ b, input1, input2, output);
+    }
+
+    /**
      * The standard not operation. Inverts all bits in the input.
      *
      * @param input  the input of the not operation.
@@ -155,6 +167,16 @@ public class ArithmeticInstructions {
     @Instruction
     public void srl(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
         arithmetic((a, b) -> a >> b, input1, input2, output);
+    }
+
+    /**
+     * The standard decrement operation. Adds one to the register's data.
+     *
+     * @param input the register to be modified.
+     */
+    @Instruction
+    public void dec(RegisterInput input) {
+        input.mutate(this.simulator, v -> Conversion.longToBytes(Conversion.bytesToLong(v) - 1));
     }
 
     /**
