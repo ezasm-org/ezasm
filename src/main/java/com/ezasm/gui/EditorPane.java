@@ -41,7 +41,7 @@ public class EditorPane extends JPanel {
                 String text = textArea.getText();
                 long length = text.chars().filter(newline -> newline == '\n').count();
                 String result = "";
-                for (int i = 1; i <= length + 2; i++) { // +1 fixes an off-by-1 error
+                for (int i = 1; i <= length + 1; i++) { // +1 fixes an off-by-1 error
                     result += i + System.getProperty("line.separator");
                 }
                 return result;
