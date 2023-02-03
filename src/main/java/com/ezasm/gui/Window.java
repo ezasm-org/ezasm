@@ -2,6 +2,8 @@ package com.ezasm.gui;
 
 import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
+import com.ezasm.Config;
+import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
@@ -17,16 +19,18 @@ public class Window {
     private final Simulator simulator;
     private final SimulationThread simulationThread;
 
+    private Config config;
     private JFrame app;
     private JToolBar toolbar;
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
 
-    protected Window(Simulator simulator) {
+    protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
-        this.simulationThread = new SimulationThread(this.simulator);
+        this.simulationThread = new SimulationThread(this.simulator, config.getSimSpeed());
+        this.config = config;
         initialize();
     }
 
@@ -45,9 +49,9 @@ public class Window {
      *
      * @param simulator the simulator to use.
      */
-    public static void instantiate(Simulator simulator) {
+    public static void instantiate(Simulator simulator, Config config) {
         if (instance == null)
-            new Window(simulator);
+            new Window(simulator, config);
     }
 
     /**
@@ -79,9 +83,26 @@ public class Window {
 
         ToolbarFactory.setButtonsEnabled(true);
 
+        applyConfiguration(config);
+
         app.validate();
         app.pack();
         app.setVisible(true);
+    }
+
+    public void applyConfiguration(Config config) {
+        Theme theme = switch (config.getTheme()) {
+            case "Dark" -> Theme.Dracula;
+            case "Purple" -> Theme.Purple;
+            case "Light" -> Theme.Light;
+            default -> Theme.Light;
+        };
+        app.getContentPane().setBackground(theme.getBackground());
+        Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
+        table.applyTheme(font, theme);
+        ToolbarFactory.applyTheme(font, theme, toolbar);
+        editor.applyTheme(font, theme);
+        simulator.setSimulationSpeed(config.getSimSpeed());
     }
 
     /**

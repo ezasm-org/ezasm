@@ -1,5 +1,6 @@
 package com.ezasm.simulation;
 
+import com.ezasm.Config;
 import com.ezasm.parsing.ParseException;
 
 import java.util.Scanner;
@@ -21,14 +22,14 @@ public class SimulationThread {
     /**
      * The sleep interval to wait before doing another action. Used in the pause busy-wait.
      */
-    public static final int SLEEP_INTERVAL = 50;
+    public static final int SLEEP_INTERVAL = 20;
 
     /**
      * Constructs a simulation thread based on the given simulator.
      *
      * @param simulator the simulator to act on.
      */
-    public SimulationThread(Simulator simulator) {
+    public SimulationThread(Simulator simulator, int speed) {
         this.simulator = simulator;
     }
 

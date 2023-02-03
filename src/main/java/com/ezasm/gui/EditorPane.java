@@ -1,22 +1,25 @@
 package com.ezasm.gui;
 
 import javax.swing.*;
-import javax.swing.text.Element;
+import javax.swing.text.BadLocationException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.undo.UndoManager;
+
+import com.ezasm.Theme;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- * The editor pane within the GUI. Allows the user to type code or edit loaded
- * code.
+ * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
-public class EditorPane extends JPanel {
+public class EditorPane extends JPanel implements IThemeable {
 
     private final JTextArea textArea;
-    private final JTextArea lineNumbers;
+    private final LineNumber lineNumbers;
+    private final LineNumberModelImpl model = new LineNumberModelImpl();
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
@@ -26,40 +29,27 @@ public class EditorPane extends JPanel {
      */
     public EditorPane() {
         super();
-        lineNumbers = new JTextArea("1");
-        lineNumbers.setBackground(Color.LIGHT_GRAY);
+
         textArea = new JTextArea();
-        textArea.setEditable(true);
-        textArea.setLineWrap(false);
-        textArea.setMinimumSize(MIN_SIZE);
-        textArea.setDisabledTextColor(Color.DARK_GRAY);
+        lineNumbers = new LineNumber(model);
+
         UndoManager manager = new UndoManager();
         textArea.getDocument().addUndoableEditListener(manager);
 
         textArea.getDocument().addDocumentListener(new DocumentListener() {
-            public String getText() {
-                Element root = textArea.getDocument().getDefaultRootElement();
-                int length = textArea.getDocument().getLength();
-                String result = "1" + System.getProperty("line.separator");
-                for (int i = 2; i <= root.getElementIndex(length) + 1; i++) { // +1 fixes an off-by-1 error
-                    result += i + System.getProperty("line.separator");
-                }
-                return result;
-            }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
-                lineNumbers.setText(getText());
+                lineNumbers.adjustWidth();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                lineNumbers.setText(getText());
+                lineNumbers.adjustWidth();
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                lineNumbers.setText(getText());
+                lineNumbers.adjustWidth();
             }
 
         });
@@ -108,6 +98,40 @@ public class EditorPane extends JPanel {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+    }
+
+    private class LineNumberModelImpl implements ILineNumberModel {
+        @Override
+        public int getNumberLines() {
+            return textArea.getLineCount();
+        }
+
+        @Override
+        public Rectangle getLineRect(int line) {
+            try {
+                return textArea.modelToView2D(textArea.getLineStartOffset(line)).getBounds();
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+                return new Rectangle();
+            }
+        }
+    }
+
+    /**
+     * Applies the proper theming to the editor area
+     */
+    public void applyTheme(Font font, Theme theme) {
+        textArea.setBackground(theme.getBackground());
+        textArea.setForeground(theme.getForeground());
+        textArea.setCaretColor(theme.getForeground());
+        lineNumbers.setBackground(theme.getCurrentline());
+        lineNumbers.setForeground(theme.getForeground().darker());
+        lineNumbers.setFont(font);
+        textArea.setFont(font);
+        textArea.setEditable(true);
+        textArea.setLineWrap(false);
+        textArea.setMinimumSize(MIN_SIZE);
+        textArea.setDisabledTextColor(Color.DARK_GRAY);
     }
 
     /**

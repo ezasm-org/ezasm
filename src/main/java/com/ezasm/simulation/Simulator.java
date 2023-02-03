@@ -24,7 +24,7 @@ public class Simulator {
     private final Map<String, Integer> labels;
 
     // The delay in ms before the next instruction is read
-    private long delayMS = 500L;
+    private long delayMS = 50L;
 
     /**
      * Constructs a Simulator with the default specifications.
@@ -44,13 +44,23 @@ public class Simulator {
      * @param wordSize   the size of words in bytes for the program.
      * @param memorySize the size of the memory in words for the program.
      */
-    public Simulator(int wordSize, int memorySize) {
+    public Simulator(int wordSize, int memorySize, long delay) {
         this.memory = new Memory(wordSize, memorySize);
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
+        this.delayMS = delay;
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
+    }
+
+    /**
+     * Changes the simulation speed.
+     *
+     * @param delay amount of time in milliseconds to wait between instructions.
+     */
+    public void setSimulationSpeed(long delay) {
+        delayMS = delay;
     }
 
     /**
@@ -62,8 +72,7 @@ public class Simulator {
     }
 
     /**
-     * Resets the contents of memory and registers as well as stored lines and
-     * labels.
+     * Resets the contents of memory and registers as well as stored lines and labels.
      */
     public void resetAll() {
         resetMemory();
