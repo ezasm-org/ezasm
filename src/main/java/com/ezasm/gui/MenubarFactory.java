@@ -124,8 +124,7 @@ public class MenubarFactory {
                 System.exit(0);
             }
             case CONFIG -> {
-                // TODO implement configuration
-                throw new RuntimeException("Unimplemented feature");
+                SettingsPopup.instantiate();
             }
             default -> {
                 System.err.printf("'%s' action is not yet defined\n", e.getActionCommand());

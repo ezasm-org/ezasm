@@ -1,5 +1,7 @@
 package com.ezasm.gui;
 
+import com.ezasm.Config;
+import com.ezasm.Theme;
 import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
@@ -9,7 +11,7 @@ import java.awt.*;
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
  */
-public class RegisterTable extends JPanel {
+public class RegisterTable extends JPanel implements IThemeable {
 
     private final JTable table;
     private final Registers registers;
@@ -39,6 +41,20 @@ public class RegisterTable extends JPanel {
     }
 
     /**
+     * Applies the proper theming to the editor area
+     */
+    public void applyTheme(Font font, Theme theme) {
+        this.setBackground(theme.getBackground());
+        table.setRowHeight(font.getSize() + 3);
+        table.getTableHeader().setOpaque(false);
+        table.getTableHeader().setBackground(theme.getCurrentline());
+        table.getTableHeader().setForeground(theme.getForeground());
+        table.setBackground(theme.getBackground());
+        table.setForeground(theme.getForeground());
+        table.setFont(font);
+    }
+
+    /**
      * Forcibly refreshes the display of the table
      */
     public void update() {
@@ -46,8 +62,7 @@ public class RegisterTable extends JPanel {
     }
 
     /**
-     * Helper model class to inform the TableModel of how to construct and read from
-     * itself.
+     * Helper model class to inform the TableModel of how to construct and read from itself.
      */
     private class RegistersTableModel extends AbstractTableModel {
 
