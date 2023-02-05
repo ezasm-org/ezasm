@@ -6,6 +6,7 @@ import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.impl.ArithmeticInstructions;
+import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.Line;
 
 import java.lang.reflect.Constructor;
@@ -26,6 +27,7 @@ public class InstructionDispatcher {
     static {
         // load the instructions
         registerInstructions(ArithmeticInstructions.class);
+        registerInstructions(TerminalInstructions.class);
     }
 
     /**
