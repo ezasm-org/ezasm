@@ -6,16 +6,13 @@ import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 
-import java.lang.reflect.Method;
-
 /**
- * The tokenized representation of a line. Consists of: one instruction token representing the
- * instruction, one register token representing where the result of the operation will be stored,
- * and any number of "right-hand side" tokens (e.g. any tokens which can represent a value).
+ * The representation of a line of code. Consists of an Instruction object and the arguments
+ * thereof.
  */
 public class Line {
 
-    private final InstructionToken instruction;
+    private final Instruction instruction;
     private final IAbstractTarget[] arguments;
 
     /**
@@ -31,16 +28,15 @@ public class Line {
             throw new ParseException("Error parsing instruction '" + instruction + "'");
         }
 
-        Method instructionTarget = InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget();
+        this.instruction = new Instruction(instruction,
+                InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget());
+        this.arguments = new IAbstractTarget[arguments.length];
 
-        if (instructionTarget.getParameterCount() != arguments.length) {
+        if (this.instruction.target().getParameterCount() != arguments.length) {
             throw new ParseException(
                     String.format("Incorrect number of arguments for instruction '%s': expected %d but got %d",
-                            instruction, instructionTarget.getParameterCount(), arguments.length));
+                            instruction, this.instruction.target().getParameterCount(), arguments.length));
         }
-
-        this.instruction = new InstructionToken(instruction);
-        this.arguments = new IAbstractTarget[arguments.length];
 
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
@@ -57,9 +53,9 @@ public class Line {
             }
 
             // Ensure that the given token is of the required type
-            if (!instructionTarget.getParameterTypes()[i].isInstance(this.arguments[i])) {
+            if (!this.instruction.target().getParameterTypes()[i].isInstance(this.arguments[i])) {
                 throw new ParseException("Expected token of type '"
-                        + instructionTarget.getParameterTypes()[i].getSimpleName().replace("IAbstract", "")
+                        + this.instruction.target().getParameterTypes()[i].getSimpleName().replace("IAbstract", "")
                         + "' but got '" + this.arguments[i].getClass().getSimpleName() + "' instead");
             }
 
@@ -71,7 +67,7 @@ public class Line {
      *
      * @return the instruction token.
      */
-    public InstructionToken getInstruction() {
+    public Instruction getInstruction() {
         return instruction;
     }
 
@@ -91,6 +87,6 @@ public class Line {
      */
     @Override
     public String toString() {
-        return instruction.getText();
+        return instruction.text();
     }
 }
