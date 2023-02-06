@@ -120,7 +120,7 @@ public class InstructionDispatcher {
         try {
             Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(ISimulator.class);
             Object inst = constructor.newInstance(this.simulator);
-            this.instructionHandlerInstances.put(instruction.getParent(), inst);
+            this.instructionHandlerInstances.put(instruction.getParent(), this.simulator);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
                 | IllegalAccessException e) {
             throw new RuntimeException(e);

@@ -1,8 +1,11 @@
 package com.ezasm.simulation;
 
+import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
+import com.ezasm.parsing.ParseException;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface ISimulator {
 
@@ -16,13 +19,13 @@ public interface ISimulator {
 
     void addLine(Line line);
 
-    void addLines(Collection<Line> lines);
+    void addLines(Collection<Line> lines, Map<String, Integer> labels);
 
-    void runLine(Line line);
+    void runLine(Line line) throws InstructionDispatchException;
 
-    void executeProgramFromPC();
+    void executeProgramFromPC() throws InstructionDispatchException;
 
-    void executeLineFromPC();
+    void executeLineFromPC() throws InstructionDispatchException;
 
     Registers getRegisters();
 

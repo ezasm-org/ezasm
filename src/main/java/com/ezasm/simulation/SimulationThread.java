@@ -1,7 +1,12 @@
 package com.ezasm.simulation;
 
+import com.ezasm.instructions.exception.InstructionDispatchException;
+import com.ezasm.parsing.Lexer;
+import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -14,7 +19,7 @@ public class SimulationThread {
 
     private Thread worker;
     private Thread callbackWorker;
-    private final Simulator simulator;
+    private final ISimulator simulator;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean paused = new AtomicBoolean(false);
 
@@ -28,7 +33,7 @@ public class SimulationThread {
      *
      * @param simulator the simulator to act on.
      */
-    public SimulationThread(Simulator simulator) {
+    public SimulationThread(ISimulator simulator) {
         this.simulator = simulator;
     }
 
@@ -112,8 +117,8 @@ public class SimulationThread {
      */
     private void runnableRunOneLine() {
         try {
-            simulator.runOneLine();
-        } catch (ParseException e) {
+            simulator.executeLineFromPC();
+        } catch (InstructionDispatchException e) {
             System.err.println(e.getMessage());
         }
     }
@@ -123,8 +128,8 @@ public class SimulationThread {
      */
     private void runnableRunLinesFromPC() {
         try {
-            simulator.executeProgramFromPC(paused);
-        } catch (ParseException e) {
+            simulator.executeProgramFromPC();
+        } catch (InstructionDispatchException e) {
             System.err.println(e.getMessage());
         }
     }
@@ -134,11 +139,15 @@ public class SimulationThread {
      */
     private void runnableRunFromCLI() {
         Scanner scanner = new Scanner(System.in);
+        Map<String, Integer> labels = new HashMap<>();
+        int lineNumber = 0;
+
         System.out.print("> ");
         while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
-                simulator.runLine(scanner.nextLine());
-            } catch (ParseException e) {
+                Line line = Lexer.parseLine(scanner.nextLine(), labels, lineNumber);
+                simulator.runLine(line);
+            } catch (ParseException | InstructionDispatchException e) {
                 System.err.println(e.getMessage());
                 System.err.flush();
                 try {

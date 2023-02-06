@@ -1,8 +1,13 @@
 package com.ezasm;
 
+import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A representation of an instance in the command line interface. Stores the current simulation and
@@ -10,7 +15,7 @@ import com.ezasm.simulation.Simulator;
  */
 public class CommandLineInterface {
 
-    private final Simulator simulator;
+    private final ISimulator simulator;
     private final SimulationThread simulationThread;
     private final boolean cli;
 
@@ -32,12 +37,13 @@ public class CommandLineInterface {
      * @param simulator the given Simulator.
      * @param file      the file to read code from.
      */
-    public CommandLineInterface(Simulator simulator, String file) {
+    public CommandLineInterface(ISimulator simulator, String file) {
         this.simulator = simulator;
         this.cli = false;
         this.simulationThread = new SimulationThread(simulator);
         try {
-            this.simulator.addLines(file);
+            Map<String, Integer> labels = new HashMap<>();
+            this.simulator.addLines(Lexer.parseLines(file, labels, 0), labels);
         } catch (ParseException e) {
             System.err.println(e.getMessage());
             System.exit(1);

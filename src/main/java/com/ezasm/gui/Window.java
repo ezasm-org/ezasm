@@ -1,11 +1,14 @@
 package com.ezasm.gui;
 
+import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.SimulationThread;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI
@@ -14,7 +17,7 @@ import java.awt.*;
 public class Window {
 
     private static Window instance;
-    private final Simulator simulator;
+    private final ISimulator simulator;
     private final SimulationThread simulationThread;
 
     private JFrame app;
@@ -23,7 +26,7 @@ public class Window {
     private EditorPane editor;
     private RegisterTable table;
 
-    protected Window(Simulator simulator) {
+    protected Window(ISimulator simulator) {
         instance = this;
         this.simulator = simulator;
         this.simulationThread = new SimulationThread(this.simulator);
@@ -45,7 +48,7 @@ public class Window {
      *
      * @param simulator the simulator to use.
      */
-    public static void instantiate(Simulator simulator) {
+    public static void instantiate(ISimulator simulator) {
         if (instance == null)
             new Window(simulator);
     }
@@ -89,7 +92,7 @@ public class Window {
      *
      * @return the current simulator in use.
      */
-    public Simulator getSimulator() {
+    public ISimulator getSimulator() {
         return simulator;
     }
 
@@ -110,7 +113,8 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         updateAll();
-        simulator.addLines(editor.getText());
+        Map<String, Integer> labels = new HashMap<>();
+        simulator.addLines(Lexer.parseLines(editor.getText(), labels, 0), labels);
     }
 
     /**

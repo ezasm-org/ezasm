@@ -173,7 +173,7 @@ public class Lexer {
      * @return the list of valid lines of code found.
      * @throws ParseException if any line could not be properly parsed.
      */
-    public static List<Line> parseLines(String lines, Map<String, Integer> labels) throws ParseException {
+    public static List<Line> parseLines(String lines, Map<String, Integer> labels, int startingLine) throws ParseException {
         List<String> linesRead = new ArrayList<>();
         List<Line> linesLexed = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
@@ -193,8 +193,8 @@ public class Lexer {
             }
         }
 
-        for (int i = 0; i < linesRead.size(); ++i) {
-            Line lexed = parseLine(linesRead.get(i), labels, i);
+        for (String s : linesRead) {
+            Line lexed = parseLine(s, labels, linesLexed.size() + startingLine);
             if (lexed != null) {
                 linesLexed.add(lexed);
             }

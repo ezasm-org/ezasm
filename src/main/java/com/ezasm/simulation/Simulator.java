@@ -4,7 +4,6 @@ import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
-import com.ezasm.parsing.ParseException;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -105,62 +104,30 @@ public class Simulator implements ISimulator {
      *
      * @param content the collection of Lines to add to the program.
      */
-    public void addLines(Collection<Line> content) {
+    public void addLines(Collection<Line> content, Map<String, Integer> labels) {
         lines.addAll(content);
+        this.labels.putAll(labels);
     }
 
     /**
      * Executes the given line on the simulator.
      *
      * @param line the line to execute.
-     * @throws ParseException if there is an error executing the line.
+     * @throws InstructionDispatchException if there is an error executing the line.
      */
-    public void runLine(Line line) throws ParseException {
+    public void runLine(Line line) throws InstructionDispatchException {
         if (line == null)
             return;
-        try {
-            lines.add(line);
-            instructionDispatcher.execute(line);
-            Window.updateAll();
-        } catch (InstructionDispatchException e) {
-            throw new ParseException(e.getMessage());
-        }
-    }
-
-    /**
-     * Runs the program to completion or error state from the current state of the PC. Allows for
-     * pausing of execution with the paused variable.
-     *
-     * @param paused an AtomicBoolean which allows for control over whether the execution of this is
-     *               paused.
-     * @throws ParseException if there is an error executing any line.
-     */
-    public void executeProgramFromPC(AtomicBoolean paused) throws ParseException {
-        for (int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
-            while (paused.get()) {
-                try {
-                    Thread.sleep(SimulationThread.SLEEP_INTERVAL);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-            i = validatePC();
-            if (isDone())
-                return;
-            i = executeLineInLoop(i);
-            try {
-                Thread.sleep(delayMS);
-            } catch (InterruptedException e) {
-                return;
-            }
-        }
+        lines.add(line);
+        instructionDispatcher.execute(line);
+        Window.updateAll();
     }
 
     /**
      * Runs the program to completion or error state from the current state of the PC.
      *
      */
-    public void executeProgramFromPC() throws ParseException {
+    public void executeProgramFromPC() throws InstructionDispatchException {
         for (int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
             i = executeLineInLoop(i);
             try {
@@ -174,9 +141,9 @@ public class Simulator implements ISimulator {
     /**
      * Runs a single line of code from the current PC.
      *
-     * @throws ParseException if there is an error executing the line.
+     * @throws InstructionDispatchException if there is an error executing the line.
      */
-    public void executeLineFromPC() throws ParseException {
+    public void executeLineFromPC() throws InstructionDispatchException {
         int lineNumber = validatePC();
         runLine(lines.get(lineNumber));
         int currentSP = validatePC();
@@ -192,9 +159,9 @@ public class Simulator implements ISimulator {
      *
      * @param i the current PC value.
      * @return the new PC value.
-     * @throws ParseException if an error occurred within execution.
+     * @throws InstructionDispatchException if an error occurred within execution.
      */
-    private int executeLineInLoop(int i) throws ParseException {
+    private int executeLineInLoop(int i) throws InstructionDispatchException {
         runLine(lines.get(i));
         int currentPC = validatePC();
         if (currentPC == i) {
@@ -219,26 +186,6 @@ public class Simulator implements ISimulator {
             throw new RuntimeException();
         }
         return (int) number;
-    }
-
-    /**
-     * Gets the register of the given register reference.
-     *
-     * @param register the register's reference number.
-     * @return the register object corresponding to the register reference number.
-     */
-    public Register getRegister(int register) {
-        return registers.getRegister(register);
-    }
-
-    /**
-     * Gets the register of the given name.
-     *
-     * @param register the register's name.
-     * @return the register object corresponding to the register name.
-     */
-    public Register getRegister(String register) {
-        return registers.getRegister(register);
     }
 
     /**

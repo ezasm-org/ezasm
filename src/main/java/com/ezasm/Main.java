@@ -22,19 +22,4 @@ public class Main {
         handleArgs(args);
     }
 
-    /**
-     * Tests reading a program from a given file.
-     */
-    private static void testFile() {
-        try {
-            Simulator sim = new Simulator();
-            String content = FileIO.readFile(new File("res/example.ez"));
-            sim.addLines(content);
-            sim.executeProgramFromPC();
-            System.out.println(sim.getRegisters().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

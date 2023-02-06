@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
@@ -126,9 +127,9 @@ public class ToolbarFactory {
                 return;
             }
             try {
-                Window.getInstance().getSimulator().runOneLine();
+                Window.getInstance().getSimulator().executeLineFromPC();
                 resetButton.setEnabled(true);
-            } catch (ParseException e) {
+            } catch (InstructionDispatchException e) {
                 Window.getInstance().handleParseException(e);
                 System.out.println("** Program terminated abnormally **");
             }
