@@ -5,7 +5,6 @@ import java.util.Scanner;
 import com.ezasm.Conversion;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.Simulator;
 
@@ -14,9 +13,11 @@ import com.ezasm.simulation.Simulator;
  */
 public class TerminalInstructions {
     private final Simulator simulator;
+    private Scanner stdin; // TODO figure out a good way to close stdin when the whole app closes
 
     public TerminalInstructions(Simulator sim) {
         simulator = sim;
+        stdin = new Scanner(System.in);
     }
 
     @Instruction
@@ -52,35 +53,28 @@ public class TerminalInstructions {
 
     @Instruction
     public void readi(IAbstractOutput output) {
-        Scanner stdin = new Scanner(System.in);
         byte[] result = Conversion.longToBytes(stdin.nextLong());
         output.set(simulator, result);
-        stdin.close();
     }
 
     @Instruction
     public void readf(IAbstractOutput output) {
-        Scanner stdin = new Scanner(System.in);
         byte[] result = Conversion.doubleToBytes(stdin.nextDouble());
         output.set(simulator, result);
-        stdin.close();
     }
 
     @Instruction
     public void readc(IAbstractOutput output) {
-        Scanner stdin = new Scanner(System.in);
-        byte[] result = Conversion.longToBytes(stdin.nextByte());
+        char c = stdin.next().charAt(0);
+        byte[] result = Conversion.longToBytes(c);
         output.set(simulator, result);
-        stdin.close();
     }
 
     @Instruction
     public void reads(IAbstractInput input1, IAbstractInput input2) {
-        Scanner stdin = new Scanner(System.in);
         int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
         String result = stdin.next();
         int address = (int) Conversion.bytesToLong(input1.get(simulator));
         simulator.getMemory().writeString(address, result, maxSize);
-        stdin.close();
     }
 }
