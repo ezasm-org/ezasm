@@ -155,9 +155,9 @@ public class Lexer {
                     .format("Too few tokens found on line %d: '%s' is likely an incomplete statement", number, line));
         }
 
-        String[] args = Arrays.copyOfRange(tokens, 2, tokens.length);
+        String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
         try {
-            return new Line(tokens[0], tokens[1], args);
+            return new Line(tokens[0], args);
         } catch (ParseException e) {
             throw new ParseException(String.format("%s on line %d", e.getMessage(), number + 1));
         }

@@ -1,5 +1,13 @@
 package com.ezasm.parsing;
 
+import com.ezasm.Conversion;
+import com.ezasm.instructions.InstructionDispatcher;
+import com.ezasm.instructions.targets.IAbstractTarget;
+import com.ezasm.instructions.targets.input.ImmediateInput;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+
+import java.lang.reflect.Method;
+
 /**
  * The tokenized representation of a line. Consists of: one instruction token representing the
  * instruction, one register token representing where the result of the operation will be stored,
@@ -8,36 +16,37 @@ package com.ezasm.parsing;
 public class Line {
 
     private final InstructionToken instruction;
-    private final RegisterToken storeRegister;
-    private final RightHandToken[] arguments;
+    private final IAbstractTarget[] arguments;
 
     /**
      * Creates and validates a line based on the given tokens.
      *
      * @param instruction   the String representing the instruction.
-     * @param storeRegister the String representing the register to store into for this operation.
      * @param arguments     the variable sized arguments token String list.
-     * @throws ParseException if any of the given String tokens cannot be parsed into their
-     *                        corresponding types.
+     * @throws ParseException if any of the given String tokens cannot be parsed into their corresponding types.
      */
-    public Line(String instruction, String storeRegister, String[] arguments) throws ParseException {
-        if (!Lexer.isRegister(storeRegister)) {
-            throw new ParseException("Error parsing register '" + storeRegister + "'");
-        }
+    public Line(String instruction, String[] arguments) throws ParseException {
         if (!Lexer.isInstruction(instruction)) {
             throw new ParseException("Error parsing instruction '" + instruction + "'");
         }
 
+        Method instructionTarget = InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget();
+
+        if (instructionTarget.getParameterCount() != arguments.length) {
+            throw new ParseException(String.format(
+                    "Incorrect number of arguments for instruction '%s': expected %d but got %d", instruction,
+                    instructionTarget.getParameterCount(), arguments.length));
+        }
+
         this.instruction = new InstructionToken(instruction);
-        this.storeRegister = new RegisterToken(storeRegister);
-        this.arguments = new RightHandToken[arguments.length];
+        this.arguments = new IAbstractTarget[arguments.length];
 
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
             if (Lexer.isImmediate(arguments[i])) {
-                this.arguments[i] = new ImmediateToken(arguments[i]);
+                this.arguments[i] = new ImmediateInput(Conversion.longToBytes(Long.parseLong(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
-                this.arguments[i] = new RegisterToken(arguments[i]);
+                this.arguments[i] = new RegisterInputOutput(arguments[i]);
                 // Code for parsing a dereference
                 // } else if(Lexer.isDereference(arguments[i])) {
                 // this.arguments[i] = new DereferenceToken(arguments[i]);
@@ -45,6 +54,12 @@ public class Line {
                 // The argument did not match any of the given types
                 throw new ParseException("Error parsing token '" + arguments[i] + "'");
             }
+            if (! instructionTarget.getParameterTypes()[i].isInstance(this.arguments[i])) {
+                throw new ParseException("Expected token of type '" +
+                        instructionTarget.getParameterTypes()[i].getSimpleName().replace("IAbstract", "")
+                        + "' but got '" + this.arguments[i].getClass().getSimpleName() + "' instead");
+            }
+
         }
     }
 
@@ -58,20 +73,11 @@ public class Line {
     }
 
     /**
-     * Gets the store register token of this line.
-     *
-     * @return the store register token.
-     */
-    public RegisterToken getStoreRegister() {
-        return storeRegister;
-    }
-
-    /**
      * Gets the "right-hand side" tokens of this line.
      *
      * @return the "right-hand side" tokens.
      */
-    public RightHandToken[] getArguments() {
+    public IAbstractTarget[] getArguments() {
         return arguments;
     }
 
@@ -82,16 +88,6 @@ public class Line {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(instruction.getText()).append(' ').append(storeRegister.getText()).append(' ');
-        for (int i = 0; i < arguments.length - 1; ++i) {
-            sb.append(arguments[i].getText()).append(' ');
-        }
-        if (arguments.length > 0) {
-            sb.append(arguments[arguments.length - 1].getText());
-        }
-
-        return sb.toString();
+        return instruction.getText();
     }
 }

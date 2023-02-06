@@ -179,6 +179,8 @@ public class Registers {
      * @return true if the register is valid, false otherwise.
      */
     public static boolean isRegister(String register) {
+        if (register == null || register.length() < 1) return false;
+        if(register.charAt(0) == '$') register = register.substring(1);
         if (registerByString.containsKey(register.toLowerCase()))
             return true;
         try {
@@ -206,6 +208,7 @@ public class Registers {
      * @return the register number found.
      */
     public static int getRegisterNumber(String register) {
+        if(register.charAt(0) == '$') register = register.substring(1);
         register = register.toLowerCase();
         if (!isRegister(register)) {
             // TODO add appropriate exception

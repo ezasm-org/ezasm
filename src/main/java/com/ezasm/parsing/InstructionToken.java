@@ -7,7 +7,7 @@ public class InstructionToken extends Token {
 
     /**
      * Constructs the token based on the given text. Assumes the text has already been validated to be
-     * an instruciton.
+     * an instruction.
      *
      * @param text the instruction text.
      */
