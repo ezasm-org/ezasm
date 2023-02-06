@@ -159,7 +159,7 @@ public class Lexer {
         try {
             return new Line(tokens[0], args);
         } catch (ParseException e) {
-            throw new ParseException(String.format("%s on line %d", e.getMessage(), number + 1));
+            throw new ParseException(String.format("Line %d: %s",number + 1, e.getMessage()));
         }
     }
 
