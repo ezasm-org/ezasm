@@ -152,7 +152,7 @@ public class Lexer {
         } else if (tokens.length < 2) {
             // ERROR too few tokens to be a line
             throw new ParseException(String
-                    .format("Too few tokens found on line %d: '%s' is likely an incomplete statement", number, line));
+                    .format("Line %d: too few tokens found '%s' is likely an incomplete statement", number, line));
         }
 
         String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
