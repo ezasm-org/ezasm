@@ -127,7 +127,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      */
     @Instruction
-    public void xor(AbstractInput input1, AbstractInput input2, AbstractOutput output){
+    public void xor(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
         arithmetic((a, b) -> a ^ b, input1, input2, output);
     }
 
