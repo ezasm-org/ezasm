@@ -139,9 +139,9 @@ public class InstructionDispatcher {
      *                                      (not yet implemented).
      */
     public void execute(Line line) throws InstructionDispatchException {
-        DispatchInstruction dispatch = instructions.get(line.getInstruction().getText());
+        DispatchInstruction dispatch = instructions.get(line.getInstruction().text());
         if (dispatch == null)
-            throw new IllegalInstructionException(line.getInstruction().getText());
+            throw new IllegalInstructionException(line.getInstruction().text());
 
         Object object = this.instructionHandlerInstances.get(dispatch.getParent());
         // TODO assume loaded for now
