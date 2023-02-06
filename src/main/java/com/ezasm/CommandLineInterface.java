@@ -28,7 +28,7 @@ public class CommandLineInterface {
     public CommandLineInterface(Simulator simulator) {
         this.simulator = simulator;
         this.cli = true;
-        this.simulationThread = new SimulationThread(simulator);
+        this.simulationThread = new SimulationThread(simulator, 250);
     }
 
     /**
@@ -40,7 +40,7 @@ public class CommandLineInterface {
     public CommandLineInterface(ISimulator simulator, String file) {
         this.simulator = simulator;
         this.cli = false;
-        this.simulationThread = new SimulationThread(simulator);
+        this.simulationThread = new SimulationThread(simulator, 250);
         try {
             Map<String, Integer> labels = new HashMap<>();
             this.simulator.addLines(Lexer.parseLines(file, labels, 0), labels);
@@ -51,8 +51,7 @@ public class CommandLineInterface {
     }
 
     /**
-     * Begins the simulation. Starts reading CLI input or reads and executes from
-     * the given file.
+     * Begins the simulation. Starts reading CLI input or reads and executes from the given file.
      */
     public void startSimulation() {
         if (cli) {

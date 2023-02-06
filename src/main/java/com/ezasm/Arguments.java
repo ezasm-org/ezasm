@@ -8,8 +8,7 @@ import org.apache.commons.cli.*;
 import javax.swing.*;
 
 /**
- * Methods to handle the program arguments and begin the program
- * correspondingly.
+ * Methods to handle the program arguments and begin the program correspondingly.
  */
 public class Arguments {
 
@@ -19,6 +18,7 @@ public class Arguments {
      * @param args the program arguments.
      */
     public static void handleArgs(String[] args) {
+        Config config = new Config();
         Options options = new Options();
 
         Option windowlessOption = new Option("w", "windowless", false,
@@ -72,7 +72,7 @@ public class Arguments {
             wordSize = Memory.DEFAULT_WORD_SIZE;
         }
 
-        Simulator sim = new Simulator(wordSize, memorySize);
+        Simulator sim = new Simulator(wordSize, memorySize, config.getSimSpeed());
         String filepath = "";
         if (commandLine.hasOption(fileOption)) {
             filepath = commandLine.getOptionValue(fileOption);
@@ -88,7 +88,7 @@ public class Arguments {
             cli.startSimulation();
         } else {
             SwingUtilities.invokeLater(() -> {
-                Window.instantiate(sim);
+                Window.instantiate(sim, config);
             });
         }
     }

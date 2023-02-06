@@ -3,6 +3,7 @@ package com.ezasm.simulation;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
+import com.ezasm.Config;
 import com.ezasm.parsing.ParseException;
 
 import java.util.HashMap;
@@ -26,14 +27,15 @@ public class SimulationThread {
     /**
      * The sleep interval to wait before doing another action. Used in the pause busy-wait.
      */
-    public static final int SLEEP_INTERVAL = 50;
+    public static final int SLEEP_INTERVAL = 20;
 
     /**
      * Constructs a simulation thread based on the given simulator.
      *
      * @param simulator the simulator to act on.
+     * @param speed the delay between execution steps
      */
-    public SimulationThread(ISimulator simulator) {
+    public SimulationThread(ISimulator simulator, int speed) {
         this.simulator = simulator;
     }
 

@@ -1,24 +1,34 @@
-package com.ezasm.instructions.targets.input;
+package com.ezasm.instructions.targets.inputoutput;
 
 import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Registers;
 
 import java.util.Arrays;
 import java.util.function.Function;
 
 /**
- * The implementation of a register to be used as an input.
+ * The implementation of a register to be used as an output.
  */
-public class RegisterInput extends AbstractInput {
+public class RegisterInputOutput implements IAbstractInputOutput {
 
     private final int register;
 
     /**
-     * Constructs the input based on the register reference number.
+     * Construct the output based on the register reference number.
      *
      * @param register the register reference number.
      */
-    public RegisterInput(int register) {
+    public RegisterInputOutput(int register) {
         this.register = register;
+    }
+
+    /**
+     * Construct the output based on the register reference string.
+     *
+     * @param register the register reference string.
+     */
+    public RegisterInputOutput(String register) {
+        this.register = Registers.getRegisterNumber(register);
     }
 
     /**
@@ -31,6 +41,17 @@ public class RegisterInput extends AbstractInput {
     public byte[] get(ISimulator simulator) {
         byte[] val = simulator.getRegisters().getRegister(register).getBytes();
         return Arrays.copyOf(val, val.length);
+    }
+
+    /**
+     * Sets the value stored within the register.
+     *
+     * @param simulator the program simulator.
+     * @param value     the value to set.
+     */
+    @Override
+    public void set(ISimulator simulator, byte[] value) {
+        simulator.getRegisters().getRegister(register).setBytes(value);
     }
 
     /**

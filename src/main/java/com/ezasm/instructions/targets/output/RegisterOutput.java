@@ -5,7 +5,7 @@ import com.ezasm.simulation.ISimulator;
 /**
  * The implementation of a register to be used as an output.
  */
-public class RegisterOutput extends AbstractOutput {
+public class RegisterOutput implements IAbstractOutput {
 
     private final int register;
 
