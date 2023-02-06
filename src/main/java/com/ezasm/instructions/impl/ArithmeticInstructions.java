@@ -4,10 +4,9 @@ import com.ezasm.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
-import com.ezasm.instructions.targets.input.ImmediateInput;
 
 import java.util.function.BinaryOperator;
 
@@ -16,14 +15,14 @@ import java.util.function.BinaryOperator;
  */
 public class ArithmeticInstructions {
 
-    private final Simulator simulator;
+    private final ISimulator simulator;
 
     /**
      * Some instructions require access to the Simulator directly, so that is provided.
      *
      * @param simulator the provided Simulator.
      */
-    public ArithmeticInstructions(Simulator simulator) {
+    public ArithmeticInstructions(ISimulator simulator) {
         this.simulator = simulator;
     }
 

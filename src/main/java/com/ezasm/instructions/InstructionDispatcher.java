@@ -38,7 +38,7 @@ public class InstructionDispatcher {
      */
     public static void registerInstructions(Class<?> clazz) {
         try {
-            clazz.getDeclaredConstructor(Simulator.class);
+            clazz.getDeclaredConstructor(ISimulator.class);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -118,7 +118,7 @@ public class InstructionDispatcher {
         try {
             Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(ISimulator.class);
             Object inst = constructor.newInstance(this.simulator);
-            this.instructionHandlerInstances.put(instruction.getParent(), this.simulator);
+            this.instructionHandlerInstances.put(instruction.getParent(), inst);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
                 | IllegalAccessException e) {
             throw new RuntimeException(e);
