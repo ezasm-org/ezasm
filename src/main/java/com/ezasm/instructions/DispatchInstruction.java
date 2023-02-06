@@ -48,9 +48,11 @@ public class DispatchInstruction {
     }
 
     /**
-     * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound method).
+     * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound
+     * method).
      *
-     * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#getParent()}.
+     * @param parent the parent instruction handler. An instance of
+     *               {@link DispatchInstruction#getParent()}.
      * @param line   the parsed line to interpret.
      */
     public void invoke(Object parent, Line line) {

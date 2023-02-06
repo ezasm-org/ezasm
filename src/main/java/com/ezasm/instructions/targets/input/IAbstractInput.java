@@ -4,7 +4,8 @@ import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.simulation.Simulator;
 
 /**
- * The abstract form of an input to an operation. Requires implementing a "get" operation to serve as the input.
+ * The abstract form of an input to an operation. Requires implementing a "get" operation to serve
+ * as the input.
  */
 public interface IAbstractInput extends IAbstractTarget {
 

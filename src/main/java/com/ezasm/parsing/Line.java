@@ -21,9 +21,10 @@ public class Line {
     /**
      * Creates and validates a line based on the given tokens.
      *
-     * @param instruction   the String representing the instruction.
-     * @param arguments     the variable sized arguments token String list.
-     * @throws ParseException if any of the given String tokens cannot be parsed into their corresponding types.
+     * @param instruction the String representing the instruction.
+     * @param arguments   the variable sized arguments token String list.
+     * @throws ParseException if any of the given String tokens cannot be parsed into their
+     *                        corresponding types.
      */
     public Line(String instruction, String[] arguments) throws ParseException {
         if (!Lexer.isInstruction(instruction)) {
@@ -33,9 +34,9 @@ public class Line {
         Method instructionTarget = InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget();
 
         if (instructionTarget.getParameterCount() != arguments.length) {
-            throw new ParseException(String.format(
-                    "Incorrect number of arguments for instruction '%s': expected %d but got %d", instruction,
-                    instructionTarget.getParameterCount(), arguments.length));
+            throw new ParseException(
+                    String.format("Incorrect number of arguments for instruction '%s': expected %d but got %d",
+                            instruction, instructionTarget.getParameterCount(), arguments.length));
         }
 
         this.instruction = new InstructionToken(instruction);
@@ -54,9 +55,11 @@ public class Line {
                 // The argument did not match any of the given types
                 throw new ParseException("Error parsing token '" + arguments[i] + "'");
             }
-            if (! instructionTarget.getParameterTypes()[i].isInstance(this.arguments[i])) {
-                throw new ParseException("Expected token of type '" +
-                        instructionTarget.getParameterTypes()[i].getSimpleName().replace("IAbstract", "")
+
+            // Ensure that the given token is of the required type
+            if (!instructionTarget.getParameterTypes()[i].isInstance(this.arguments[i])) {
+                throw new ParseException("Expected token of type '"
+                        + instructionTarget.getParameterTypes()[i].getSimpleName().replace("IAbstract", "")
                         + "' but got '" + this.arguments[i].getClass().getSimpleName() + "' instead");
             }
 

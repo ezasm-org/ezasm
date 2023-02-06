@@ -4,7 +4,8 @@ import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.simulation.Simulator;
 
 /**
- * The abstract form of an input to an operation. Requires implementing a "set" operation to serve as the output.
+ * The abstract form of an input to an operation. Requires implementing a "set" operation to serve
+ * as the output.
  */
 public interface IAbstractOutput extends IAbstractTarget {
 

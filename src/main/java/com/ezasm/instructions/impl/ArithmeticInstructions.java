@@ -37,7 +37,7 @@ public class ArithmeticInstructions {
      * @param input2 the right-hand side of the operation.
      */
     private void arithmetic(BinaryOperator<Long> op, IAbstractOutput output, IAbstractInput input1,
-                            IAbstractInput input2) {
+            IAbstractInput input2) {
 
         long res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));
@@ -135,6 +135,7 @@ public class ArithmeticInstructions {
 
     /**
      * The standard "shift left logical" operation.
+     *
      * @param output the output of the operation.
      * @param input1 the left-hand side of the sll operation.
      * @param input2 the right-hand side of the sll operation.
@@ -170,7 +171,7 @@ public class ArithmeticInstructions {
      * The standard increment operation. Adds one to the register's data.
      *
      * @param output the output register of the increment.
-     * @param input the input of the increment.
+     * @param input  the input of the increment.
      */
     @Instruction
     public void inc(IAbstractOutput output, IAbstractInput input) {
