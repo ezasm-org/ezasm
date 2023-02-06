@@ -8,7 +8,6 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.instructions.targets.input.ImmediateInput;
-import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 
 import java.util.function.BinaryOperator;
 
@@ -127,8 +126,8 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      */
     @Instruction
-    public void xor(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic((a, b) -> a ^ b, input1, input2, output);
+    public void xor(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a ^ b, output, input1, input2);
     }
 
     /**
@@ -170,13 +169,13 @@ public class ArithmeticInstructions {
     }
 
     /**
-     * The standard decrement operation. Adds one to the register's data.
+     * The standard decrement operation. Subtracts one to the register's data.
      *
      * @param input the register to be modified.
      */
     @Instruction
-    public void dec(RegisterInput input) {
-        input.mutate(this.simulator, v -> Conversion.longToBytes(Conversion.bytesToLong(v) - 1));
+    public void dec(IAbstractInputOutput input) {
+        input.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) - 1));
     }
 
     /**
