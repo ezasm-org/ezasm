@@ -1,14 +1,6 @@
 package com.ezasm.instructions;
 
-import com.ezasm.Conversion;
-import com.ezasm.instructions.targets.input.ImmediateInput;
-import com.ezasm.instructions.targets.input.RegisterInput;
-import com.ezasm.instructions.targets.output.RegisterOutput;
-import com.ezasm.parsing.*;
-import com.ezasm.parsing.ImmediateToken;
 import com.ezasm.parsing.Line;
-import com.ezasm.parsing.RegisterToken;
-import com.ezasm.parsing.RightHandToken;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -51,6 +43,10 @@ public class DispatchInstruction {
         return parent;
     }
 
+    public Method getInvocationTarget() {
+        return invocationTarget;
+    }
+
     /**
      * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound
      * method).
@@ -60,26 +56,8 @@ public class DispatchInstruction {
      * @param line   the parsed line to interpret.
      */
     public void invoke(Object parent, Line line) {
-
-        // TODO, change construction based on argument types. This will be necessary for
-        // deref
-        Object[] args = new Object[line.getArguments().length + 1];
-
-        args[args.length - 1] = new RegisterOutput(line.getStoreRegister().getRegisterNumber());
-
-        for (int i = 0; i < line.getArguments().length; ++i) {
-            RightHandToken token = line.getArguments()[i];
-            if (token instanceof RegisterToken) {
-                args[i] = new RegisterInput(((RegisterToken) token).getRegisterNumber());
-            } else if (token instanceof ImmediateToken) {
-                args[i] = new ImmediateInput(Conversion.longToBytes(((ImmediateToken) token).getValue()));
-            } else {
-                // Invalid token type
-                throw new IllegalArgumentException();
-            }
-        }
         try {
-            this.invocationTarget.invoke(parent, args);
+            this.invocationTarget.invoke(parent, line.getArguments());
         } catch (IllegalAccessException | InvocationTargetException e) {
             // TODO handle
             throw new RuntimeException(e);
