@@ -8,7 +8,6 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.instructions.targets.input.ImmediateInput;
-import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 
 import java.util.function.BinaryOperator;
 
@@ -120,6 +119,18 @@ public class ArithmeticInstructions {
     }
 
     /**
+     * The standard xor operation.
+     *
+     * @param input1 the left-hand side of the xor operation.
+     * @param input2 the right-hand side of the xor operation.
+     * @param output the output of the operation.
+     */
+    @Instruction
+    public void xor(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a ^ b, output, input1, input2);
+    }
+
+    /**
      * The standard not operation. Inverts all bits in the input.
      *
      * @param output the output of the operation.
@@ -155,6 +166,16 @@ public class ArithmeticInstructions {
     @Instruction
     public void srl(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
         arithmetic((a, b) -> a >> b, output, input1, input2);
+    }
+
+    /**
+     * The standard decrement operation. Subtracts one to the register's data.
+     *
+     * @param input the register to be modified.
+     */
+    @Instruction
+    public void dec(IAbstractInputOutput input) {
+        input.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) - 1));
     }
 
     /**
