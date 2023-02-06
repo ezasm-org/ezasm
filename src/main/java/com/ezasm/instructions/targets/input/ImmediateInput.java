@@ -6,7 +6,7 @@ import com.ezasm.simulation.Simulator;
  * The implementation of an "immediate" input to be used inline instead of a register or other
  * input. Is used as a fixed value or constant.
  */
-public class ImmediateInput extends AbstractInput {
+public class ImmediateInput implements IAbstractInput {
 
     private final byte[] value;
 

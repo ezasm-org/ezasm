@@ -1,14 +1,14 @@
 package com.ezasm.instructions.impl;
 
 import com.ezasm.Conversion;
+import com.ezasm.instructions.targets.input.IAbstractInput;
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
-import com.ezasm.instructions.targets.input.AbstractInput;
 import com.ezasm.instructions.targets.input.ImmediateInput;
-import com.ezasm.instructions.targets.input.RegisterInput;
-import com.ezasm.instructions.targets.output.AbstractOutput;
-import com.ezasm.instructions.targets.output.RegisterOutput;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 
 import java.util.function.BinaryOperator;
 
@@ -32,12 +32,12 @@ public class ArithmeticInstructions {
      * Template arithmetic operation.
      *
      * @param op     operation to apply to the arguments.
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
-     * @param output the output of the operation.
      */
-    private void arithmetic(BinaryOperator<Long> op, AbstractInput input1, AbstractInput input2,
-            AbstractOutput output) {
+    private void arithmetic(BinaryOperator<Long> op, IAbstractOutput output, IAbstractInput input1,
+            IAbstractInput input2) {
 
         long res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));
@@ -47,76 +47,76 @@ public class ArithmeticInstructions {
     /**
      * The standard add operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the addition operation.
      * @param input2 the right-hand side of the addition operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void add(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic(Long::sum, input1, input2, output);
+    public void add(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic(Long::sum, output, input1, input2);
     }
 
     /**
      * The standard subtract operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the subtraction operation.
      * @param input2 the right-hand side of the subtraction operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void sub(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic((a, b) -> a - b, input1, input2, output);
+    public void sub(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a - b, output, input1, input2);
     }
 
     /**
      * The standard multiply operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the multiply operation.
      * @param input2 the right-hand side of the multiply operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void mul(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic((a, b) -> a * b, input1, input2, output);
+    public void mul(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a * b, output, input1, input2);
     }
 
     /**
      * The standard divide operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the divide operation.
      * @param input2 the right-hand side of the divide operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void div(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
+    public void div(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
         if (Conversion.bytesToLong(input2.get(simulator)) == 0) {
             throw new IllegalArgumentException(-1);
         }
-        arithmetic((a, b) -> a / b, input1, input2, output);
+        arithmetic((a, b) -> a / b, output, input1, input2);
     }
 
     /**
      * The standard and operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the and operation.
      * @param input2 the right-hand side of the and operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void and(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic((a, b) -> a & b, input1, input2, output);
+    public void and(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a & b, output, input1, input2);
     }
 
     /**
      * The standard or operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the or operation.
      * @param input2 the right-hand side of the or operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void or(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic((a, b) -> a | b, input1, input2, output);
+    public void or(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a | b, output, input1, input2);
     }
 
     /**
@@ -134,11 +134,11 @@ public class ArithmeticInstructions {
     /**
      * The standard not operation. Inverts all bits in the input.
      *
-     * @param input  the input of the not operation.
      * @param output the output of the operation.
+     * @param input  the input of the not operation.
      */
     @Instruction
-    public void not(AbstractInput input, AbstractOutput output) {
+    public void not(IAbstractOutput output, IAbstractInput input) {
         byte[] bytes = input.get(this.simulator);
         long val = Conversion.bytesToLong(bytes);
         val = ~val;
@@ -148,25 +148,25 @@ public class ArithmeticInstructions {
     /**
      * The standard "shift left logical" operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the sll operation.
      * @param input2 the right-hand side of the sll operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void sll(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic((a, b) -> a << b, input1, input2, output);
+    public void sll(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a << b, output, input1, input2);
     }
 
     /**
      * The standard "shift right logical" operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the srl operation.
      * @param input2 the right-hand side of the srl operation.
-     * @param output the output of the operation.
      */
     @Instruction
-    public void srl(AbstractInput input1, AbstractInput input2, AbstractOutput output) {
-        arithmetic((a, b) -> a >> b, input1, input2, output);
+    public void srl(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) {
+        arithmetic((a, b) -> a >> b, output, input1, input2);
     }
 
     /**
@@ -182,21 +182,21 @@ public class ArithmeticInstructions {
     /**
      * The standard increment operation. Adds one to the register's data.
      *
-     * @param input the register to be modified.
+     * @param input the input/output to be modified.
      */
     @Instruction
-    public void inc(RegisterInput input) {
-        input.mutate(this.simulator, v -> Conversion.longToBytes(Conversion.bytesToLong(v) + 1));
+    public void inc(IAbstractInputOutput input) {
+        input.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) + 1));
     }
 
     /**
      * The standard increment operation. Adds one to the register's data.
      *
      * @param output the output register of the increment.
-     * @param input1 the input of the increment.
+     * @param input  the input of the increment.
      */
     @Instruction
-    public void inc(RegisterOutput output, ImmediateInput input1) {
-        output.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input1.get(this.simulator)) + 1));
+    public void inc(IAbstractOutput output, IAbstractInput input) {
+        output.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) + 1));
     }
 }

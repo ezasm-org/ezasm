@@ -85,7 +85,7 @@ class LexerTest {
     @Test
     void parseLine() {
         try {
-            Line line = new Line("add", "$s0", new String[] { "$t0", "1" });
+            Line line = new Line("add", new String[] { "$s0", "$t0", "1" });
             assertTrue(testLineAgainstString(line, "add $s0 $t0 1"));
             assertTrue(testLineAgainstString(line, "add $s0,$t0,1"));
             assertTrue(testLineAgainstString(line, " \t\t  add $s0 $t0 1   "));
