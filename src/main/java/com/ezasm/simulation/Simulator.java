@@ -127,7 +127,6 @@ public class Simulator implements ISimulator {
     public void runLine(Line line) throws InstructionDispatchException {
         if (line == null)
             return;
-        lines.add(line);
         instructionDispatcher.execute(line);
         Window.updateAll();
     }
@@ -137,8 +136,9 @@ public class Simulator implements ISimulator {
      *
      */
     public void executeProgramFromPC() throws InstructionDispatchException {
-        for (int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
-            i = executeLineInLoop(i);
+        while (!isDone() && !Thread.interrupted()) {
+            executeLineFromPC();
+            Window.updateAll();
             try {
                 Thread.sleep(delayMS);
             } catch (InterruptedException e) {
@@ -155,31 +155,11 @@ public class Simulator implements ISimulator {
     public void executeLineFromPC() throws InstructionDispatchException {
         int lineNumber = validatePC();
         runLine(lines.get(lineNumber));
-        int currentSP = validatePC();
-        if (currentSP == lineNumber) {
-            pc.setLong(currentSP + 1);
-        } // otherwise the PC was set by the program to a certain line and should be read
-          // as such
-        Window.updateAll();
-    }
-
-    /**
-     * Helper method to execute a line in a loop and return the new PC.
-     *
-     * @param i the current PC value.
-     * @return the new PC value.
-     * @throws InstructionDispatchException if an error occurred within execution.
-     */
-    private int executeLineInLoop(int i) throws InstructionDispatchException {
-        runLine(lines.get(i));
         int currentPC = validatePC();
-        if (currentPC == i) {
+        if (currentPC == lineNumber) {
             pc.setLong(currentPC + 1);
-        } else {
-            i = currentPC;
-        }
+        } // otherwise the PC was set by the program to a certain line and should be read as such
         Window.updateAll();
-        return i;
     }
 
     /**
@@ -188,13 +168,12 @@ public class Simulator implements ISimulator {
      * @return the validated PC.
      */
     private int validatePC() {
-        long number = pc.getLong();
-        if (number < 0 || number > lines.size()) {
-            // Guaranteed invalid SP
+        if (isErrorPC()) {
+            // Guaranteed invalid PC
             // TODO handle better
             throw new RuntimeException();
         }
-        return (int) number;
+        return (int) pc.getLong();
     }
 
     /**
@@ -213,6 +192,18 @@ public class Simulator implements ISimulator {
      */
     public Memory getMemory() {
         return memory;
+    }
+
+    /**
+     * Pauses ongoing program execution loop if applicable.
+     */
+    public void pause() {
+    }
+
+    /**
+     * Resumes ongoing program execution loop if applicable.
+     */
+    public void resume() {
     }
 
 }

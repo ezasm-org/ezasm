@@ -31,4 +31,8 @@ public interface ISimulator {
 
     Memory getMemory();
 
+    void pause();
+
+    void resume();
+
 }
