@@ -60,7 +60,7 @@ public class DispatchInstruction {
         try {
             this.invocationTarget.invoke(parent, line.getArguments());
         } catch (InvocationTargetException e) {
-            throw (SimulationException) e.getTargetException();
+            throw new SimulationException(e.getTargetException().getMessage());
         } catch (IllegalAccessException | IllegalArgumentException e) {
             // TODO handle
             throw new RuntimeException();

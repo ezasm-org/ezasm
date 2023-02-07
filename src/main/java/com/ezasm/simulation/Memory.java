@@ -140,7 +140,7 @@ public class Memory {
      */
     public byte[] read(int address, int count) {
         address = address - OFFSET;
-        if (address < 0 || (address + count) >= this.MEMORY_SIZE) {
+        if (address < 0 || (address + count) > this.MEMORY_SIZE) {
             // Error: address is out of bounds
             System.out.println("Error: possible read out of bounds with address" + address);
             return null;
@@ -195,7 +195,7 @@ public class Memory {
      */
     public void write(int address, byte[] data) {
         address = address - OFFSET;
-        if (address < 0 || (address + data.length) >= this.MEMORY_SIZE) {
+        if (address < 0 || (address + data.length) > this.MEMORY_SIZE) {
             // Error: address is out of bounds
             System.out.println("Error: address is out of bounds");
             return;

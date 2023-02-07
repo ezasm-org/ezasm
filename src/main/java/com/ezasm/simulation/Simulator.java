@@ -6,7 +6,6 @@ import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The main controller class. Manages the memory, registers, and lines.
@@ -34,6 +33,7 @@ public class Simulator implements ISimulator {
         this.labels = new HashMap<>();
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
+        init();
     }
 
     /**
@@ -50,6 +50,11 @@ public class Simulator implements ISimulator {
         this.delayMS = delay;
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
+        init();
+    }
+
+    private void init() {
+        registers.getRegister(Registers.SP).setLong(memory.initialStackPointer());
     }
 
     /**
@@ -76,6 +81,7 @@ public class Simulator implements ISimulator {
         resetData();
         lines.clear();
         labels.clear();
+        init();
     }
 
     /**
@@ -105,6 +111,9 @@ public class Simulator implements ISimulator {
      * @param line the line to add to the program.
      */
     public void addLine(Line line) {
+        if (line.isLabel()) {
+            labels.put(line.getLabel(), lines.size());
+        }
         lines.add(line);
     }
 
@@ -114,7 +123,7 @@ public class Simulator implements ISimulator {
      * @param content the collection of Lines to add to the program.
      */
     public void addLines(Collection<Line> content) {
-        lines.addAll(content);
+        content.forEach(this::addLine);
     }
 
     /**
@@ -131,7 +140,7 @@ public class Simulator implements ISimulator {
             if(labels.containsKey(line.getLabel())) {
                 // What to do in case of duplicate labels... currently nothing
             }
-            labels.put(line.getLabel(), (int) pc.getLong() + 1);
+            labels.put(line.getLabel(), (int) pc.getLong());
         } else {
             instructionDispatcher.execute(line);
         }
@@ -163,9 +172,7 @@ public class Simulator implements ISimulator {
         int lineNumber = validatePC();
         runLine(lines.get(lineNumber));
         int currentPC = validatePC();
-        if (currentPC == lineNumber) {
-            pc.setLong(currentPC + 1);
-        } // otherwise the PC was set by the program to a certain line and should be read as such
+        pc.setLong(currentPC + 1);
         Window.updateAll();
     }
 

@@ -1,5 +1,7 @@
 package com.ezasm.instructions;
 
+import com.ezasm.instructions.impl.FunctionInstructions;
+import com.ezasm.instructions.impl.MemoryInstructions;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalArgumentException;
@@ -27,6 +29,8 @@ public class InstructionDispatcher {
     static {
         // load the instructions
         registerInstructions(ArithmeticInstructions.class);
+        registerInstructions(FunctionInstructions.class);
+        registerInstructions(MemoryInstructions.class);
     }
 
     /**
@@ -59,7 +63,11 @@ public class InstructionDispatcher {
      * @param method The method to register as an instruction.
      */
     private static void registerInstruction(Class<?> parent, Method method) {
-        instructions.put(method.getName().toLowerCase(), new DispatchInstruction(parent, method));
+        String name = method.getName().toLowerCase();
+        if (name.startsWith("_")) {
+            name = name.substring(1);
+        }
+        instructions.put(name, new DispatchInstruction(parent, method));
     }
 
     private static void validateInstruction(Method method) {
