@@ -27,7 +27,7 @@ public class InstructionDispatcher {
     static {
         // load the instructions
         registerInstructions(ArithmeticInstructions.class);
-        registerInstructions(TerminalInstructions.class);
+        // registerInstructions(TerminalInstructions.class);
     }
 
     /**
