@@ -113,9 +113,8 @@ public class Simulator implements ISimulator {
      *
      * @param content the collection of Lines to add to the program.
      */
-    public void addLines(Collection<Line> content, Map<String, Integer> labels) {
+    public void addLines(Collection<Line> content) {
         lines.addAll(content);
-        this.labels.putAll(labels);
     }
 
     /**
@@ -124,10 +123,18 @@ public class Simulator implements ISimulator {
      * @param line the line to execute.
      * @throws InstructionDispatchException if there is an error executing the line.
      */
-    public void runLine(Line line) throws InstructionDispatchException {
-        if (line == null)
+    public void runLine(Line line) throws SimulationException {
+        if (line == null) {
             return;
-        instructionDispatcher.execute(line);
+        }
+        if (line.isLabel()) {
+            if(labels.containsKey(line.getLabel())) {
+                // What to do in case of duplicate labels... currently nothing
+            }
+            labels.put(line.getLabel(), (int) pc.getLong() + 1);
+        } else {
+            instructionDispatcher.execute(line);
+        }
         Window.updateAll();
     }
 
@@ -135,7 +142,7 @@ public class Simulator implements ISimulator {
      * Runs the program to completion or error state from the current state of the PC.
      *
      */
-    public void executeProgramFromPC() throws InstructionDispatchException {
+    public void executeProgramFromPC() throws SimulationException {
         while (!isDone() && !Thread.interrupted()) {
             executeLineFromPC();
             Window.updateAll();
@@ -152,7 +159,7 @@ public class Simulator implements ISimulator {
      *
      * @throws InstructionDispatchException if there is an error executing the line.
      */
-    public void executeLineFromPC() throws InstructionDispatchException {
+    public void executeLineFromPC() throws SimulationException {
         int lineNumber = validatePC();
         runLine(lines.get(lineNumber));
         int currentPC = validatePC();
@@ -174,6 +181,15 @@ public class Simulator implements ISimulator {
             throw new RuntimeException();
         }
         return (int) pc.getLong();
+    }
+
+    /**
+     * Get the labels mapping for the simulator
+     *
+     * @return the label mapping.
+     */
+    public Map<String, Integer> getLabels() {
+        return labels;
     }
 
     /**

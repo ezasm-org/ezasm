@@ -1,6 +1,7 @@
 package com.ezasm.instructions;
 
 import com.ezasm.parsing.Line;
+import com.ezasm.simulation.SimulationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -55,14 +56,15 @@ public class DispatchInstruction {
      *               {@link DispatchInstruction#getParent()}.
      * @param line   the parsed line to interpret.
      */
-    public void invoke(Object parent, Line line) {
+    public void invoke(Object parent, Line line) throws SimulationException {
         try {
             this.invocationTarget.invoke(parent, line.getArguments());
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
+            throw (SimulationException) e.getTargetException();
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             // TODO handle
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
-
     }
 
 }

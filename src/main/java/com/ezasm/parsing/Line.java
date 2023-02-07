@@ -4,6 +4,7 @@ import com.ezasm.Conversion;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
+import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 
 /**
@@ -14,6 +15,7 @@ public class Line {
 
     private final Instruction instruction;
     private final IAbstractTarget[] arguments;
+    private final String label;
 
     /**
      * Creates and validates a line based on the given tokens.
@@ -24,13 +26,22 @@ public class Line {
      *                        corresponding types.
      */
     public Line(String instruction, String[] arguments) throws ParseException {
-        if (!Lexer.isInstruction(instruction)) {
+        if (Lexer.isLabel(instruction)) {
+            this.label = instruction.substring(0, instruction.length() - 1);
+            this.instruction = null;
+            this.arguments = null;
+            if (arguments != null && arguments.length > 0) {
+                throw new ParseException(String.format("Unexpected token after label: '%s'", arguments[0]));
+            }
+            return;
+        } else if (!Lexer.isInstruction(instruction)) {
             throw new ParseException("Error parsing instruction '" + instruction + "'");
         }
 
         this.instruction = new Instruction(instruction,
                 InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget());
         this.arguments = new IAbstractTarget[arguments.length];
+        this.label = null;
 
         if (this.instruction.target().getParameterCount() != arguments.length) {
             throw new ParseException(
@@ -47,6 +58,8 @@ public class Line {
                 // Code for parsing a dereference
                 // } else if(Lexer.isDereference(arguments[i])) {
                 // this.arguments[i] = new DereferenceToken(arguments[i]);
+            } else if (Lexer.isLabelReference(arguments[i])) {
+                this.arguments[i] = new LabelReferenceInput(arguments[i]);
             } else {
                 // The argument did not match any of the given types
                 throw new ParseException("Error parsing token '" + arguments[i] + "'");
@@ -78,6 +91,24 @@ public class Line {
      */
     public IAbstractTarget[] getArguments() {
         return arguments;
+    }
+
+    /**
+     * Check if the line is a label.
+     *
+     * @return true if the line is a label, false otherwise.
+     */
+    public boolean isLabel() {
+        return label != null;
+    }
+
+    /**
+     * Gets the label text of that line.
+     *
+     * @return the label text of that line.
+     */
+    public String getLabel() {
+        return label;
     }
 
     /**

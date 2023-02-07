@@ -33,7 +33,7 @@ public class SimulationThread {
      * Constructs a simulation thread based on the given simulator.
      *
      * @param simulator the simulator to act on.
-     * @param speed the delay between execution steps
+     * @param speed     the delay between execution steps
      */
     public SimulationThread(ISimulator simulator, int speed) {
         this.simulator = simulator;
@@ -120,7 +120,7 @@ public class SimulationThread {
     private void runnableRunOneLine() {
         try {
             simulator.executeLineFromPC();
-        } catch (InstructionDispatchException e) {
+        } catch (SimulationException e) {
             System.err.println(e.getMessage());
         }
     }
@@ -131,7 +131,7 @@ public class SimulationThread {
     private void runnableRunLinesFromPC() {
         try {
             simulator.executeProgramFromPC();
-        } catch (InstructionDispatchException e) {
+        } catch (SimulationException e) {
             System.err.println(e.getMessage());
         }
     }
@@ -141,15 +141,14 @@ public class SimulationThread {
      */
     private void runnableRunFromCLI() {
         Scanner scanner = new Scanner(System.in);
-        Map<String, Integer> labels = new HashMap<>();
         int lineNumber = 0;
 
         System.out.print("> ");
         while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
-                Line line = Lexer.parseLine(scanner.nextLine(), labels, lineNumber);
+                Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
                 simulator.runLine(line);
-            } catch (ParseException | InstructionDispatchException e) {
+            } catch (ParseException | SimulationException e) {
                 System.err.println(e.getMessage());
                 System.err.flush();
                 try {

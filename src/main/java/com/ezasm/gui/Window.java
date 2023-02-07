@@ -51,7 +51,7 @@ public class Window {
      * Generate the singleton Window instance if it does not exist.
      *
      * @param simulator the simulator to use.
-     * @param config the program configuration.
+     * @param config    the program configuration.
      */
     public static void instantiate(ISimulator simulator, Config config) {
         if (instance == null)
@@ -106,7 +106,7 @@ public class Window {
         table.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
-        //simulator.setSimulationSpeed(config.getSimSpeed()); //TODO
+        // simulator.setSimulationSpeed(config.getSimSpeed()); //TODO
     }
 
     /**
@@ -135,8 +135,7 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         updateAll();
-        Map<String, Integer> labels = new HashMap<>();
-        simulator.addLines(Lexer.parseLines(editor.getText(), labels, 0), labels);
+        simulator.addLines(Lexer.parseLines(editor.getText(), 0));
     }
 
     /**

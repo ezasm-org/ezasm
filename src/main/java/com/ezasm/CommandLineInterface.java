@@ -42,8 +42,7 @@ public class CommandLineInterface {
         this.cli = false;
         this.simulationThread = new SimulationThread(simulator, 250);
         try {
-            Map<String, Integer> labels = new HashMap<>();
-            this.simulator.addLines(Lexer.parseLines(file, labels, 0), labels);
+            this.simulator.addLines(Lexer.parseLines(file, 0));
         } catch (ParseException e) {
             System.err.println(e.getMessage());
             System.exit(1);

@@ -19,13 +19,15 @@ public interface ISimulator {
 
     void addLine(Line line);
 
-    void addLines(Collection<Line> lines, Map<String, Integer> labels);
+    void addLines(Collection<Line> lines);
 
-    void runLine(Line line) throws InstructionDispatchException;
+    void runLine(Line line) throws SimulationException;
 
-    void executeProgramFromPC() throws InstructionDispatchException;
+    void executeProgramFromPC() throws SimulationException;
 
-    void executeLineFromPC() throws InstructionDispatchException;
+    void executeLineFromPC() throws SimulationException;
+
+    Map<String, Integer> getLabels();
 
     Registers getRegisters();
 

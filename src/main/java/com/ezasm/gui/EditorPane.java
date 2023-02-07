@@ -33,9 +33,9 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea = new JTextArea();
         lineNumbers = new LineNumber(model);
 
+        textArea.setTabSize(2);
         UndoManager manager = new UndoManager();
         textArea.getDocument().addUndoableEditListener(manager);
-
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -53,7 +53,6 @@ public class EditorPane extends JPanel implements IThemeable {
             }
 
         });
-
         textArea.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {

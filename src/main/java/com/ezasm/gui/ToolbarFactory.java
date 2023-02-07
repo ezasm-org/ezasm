@@ -4,6 +4,7 @@ import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.Config;
 import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.SimulationException;
 
 import javax.swing.*;
 
@@ -158,7 +159,7 @@ public class ToolbarFactory {
             try {
                 Window.getInstance().getSimulator().executeLineFromPC();
                 resetButton.setEnabled(true);
-            } catch (InstructionDispatchException e) {
+            } catch (SimulationException e) {
                 Window.getInstance().handleParseException(e);
                 System.out.println("** Program terminated abnormally **");
             }

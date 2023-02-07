@@ -1,13 +1,13 @@
 package com.ezasm.instructions;
 
-import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.impl.ArithmeticInstructions;
 import com.ezasm.parsing.Line;
+import com.ezasm.simulation.SimulationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -91,7 +91,7 @@ public class InstructionDispatcher {
     private final ISimulator simulator;
 
     /**
-     * Create a new Instruction Dispatcher, and bind it to an existing {@link Simulator}.
+     * Create a new Instruction Dispatcher, and bind it to an existing {@link ISimulator}.
      *
      * @param simulator the simulator to bind to.
      */
@@ -137,7 +137,7 @@ public class InstructionDispatcher {
      *                                      the provided parsed arguments cannot fit to the instruction
      *                                      (not yet implemented).
      */
-    public void execute(Line line) throws InstructionDispatchException {
+    public void execute(Line line) throws InstructionDispatchException, SimulationException {
         DispatchInstruction dispatch = instructions.get(line.getInstruction().text());
         if (dispatch == null)
             throw new IllegalInstructionException(line.getInstruction().text());
@@ -147,7 +147,6 @@ public class InstructionDispatcher {
         assert object != null;
 
         dispatch.invoke(object, line);
-
     }
 
 }
