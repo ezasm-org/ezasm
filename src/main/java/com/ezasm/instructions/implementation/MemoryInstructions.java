@@ -6,6 +6,9 @@ import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.Conversion;
+import com.ezasm.simulation.Memory;
+
 
 /**
  * An implementation of memory manipulation instructions for the simulation.
@@ -47,6 +50,26 @@ public class MemoryInstructions {
         long sp = simulator.getRegisters().getRegister(Registers.SP).getLong();
         output.set(simulator, simulator.getMemory().read((int) sp, simulator.getMemory().WORD_SIZE));
         simulator.getRegisters().getRegister(Registers.SP).setLong(sp + simulator.getMemory().WORD_SIZE);
+    }
+
+    @Instruction
+    public void load(IAbstractOutput out, IAbstractInput inp) throws SimulationException{
+        Memory m = this.simulator.getMemory();
+        byte[] word = m.read((int) Conversion.bytesToLong(inp.get(simulator)), m.WORD_SIZE);
+        out.set(this.simulator, word);
+    }
+
+    @Instruction
+    public void store(IAbstractInput inp1, IAbstractInput inp2) throws SimulationException{
+        Memory m = this.simulator.getMemory();
+        m.write( (int) Conversion.bytesToLong(inp2.get(simulator)), inp1.get(simulator) );
+    }
+
+    @Instruction
+    public void alloc(IAbstractOutput out, IAbstractInput inp) throws SimulationException{
+        Memory m = this.simulator.getMemory();
+        int bytesWritten = m.unsafeAllocate((int) Conversion.bytesToLong(inp.get(simulator)));
+        out.set(this.simulator, Conversion.longToBytes( bytesWritten ));
     }
 
 }
