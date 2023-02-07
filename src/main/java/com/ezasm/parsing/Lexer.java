@@ -30,50 +30,49 @@ public class Lexer {
     }
 
     private static boolean isNumeric(String text) {
-        try{
+        try {
             textToDouble(text);
             return true;
-        }
-        catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return false;
         }
     }
 
-    private static boolean isHex(String text){
+    private static boolean isHex(String text) {
         return text.startsWith("0x") || text.startsWith("0X");
     }
 
-    private static boolean isBin(String text){
+    private static boolean isBin(String text) {
         return text.startsWith("0b") || text.startsWith("0B");
     }
 
-    private static double baseToDouble(String text, int base) throws NumberFormatException{
+    private static double baseToDouble(String text, int base) throws NumberFormatException {
         String[] halves = text.split("\\.");
-        if(halves.length == 0){
+        if (halves.length == 0) {
             return Integer.parseInt(text, 2);
         }
-        if(halves.length > 2){
+        if (halves.length > 2) {
             throw new NumberFormatException();
         }
         double alloc = 0.0;
-        for(int i = 0; i < halves[0].length(); i++){
-            int exp = halves[0].length()-1-i;
-            alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * (int)Math.pow(base, exp); 
+        for (int i = 0; i < halves[0].length(); i++) {
+            int exp = halves[0].length() - 1 - i;
+            alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * (int) Math.pow(base, exp);
         }
-        if(halves.length == 1){
+        if (halves.length == 1) {
             return alloc;
         }
-        for(int i = 0; i < halves[1].length(); i++){
-           alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * Math.pow(base, -(i+1)); 
+        for (int i = 0; i < halves[1].length(); i++) {
+            alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * Math.pow(base, -(i + 1));
         }
         return alloc;
     }
 
-    public static double textToDouble(String text) throws NumberFormatException{
-        if(isHex(text)){
+    public static double textToDouble(String text) throws NumberFormatException {
+        if (isHex(text)) {
             return baseToDouble(text.substring(2), 16);
         }
-        if(isBin(text)){
+        if (isBin(text)) {
             return baseToDouble(text.substring(2), 2);
         }
         return Double.parseDouble(text);

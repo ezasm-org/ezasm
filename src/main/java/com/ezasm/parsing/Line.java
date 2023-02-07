@@ -41,7 +41,14 @@ public class Line {
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
             if (Lexer.isImmediate(arguments[i])) {
-                this.arguments[i] = new ImmediateInput(Conversion.doubleToBytes(Lexer.textToDouble(arguments[i])));
+                double val = Lexer.textToDouble(arguments[i]);
+                long iVal = (long) val;
+                boolean isInteger = val == iVal;
+                if (isInteger) {
+                    this.arguments[i] = new ImmediateInput(Conversion.longToBytes(iVal));
+                } else {
+                    this.arguments[i] = new ImmediateInput(Conversion.doubleToBytes(val));
+                }
             } else if (Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);
                 // Code for parsing a dereference
