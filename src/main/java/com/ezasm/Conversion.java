@@ -58,7 +58,7 @@ public class Conversion {
     }
 
     /**
-     * Converts an array of bytes into the corresponding double.
+     * Converts an array of bytes into the corresponding String.
      *
      * @param data the array of bytes to convert.
      * @return the double representation of that data.
