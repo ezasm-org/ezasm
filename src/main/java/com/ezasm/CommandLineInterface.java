@@ -1,13 +1,12 @@
 package com.ezasm;
 
 import com.ezasm.parsing.Lexer;
+import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.SimulationThread;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.SimulationException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Scanner;
 
 /**
  * A representation of an instance in the command line interface. Stores the current simulation and
@@ -16,7 +15,6 @@ import java.util.Map;
 public class CommandLineInterface {
 
     private final ISimulator simulator;
-    private final SimulationThread simulationThread;
     private final boolean cli;
 
     /**
@@ -25,10 +23,9 @@ public class CommandLineInterface {
      *
      * @param simulator the given Simulator.
      */
-    public CommandLineInterface(Simulator simulator) {
+    public CommandLineInterface(ISimulator simulator) {
         this.simulator = simulator;
         this.cli = true;
-        this.simulationThread = new SimulationThread(simulator, 250);
     }
 
     /**
@@ -40,7 +37,6 @@ public class CommandLineInterface {
     public CommandLineInterface(ISimulator simulator, String file) {
         this.simulator = simulator;
         this.cli = false;
-        this.simulationThread = new SimulationThread(simulator, 250);
         try {
             this.simulator.addLines(Lexer.parseLines(file, 0));
         } catch (ParseException e) {
@@ -64,14 +60,36 @@ public class CommandLineInterface {
      * Uses the simulation thread to run from the CLI input.
      */
     private void runFromCliInput() {
-        simulationThread.runFromCliInput();
+        Scanner scanner = new Scanner(System.in);
+        int lineNumber = 0;
+
+        System.out.print("> ");
+        while (scanner.hasNextLine() && !Thread.interrupted()) {
+            try {
+                Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
+                simulator.runLine(line);
+            } catch (ParseException | SimulationException e) {
+                System.err.println(e.getMessage());
+                System.err.flush();
+            }
+            System.out.print("> ");
+        }
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException ignored) {
+        }
     }
 
     /**
      * Uses the simulation thread to run the code from the file.
      */
     private void runLinesFromBeginning() {
-        simulationThread.runLinesFromPC();
+        try {
+            simulator.executeProgramFromPC();
+        } catch (SimulationException e) {
+            System.err.println(e.getMessage());
+        }
+
     }
 
 }

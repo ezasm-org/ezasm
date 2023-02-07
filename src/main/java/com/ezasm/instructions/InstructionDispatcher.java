@@ -145,7 +145,7 @@ public class InstructionDispatcher {
      *                                      the provided parsed arguments cannot fit to the instruction
      *                                      (not yet implemented).
      */
-    public void execute(Line line) throws InstructionDispatchException, SimulationException {
+    public void execute(Line line) throws SimulationException {
         DispatchInstruction dispatch = instructions.get(line.getInstruction().text());
         if (dispatch == null)
             throw new IllegalInstructionException(line.getInstruction().text());

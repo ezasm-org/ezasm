@@ -1,8 +1,5 @@
 package com.ezasm;
 
-import com.ezasm.simulation.Simulator;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 

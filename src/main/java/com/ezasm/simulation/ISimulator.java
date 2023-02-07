@@ -1,8 +1,6 @@
 package com.ezasm.simulation;
 
-import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
-import com.ezasm.parsing.ParseException;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,7 +13,7 @@ public interface ISimulator {
 
     boolean isDone();
 
-    boolean isErrorPC();
+    boolean isError();
 
     void addLine(Line line);
 
@@ -32,9 +30,5 @@ public interface ISimulator {
     Registers getRegisters();
 
     Memory getMemory();
-
-    void pause();
-
-    void resume();
 
 }

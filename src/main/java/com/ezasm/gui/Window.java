@@ -1,7 +1,6 @@
 package com.ezasm.gui;
 
 import com.ezasm.parsing.Lexer;
-import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.Config;
 import com.ezasm.Theme;
@@ -9,8 +8,6 @@ import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI
@@ -20,7 +17,6 @@ public class Window {
 
     private static Window instance;
     private final ISimulator simulator;
-    private final SimulationThread simulationThread;
 
     private Config config;
     private JFrame app;
@@ -32,7 +28,6 @@ public class Window {
     protected Window(ISimulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
-        this.simulationThread = new SimulationThread(this.simulator, config.getSimSpeed());
         this.config = config;
         initialize();
     }
@@ -139,22 +134,11 @@ public class Window {
     }
 
     /**
-     * Gets the instance's simulation thread for use in staring the async execution of the simulator's
-     * instructions.
-     *
-     * @return the SimulationThread instance relevant.
-     */
-    public SimulationThread getSimulationThread() {
-        return simulationThread;
-    }
-
-    /**
      * Handles the program completion and displays a message to the user about the status of the
      * program.
      */
     public void handleProgramCompletion() {
-        ToolbarFactory.handleProgramCompletion();
-        if (simulator.isErrorPC()) {
+        if (simulator.isError()) {
             System.out.println("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
             System.out.println("** Program terminated normally **");
