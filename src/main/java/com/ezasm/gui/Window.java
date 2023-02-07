@@ -1,20 +1,23 @@
 package com.ezasm.gui;
 
-import com.ezasm.parsing.Line;
 import com.ezasm.simulation.SimulationThread;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 /**
  * The main graphical user interface of the program.
  * A singleton which holds all the necessary GUI components and one relevant simulator.
  */
 public class Window {
-
+    public class School {
+        private String name;
+        public School(String theName) {
+            this.name = new String(theName);
+        }
+    }
     private static Window instance;
     private final Simulator simulator;
     private final SimulationThread simulationThread;
@@ -93,10 +96,19 @@ public class Window {
     /**
      * Updates all UI elements if they exist.
      */
-    public static void updateAll(int PC) {
+    public static void updateAll() {
         if(instance == null || instance.table == null) return;
         instance.table.update();
-        instance.editor.updateHighlight(PC);
+    }
+
+    /**
+     * Update tells the EditorPane to update the line highlighter.
+     */
+    public static void updateHighlight(int PC) {
+        if(instance == null || instance.table == null) return;
+        if (PC >= 0) {
+            instance.editor.updateHighlight(PC);
+        }
     }
 
     /**
@@ -105,9 +117,9 @@ public class Window {
      */
     public void parseText() throws ParseException {
         simulator.resetAll();
-        updateAll(0);
+        updateAll();
         simulator.readMultiLineString(editor.getText());
-        instance.editor.reset_highlighter();
+        instance.editor.resetHighlighter();
     }
 
     /**

@@ -14,7 +14,8 @@ import static com.ezasm.gui.LineHighlighter.removeHighlights;
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
 public class EditorPane extends JPanel {
-    LineHighlighter yellowHighlighter;
+    LineHighlighter highlighter;
+    public static final Color HIGHLIGHT_COLOR = Color.YELLOW;
     private final JTextArea textArea;
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
@@ -112,10 +113,10 @@ public class EditorPane extends JPanel {
      */
     public void updateHighlight(int line) {
         removeHighlights(textArea);
-        if (line >= 0) yellowHighlighter.highlight(textArea, line);
+        if (line >= 0) highlighter.highlight(textArea, line);
     }
 
-    public void reset_highlighter() {
-        yellowHighlighter = new LineHighlighter(Color.YELLOW, textArea);
+    public void resetHighlighter() {
+        highlighter = new LineHighlighter(HIGHLIGHT_COLOR, textArea);
     }
 }
