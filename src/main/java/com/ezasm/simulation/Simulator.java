@@ -227,7 +227,6 @@ public class Simulator {
         } else {
             i = currentPC;
         }
-        Window.updateAll();
         return i;
     }
 
