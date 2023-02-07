@@ -173,7 +173,6 @@ public class Simulator implements ISimulator {
         runLine(lines.get(lineNumber));
         int currentPC = validatePC();
         pc.setLong(currentPC + 1);
-        Window.updateAll();
     }
 
     /**
