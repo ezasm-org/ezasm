@@ -14,28 +14,28 @@ public class Arguments {
 
     /**
      * Handles the program arguments and begin the program correspondingly.
+     *
      * @param args the program arguments.
      */
     public static void handleArgs(String[] args) {
+        Config config = new Config();
         Options options = new Options();
 
         Option windowlessOption = new Option("w", "windowless", false,
                 "Starts the program in windowless mode \n(default: disabled)");
         options.addOption(windowlessOption);
 
-        Option fileOption = new Option("f", "file", true,
-                "EzASM code file path to open");
+        Option fileOption = new Option("f", "file", true, "EzASM code file path to open");
         fileOption.setArgName("path");
         options.addOption(fileOption);
 
         Option memoryOption = new Option("m", "memory", true,
-                "The number of words to allocate space for on the stack and heap each, " +
-                        "must be larger than 0 (default 65536)");
+                "The number of words to allocate space for on the stack and heap each, "
+                        + "must be larger than 0 (default 65536)");
         options.addOption(memoryOption);
         memoryOption.setArgName("words");
 
-        Option wordSizeOption = new Option("s", "word-size", true,
-                "The size in bytes of a word (default: 8)");
+        Option wordSizeOption = new Option("s", "word-size", true, "The size in bytes of a word (default: 8)");
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 
@@ -51,7 +51,7 @@ public class Arguments {
         int memorySize = 0;
         int wordSize = 0;
 
-        if(commandLine.hasOption(memoryOption)) {
+        if (commandLine.hasOption(memoryOption)) {
             String memoryString = commandLine.getOptionValue(memoryOption);
             try {
                 memorySize = Integer.parseInt(memoryString);
@@ -61,7 +61,7 @@ public class Arguments {
         } else {
             memorySize = Memory.DEFAULT_MEMORY_WORDS;
         }
-        if(commandLine.hasOption(wordSizeOption)) {
+        if (commandLine.hasOption(wordSizeOption)) {
             String wordSizeString = commandLine.getOptionValue(wordSizeOption);
             try {
                 wordSize = Integer.parseInt(wordSizeString);
@@ -72,15 +72,15 @@ public class Arguments {
             wordSize = Memory.DEFAULT_WORD_SIZE;
         }
 
-        Simulator sim = new Simulator(wordSize, memorySize);
+        Simulator sim = new Simulator(wordSize, memorySize, config.getSimSpeed());
         String filepath = "";
-        if(commandLine.hasOption(fileOption)) {
+        if (commandLine.hasOption(fileOption)) {
             filepath = commandLine.getOptionValue(fileOption);
         }
 
-        if(commandLine.hasOption(windowlessOption)) {
+        if (commandLine.hasOption(windowlessOption)) {
             CommandLineInterface cli = null;
-            if(filepath.equals("")) {
+            if (filepath.equals("")) {
                 cli = new CommandLineInterface(sim);
             } else {
                 cli = new CommandLineInterface(sim, filepath);
@@ -88,13 +88,14 @@ public class Arguments {
             cli.startSimulation();
         } else {
             SwingUtilities.invokeLater(() -> {
-                Window.instantiate(sim);
+                Window.instantiate(sim, config);
             });
         }
     }
 
     /**
      * Exit the program while displaying a message.
+     *
      * @param message the message to print before exiting.
      */
     private static void errorArgs(String message) {

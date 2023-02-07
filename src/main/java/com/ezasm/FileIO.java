@@ -11,17 +11,18 @@ public class FileIO {
 
     /**
      * Reads the text from a given file.
+     *
      * @param file the file to read from.
      * @return the text read.
      * @throws IOException if an error occurred reading from the file.
      */
     public static String readFile(File file) throws IOException {
-        if(!file.exists() || !file.canRead() ) {
+        if (!file.exists() || !file.canRead()) {
             throw new IOException("Could not load specified file");
         }
         BufferedReader reader = new BufferedReader(new FileReader(file));
         StringBuilder sb = new StringBuilder();
-        reader.lines().forEachOrdered( line -> {
+        reader.lines().forEachOrdered(line -> {
             sb.append(line).append(System.lineSeparator());
         });
         return sb.toString();
@@ -29,7 +30,8 @@ public class FileIO {
 
     /**
      * Writes the given content to the given file.
-     * @param file the file to write to.
+     *
+     * @param file    the file to write to.
      * @param content the String to write.
      * @throws IOException if an error occurred writing to the file.
      */
@@ -40,7 +42,9 @@ public class FileIO {
     }
 
     /**
-     * Initializes a JFileChooser with the file types which could be associated with code for an EzASM program.
+     * Initializes a JFileChooser with the file types which could be associated with code for an EzASM
+     * program.
+     *
      * @param fileChooser the JFileChooser to act on.
      */
     public static void filterFileChooser(JFileChooser fileChooser) {
@@ -66,8 +70,10 @@ public class FileIO {
 
         @Override
         public boolean accept(File file) {
-            if(file.isDirectory()) return true;
-            else return file.getName().toLowerCase().endsWith(extension);
+            if (file.isDirectory())
+                return true;
+            else
+                return file.getName().toLowerCase().endsWith(extension);
         }
 
         @Override

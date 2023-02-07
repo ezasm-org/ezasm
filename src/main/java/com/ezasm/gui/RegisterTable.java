@@ -1,5 +1,7 @@
 package com.ezasm.gui;
 
+import com.ezasm.Config;
+import com.ezasm.Theme;
 import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
@@ -9,7 +11,7 @@ import java.awt.*;
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
  */
-public class RegisterTable extends JPanel {
+public class RegisterTable extends JPanel implements IThemeable {
 
     private final JTable table;
     private final Registers registers;
@@ -18,6 +20,7 @@ public class RegisterTable extends JPanel {
 
     /**
      * Given the registers, construct a table which displays the names and values of each one.
+     *
      * @param registers the registers to read from.
      */
     public RegisterTable(Registers registers) {
@@ -35,6 +38,20 @@ public class RegisterTable extends JPanel {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+    }
+
+    /**
+     * Applies the proper theming to the editor area
+     */
+    public void applyTheme(Font font, Theme theme) {
+        this.setBackground(theme.getBackground());
+        table.setRowHeight(font.getSize() + 3);
+        table.getTableHeader().setOpaque(false);
+        table.getTableHeader().setBackground(theme.getCurrentline());
+        table.getTableHeader().setForeground(theme.getForeground());
+        table.setBackground(theme.getBackground());
+        table.setForeground(theme.getForeground());
+        table.setFont(font);
     }
 
     /**
@@ -67,10 +84,10 @@ public class RegisterTable extends JPanel {
         }
 
         public Object getValueAt(int row, int col) {
-            if(col == 0) {
+            if (col == 0) {
                 // labels
                 return "$" + Registers.getRegisterName(row);
-            } else if(col == 1) {
+            } else if (col == 1) {
                 // values
                 return registers.getRegister(row).getLong();
             } else {
@@ -80,7 +97,8 @@ public class RegisterTable extends JPanel {
         }
 
         @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        }
 
         @Override
         public boolean isCellEditable(int row, int col) {

@@ -9,7 +9,29 @@ CerulanLumina@users.noreply.github.com
 
 ## Building
 
-TODO
+Clone this repository somehow, either download the source from GitHub or run `git clone https://github.com/TrevorBrunette/EzASM` from the command line.
+
+### Building from source through the command line:
+
+Install Apache Maven \
+Navigate to the EzASM source directory \
+Run `mvn compile assembly:single` will build an executable .jar file in the `target` directory \
+Run that jar file with `java -jar target/*.jar`
+
+### Building using an IDE (IntelliJ IDEA):
+
+Open IntelliJ and select open project \
+Navigate to the EzASM source directory and open it \
+Wait for the files to be indexed \
+An SDK has to be set if one is not detected automatically (use version 17 at a minimum)
+Navigate to the `src/main/java/com/ezasm/Main.java` file \
+Run that file with the play button
+
+### Testing
+
+**You will need to have built from the command line or IntelliJ to complete this** \
+Navigate to the EzASM source directory \
+Run `mvn clean test`
 
 ## Introduction
 
@@ -74,7 +96,7 @@ String manip (first argument is source, second is destination) \
 `strcat` (ptr) (ptr) (number of characters) 
 
 ### System call instructions: 
-`alloc` (register destination) (register/immediate number of words) \
+`alloc` (register destination) (register/immediate number of words) 
 
 `printi` (register/immediate, integer interpretation) \
 `printf` (register/immediate, float interpretation) \
@@ -95,3 +117,4 @@ Delimiter - `INSTRUCTION ARG1, ARG2, … ;` \
 replace syntax with whitespace at runtime \
 Label - line only contains `LABEL_NAME:` \
 Comment - line starts with `#` 
+
