@@ -41,6 +41,13 @@ public class Line {
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
             if (Lexer.isImmediate(arguments[i])) {
+                if (arguments[i].matches("'.+'")) {
+                    String str = arguments[i];
+                    str = str.replaceAll("'", "");
+                    str = str.replaceAll("\\n", "\n");
+                    this.arguments[i] = new ImmediateInput(Conversion.longToBytes(str.charAt(0)));
+                    continue;
+                }
                 this.arguments[i] = new ImmediateInput(Conversion.longToBytes(Long.parseLong(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);

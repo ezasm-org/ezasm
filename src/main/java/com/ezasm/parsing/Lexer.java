@@ -104,6 +104,8 @@ public class Lexer {
     public static boolean isImmediate(String token) {
         if (token.length() < 1)
             return false;
+        if (token.matches("'.+'"))
+            return true;
         if (!isNumeric(token))
             return false;
         try {
