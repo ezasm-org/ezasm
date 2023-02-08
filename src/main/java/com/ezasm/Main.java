@@ -1,8 +1,5 @@
 package com.ezasm;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import static com.ezasm.Arguments.handleArgs;
 
 /**
@@ -15,7 +12,7 @@ public class Main {
      *
      * @param args the program arguments.
      */
-    public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
+    public static void main(String[] args) {
         handleArgs(args);
     }
 

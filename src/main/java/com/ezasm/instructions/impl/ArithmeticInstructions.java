@@ -7,7 +7,7 @@ import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
-import com.ezasm.simulation.SimulationException;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.function.BinaryOperator;
 
@@ -49,6 +49,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the addition operation.
      * @param input2 the right-hand side of the addition operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void add(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -61,11 +62,11 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the subtraction operation.
      * @param input2 the right-hand side of the subtraction operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void sub(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        throw new SimulationException("hi");
-        //arithmetic((a, b) -> a - b, output, input1, input2);
+        arithmetic((a, b) -> a - b, output, input1, input2);
     }
 
     /**
@@ -74,6 +75,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the multiply operation.
      * @param input2 the right-hand side of the multiply operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void mul(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -86,6 +88,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the divide operation.
      * @param input2 the right-hand side of the divide operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void div(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -101,6 +104,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the and operation.
      * @param input2 the right-hand side of the and operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void and(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -113,6 +117,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the or operation.
      * @param input2 the right-hand side of the or operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void or(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -122,9 +127,10 @@ public class ArithmeticInstructions {
     /**
      * The standard xor operation.
      *
+     * @param output the output of the operation.
      * @param input1 the left-hand side of the xor operation.
      * @param input2 the right-hand side of the xor operation.
-     * @param output the output of the operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void xor(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -136,6 +142,7 @@ public class ArithmeticInstructions {
      *
      * @param output the output of the operation.
      * @param input  the input of the not operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void not(IAbstractOutput output, IAbstractInput input) throws SimulationException {
@@ -151,6 +158,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the sll operation.
      * @param input2 the right-hand side of the sll operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void sll(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -163,6 +171,7 @@ public class ArithmeticInstructions {
      * @param output the output of the operation.
      * @param input1 the left-hand side of the srl operation.
      * @param input2 the right-hand side of the srl operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void srl(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
@@ -170,9 +179,10 @@ public class ArithmeticInstructions {
     }
 
     /**
-     * The standard decrement operation. Subtracts one to the register's data.
+     * The standard decrement operation. Subtracts one from the given data.
      *
-     * @param input the register to be modified.
+     * @param input the input/output to be modified.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void dec(IAbstractInputOutput input) throws SimulationException {
@@ -180,9 +190,10 @@ public class ArithmeticInstructions {
     }
 
     /**
-     * The standard increment operation. Adds one to the register's data.
+     * The standard increment operation. Adds one to the given data.
      *
      * @param input the input/output to be modified.
+     * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
     public void inc(IAbstractInputOutput input) throws SimulationException {

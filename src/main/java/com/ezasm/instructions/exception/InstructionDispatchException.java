@@ -1,9 +1,9 @@
 package com.ezasm.instructions.exception;
 
-import com.ezasm.simulation.SimulationException;
+import com.ezasm.simulation.exception.SimulationException;
 
 /**
- * Not yet implemented. An error in dispatching an instruction's corresponding method.
+ * An error in dispatching an instruction's corresponding method.
  */
 public class InstructionDispatchException extends SimulationException {
 

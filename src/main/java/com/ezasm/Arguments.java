@@ -3,7 +3,7 @@ package com.ezasm;
 import com.ezasm.gui.Window;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Memory;
-import com.ezasm.simulation.NewSimulator;
+import com.ezasm.simulation.Simulator;
 import org.apache.commons.cli.*;
 
 import javax.swing.*;
@@ -73,7 +73,7 @@ public class Arguments {
             wordSize = Memory.DEFAULT_WORD_SIZE;
         }
 
-        ISimulator sim = new NewSimulator(wordSize, memorySize);
+        ISimulator sim = new Simulator(wordSize, memorySize);
         String filepath = "";
         if (commandLine.hasOption(fileOption)) {
             filepath = commandLine.getOptionValue(fileOption);

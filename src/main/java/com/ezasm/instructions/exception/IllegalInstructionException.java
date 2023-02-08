@@ -1,8 +1,7 @@
 package com.ezasm.instructions.exception;
 
 /**
- * Represents the usage of an instruction with an improper number of parameters or a nonexistent
- * instruction.
+ * Represents the usage of an instruction with an improper number of parameters or a nonexistent instruction.
  */
 public class IllegalInstructionException extends InstructionDispatchException {
 

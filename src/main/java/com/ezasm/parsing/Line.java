@@ -7,9 +7,11 @@ import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
- * The representation of a line of code. Consists of an Instruction object and the arguments
- * thereof.
+ * The representation of a line of code. Consists of an Instruction object and the arguments thereof.
  */
 public class Line {
 
@@ -22,8 +24,7 @@ public class Line {
      *
      * @param instruction the String representing the instruction.
      * @param arguments   the variable sized arguments token String list.
-     * @throws ParseException if any of the given String tokens cannot be parsed into their
-     *                        corresponding types.
+     * @throws ParseException if any of the given String tokens cannot be parsed into their corresponding types.
      */
     public Line(String instruction, String[] arguments) throws ParseException {
         if (Lexer.isLabel(instruction)) {
@@ -111,13 +112,27 @@ public class Line {
         return label;
     }
 
-    /**
-     * Gets the interpreted String representation of this line of code.
-     *
-     * @return the interpreted String representation of this line of code.
-     */
     @Override
     public String toString() {
         return instruction.text();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Line line = (Line) o;
+        return Objects.equals(instruction, line.instruction) && Arrays.equals(arguments, line.arguments)
+                && Objects.equals(label, line.label);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(instruction, label);
+        result = 31 * result + Arrays.hashCode(arguments);
+        return result;
+    }
+
 }

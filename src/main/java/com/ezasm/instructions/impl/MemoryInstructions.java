@@ -5,8 +5,11 @@ import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
-import com.ezasm.simulation.SimulationException;
+import com.ezasm.simulation.exception.SimulationException;
 
+/**
+ * An implementation of memory manipulation instructions for the simulation.
+ */
 public class MemoryInstructions {
 
     private final ISimulator simulator;
@@ -20,6 +23,12 @@ public class MemoryInstructions {
         this.simulator = simulator;
     }
 
+    /**
+     * Pushes a value to the stack, moving the stack pointer to allow for room on the stack to store it.
+     *
+     * @param input the value to be pushed onto the stack.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
     @Instruction
     public void push(IAbstractInput input) throws SimulationException {
         long sp = simulator.getRegisters().getRegister(Registers.SP).getLong() - simulator.getMemory().WORD_SIZE;
@@ -27,6 +36,12 @@ public class MemoryInstructions {
         simulator.getMemory().write((int) sp, input.get(simulator));
     }
 
+    /**
+     * Pops a value from the stack, moving the stack pointer to deallocate it.
+     *
+     * @param output the place to store the obtained value.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
     @Instruction
     public void pop(IAbstractOutput output) throws SimulationException {
         long sp = simulator.getRegisters().getRegister(Registers.SP).getLong();

@@ -4,10 +4,10 @@ import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
 
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.Objects;
 
 /**
- * The implementation of a register to be used as an output.
+ * The implementation of a register to be used as either an input or an output.
  */
 public class RegisterInputOutput implements IAbstractInputOutput {
 
@@ -54,16 +54,18 @@ public class RegisterInputOutput implements IAbstractInputOutput {
         simulator.getRegisters().getRegister(register).setBytes(value);
     }
 
-    /**
-     * Mutates the register according to the mutator function given.
-     *
-     * @param simulator the program simulator.
-     * @param mutator   the mutator function.
-     */
-    public void mutate(ISimulator simulator, Function<byte[], byte[]> mutator) {
-        byte[] val = simulator.getRegisters().getRegister(register).getBytes();
-        byte[] mutate = mutator.apply(val);
-        simulator.getRegisters().getRegister(register).setBytes(mutate);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        RegisterInputOutput that = (RegisterInputOutput) o;
+        return register == that.register;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(register);
+    }
 }

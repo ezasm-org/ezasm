@@ -3,10 +3,16 @@ package com.ezasm.simulation;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
+import com.ezasm.simulation.exception.InvalidProgramCounterException;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.*;
 
-public class NewSimulator implements ISimulator {
+/**
+ * An implementation of a simulator which manages the memory, registers, and lines of code in an instance of the EzASM
+ * runtime. Provides capabilities to run lines of code and access to the internal representation.
+ */
+public class Simulator implements ISimulator {
 
     private final Memory memory;
     private final Registers registers;
@@ -17,35 +23,25 @@ public class NewSimulator implements ISimulator {
     private final Map<String, Integer> labels;
 
     /**
-     * Constructs a Simulator with the default specifications.
-     */
-    public NewSimulator() {
-        this.memory = new Memory();
-        this.registers = new Registers(this.memory.WORD_SIZE);
-        this.lines = new ArrayList<>();
-        this.labels = new HashMap<>();
-        pc = registers.getRegister(Registers.PC);
-        instructionDispatcher = new InstructionDispatcher(this);
-        init();
-    }
-
-    /**
      * Constructs a Simulator with the given word size and memory size specifications.
      *
      * @param wordSize   the size of words in bytes for the program.
      * @param memorySize the size of the memory in words for the program.
      */
-    public NewSimulator(int wordSize, int memorySize) {
+    public Simulator(int wordSize, int memorySize) {
         this.memory = new Memory(wordSize, memorySize);
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
-        init();
+        initialize();
     }
 
-    private void init() {
+    /**
+     * Initialization function which sets up any registers and memory.
+     */
+    private void initialize() {
         registers.getRegister(Registers.SP).setLong(memory.initialStackPointer());
     }
 
@@ -64,15 +60,13 @@ public class NewSimulator implements ISimulator {
         resetData();
         lines.clear();
         labels.clear();
-        init();
+        initialize();
     }
 
     /**
-     * Return true if the program has run off of the end of the code as in program completion, false
-     * otherwise.
+     * Return true if the program has run off of the end of the code as in program completion, false otherwise.
      *
-     * @return true if the program has run off of the end of the code as in program completion, false
-     *         otherwise.
+     * @return true if the program has run off of the end of the code as in program completion, false otherwise.
      */
     public boolean isDone() {
         return pc.getLong() == lines.size();
@@ -145,10 +139,9 @@ public class NewSimulator implements ISimulator {
      *
      * @return the validated PC.
      */
-    private int validatePC() {
+    private int validatePC() throws InvalidProgramCounterException {
         if (isError()) {
-            // TODO handle better
-            throw new RuntimeException();
+            throw new InvalidProgramCounterException(pc.getLong());
         }
         return (int) pc.getLong();
     }

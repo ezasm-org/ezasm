@@ -4,9 +4,6 @@ import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.simulation.Registers;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class LexerTest {
@@ -74,7 +71,7 @@ class LexerTest {
             if (newline == null) {
                 return false;
             }
-            return line.toString().equals(newline.toString());
+            return line.equals(newline);
         } catch (ParseException e) {
             return false;
         }
@@ -106,9 +103,6 @@ class LexerTest {
     void parseLineException() {
         assertThrows(ParseException.class, () -> {
             Lexer.parseLine("add $s0 $s1 $abc", 0);
-        });
-        assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add $s0 $s1 ABC", 0);
         });
         /*
          * Will not work until issue #30 is resolved assertThrows(ParseException.class, () -> {

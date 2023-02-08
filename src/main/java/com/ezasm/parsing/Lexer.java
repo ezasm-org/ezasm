@@ -6,7 +6,6 @@ import com.ezasm.instructions.InstructionDispatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Static context functions regarding lexing and tokenizing Strings.
@@ -62,9 +61,6 @@ public class Lexer {
         if (token.length() < 1)
             return false;
         int colon = token.indexOf(':');
-        // Implementation for labels without colons
-        // if (colon == -1) return isAlNum(token) &&
-        // !InstructionDispatcher.getInstructions().containsKey(token);
         return (colon == token.length() - 1) && isAlNum(token.substring(0, colon));
     }
 
@@ -135,13 +131,11 @@ public class Lexer {
     }
 
     /**
-     * Parses the given text as a single line. Meant for use within a simulation of the programming
-     * language.
+     * Parses the given text as a single line. Meant for use within a simulation of the programming language.
      *
      * @param line       the line of text.
      * @param lineNumber the line number of this line.
-     * @return null if the line was empty, a comment, or a label; otherwise returns the line
-     *         corresponding to the text.
+     * @return null if the line was empty, a comment, or a label; otherwise returns the line corresponding to the text.
      * @throws ParseException if the line could not be properly parsed.
      */
     public static Line parseLine(String line, int lineNumber) throws ParseException {

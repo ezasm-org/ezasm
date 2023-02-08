@@ -4,13 +4,13 @@ import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.SimulationException;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.Scanner;
 
 /**
- * A representation of an instance in the command line interface. Stores the current simulation and
- * the simulation thread.
+ * A representation of an instance in the command line interface. Stores the current simulation and the simulation
+ * thread.
  */
 public class CommandLineInterface {
 
@@ -18,8 +18,8 @@ public class CommandLineInterface {
     private final boolean cli;
 
     /**
-     * Constructs a basic CLI based on the given Simulator. This CLI will read from the terminal until
-     * the program is closed or the EOF signal is sent.
+     * Constructs a basic CLI based on the given Simulator. This CLI will read from the terminal until the program is
+     * closed or the EOF signal is sent.
      *
      * @param simulator the given Simulator.
      */

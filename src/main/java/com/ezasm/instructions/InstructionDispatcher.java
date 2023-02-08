@@ -4,12 +4,11 @@ import com.ezasm.instructions.impl.FunctionInstructions;
 import com.ezasm.instructions.impl.MemoryInstructions;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
-import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.impl.ArithmeticInstructions;
 import com.ezasm.parsing.Line;
-import com.ezasm.simulation.SimulationException;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,16 +26,15 @@ public class InstructionDispatcher {
     private static final HashMap<String, DispatchInstruction> instructions = new HashMap<>();
 
     static {
-        // load the instructions
         registerInstructions(ArithmeticInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
     }
 
     /**
-     * Registers instructions from a class. Instructions are registered by scanning the class's declared
-     * methods for those annotated with {@link Instruction}. It enumerates the methods and scans their
-     * parameters to deduce the appropriate operands.
+     * Registers instructions from a class. Instructions are registered by scanning the class's declared methods for
+     * those annotated with {@link Instruction}. It enumerates the methods and scans their parameters to deduce the
+     * appropriate operands.
      *
      * @param clazz The class to register instructions from.
      */
@@ -56,8 +54,8 @@ public class InstructionDispatcher {
     }
 
     /**
-     * Registers a single instruction. The method is assumed to be annotated with {@link Instruction} at
-     * this point. This function deduces the operands based on the method's parameters (TODO).
+     * Registers a single instruction. The method is assumed to be annotated with {@link Instruction} at this point.
+     * This function deduces the operands based on the method's parameters (TODO).
      *
      * @param parent The parent class of the method.
      * @param method The method to register as an instruction.
@@ -87,9 +85,9 @@ public class InstructionDispatcher {
     }
 
     /**
-     * Stores instances of the classes that implement the instructions. For every instantiated
-     * InstructionDispatcher, there's a set of instances that manage the instructions. This allows us to
-     * bind the Simulator to the instructions.
+     * Stores instances of the classes that implement the instructions. For every instantiated InstructionDispatcher,
+     * there's a set of instances that manage the instructions. This allows us to bind the Simulator to the
+     * instructions.
      */
     private final HashMap<Class<?>, Object> instructionHandlerInstances = new HashMap<>();
 
@@ -138,12 +136,8 @@ public class InstructionDispatcher {
      * Execute an instruction based on a parsed line.
      *
      * @param line the parsed line.
-     * @throws InstructionDispatchException when a parsed line cannot be interpreted as a function. This
-     *                                      could be an {@link IllegalInstructionException} if the
-     *                                      instruction is unrecognized, or an
-     *                                      {@link IllegalArgumentException IllegalArgumentException} if
-     *                                      the provided parsed arguments cannot fit to the instruction
-     *                                      (not yet implemented).
+     * @throws InstructionDispatchException when a parsed line cannot be interpreted as a function. This could be an
+     *                                      {@link IllegalInstructionException} if the instruction is unrecognized.
      */
     public void execute(Line line) throws SimulationException {
         DispatchInstruction dispatch = instructions.get(line.getInstruction().text());

@@ -47,8 +47,6 @@ public class MenubarFactory {
         menu.addSeparator();
         addMenuItem(menu, EXIT);
 
-
-
         /*
          * SETTINGS
          */

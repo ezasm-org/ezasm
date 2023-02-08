@@ -10,8 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * The main graphical user interface of the program. A singleton which holds all the necessary GUI
- * components and one relevant simulator.
+ * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
+ * relevant simulator.
  */
 public class Window {
 
@@ -134,8 +134,7 @@ public class Window {
     }
 
     /**
-     * Handles the program completion and displays a message to the user about the status of the
-     * program.
+     * Handles the program completion and displays a message to the user about the status of the program.
      */
     public void handleProgramCompletion() {
         if (simulator.isError()) {
@@ -166,8 +165,8 @@ public class Window {
     }
 
     /**
-     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while
-     * this is the set to false.
+     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while this is the set to
+     * false.
      *
      * @param value true to enable, false to disable.
      */

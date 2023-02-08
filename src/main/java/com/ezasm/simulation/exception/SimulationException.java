@@ -1,4 +1,4 @@
-package com.ezasm.simulation;
+package com.ezasm.simulation.exception;
 
 /**
  * Represents an exception during the runtime of the simulation of the language.
