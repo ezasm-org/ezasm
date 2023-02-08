@@ -1,14 +1,5 @@
 package com.ezasm;
 
-import com.ezasm.instructions.InstructionDispatcher;
-import com.ezasm.simulation.Memory;
-import com.ezasm.simulation.Simulator;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import static com.ezasm.Arguments.handleArgs;
 
 /**
@@ -21,23 +12,8 @@ public class Main {
      *
      * @param args the program arguments.
      */
-    public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
+    public static void main(String[] args) {
         handleArgs(args);
-    }
-
-    /**
-     * Tests reading a program from a given file.
-     */
-    private static void testFile() {
-        try {
-            Simulator sim = new Simulator();
-            String content = FileIO.readFile(new File("res/example.ez"));
-            sim.readMultiLineString(content);
-            sim.runLinesFromPC();
-            System.out.println(sim.getRegisters().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }

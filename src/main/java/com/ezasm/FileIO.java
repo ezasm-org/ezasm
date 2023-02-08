@@ -42,8 +42,7 @@ public class FileIO {
     }
 
     /**
-     * Initializes a JFileChooser with the file types which could be associated with code for an EzASM
-     * program.
+     * Initializes a JFileChooser with the file types which could be associated with code for an EzASM program.
      *
      * @param fileChooser the JFileChooser to act on.
      */

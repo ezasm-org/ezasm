@@ -5,11 +5,11 @@ import com.ezasm.Conversion;
 import java.util.Arrays;
 
 /**
- * Represents the system memory. There will be a single and contiguous array of memory which
- * represents both the stack and heap with the stack growing downward and the heap growing upward.
- * Implements an "offset" for the address spacing to not start at 0. Keeps track of allocated memory
- * and throws an exception when the heap crosses the stack. Has a default size of 2^16 words (or
- * 2^19 bytes). Has a default word size of 8 bytes (the typical long integer or long float size).
+ * Represents the system memory. There will be a single and contiguous array of memory which represents both the stack
+ * and heap with the stack growing downward and the heap growing upward. Implements an "offset" for the address spacing
+ * to not start at 0. Keeps track of allocated memory and throws an exception when the heap crosses the stack. Has a
+ * default size of 2^16 words (or 2^19 bytes). Has a default word size of 8 bytes (the typical long integer or long
+ * float size).
  */
 public class Memory {
 
@@ -101,8 +101,8 @@ public class Memory {
     }
 
     /**
-     * Allocates a certain number of bytes with a check based on stack pointer to ensure that the heap
-     * pointer does not cross the stack pointer.
+     * Allocates a certain number of bytes with a check based on stack pointer to ensure that the heap pointer does not
+     * cross the stack pointer.
      *
      * @param bytes the number of bytes to allocate.
      * @param sp    the current stack pointer of the program.
@@ -140,7 +140,7 @@ public class Memory {
      */
     public byte[] read(int address, int count) {
         address = address - OFFSET;
-        if (address < 0 || (address + count) >= this.MEMORY_SIZE) {
+        if (address < 0 || (address + count) > this.MEMORY_SIZE) {
             // Error: address is out of bounds
             System.out.println("Error: possible read out of bounds with address" + address);
             return null;
@@ -195,9 +195,10 @@ public class Memory {
      */
     public void write(int address, byte[] data) {
         address = address - OFFSET;
-        if (address < 0 || (address + data.length) >= this.MEMORY_SIZE) {
+        if (address < 0 || (address + data.length) > this.MEMORY_SIZE) {
             // Error: address is out of bounds
-            System.out.println("Error: address is out of bounds");
+            // TODO replace with new simulation exception
+            System.err.println("Error: address is out of bounds");
             return;
         }
         System.arraycopy(data, 0, memory, address, data.length);

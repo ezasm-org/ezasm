@@ -1,6 +1,5 @@
 package com.ezasm.gui;
 
-import com.ezasm.Config;
 import com.ezasm.Theme;
 import com.ezasm.simulation.Registers;
 
@@ -47,7 +46,7 @@ public class RegisterTable extends JPanel implements IThemeable {
         this.setBackground(theme.getBackground());
         table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
-        table.getTableHeader().setBackground(theme.getCurrentline());
+        table.getTableHeader().setBackground(theme.getCurrentLine());
         table.getTableHeader().setForeground(theme.getForeground());
         table.setBackground(theme.getBackground());
         table.setForeground(theme.getForeground());
