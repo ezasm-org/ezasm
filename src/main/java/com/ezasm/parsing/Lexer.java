@@ -47,9 +47,6 @@ public class Lexer {
 
     private static double baseToDouble(String text, int base) throws NumberFormatException {
         String[] halves = text.split("\\.");
-        if (halves.length == 0) {
-            return Integer.parseInt(text, 2);
-        }
         if (halves.length > 2) {
             throw new NumberFormatException();
         }
@@ -62,7 +59,7 @@ public class Lexer {
             return alloc;
         }
         for (int i = 0; i < halves[1].length(); i++) {
-            alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * Math.pow(base, -(i + 1));
+            alloc += Integer.parseInt(Character.toString(halves[1].charAt(i)), base) * Math.pow(base, -(i + 1));
         }
         return alloc;
     }
