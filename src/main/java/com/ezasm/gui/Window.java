@@ -1,7 +1,7 @@
 package com.ezasm.gui;
 
-import com.ezasm.simulation.SimulationThread;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.parsing.Lexer;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.Config;
 import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
@@ -10,14 +10,13 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * The main graphical user interface of the program. A singleton which holds all the necessary GUI
- * components and one relevant simulator.
+ * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
+ * relevant simulator.
  */
 public class Window {
 
     private static Window instance;
-    private final Simulator simulator;
-    private final SimulationThread simulationThread;
+    private final ISimulator simulator;
 
     private Config config;
     private JFrame app;
@@ -26,10 +25,9 @@ public class Window {
     private EditorPane editor;
     private RegisterTable table;
 
-    protected Window(Simulator simulator, Config config) {
+    protected Window(ISimulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
-        this.simulationThread = new SimulationThread(this.simulator, config.getSimSpeed());
         this.config = config;
         initialize();
     }
@@ -48,8 +46,9 @@ public class Window {
      * Generate the singleton Window instance if it does not exist.
      *
      * @param simulator the simulator to use.
+     * @param config    the program configuration.
      */
-    public static void instantiate(Simulator simulator, Config config) {
+    public static void instantiate(ISimulator simulator, Config config) {
         if (instance == null)
             new Window(simulator, config);
     }
@@ -102,7 +101,7 @@ public class Window {
         table.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
-        simulator.setSimulationSpeed(config.getSimSpeed());
+        SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
     /**
@@ -110,7 +109,7 @@ public class Window {
      *
      * @return the current simulator in use.
      */
-    public Simulator getSimulator() {
+    public ISimulator getSimulator() {
         return simulator;
     }
 
@@ -131,26 +130,14 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         updateAll();
-        simulator.readMultiLineString(editor.getText());
+        simulator.addLines(Lexer.parseLines(editor.getText(), 0));
     }
 
     /**
-     * Gets the instance's simulation thread for use in staring the async execution of the simulator's
-     * instructions.
-     *
-     * @return the SimulationThread instance relevant.
-     */
-    public SimulationThread getSimulationThread() {
-        return simulationThread;
-    }
-
-    /**
-     * Handles the program completion and displays a message to the user about the status of the
-     * program.
+     * Handles the program completion and displays a message to the user about the status of the program.
      */
     public void handleProgramCompletion() {
-        ToolbarFactory.handleProgramCompletion();
-        if (simulator.isErrored()) {
+        if (simulator.isError()) {
             System.out.println("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
             System.out.println("** Program terminated normally **");
@@ -178,8 +165,8 @@ public class Window {
     }
 
     /**
-     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while
-     * this is the set to false.
+     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while this is the set to
+     * false.
      *
      * @param value true to enable, false to disable.
      */

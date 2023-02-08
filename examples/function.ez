@@ -1,0 +1,10 @@
+add $t0 3 0
+call function1
+jal function1
+jump exit
+
+function1:
+	add $t0 $t0 1
+	return
+
+exit:

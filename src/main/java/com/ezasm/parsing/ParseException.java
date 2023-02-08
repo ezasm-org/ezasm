@@ -1,7 +1,7 @@
 package com.ezasm.parsing;
 
 /**
- * An exception relating to parsing or lexing.
+ * Represents an exception relating to parsing or lexing.
  */
 public class ParseException extends Exception {
 

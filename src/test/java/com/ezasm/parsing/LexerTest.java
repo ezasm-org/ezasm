@@ -4,9 +4,6 @@ import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.simulation.Registers;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class LexerTest {
@@ -68,15 +65,13 @@ class LexerTest {
         assertFalse(Lexer.isInstruction(""));
     }
 
-    private static final Map<String, Integer> map = new HashMap<>();
-
     private static boolean testLineAgainstString(Line line, String string) {
         try {
-            Line newline = Lexer.parseLine(string, map, 0);
+            Line newline = Lexer.parseLine(string, 0);
             if (newline == null) {
                 return false;
             }
-            return line.toString().equals(newline.toString());
+            return line.equals(newline);
         } catch (ParseException e) {
             return false;
         }
@@ -107,23 +102,20 @@ class LexerTest {
     @Test
     void parseLineException() {
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add $s0 $s1 $abc", map, 0);
-        });
-        assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add $s0 $s1 ABC", map, 0);
+            Lexer.parseLine("add $s0 $s1 $abc", 0);
         });
         /*
          * Will not work until issue #30 is resolved assertThrows(ParseException.class, () -> {
          * Lexer.parseLine("add $s0 $s1", map, 0); });
          */
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add", map, 0);
+            Lexer.parseLine("add", 0);
         });
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("$s0", map, 0);
+            Lexer.parseLine("$s0", 0);
         });
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("$s0", map, 0);
+            Lexer.parseLine("$s0", 0);
         });
 
     }

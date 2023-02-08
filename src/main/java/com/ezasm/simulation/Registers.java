@@ -3,8 +3,7 @@ package com.ezasm.simulation;
 import java.util.*;
 
 /**
- * Represents all system registers within an array. Provides access to them by name and by reference
- * number.
+ * Represents all system registers within an array. Provides access to them by name and by reference number.
  */
 public class Registers {
 
@@ -82,10 +81,9 @@ public class Registers {
     private static final int FLOAT_OFFSET = REGISTERS_COUNT;
 
     /**
-     * Initialization function for the registers. Creates both mapping of register number to String and
-     * vice-versa.
+     * Initialization function for the registers. Creates both mapping of register number to String and vice-versa.
      */
-    private static void init() {
+    private static void initialize() {
         registerByString = new HashMap<>(TOTAL_REGISTERS);
         registerByInt = new HashMap<>(TOTAL_REGISTERS);
         addRegister(ZERO, 0);
@@ -151,11 +149,11 @@ public class Registers {
     }
 
     /*
-     * Initializes the registers and mappings in a static context whenever this code is loaded. This
-     * prevents the register mappings from ever being null.
+     * Initializes the registers and mappings in a static context whenever this code is loaded. This prevents the
+     * register mappings from ever being null.
      */
     static {
-        init();
+        initialize();
     }
 
     /**
@@ -171,9 +169,8 @@ public class Registers {
     }
 
     /**
-     * Checks if a given String matches any of the registers. Can be the named register notation or the
-     * numerical register notation to check. The register attempt given should not have the '$' at the
-     * start of the String.
+     * Checks if a given String matches any of the registers. Can be the named register notation or the numerical
+     * register notation to check. The register attempt given should not have the '$' at the start of the String.
      *
      * @param register the String representing the register.
      * @return true if the register is valid, false otherwise.

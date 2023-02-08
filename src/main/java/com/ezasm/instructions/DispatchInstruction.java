@@ -1,13 +1,14 @@
 package com.ezasm.instructions;
 
 import com.ezasm.parsing.Line;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * An instruction which can be dispatched. This has all the information necessary to interpret a
- * parsed {@link Line} and caches it for quick interpretation.
+ * An instruction which can be dispatched. This has all the information necessary to interpret a parsed {@link Line} and
+ * caches it for quick interpretation.
  */
 public class DispatchInstruction {
 
@@ -22,12 +23,11 @@ public class DispatchInstruction {
     private final Class<?> parent;
 
     /**
-     * Create a new dispatchable instruction based on a method with specific parameters and its parent
-     * class.
+     * Create a new dispatchable instruction based on a method with specific parameters and its parent class.
      *
      * @param parent           the parent class.
-     * @param invocationTarget the method for which to deduce operands for instructions and compile into
-     *                         a dispatchable instruction.
+     * @param invocationTarget the method for which to deduce operands for instructions and compile into a dispatchable
+     *                         instruction.
      */
     public DispatchInstruction(Class<?> parent, Method invocationTarget) {
         this.parent = parent;
@@ -48,21 +48,20 @@ public class DispatchInstruction {
     }
 
     /**
-     * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound
-     * method).
+     * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound method).
      *
-     * @param parent the parent instruction handler. An instance of
-     *               {@link DispatchInstruction#getParent()}.
+     * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#getParent()}.
      * @param line   the parsed line to interpret.
      */
-    public void invoke(Object parent, Line line) {
+    public void invoke(Object parent, Line line) throws SimulationException {
         try {
             this.invocationTarget.invoke(parent, line.getArguments());
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
+            throw new SimulationException(e.getTargetException().getMessage());
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             // TODO handle
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
-
     }
 
 }
