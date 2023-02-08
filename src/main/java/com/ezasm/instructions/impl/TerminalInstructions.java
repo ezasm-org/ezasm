@@ -20,6 +20,11 @@ public class TerminalInstructions {
         stdin = new Scanner(System.in);
     }
 
+    /**
+     * Print a given abstractinput as an Integer
+     *
+     * @param input the input to print
+     */
     @Instruction
     public void printi(IAbstractInput input) {
         byte[] bytes = input.get(simulator);
@@ -27,6 +32,11 @@ public class TerminalInstructions {
         System.out.print(out);
     }
 
+    /**
+     * Print a given abstractinput as a Float
+     *
+     * @param input the input to print
+     */
     @Instruction
     public void printf(IAbstractInput input) {
         byte[] bytes = input.get(simulator);
@@ -34,6 +44,11 @@ public class TerminalInstructions {
         System.out.print(out);
     }
 
+    /**
+     * Print a given abstractinput as a Character
+     *
+     * @param input the input to print
+     */
     @Instruction
     public void printc(IAbstractInput input) {
         byte[] bytes = input.get(simulator);
@@ -41,6 +56,11 @@ public class TerminalInstructions {
         System.out.print(out);
     }
 
+    /**
+     * Print a given abstractinput as a String
+     *
+     * @param input the input to print
+     */
     @Instruction
     public void prints(IAbstractInput input, IAbstractInput input2) {
         byte[] bytes = input.get(simulator);
@@ -51,18 +71,33 @@ public class TerminalInstructions {
         System.out.print(s);
     }
 
+    /**
+     * Read an integer from the terminal to a register
+     *
+     * @param input the input to print
+     */
     @Instruction
     public void readi(IAbstractOutput output) {
         byte[] result = Conversion.longToBytes(stdin.nextLong());
         output.set(simulator, result);
     }
 
+    /**
+     * Read a float from the terminal to a register
+     *
+     * @param input the input to print
+     */
     @Instruction
     public void readf(IAbstractOutput output) {
         byte[] result = Conversion.doubleToBytes(stdin.nextDouble());
         output.set(simulator, result);
     }
 
+    /**
+     * Read a character from the terminal to a register
+     *
+     * @param input the input to print
+     */
     @Instruction
     public void readc(IAbstractOutput output) {
         char c = stdin.next().charAt(0);
@@ -70,6 +105,12 @@ public class TerminalInstructions {
         output.set(simulator, result);
     }
 
+    /**
+     * Read a string from the terminal of a given maximum size and write it to memory
+     *
+     * @param input1 the address to write the string to
+     * @param input2 maximum size of the string to read
+     */
     @Instruction
     public void reads(IAbstractInput input1, IAbstractInput input2) {
         int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
