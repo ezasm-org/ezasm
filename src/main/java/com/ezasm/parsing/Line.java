@@ -1,6 +1,5 @@
 package com.ezasm.parsing;
 
-import com.ezasm.Conversion;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
@@ -52,15 +51,8 @@ public class Line {
 
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
-            if (Lexer.isImmediate(arguments[i])) {
-                double val = Lexer.textToDouble(arguments[i]);
-                long iVal = (long) val;
-                boolean isInteger = val == iVal;
-                if (isInteger) {
-                    this.arguments[i] = new ImmediateInput(Conversion.longToBytes(iVal));
-                } else {
-                    this.arguments[i] = new ImmediateInput(Conversion.doubleToBytes(val));
-                }
+            if (Lexer.isImmediate(arguments[i].toLowerCase())) {
+                this.arguments[i] = new ImmediateInput(Lexer.textToBytes(arguments[i].toLowerCase()));
             } else if (Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);
                 // Code for parsing a dereference

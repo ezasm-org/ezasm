@@ -1,5 +1,6 @@
 package com.ezasm.parsing;
 
+import com.ezasm.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
 
@@ -30,48 +31,72 @@ public class Lexer {
 
     private static boolean isNumeric(String text) {
         try {
-            textToDouble(text);
+            Double.parseDouble(text);
             return true;
-        } catch (NumberFormatException e) {
-            return false;
+        } catch (NumberFormatException ignored) {
         }
+        return isHexadecimal(text) || isBinary(text);
     }
 
-    private static boolean isHex(String text) {
-        return text.startsWith("0x") || text.startsWith("0X");
+    public static byte[] textToBytes(String text) throws ParseException {
+        int base = 10;
+        if(isHexadecimal(text)) {
+            base = 16;
+            text = text.replace("0x", "");
+        } else if (isBinary(text)) {
+            base = 2;
+            text = text.replace("0b", "");
+        }
+
+        try { // Try conversion to long
+            return Conversion.longToBytes(Long.parseLong(text, base));
+        } catch (NumberFormatException ignored) {
+        }
+
+        try { // Try conversion to double
+            return Conversion.doubleToBytes(stringToDouble(text, base));
+        } catch (NumberFormatException ignored) {
+        }
+
+        throw new ParseException(String.format("Unable to parse immediate %s in base %d", text, base));
     }
 
-    private static boolean isBin(String text) {
-        return text.startsWith("0b") || text.startsWith("0B");
+    private static boolean isHexadecimal(String text) {
+        return text.startsWith("0x") || text.startsWith("-0x");
     }
 
-    private static double baseToDouble(String text, int base) throws NumberFormatException {
+    private static boolean isBinary(String text) {
+        return text.startsWith("0b") || text.startsWith("-0b");
+    }
+
+    private static double stringToDouble(String text, int base) throws NumberFormatException {
+        boolean isNegative = false;
+        if(text.startsWith("-")) {
+            text = text.substring(1);
+            isNegative = true;
+        }
         String[] halves = text.split("\\.");
         if (halves.length > 2) {
             throw new NumberFormatException();
         }
         double alloc = 0.0;
-        for (int i = 0; i < halves[0].length(); i++) {
+        for (int i = 0; i < halves[0].length(); ++i) {
             int exp = halves[0].length() - 1 - i;
-            alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * (int) Math.pow(base, exp);
+            alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * Math.pow(base, exp);
         }
         if (halves.length == 1) {
+            if (isNegative) {
+                alloc = -alloc;
+            }
             return alloc;
         }
-        for (int i = 0; i < halves[1].length(); i++) {
+        for (int i = 0; i < halves[1].length(); ++i) {
             alloc += Integer.parseInt(Character.toString(halves[1].charAt(i)), base) * Math.pow(base, -(i + 1));
         }
+        if (isNegative) {
+            alloc = -alloc;
+        }
         return alloc;
-    }
-
-    public static double textToDouble(String text) throws NumberFormatException {
-        if (isHex(text)) {
-            return baseToDouble(text.substring(2), 16);
-        }
-        if (isBin(text)) {
-            return baseToDouble(text.substring(2), 2);
-        }
-        return Double.parseDouble(text);
     }
 
     /**
@@ -143,16 +168,10 @@ public class Lexer {
      * @return true if the given token is a valid immediate, false otherwise.
      */
     public static boolean isImmediate(String token) {
-        if (token.length() < 1)
-            return false;
-        if (!isNumeric(token))
-            return false;
-        try {
-            textToDouble(token);
-            return true;
-        } catch (Exception e) {
+        if (token.isEmpty()) {
             return false;
         }
+        return isNumeric(token);
     }
 
     /**

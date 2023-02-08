@@ -10,7 +10,7 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 
 /**
- * An implementatino of standard terminal I/O instructions for simulation.
+ * An implementation of standard terminal I/O instructions for simulation.
  */
 public class TerminalInstructions {
     private final Simulator simulator;
@@ -23,59 +23,47 @@ public class TerminalInstructions {
 
     @Instruction
     public void printi(IAbstractInput input) throws SimulationException {
-        byte[] bytes = input.get(simulator);
-        long out = Conversion.bytesToLong(bytes);
-        System.out.print(out);
+        System.out.print(Conversion.bytesToLong(input.get(simulator)));
     }
 
     @Instruction
     public void printf(IAbstractInput input) throws SimulationException {
-        byte[] bytes = input.get(simulator);
-        double out = Conversion.bytesToDouble(bytes);
-        System.out.print(out);
+        System.out.print(Conversion.bytesToDouble(input.get(simulator)));
     }
 
     @Instruction
     public void printc(IAbstractInput input) throws SimulationException {
-        byte[] bytes = input.get(simulator);
-        char out = (char) Conversion.bytesToLong(bytes);
-        System.out.print(out);
+
+        System.out.print((char) Conversion.bytesToLong(input.get(simulator)));
     }
 
     @Instruction
-    public void prints(IAbstractInput input, IAbstractInput input2) throws SimulationException {
-        byte[] bytes = input.get(simulator);
-        int addr = (int) Conversion.bytesToLong(bytes);
-        bytes = input2.get(simulator);
-        int maxSize = (int) Conversion.bytesToLong(bytes);
-        String s = simulator.getMemory().readString(addr, maxSize);
+    public void prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+        int address = (int) Conversion.bytesToLong(input1.get(simulator));
+        int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
+        String s = simulator.getMemory().readString(address, maxSize);
         System.out.print(s);
     }
 
     @Instruction
     public void readi(IAbstractOutput output) throws SimulationException {
-        byte[] result = Conversion.longToBytes(stdin.nextLong());
-        output.set(simulator, result);
+        output.set(simulator, Conversion.longToBytes(stdin.nextLong()));
     }
 
     @Instruction
     public void readf(IAbstractOutput output) throws SimulationException {
-        byte[] result = Conversion.doubleToBytes(stdin.nextDouble());
-        output.set(simulator, result);
+        output.set(simulator, Conversion.doubleToBytes(stdin.nextDouble()));
     }
 
     @Instruction
     public void readc(IAbstractOutput output) throws SimulationException {
-        char c = stdin.next().charAt(0);
-        byte[] result = Conversion.longToBytes(c);
-        output.set(simulator, result);
+        output.set(simulator, Conversion.longToBytes(stdin.next().charAt(0)));
     }
 
     @Instruction
     public void reads(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
-        String result = stdin.next();
         int address = (int) Conversion.bytesToLong(input1.get(simulator));
-        simulator.getMemory().writeString(address, result, maxSize);
+        simulator.getMemory().writeString(address, stdin.next(), maxSize);
     }
 }
