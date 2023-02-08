@@ -40,7 +40,6 @@ public class SimulatorGUIActions {
      */
     public static void setInstructionDelayMS(long newDelayMS) {
         instructionDelayMS = newDelayMS;
-
     }
 
     /**

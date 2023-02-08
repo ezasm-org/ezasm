@@ -101,7 +101,7 @@ public class Window {
         table.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
-        // simulator.setSimulationSpeed(config.getSimSpeed()); //TODO
+        SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
     /**
