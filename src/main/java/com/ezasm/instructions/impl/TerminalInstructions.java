@@ -35,9 +35,6 @@ public class TerminalInstructions {
      * @param newOutput the PrintStream representing the output stream.
      */
     public static void setInputOutput(Scanner newInput, PrintStream newOutput) {
-        inputReader.close();
-        outputWriter.flush();
-        outputWriter.close();
         inputReader = newInput;
         outputWriter = newOutput;
     }
@@ -75,7 +72,7 @@ public class TerminalInstructions {
             output.set(simulator, Conversion.longToBytes(inputReader.nextLong()));
         } catch (Exception e) {
             // TODO make I/O simulation exception
-            handleReadError("Error reading integer from input");
+            throw new SimulationException("Error reading integer from input");
         }
     }
 
@@ -85,7 +82,7 @@ public class TerminalInstructions {
             output.set(simulator, Conversion.doubleToBytes(inputReader.nextDouble()));
         } catch (Exception e) {
             // TODO make I/O simulation exception
-            handleReadError("Error reading double from input");
+            throw new SimulationException("Error reading double from input");
         }
     }
 
@@ -102,9 +99,8 @@ public class TerminalInstructions {
             inputReader.useDelimiter(oldDelimiter);
         } catch (Exception e) {
             // TODO make I/O simulation exception
-            e.printStackTrace();
             inputReader.useDelimiter(oldDelimiter);
-            handleReadError("Error reading character from input");
+            throw new SimulationException("Error reading character from input");
         }
     }
 
@@ -116,7 +112,7 @@ public class TerminalInstructions {
             simulator.getMemory().writeString(address, inputReader.next(), maxSize);
         } catch (Exception e) {
             // TODO make I/O simulation exception
-            handleReadError("Error reading string from input");
+            throw new SimulationException("Error reading string from input");
         }
     }
 
@@ -128,16 +124,8 @@ public class TerminalInstructions {
             simulator.getMemory().writeString(address, inputReader.nextLine(), maxSize);
         } catch (Exception e) {
             // TODO make I/O simulation exception
-            handleReadError("Error reading string from input");
+            throw new SimulationException("Error reading string from input");
         }
-    }
-
-    private void handleReadError(String message) throws SimulationException {
-        try {
-            clearBuffer();
-        } catch (Exception ignored) {
-        }
-        throw new SimulationException(message);
     }
 
     /**
