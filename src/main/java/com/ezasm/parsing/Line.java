@@ -52,8 +52,8 @@ public class Line {
 
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
-            if (Lexer.isImmediate(arguments[i])) {
-                this.arguments[i] = new ImmediateInput(Conversion.longToBytes(Long.parseLong(arguments[i])));
+            if (Lexer.isImmediate(arguments[i].toLowerCase())) {
+                this.arguments[i] = new ImmediateInput(Lexer.textToBytes(arguments[i].toLowerCase()));
             } else if (Lexer.isCharacterImmediate(arguments[i])) {
                 this.arguments[i] = new ImmediateInput(
                         Conversion.longToBytes(Lexer.getCharacterImmediate(arguments[i])));

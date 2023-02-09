@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
 

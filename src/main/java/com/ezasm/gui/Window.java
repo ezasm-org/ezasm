@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.Config;
@@ -140,6 +141,8 @@ public class Window {
      * Handles the program completion and displays a message to the user about the status of the program.
      */
     public void handleProgramCompletion() {
+        TerminalInstructions.clearBuffer();
+        System.out.println();
         if (simulator.isError()) {
             System.out.println("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
