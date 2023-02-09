@@ -1,6 +1,8 @@
 package com.ezasm.instructions.impl;
 
+import java.io.*;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import com.ezasm.Conversion;
 import com.ezasm.instructions.Instruction;
@@ -13,28 +15,50 @@ import com.ezasm.simulation.exception.SimulationException;
  * An implementation of standard terminal I/O instructions for simulation.
  */
 public class TerminalInstructions {
+
+    private static InputStream defaultInput = System.in;
+    private static PrintStream defaultOutput = System.out;
+
     private final ISimulator simulator;
-    private Scanner stdin;
+    private static Scanner inputReader;
+    private static PrintStream outputWriter;
+
+    static {
+        inputReader = new Scanner(defaultInput);
+        outputWriter = defaultOutput;
+    }
+
+    /**
+     * Set the input and output of all terminal instructions.
+     *
+     * @param newInput the Scanner representing the input stream.
+     * @param newOutput the PrintStream representing the output stream.
+     */
+    public static void setInputOutput(Scanner newInput, PrintStream newOutput) {
+        inputReader.close();
+        outputWriter.flush();
+        outputWriter.close();
+        inputReader = newInput;
+        outputWriter = newOutput;
+    }
 
     public TerminalInstructions(ISimulator simulator) {
         this.simulator = simulator;
-        stdin = new Scanner(System.in);
     }
 
     @Instruction
     public void printi(IAbstractInput input) throws SimulationException {
-        System.out.print(Conversion.bytesToLong(input.get(simulator)));
+        outputWriter.print(Conversion.bytesToLong(input.get(simulator)));
     }
 
     @Instruction
     public void printf(IAbstractInput input) throws SimulationException {
-        System.out.print(Conversion.bytesToDouble(input.get(simulator)));
+        outputWriter.print(Conversion.bytesToDouble(input.get(simulator)));
     }
 
     @Instruction
     public void printc(IAbstractInput input) throws SimulationException {
-
-        System.out.print((char) Conversion.bytesToLong(input.get(simulator)));
+        outputWriter.print((char) Conversion.bytesToLong(input.get(simulator)));
     }
 
     @Instruction
@@ -42,28 +66,84 @@ public class TerminalInstructions {
         int address = (int) Conversion.bytesToLong(input1.get(simulator));
         int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
         String s = simulator.getMemory().readString(address, maxSize);
-        System.out.print(s);
+        outputWriter.print(s);
     }
 
     @Instruction
     public void readi(IAbstractOutput output) throws SimulationException {
-        output.set(simulator, Conversion.longToBytes(stdin.nextLong()));
+        try {
+            output.set(simulator, Conversion.longToBytes(inputReader.nextLong()));
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            handleReadError("Error reading integer from input");
+        }
     }
 
     @Instruction
     public void readf(IAbstractOutput output) throws SimulationException {
-        output.set(simulator, Conversion.doubleToBytes(stdin.nextDouble()));
+        try {
+            output.set(simulator, Conversion.doubleToBytes(inputReader.nextDouble()));
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            handleReadError("Error reading double from input");
+        }
     }
 
     @Instruction
     public void readc(IAbstractOutput output) throws SimulationException {
-        output.set(simulator, Conversion.longToBytes(stdin.next().charAt(0)));
+        Pattern oldDelimiter = inputReader.delimiter();
+        inputReader.useDelimiter("");
+        try {
+            String current = " ";
+            while (current.matches("\\s")) {
+                current = inputReader.next();
+            }
+            output.set(simulator, Conversion.longToBytes(current.charAt(0)));
+            inputReader.useDelimiter(oldDelimiter);
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            e.printStackTrace();
+            inputReader.useDelimiter(oldDelimiter);
+            handleReadError("Error reading character from input");
+        }
     }
 
     @Instruction
     public void reads(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
-        int address = (int) Conversion.bytesToLong(input1.get(simulator));
-        simulator.getMemory().writeString(address, stdin.next(), maxSize);
+        try {
+            int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
+            int address = (int) Conversion.bytesToLong(input1.get(simulator));
+            simulator.getMemory().writeString(address, inputReader.next(), maxSize);
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            handleReadError("Error reading string from input");
+        }
+    }
+
+    @Instruction
+    public void readline(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+        try {
+            int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
+            int address = (int) Conversion.bytesToLong(input1.get(simulator));
+            simulator.getMemory().writeString(address, inputReader.nextLine(), maxSize);
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            handleReadError("Error reading string from input");
+        }
+    }
+
+    private void handleReadError(String message) throws SimulationException {
+        try {
+            clearBuffer();
+        } catch (Exception ignored) {
+        }
+        throw new SimulationException(message);
+    }
+
+    /**
+     * Clears the scanner's buffer for use on error and program end.
+     */
+    public static void clearBuffer() {
+        inputReader.skip(".*");
     }
 }
