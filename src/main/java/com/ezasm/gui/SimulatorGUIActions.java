@@ -71,6 +71,10 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the program runs one individual line of code from the current state.
      */
     static void step() {
+        if (Window.getInstance().getSimulator().isDone() && state == State.PAUSED) {
+            setState(State.STOPPED);
+            return;
+        }
         if (state == State.IDLE || state == State.STOPPED) {
             setState(State.PAUSED);
             try {
@@ -79,7 +83,6 @@ public class SimulatorGUIActions {
                 startWorker();
             } catch (ParseException e) {
                 setState(State.IDLE);
-                Window.getInstance().setEditable(true);
                 Window.getInstance().handleParseException(e);
             }
         } else {
@@ -91,9 +94,6 @@ public class SimulatorGUIActions {
                 System.err.println(e.getMessage());
                 handleProgramCompletion();
             }
-        }
-        if (Window.getInstance().getSimulator().isDone() && state == State.PAUSED) {
-            setState(State.STOPPED);
         }
     }
 
