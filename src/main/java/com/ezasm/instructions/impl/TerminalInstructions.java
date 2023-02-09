@@ -53,8 +53,8 @@ public class TerminalInstructions {
             output.set(simulator, result);
             return;
         } catch (NumberFormatException ignored) {
+            throw new SimulationException("Error: Invalid integer input");
         }
-        throw new SimulationException("Error: Invalid integer input");
     }
 
     @Instruction
@@ -65,8 +65,8 @@ public class TerminalInstructions {
             output.set(simulator, result);
             return;
         } catch (NumberFormatException ignored) {
+            throw new SimulationException("Error: Invalid float input");
         }
-        throw new SimulationException("Error: Invalid float input");
     }
 
     @Instruction
