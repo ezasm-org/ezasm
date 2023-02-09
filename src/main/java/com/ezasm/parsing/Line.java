@@ -1,5 +1,6 @@
 package com.ezasm.parsing;
 
+import com.ezasm.Conversion;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
@@ -53,6 +54,9 @@ public class Line {
         for (int i = 0; i < arguments.length; ++i) {
             if (Lexer.isImmediate(arguments[i].toLowerCase())) {
                 this.arguments[i] = new ImmediateInput(Lexer.textToBytes(arguments[i].toLowerCase()));
+            } else if (Lexer.isCharacterImmediate(arguments[i])) {
+                this.arguments[i] = new ImmediateInput(
+                        Conversion.longToBytes(Lexer.getCharacterImmediate(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);
                 // Code for parsing a dereference
