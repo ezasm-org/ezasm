@@ -43,8 +43,11 @@ public class Line {
             if (Lexer.isImmediate(arguments[i])) {
                 if (arguments[i].matches("'.+'")) {
                     String str = arguments[i];
-                    str = str.replaceAll("'", "");
-                    str = str.replaceAll("\\n", "\n");
+                    str = str.substring(1, str.length() - 1);
+                    str = str.translateEscapes();
+                    if (str.length() > 1) {
+                        throw new ParseException();
+                    }
                     this.arguments[i] = new ImmediateInput(Conversion.longToBytes(str.charAt(0)));
                     continue;
                 }
