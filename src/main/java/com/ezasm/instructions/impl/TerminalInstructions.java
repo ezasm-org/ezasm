@@ -47,12 +47,26 @@ public class TerminalInstructions {
 
     @Instruction
     public void readi(IAbstractOutput output) throws SimulationException {
-        output.set(simulator, Conversion.longToBytes(stdin.nextLong()));
+        String text = stdin.next().toLowerCase();
+        try {
+            byte[] result = Conversion.longToBytes(Long.parseLong(text));
+            output.set(simulator, result);
+            return;
+        } catch (NumberFormatException ignored) {
+        }
+        throw new SimulationException("Error: Invalid integer input");
     }
 
     @Instruction
     public void readf(IAbstractOutput output) throws SimulationException {
-        output.set(simulator, Conversion.doubleToBytes(stdin.nextDouble()));
+        String text = stdin.next().toLowerCase();
+        try {
+            byte[] result = Conversion.doubleToBytes(Double.parseDouble(text));
+            output.set(simulator, result);
+            return;
+        } catch (NumberFormatException ignored) {
+        }
+        throw new SimulationException("Error: Invalid float input");
     }
 
     @Instruction

@@ -29,7 +29,7 @@ public class Lexer {
         return c >= '0' && c <= '9';
     }
 
-    private static boolean isNumeric(String text) {
+    public static boolean isNumeric(String text) {
         try {
             Double.parseDouble(text);
             return true;
@@ -47,17 +47,17 @@ public class Lexer {
             base = 2;
             text = text.replace("0b", "");
         }
-        
+
         try { // Try conversion to long
             return Conversion.longToBytes(Long.parseLong(text, base));
         } catch (NumberFormatException ignored) {
         }
-        
+
         try { // Try conversion to double
             return Conversion.doubleToBytes(stringToDouble(text, base));
         } catch (NumberFormatException ignored) {
         }
-        
+
         throw new ParseException(String.format("Unable to parse immediate %s in base %d", text, base));
     }
 
