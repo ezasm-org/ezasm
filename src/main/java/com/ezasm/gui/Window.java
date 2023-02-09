@@ -119,7 +119,10 @@ public class Window {
     public static void updateAll() {
         if (instance == null || instance.table == null)
             return;
-        instance.table.update();
+        SwingUtilities.invokeLater(() -> {
+            instance.table.update();
+        });
+
     }
 
     /**
