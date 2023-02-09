@@ -40,24 +40,24 @@ public class Lexer {
 
     public static byte[] textToBytes(String text) throws ParseException {
         int base = 10;
-        if(isHexadecimal(text)) {
+        if (isHexadecimal(text)) {
             base = 16;
             text = text.replace("0x", "");
         } else if (isBinary(text)) {
             base = 2;
             text = text.replace("0b", "");
         }
-
+        
         try { // Try conversion to long
             return Conversion.longToBytes(Long.parseLong(text, base));
         } catch (NumberFormatException ignored) {
         }
-
+        
         try { // Try conversion to double
             return Conversion.doubleToBytes(stringToDouble(text, base));
         } catch (NumberFormatException ignored) {
         }
-
+        
         throw new ParseException(String.format("Unable to parse immediate %s in base %d", text, base));
     }
 
@@ -71,7 +71,7 @@ public class Lexer {
 
     private static double stringToDouble(String text, int base) throws NumberFormatException {
         boolean isNegative = false;
-        if(text.startsWith("-")) {
+        if (text.startsWith("-")) {
             text = text.substring(1);
             isNegative = true;
         }

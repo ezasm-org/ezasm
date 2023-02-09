@@ -28,7 +28,7 @@ public class InstructionDispatcher {
 
     static {
         registerInstructions(ArithmeticInstructions.class);
-        // registerInstructions(TerminalInstructions.class);
+        registerInstructions(TerminalInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
     }

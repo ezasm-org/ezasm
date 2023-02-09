@@ -6,18 +6,18 @@ import com.ezasm.Conversion;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
 
 /**
  * An implementation of standard terminal I/O instructions for simulation.
  */
 public class TerminalInstructions {
-    private final Simulator simulator;
-    private Scanner stdin; // TODO figure out a good way to close stdin when the whole app closes
+    private final ISimulator simulator;
+    private Scanner stdin;
 
-    public TerminalInstructions(Simulator sim) {
-        simulator = sim;
+    public TerminalInstructions(ISimulator simulator) {
+        this.simulator = simulator;
         stdin = new Scanner(System.in);
     }
 
