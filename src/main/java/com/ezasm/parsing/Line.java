@@ -41,17 +41,10 @@ public class Line {
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
             if (Lexer.isImmediate(arguments[i])) {
-                if (!arguments[i].matches("'.+'")) {
-                    this.arguments[i] = new ImmediateInput(Conversion.longToBytes(Long.parseLong(arguments[i])));
-                    continue;
-                }
-                String str = arguments[i];
-                str = str.substring(1, str.length() - 1);
-                str = str.translateEscapes();
-                if (str.length() > 1) {
-                    throw new ParseException();
-                }
-                this.arguments[i] = new ImmediateInput(Conversion.longToBytes(str.charAt(0)));
+                this.arguments[i] = new ImmediateInput(Conversion.longToBytes(Long.parseLong(arguments[i])));
+            } else if (Lexer.isCharacterImmediate(arguments[i])) {
+                this.arguments[i] = new ImmediateInput(
+                        Conversion.longToBytes(Lexer.getCharacterImmediate(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);
                 // Code for parsing a dereference

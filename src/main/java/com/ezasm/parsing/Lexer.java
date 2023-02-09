@@ -104,8 +104,6 @@ public class Lexer {
     public static boolean isImmediate(String token) {
         if (token.length() < 1)
             return false;
-        if (token.matches("'.+'"))
-            return true;
         if (!isNumeric(token))
             return false;
         try {
@@ -114,6 +112,23 @@ public class Lexer {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static boolean isCharacterImmediate(String token) {
+        return token.startsWith("'") && token.endsWith("'");
+    }
+
+    public static char getCharacterImmediate(String token) throws ParseException {
+        if (token.length() == 3) {
+            return token.charAt(1);
+        } else if (token.length() < 3) {
+            throw new ParseException(String.format("Improperly formatted character token %s", token));
+        }
+        String parsed = token.substring(1, token.length() - 1).translateEscapes();
+        if (parsed.length() != 1) {
+            throw new ParseException(String.format("Unable to parse character token %s", token));
+        }
+        return parsed.charAt(0);
     }
 
     /**
