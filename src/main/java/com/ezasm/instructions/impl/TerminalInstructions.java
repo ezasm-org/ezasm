@@ -31,7 +31,7 @@ public class TerminalInstructions {
     /**
      * Set the input and output of all terminal instructions.
      *
-     * @param newInput the Scanner representing the input stream.
+     * @param newInput  the Scanner representing the input stream.
      * @param newOutput the PrintStream representing the output stream.
      */
     public static void setInputOutput(Scanner newInput, PrintStream newOutput) {
