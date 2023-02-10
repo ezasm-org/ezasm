@@ -1,13 +1,13 @@
 package com.ezasm.instructions.targets.inputoutput;
 
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
-import com.ezasm.simulation.Simulator;
 
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.Objects;
 
 /**
- * The implementation of a register to be used as an output.
+ * The implementation of a register to be used as either an input or an output.
  */
 public class RegisterInputOutput implements IAbstractInputOutput {
 
@@ -38,8 +38,8 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * @return the value stored within the register.
      */
     @Override
-    public byte[] get(Simulator simulator) {
-        byte[] val = simulator.getRegister(register).getBytes();
+    public byte[] get(ISimulator simulator) {
+        byte[] val = simulator.getRegisters().getRegister(register).getBytes();
         return Arrays.copyOf(val, val.length);
     }
 
@@ -50,20 +50,22 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(Simulator simulator, byte[] value) {
-        simulator.getRegister(register).setBytes(value);
+    public void set(ISimulator simulator, byte[] value) {
+        simulator.getRegisters().getRegister(register).setBytes(value);
     }
 
-    /**
-     * Mutates the register according to the mutator function given.
-     *
-     * @param simulator the program simulator.
-     * @param mutator   the mutator function.
-     */
-    public void mutate(Simulator simulator, Function<byte[], byte[]> mutator) {
-        byte[] val = simulator.getRegister(register).getBytes();
-        byte[] mutate = mutator.apply(val);
-        simulator.getRegister(register).setBytes(mutate);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        RegisterInputOutput that = (RegisterInputOutput) o;
+        return register == that.register;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(register);
+    }
 }

@@ -1,19 +1,18 @@
 package com.ezasm.simulation;
 
-import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
-import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
-import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.exception.InvalidProgramCounterException;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * The main controller class. Manages the memory, registers, and lines.
+ * An implementation of a simulator which manages the memory, registers, and lines of code in an instance of the EzASM
+ * runtime. Provides capabilities to run lines of code and access to the internal representation.
  */
-public class Simulator {
+public class Simulator implements ISimulator {
 
     private final Memory memory;
     private final Registers registers;
@@ -23,50 +22,33 @@ public class Simulator {
     private final List<Line> lines;
     private final Map<String, Integer> labels;
 
-    // The delay in ms before the next instruction is read
-    private long delayMS = 50L;
-
-    /**
-     * Constructs a Simulator with the default specifications.
-     */
-    public Simulator() {
-        this.memory = new Memory();
-        this.registers = new Registers(this.memory.WORD_SIZE);
-        this.lines = new ArrayList<>();
-        this.labels = new HashMap<>();
-        pc = registers.getRegister(Registers.PC);
-        instructionDispatcher = new InstructionDispatcher(this);
-    }
-
     /**
      * Constructs a Simulator with the given word size and memory size specifications.
      *
      * @param wordSize   the size of words in bytes for the program.
      * @param memorySize the size of the memory in words for the program.
      */
-    public Simulator(int wordSize, int memorySize, long delay) {
+    public Simulator(int wordSize, int memorySize) {
         this.memory = new Memory(wordSize, memorySize);
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
-        this.delayMS = delay;
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
+        initialize();
     }
 
     /**
-     * Changes the simulation speed.
-     *
-     * @param delay amount of time in milliseconds to wait between instructions.
+     * Initialization function which sets up any registers and memory.
      */
-    public void setSimulationSpeed(long delay) {
-        delayMS = delay;
+    private void initialize() {
+        registers.getRegister(Registers.SP).setLong(memory.initialStackPointer());
     }
 
     /**
      * Resets the contents of memory and registers.
      */
-    public void resetMemory() {
+    public void resetData() {
         memory.reset();
         registers.reset();
     }
@@ -75,17 +57,16 @@ public class Simulator {
      * Resets the contents of memory and registers as well as stored lines and labels.
      */
     public void resetAll() {
-        resetMemory();
+        resetData();
         lines.clear();
         labels.clear();
+        initialize();
     }
 
     /**
-     * Return true if the program has run off of the end of the code as in program completion, false
-     * otherwise.
+     * Return true if the program has run off of the end of the code as in program completion, false otherwise.
      *
-     * @return true if the program has run off of the end of the code as in program completion, false
-     *         otherwise.
+     * @return true if the program has run off of the end of the code as in program completion, false otherwise.
      */
     public boolean isDone() {
         return pc.getLong() == lines.size();
@@ -96,115 +77,58 @@ public class Simulator {
      *
      * @return true if the program counter is in an error state, false otherwise.
      */
-    public boolean isErrored() {
+    public boolean isError() {
         long line = pc.getLong();
         return line > lines.size() || line < 0;
     }
 
     /**
-     * Parses the given line and returns it. Adds the line to the program as well.
+     * Adds the given line to the program.
      *
-     * @param line the line of text to parse.
-     * @return the generated line.
-     * @throws ParseException if there is an error parsing the line.
+     * @param line the line to add to the program.
      */
-    public Line readLine(String line) throws ParseException {
-        Line lexed = Lexer.parseLine(line, labels, lines.size());
-        lines.add(lexed);
-        return lexed;
+    public void addLine(Line line) {
+        if (line.isLabel()) {
+            labels.put(line.getLabel(), lines.size());
+        }
+        lines.add(line);
     }
 
     /**
      * Parses the given text as a multi-line String. Then adds those lines to the program.
      *
-     * @param content the multi-line string to parse.
-     * @throws ParseException if there was an error in parsing any line.
+     * @param content the collection of Lines to add to the program.
      */
-    public void readMultiLineString(String content) throws ParseException {
-        lines.addAll(Lexer.parseLines(content, labels));
+    public void addLines(Collection<Line> content) {
+        content.forEach(this::addLine);
     }
 
     /**
      * Executes the given line on the simulator.
      *
      * @param line the line to execute.
-     * @throws ParseException if there is an error executing the line.
+     * @throws InstructionDispatchException if there is an error executing the line.
      */
-    public void executeLine(Line line) throws ParseException {
-        if (line == null)
-            return;
-        try {
+    public void runLine(Line line) throws SimulationException {
+        if (line != null && !line.isLabel()) {
             instructionDispatcher.execute(line);
-            Window.updateAll();
-        } catch (InstructionDispatchException e) {
-            throw new ParseException(e.getMessage());
         }
     }
 
-    /**
-     * Executes the given line on the simulator.
-     *
-     * @param line the text representation of the line to execute.
-     * @throws ParseException if there is an error parsing or executing the line.
-     */
-    public void executeLine(String line) throws ParseException {
-        executeLine(readLine(line));
-    }
 
-    /**
-     * Runs the program to completion or error state from the current state of the PC. Allows for
-     * pausing of execution with the paused variable.
-     *
-     * @param paused an AtomicBoolean which allows for control over whether the execution of this is
-     *               paused.
-     * @throws ParseException if there is an error executing any line.
-     */
-    public void runLinesFromPC(AtomicBoolean paused) throws ParseException {
-        for (int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
-            while (paused.get()) {
-                try {
-                    Thread.sleep(SimulationThread.SLEEP_INTERVAL);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-            i = validatePC();
-            if (isDone())
-                return;
-            i = executeLineInLoop(i);
-            try {
-                Thread.sleep(delayMS);
-            } catch (InterruptedException e) {
-                return;
-            }
-            i = validatePC();
-            if(isDone()) return;
-            i = executeLineInLoop(i);
-        }
-    }
-
-    /**
-     * Runs the program to completion or error state from the current state of the PC.
-     *
-     * @throws ParseException if there is an error executing any line.
-     */
-    public void runLinesFromPC() throws ParseException {
-        for (int i = (int) pc.getLong(); i < lines.size() && !Thread.interrupted(); ++i) {
-            i = executeLineInLoop(i);
-            try {
-                Thread.sleep(delayMS);
-            } catch (InterruptedException e) {
-                break;
-            }
+    @Override
+    public void executeProgramFromPC() throws SimulationException {
+        while (!isDone() && !isError()) {
+            executeLineFromPC();
         }
     }
 
     /**
      * Runs a single line of code from the current PC.
      *
-     * @throws ParseException if there is an error executing the line.
+     * @throws InstructionDispatchException if there is an error executing the line.
      */
-    public void runOneLine() throws ParseException {
+    public void executeLineFromPC() throws SimulationException {
         int lineNumber = validatePC();
         Window.updateHighlight(lineNumber);
         executeLine(lines.get(lineNumber));
@@ -225,14 +149,9 @@ public class Simulator {
      */
     private int executeLineInLoop(int i) throws ParseException {
         Window.updateHighlight(validatePC());
-        executeLine(lines.get(i));
+        runLine(lines.get(lineNumber));
         int currentPC = validatePC();
-        if (currentPC == i) {
-            pc.setLong(currentPC + 1);
-        } else {
-            i = currentPC;
-        }
-        return i;
+        pc.setLong(currentPC + 1);
     }
 
     /**
@@ -240,34 +159,20 @@ public class Simulator {
      *
      * @return the validated PC.
      */
-    private int validatePC() {
-        long number = pc.getLong();
-        if (number < 0 || number > lines.size()) {
-            // Guaranteed invalid SP
-            // TODO handle better
-            throw new RuntimeException();
+    private int validatePC() throws InvalidProgramCounterException {
+        if (isError()) {
+            throw new InvalidProgramCounterException(pc.getLong());
         }
-        return (int) number;
+        return (int) pc.getLong();
     }
 
     /**
-     * Gets the register of the given register reference.
+     * Get the labels mapping for the simulator
      *
-     * @param register the register's reference number.
-     * @return the register object corresponding to the register reference number.
+     * @return the label mapping.
      */
-    public Register getRegister(int register) {
-        return registers.getRegister(register);
-    }
-
-    /**
-     * Gets the register of the given name.
-     *
-     * @param register the register's name.
-     * @return the register object corresponding to the register name.
-     */
-    public Register getRegister(String register) {
-        return registers.getRegister(register);
+    public Map<String, Integer> getLabels() {
+        return labels;
     }
 
     /**

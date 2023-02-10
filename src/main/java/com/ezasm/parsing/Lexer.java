@@ -1,12 +1,12 @@
 package com.ezasm.parsing;
 
+import com.ezasm.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Static context functions regarding lexing and tokenizing Strings.
@@ -19,8 +19,9 @@ public class Lexer {
 
     private static boolean isAlNum(String text) {
         for (int i = 0; i < text.length(); ++i) {
-            if (!isAlNum(text.charAt(i)))
+            if (!isAlNum(text.charAt(i)) || (i == 0 && isNumeric(text.charAt(i)))) {
                 return false;
+            }
         }
         return true;
     }
@@ -29,15 +30,78 @@ public class Lexer {
         return c >= '0' && c <= '9';
     }
 
-    private static boolean isNumeric(String text) {
+    public static boolean isNumeric(String text) {
+        try {
+            textToBytes(text);
+            return true;
+        } catch (ParseException ignored) {
+        }
+        return false;
+    }
+
+    public static byte[] textToBytes(String text) throws ParseException {
+        int base = 10;
+        if (isHexadecimal(text)) {
+            base = 16;
+            text = text.replace("0x", "");
+        } else if (isBinary(text)) {
+            base = 2;
+            text = text.replace("0b", "");
+        }
+
+        if (text.indexOf('.') != text.lastIndexOf('.')) {
+            throw new ParseException("More than one decimal point in number");
+        }
+
+        try { // Try conversion to long
+            return Conversion.longToBytes(Long.parseLong(text, base));
+        } catch (NumberFormatException ignored) {
+        }
+
+        try { // Try conversion to double
+            return Conversion.doubleToBytes(stringToDouble(text, base));
+        } catch (NumberFormatException ignored) {
+        }
+
+        throw new ParseException(String.format("Unable to parse immediate %s in base %d", text, base));
+    }
+
+    private static boolean isHexadecimal(String text) {
+        return text.startsWith("0x") || text.startsWith("-0x");
+    }
+
+    private static boolean isBinary(String text) {
+        return text.startsWith("0b") || text.startsWith("-0b");
+    }
+
+    private static double stringToDouble(String text, int base) throws NumberFormatException {
+        boolean isNegative = false;
         if (text.startsWith("-")) {
             text = text.substring(1);
+            isNegative = true;
         }
-        for (int i = 0; i < text.length(); ++i) {
-            if (!isNumeric(text.charAt(i)))
-                return false;
+        String[] halves = text.split("\\.");
+        if (halves.length > 2) {
+            throw new NumberFormatException();
         }
-        return true;
+        double alloc = 0.0;
+        for (int i = 0; i < halves[0].length(); ++i) {
+            int exp = halves[0].length() - 1 - i;
+            alloc += Integer.parseInt(Character.toString(halves[0].charAt(i)), base) * Math.pow(base, exp);
+        }
+        if (halves.length == 1) {
+            if (isNegative) {
+                alloc = -alloc;
+            }
+            return alloc;
+        }
+        for (int i = 0; i < halves[1].length(); ++i) {
+            alloc += Integer.parseInt(Character.toString(halves[1].charAt(i)), base) * Math.pow(base, -(i + 1));
+        }
+        if (isNegative) {
+            alloc = -alloc;
+        }
+        return alloc;
     }
 
     /**
@@ -56,16 +120,23 @@ public class Lexer {
      * Determines if a token is a label or not.
      *
      * @param token the token of text in question.
-     * @return true if the token is a label, false otherwise;
+     * @return true if the token is a label, false otherwise.
      */
     public static boolean isLabel(String token) {
         if (token.length() < 1)
             return false;
         int colon = token.indexOf(':');
-        // Implementation for labels without colons
-        // if (colon == -1) return isAlNum(token) &&
-        // !InstructionDispatcher.getInstructions().containsKey(token);
         return (colon == token.length() - 1) && isAlNum(token.substring(0, colon));
+    }
+
+    /**
+     * Determines if a token is possibly a label reference or not.
+     *
+     * @param token the token of text in question.
+     * @return true if the token is a label reference, false otherwise.
+     */
+    public static boolean isLabelReference(String token) {
+        return isAlNum(token);
     }
 
     /**
@@ -87,12 +158,7 @@ public class Lexer {
      * @return true if the given token is a valid dereference expression, false otherwise.
      */
     public static boolean isDereference(String token) {
-        if (token.length() < 5)
-            return false;
-        int first = token.indexOf('(');
-        int last = token.indexOf(')');
-        return (first != -1) && (last != -1) && (first == token.lastIndexOf('(')) && (last == token.lastIndexOf(')'))
-                && (isAlNum(token.substring(0, first))) && isRegister(token.substring(first + 1, last));
+        return token.matches("^(-?\\d+)?\\(\\$.+\\)$");
     }
 
     /**
@@ -102,16 +168,27 @@ public class Lexer {
      * @return true if the given token is a valid immediate, false otherwise.
      */
     public static boolean isImmediate(String token) {
-        if (token.length() < 1)
-            return false;
-        if (!isNumeric(token))
-            return false;
-        try {
-            Long.parseLong(token);
-            return true;
-        } catch (Exception e) {
+        if (token.isEmpty()) {
             return false;
         }
+        return isNumeric(token);
+    }
+
+    public static boolean isCharacterImmediate(String token) {
+        return token.startsWith("'") && token.endsWith("'");
+    }
+
+    public static char getCharacterImmediate(String token) throws ParseException {
+        if (token.length() == 3) {
+            return token.charAt(1);
+        } else if (token.length() < 3) {
+            throw new ParseException(String.format("Improperly formatted character token %s", token));
+        }
+        String parsed = token.substring(1, token.length() - 1).translateEscapes();
+        if (parsed.length() != 1) {
+            throw new ParseException(String.format("Unable to parse character token %s", token));
+        }
+        return parsed.charAt(0);
     }
 
     /**
@@ -125,54 +202,40 @@ public class Lexer {
     }
 
     /**
-     * Parses the given text as a single line. Meant for use within a simulation of the programming
-     * language.
+     * Parses the given text as a single line. Meant for use within a simulation of the programming language.
      *
-     * @param line   the line of text.
-     * @param labels the mapping of label text to line numbers.
-     * @param number the line number of this line.
-     * @return null if the line was empty, a comment, or a label; otherwise returns the line
-     *         corresponding to the text.
+     * @param line       the line of text.
+     * @param lineNumber the line number of this line.
+     * @return null if the line was empty, a comment, or a label; otherwise returns the line corresponding to the text.
      * @throws ParseException if the line could not be properly parsed.
      */
-    public static Line parseLine(String line, Map<String, Integer> labels, int number) throws ParseException {
+    public static Line parseLine(String line, int lineNumber) throws ParseException {
         line = line.replaceAll("[\s\t,;]+", " ").trim();
         if (line.length() == 0)
             return null;
         if (Lexer.isComment(line))
             return null;
-        if (Lexer.isLabel(line)) {
-            labels.putIfAbsent(line, number);
-            return null;
-        }
         String[] tokens = line.split("[ ,]");
         if (tokens.length == 0) {
             // Empty line
             return null;
-        } else if (tokens.length < 2) {
-            // ERROR too few tokens to be a line
-            throw new ParseException(String
-                    .format("Line %d: too few tokens found '%s' is likely an incomplete statement", number, line));
         }
-
         String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
         try {
             return new Line(tokens[0], args);
         } catch (ParseException e) {
-            throw new ParseException(String.format("Line %d: %s", number + 1, e.getMessage()));
+            throw new ParseException(String.format("Line %d: %s", lineNumber + 1, e.getMessage()));
         }
     }
 
     /**
-     * Parses a String containing multiple lines. Meant for use within a simulation of the programming
-     * language.
+     * Parses a String containing multiple lines.
      *
-     * @param lines  the text containing the lines to parse.
-     * @param labels the mapping of label text to line numbers.
+     * @param lines the text containing the lines to parse.
      * @return the list of valid lines of code found.
      * @throws ParseException if any line could not be properly parsed.
      */
-    public static List<Line> parseLines(String lines, Map<String, Integer> labels) throws ParseException {
+    public static List<Line> parseLines(String lines, int startingLine) throws ParseException {
         List<String> linesRead = new ArrayList<>();
         List<Line> linesLexed = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
@@ -192,8 +255,8 @@ public class Lexer {
             }
         }
 
-        for (int i = 0; i < linesRead.size(); ++i) {
-            Line lexed = parseLine(linesRead.get(i), labels, i);
+        for (String s : linesRead) {
+            Line lexed = parseLine(s, linesLexed.size() + startingLine);
             if (lexed != null) {
                 linesLexed.add(lexed);
             }

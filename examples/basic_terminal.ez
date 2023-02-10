@@ -1,0 +1,6 @@
+readi $t0
+printi $t0
+readf $t1
+printf $t1
+readc $t2
+printc $t2

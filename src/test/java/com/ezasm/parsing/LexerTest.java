@@ -4,9 +4,6 @@ import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.simulation.Registers;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class LexerTest {
@@ -25,7 +22,8 @@ class LexerTest {
     void isLabel() {
         assertTrue(Lexer.isLabel("label:"));
         assertTrue(Lexer.isLabel("_label-:"));
-        assertTrue(Lexer.isLabel("123label:"));
+        assertTrue(Lexer.isLabel("abc123:"));
+        assertFalse(Lexer.isLabel("123label:"));
         assertFalse(Lexer.isLabel("my label:"));
         assertFalse(Lexer.isLabel(""));
     }
@@ -41,7 +39,15 @@ class LexerTest {
 
     @Test
     void isDereference() {
-        // Not yet properly implemented
+        assertTrue(Lexer.isDereference("($t0)"));
+        assertTrue(Lexer.isDereference("10($t0)"));
+        assertTrue(Lexer.isDereference("-4($t0)"));
+        assertFalse(Lexer.isDereference("-($t0)"));
+        assertFalse(Lexer.isDereference("10(t0)"));
+        assertFalse(Lexer.isDereference("10($t0)aaaa"));
+        assertFalse(Lexer.isDereference("#10($t0)"));
+        assertFalse(Lexer.isDereference(""));
+        assertFalse(Lexer.isDereference("()"));
     }
 
     @Test
@@ -49,11 +55,31 @@ class LexerTest {
         assertTrue(Lexer.isImmediate("123"));
         assertTrue(Lexer.isImmediate("-123"));
         assertTrue(Lexer.isImmediate("1234567890123456789"));
-        // Future functionality of issue #29
-        // assertTrue(Lexer.isImmediate("0x1000"));
-        // assertTrue(Lexer.isImmediate("0xABCDEF"));
-        // assertTrue(Lexer.isImmediate("0b100101"));
-        assertFalse(Lexer.isImmediate("123.456"));
+
+        assertTrue(Lexer.isImmediate("0x1000"));
+        assertTrue(Lexer.isImmediate("0xABCDEF"));
+        assertTrue(Lexer.isImmediate("0b100101"));
+
+        assertTrue(Lexer.isImmediate("-0xABCDEF"));
+        assertTrue(Lexer.isImmediate("-0b100101"));
+
+        assertTrue(Lexer.isImmediate("123.456"));
+        assertTrue(Lexer.isImmediate("123."));
+        assertTrue(Lexer.isImmediate(".456"));
+        assertTrue(Lexer.isImmediate("0xABC.DEF"));
+        assertTrue(Lexer.isImmediate("0b1001.01"));
+
+        assertTrue(Lexer.isImmediate("-0xABC.DEF"));
+        assertTrue(Lexer.isImmediate("-0b1001.01"));
+
+        assertTrue(Lexer.isImmediate("0xABCDEF."));
+        assertTrue(Lexer.isImmediate("0b100101."));
+        assertTrue(Lexer.isImmediate("0x.ABCDEF"));
+        assertTrue(Lexer.isImmediate("0b.100101"));
+
+        assertFalse(Lexer.isImmediate(".123."));
+        assertFalse(Lexer.isImmediate("0xABCDEFG"));
+        assertFalse(Lexer.isImmediate("0b0121"));
         assertFalse(Lexer.isImmediate("ABC"));
         assertFalse(Lexer.isImmediate(""));
     }
@@ -68,15 +94,13 @@ class LexerTest {
         assertFalse(Lexer.isInstruction(""));
     }
 
-    private static final Map<String, Integer> map = new HashMap<>();
-
     private static boolean testLineAgainstString(Line line, String string) {
         try {
-            Line newline = Lexer.parseLine(string, map, 0);
+            Line newline = Lexer.parseLine(string, 0);
             if (newline == null) {
                 return false;
             }
-            return line.toString().equals(newline.toString());
+            return line.equals(newline);
         } catch (ParseException e) {
             return false;
         }
@@ -107,23 +131,20 @@ class LexerTest {
     @Test
     void parseLineException() {
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add $s0 $s1 $abc", map, 0);
-        });
-        assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add $s0 $s1 ABC", map, 0);
+            Lexer.parseLine("add $s0 $s1 $abc", 0);
         });
         /*
          * Will not work until issue #30 is resolved assertThrows(ParseException.class, () -> {
          * Lexer.parseLine("add $s0 $s1", map, 0); });
          */
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("add", map, 0);
+            Lexer.parseLine("add", 0);
         });
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("$s0", map, 0);
+            Lexer.parseLine("$s0", 0);
         });
         assertThrows(ParseException.class, () -> {
-            Lexer.parseLine("$s0", map, 0);
+            Lexer.parseLine("$s0", 0);
         });
 
     }

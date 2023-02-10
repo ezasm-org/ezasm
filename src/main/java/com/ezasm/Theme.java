@@ -2,9 +2,12 @@ package com.ezasm;
 
 import java.awt.Color;
 
+/**
+ * Represents a theme for components and text in the application.
+ */
 public class Theme {
 
-    Color BACKGROUND, FOREGROUND, CURRENTLINE, COMMENT, CYAN, GREEN, ORANGE, PINK, PURPLE, RED, YELLOW;
+    Color BACKGROUND, FOREGROUND, CURRENT_LINE, COMMENT, CYAN, GREEN, ORANGE, PINK, PURPLE, RED, YELLOW;
 
     // based on https://github.com/dracula/dracula-theme
     public static Theme Dracula = new Theme(0x282a36, 0x44475a, 0xf8f8f2, 0x6272a4, 0x8be9fd, 0x50fa7b, 0xffb86c,
@@ -19,7 +22,7 @@ public class Theme {
     public Theme(int bg, int cl, int fg, int cmt, int cyan, int grn, int org, int pnk, int prp, int red, int ylw) {
         BACKGROUND = new Color(bg);
         FOREGROUND = new Color(fg);
-        CURRENTLINE = new Color(cl);
+        CURRENT_LINE = new Color(cl);
         COMMENT = new Color(cmt);
         CYAN = new Color(cyan);
         GREEN = new Color(grn);
@@ -38,8 +41,8 @@ public class Theme {
         return FOREGROUND;
     }
 
-    public Color getCurrentline() {
-        return CURRENTLINE;
+    public Color getCurrentLine() {
+        return CURRENT_LINE;
     }
 
     public Color getComment() {

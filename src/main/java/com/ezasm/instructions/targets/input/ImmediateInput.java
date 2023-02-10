@@ -1,10 +1,12 @@
 package com.ezasm.instructions.targets.input;
 
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
+
+import java.util.Arrays;
 
 /**
- * The implementation of an "immediate" input to be used inline instead of a register or other
- * input. Is used as a fixed value or constant.
+ * The implementation of an "immediate" input to be used inline instead of a register or other input. Is used as a fixed
+ * value or constant.
  */
 public class ImmediateInput implements IAbstractInput {
 
@@ -26,7 +28,22 @@ public class ImmediateInput implements IAbstractInput {
      * @return the constant value.
      */
     @Override
-    public byte[] get(Simulator simulator) {
+    public byte[] get(ISimulator simulator) {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        ImmediateInput that = (ImmediateInput) o;
+        return Arrays.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(value);
     }
 }

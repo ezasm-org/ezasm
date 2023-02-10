@@ -29,8 +29,8 @@ public class EditorPane extends JPanel implements IThemeable {
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
     /**
-     * Creates a text edit field with an "Undo Manager" to undo the user's actions with CTRL + Z or redo
-     * those undid actions with CTRL + SHIFT + Z or CTRL + Y.
+     * Creates a text edit field with an "Undo Manager" to undo the user's actions with CTRL + Z or redo those undid
+     * actions with CTRL + SHIFT + Z or CTRL + Y.
      */
     public EditorPane() {
         super();
@@ -38,9 +38,9 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea = new JTextArea();
         lineNumbers = new LineNumber(model);
 
+        textArea.setTabSize(2);
         UndoManager manager = new UndoManager();
         textArea.getDocument().addUndoableEditListener(manager);
-
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -58,7 +58,6 @@ public class EditorPane extends JPanel implements IThemeable {
             }
 
         });
-
         textArea.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
@@ -129,7 +128,7 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setBackground(theme.getBackground());
         textArea.setForeground(theme.getForeground());
         textArea.setCaretColor(theme.getForeground());
-        lineNumbers.setBackground(theme.getCurrentline());
+        lineNumbers.setBackground(theme.getCurrentLine());
         lineNumbers.setForeground(theme.getForeground().darker());
         lineNumbers.setFont(font);
         textArea.setFont(font);
