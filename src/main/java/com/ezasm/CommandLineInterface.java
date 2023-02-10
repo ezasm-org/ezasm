@@ -6,6 +6,8 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -38,8 +40,8 @@ public class CommandLineInterface {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(Lexer.parseLines(file, 0));
-        } catch (ParseException e) {
+            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
+        } catch (ParseException | IOException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
