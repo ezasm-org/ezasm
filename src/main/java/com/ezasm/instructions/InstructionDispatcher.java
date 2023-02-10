@@ -1,12 +1,15 @@
 package com.ezasm.instructions;
 
+import com.ezasm.instructions.impl.FunctionInstructions;
+import com.ezasm.instructions.impl.MemoryInstructions;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
-import com.ezasm.simulation.Simulator;
-import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.impl.ArithmeticInstructions;
+import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.Line;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -24,20 +27,22 @@ public class InstructionDispatcher {
     private static final HashMap<String, DispatchInstruction> instructions = new HashMap<>();
 
     static {
-        // load the instructions
         registerInstructions(ArithmeticInstructions.class);
+        registerInstructions(TerminalInstructions.class);
+        registerInstructions(FunctionInstructions.class);
+        registerInstructions(MemoryInstructions.class);
     }
 
     /**
-     * Registers instructions from a class. Instructions are registered by scanning the class's declared
-     * methods for those annotated with {@link Instruction}. It enumerates the methods and scans their
-     * parameters to deduce the appropriate operands.
+     * Registers instructions from a class. Instructions are registered by scanning the class's declared methods for
+     * those annotated with {@link Instruction}. It enumerates the methods and scans their parameters to deduce the
+     * appropriate operands.
      *
      * @param clazz The class to register instructions from.
      */
     public static void registerInstructions(Class<?> clazz) {
         try {
-            clazz.getDeclaredConstructor(Simulator.class);
+            clazz.getDeclaredConstructor(ISimulator.class);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -51,14 +56,18 @@ public class InstructionDispatcher {
     }
 
     /**
-     * Registers a single instruction. The method is assumed to be annotated with {@link Instruction} at
-     * this point. This function deduces the operands based on the method's parameters (TODO).
+     * Registers a single instruction. The method is assumed to be annotated with {@link Instruction} at this point.
+     * This function deduces the operands based on the method's parameters (TODO).
      *
      * @param parent The parent class of the method.
      * @param method The method to register as an instruction.
      */
     private static void registerInstruction(Class<?> parent, Method method) {
-        instructions.put(method.getName().toLowerCase(), new DispatchInstruction(parent, method));
+        String name = method.getName().toLowerCase();
+        if (name.startsWith("_")) {
+            name = name.substring(1);
+        }
+        instructions.put(name, new DispatchInstruction(parent, method));
     }
 
     private static void validateInstruction(Method method) {
@@ -78,23 +87,23 @@ public class InstructionDispatcher {
     }
 
     /**
-     * Stores instances of the classes that implement the instructions. For every instantiated
-     * InstructionDispatcher, there's a set of instances that manage the instructions. This allows us to
-     * bind the Simulator to the instructions.
+     * Stores instances of the classes that implement the instructions. For every instantiated InstructionDispatcher,
+     * there's a set of instances that manage the instructions. This allows us to bind the Simulator to the
+     * instructions.
      */
     private final HashMap<Class<?>, Object> instructionHandlerInstances = new HashMap<>();
 
     /**
      * The bound simulator for this dispatcher.
      */
-    private final Simulator simulator;
+    private final ISimulator simulator;
 
     /**
-     * Create a new Instruction Dispatcher, and bind it to an existing {@link Simulator}.
+     * Create a new Instruction Dispatcher, and bind it to an existing {@link ISimulator}.
      *
      * @param simulator the simulator to bind to.
      */
-    public InstructionDispatcher(Simulator simulator) {
+    public InstructionDispatcher(ISimulator simulator) {
         this.simulator = simulator;
         loadInstructionHandlers();
     }
@@ -115,7 +124,7 @@ public class InstructionDispatcher {
      */
     private void loadInstructionHandler(DispatchInstruction instruction) {
         try {
-            Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(Simulator.class);
+            Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(ISimulator.class);
             Object inst = constructor.newInstance(this.simulator);
             this.instructionHandlerInstances.put(instruction.getParent(), inst);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
@@ -129,14 +138,10 @@ public class InstructionDispatcher {
      * Execute an instruction based on a parsed line.
      *
      * @param line the parsed line.
-     * @throws InstructionDispatchException when a parsed line cannot be interpreted as a function. This
-     *                                      could be an {@link IllegalInstructionException} if the
-     *                                      instruction is unrecognized, or an
-     *                                      {@link IllegalArgumentException IllegalArgumentException} if
-     *                                      the provided parsed arguments cannot fit to the instruction
-     *                                      (not yet implemented).
+     * @throws InstructionDispatchException when a parsed line cannot be interpreted as a function. This could be an
+     *                                      {@link IllegalInstructionException} if the instruction is unrecognized.
      */
-    public void execute(Line line) throws InstructionDispatchException {
+    public void execute(Line line) throws SimulationException {
         DispatchInstruction dispatch = instructions.get(line.getInstruction().text());
         if (dispatch == null)
             throw new IllegalInstructionException(line.getInstruction().text());
@@ -146,7 +151,6 @@ public class InstructionDispatcher {
         assert object != null;
 
         dispatch.invoke(object, line);
-
     }
 
 }

@@ -1,11 +1,11 @@
 package com.ezasm.instructions.targets.input;
 
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.targets.IAbstractTarget;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.exception.SimulationException;
 
 /**
- * The abstract form of an input to an operation. Requires implementing a "get" operation to serve
- * as the input.
+ * Represents an input to an operation. Requires implementing a "get" operation to serve as the output.
  */
 public interface IAbstractInput extends IAbstractTarget {
 
@@ -15,6 +15,6 @@ public interface IAbstractInput extends IAbstractTarget {
      * @param simulator the program simulator.
      * @return the obtained value.
      */
-    public byte[] get(Simulator simulator);
+    public byte[] get(ISimulator simulator) throws SimulationException;
 
 }

@@ -5,8 +5,8 @@ import com.ezasm.Conversion;
 import java.util.Arrays;
 
 /**
- * The representation of an individual register within the system's registers. Stores the register's
- * own reference number and the data corresponding to it.
+ * The representation of an individual register within the system's registers. Stores the register's own reference
+ * number and the data corresponding to it.
  */
 public class Register {
 
@@ -93,8 +93,7 @@ public class Register {
     /**
      * Gets a String containing the register number and the data it represents as a hexadecimal number.
      *
-     * @return a String containing the register number and the data it represents as a hexadecimal
-     *         number.
+     * @return a String containing the register number and the data it represents as a hexadecimal number.
      */
     @Override
     public String toString() {

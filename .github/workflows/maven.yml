@@ -1,0 +1,51 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots compile assembly:single --file pom.xml
+
+      - run: |
+          ref="${GITHUB_REF#refs/heads/}" && echo "::set-output name=branch::${ref////-}"
+          FILE_NAME=$(basename $(find -name '*with-dependencies.jar') | sed "s/-jar-with-dependencies.jar//")
+          echo "::set-output name=file::$FILE_NAME"
+          mkdir staging && cp target/*with-dependencies.jar "staging/$FILE_NAME.jar"
+        id: res
+      - name: Produce Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ezasm-artifacts-${{ steps.res.outputs.branch }}
+          path: staging
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Test Format with Maven
+        run: mvn --batch-mode formatter:validate --file pom.xml
+      - name: Test Code with Maven
+        run: mvn --batch-mode clean test --file pom.xml

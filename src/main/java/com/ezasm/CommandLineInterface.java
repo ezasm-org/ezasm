@@ -1,29 +1,33 @@
 package com.ezasm;
 
+import com.ezasm.parsing.Lexer;
+import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.SimulationThread;
-import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.exception.SimulationException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 
 /**
- * A representation of an instance in the command line interface. Stores the current simulation and
- * the simulation thread.
+ * A representation of an instance in the command line interface. Stores the current simulation and the simulation
+ * thread.
  */
 public class CommandLineInterface {
 
-    private final Simulator simulator;
-    private final SimulationThread simulationThread;
+    private final ISimulator simulator;
     private final boolean cli;
 
     /**
-     * Constructs a basic CLI based on the given Simulator. This CLI will read from the terminal until
-     * the program is closed or the EOF signal is sent.
+     * Constructs a basic CLI based on the given Simulator. This CLI will read from the terminal until the program is
+     * closed or the EOF signal is sent.
      *
      * @param simulator the given Simulator.
      */
-    public CommandLineInterface(Simulator simulator) {
+    public CommandLineInterface(ISimulator simulator) {
         this.simulator = simulator;
         this.cli = true;
-        this.simulationThread = new SimulationThread(simulator, 250);
     }
 
     /**
@@ -32,13 +36,12 @@ public class CommandLineInterface {
      * @param simulator the given Simulator.
      * @param file      the file to read code from.
      */
-    public CommandLineInterface(Simulator simulator, String file) {
+    public CommandLineInterface(ISimulator simulator, String file) {
         this.simulator = simulator;
         this.cli = false;
-        this.simulationThread = new SimulationThread(simulator, 250);
         try {
-            this.simulator.readMultiLineString(file);
-        } catch (ParseException e) {
+            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
+        } catch (ParseException | IOException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
@@ -59,14 +62,36 @@ public class CommandLineInterface {
      * Uses the simulation thread to run from the CLI input.
      */
     private void runFromCliInput() {
-        simulationThread.runFromCliInput();
+        Scanner scanner = new Scanner(System.in);
+        int lineNumber = 0;
+
+        System.out.print("> ");
+        while (scanner.hasNextLine() && !Thread.interrupted()) {
+            try {
+                Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
+                simulator.runLine(line);
+            } catch (ParseException | SimulationException e) {
+                System.err.println(e.getMessage());
+                System.err.flush();
+            }
+            System.out.print("> ");
+        }
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException ignored) {
+        }
     }
 
     /**
      * Uses the simulation thread to run the code from the file.
      */
     private void runLinesFromBeginning() {
-        simulationThread.runLinesFromPC();
+        try {
+            simulator.executeProgramFromPC();
+        } catch (SimulationException e) {
+            System.err.println(e.getMessage());
+        }
+
     }
 
 }

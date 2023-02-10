@@ -8,12 +8,20 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.Arrays;
 
+/**
+ * Represents the configuration of the program. Stores the configuration persistently at the given path.
+ */
 public class Config {
+
+    /**
+     * The configuration file name.
+     */
+    private static final String FILE_NAME = ".ezasmrc";
 
     /**
      * A path to the config file for EzASM
      */
-    private static final String CONFIG_PATH = System.getProperty("user.home") + File.separator + ".ezasmrc";
+    private static final String CONFIG_PATH = System.getProperty("user.home") + File.separator + FILE_NAME;
 
     /**
      * The configuration file for EzASM
@@ -84,7 +92,7 @@ public class Config {
             props.store(writer, "");
             writer.close();
         } catch (IOException e) {
-            System.out.println("ERROR SAVING SETTING");
+            System.err.println("ERROR SAVING SETTING");
         }
     }
 

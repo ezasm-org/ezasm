@@ -1,6 +1,7 @@
 package com.ezasm;
 
 import com.ezasm.gui.Window;
+import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.Simulator;
 import org.apache.commons.cli.*;
@@ -74,14 +75,14 @@ public class Arguments {
             wordSize = Memory.DEFAULT_WORD_SIZE;
         }
 
-        Simulator sim = new Simulator(wordSize, memorySize, config.getSimSpeed());
+        ISimulator sim = new Simulator(wordSize, memorySize);
         String filepath = "";
         if (commandLine.hasOption(fileOption)) {
             filepath = commandLine.getOptionValue(fileOption);
         }
 
         if (commandLine.hasOption(windowlessOption)) {
-            CommandLineInterface cli = null;
+            CommandLineInterface cli;
             if (filepath.equals("")) {
                 cli = new CommandLineInterface(sim);
             } else {

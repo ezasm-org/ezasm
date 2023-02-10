@@ -1,8 +1,7 @@
 package com.ezasm.gui;
 
-import com.ezasm.Config;
 import com.ezasm.Theme;
-import com.ezasm.parsing.ParseException;
+import static com.ezasm.gui.SimulatorGUIActions.*;
 
 import javax.swing.*;
 
@@ -11,26 +10,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * A toolbar factory to add to the application with simulation functionality (i.e. Run program, Run
- * single line, etc.).
+ * A toolbar factory to add to the application with simulation functionality (i.e. Run program, Run single line, etc.).
  */
 public class ToolbarFactory {
 
-    private static final String START = "  Start  ";
-    private static final String STOP = "   Stop   ";
-    private static final String PAUSE = "  Pause  ";
-    private static final String RESUME = "  Resume  ";
-    private static final String STEP = "   Step   ";
-    private static final String RESET = "  Reset  ";
+    static final String START = "  Start  ";
+    static final String STOP = "   Stop   ";
+    static final String PAUSE = "  Pause  ";
+    static final String RESUME = "  Resume  ";
+    static final String STEP = "   Step   ";
+    static final String RESET = "  Reset  ";
 
     private static final ToolbarActionListener actionListener = new ToolbarActionListener();
 
-    private static JButton startButton;
-    private static JButton stopButton;
-    private static JButton pauseButton;
-    private static JButton resumeButton;
-    private static JButton stepButton;
-    private static JButton resetButton;
+    static JButton startButton;
+    static JButton stopButton;
+    static JButton pauseButton;
+    static JButton resumeButton;
+    static JButton stepButton;
+    static JButton resetButton;
 
     /**
      * Generate the toolbar if it does not already exist and initialize its buttons.
@@ -79,8 +77,7 @@ public class ToolbarFactory {
     }
 
     /**
-     * Sets the state of the buttons from a static context. Only acts if makeToolbar() has been called
-     * prior to this.
+     * Sets the state of the buttons from a static context. Only acts if makeToolbar() has been called prior to this.
      *
      * @param state the new state of the buttons.
      */
@@ -92,8 +89,7 @@ public class ToolbarFactory {
         }
     }
 
-    // Helper method to automate the tasks completed for all buttons on the toolbar (disable, add action
-    // listener, etc.)
+    // Helper method to automate the tasks completed for all buttons on the toolbar (disable, add action listener, etc.)
     private static void addButton(JToolBar toolbar, String text) {
         JButton button = new JButton(text);
         button.setEnabled(false);
@@ -108,17 +104,6 @@ public class ToolbarFactory {
         case RESUME -> resumeButton = button;
         case RESET -> resetButton = button;
         }
-    }
-
-    public static void handleProgramCompletion() {
-        stepButton.setEnabled(true);
-        startButton.setEnabled(true);
-        stopButton.setEnabled(false);
-        pauseButton.setEnabled(false);
-        resumeButton.setEnabled(false);
-        resetButton.setEnabled(true);
-
-        Window.getInstance().setEditable(true);
     }
 
     /**
@@ -137,97 +122,5 @@ public class ToolbarFactory {
             default -> System.err.printf("Button '%s' not yet implemented", e.getActionCommand());
             }
         }
-
-        private static void step() {
-            if (Window.getInstance().getEditable()) {
-                Window.getInstance().setEditable(false);
-                try {
-                    Window.getInstance().parseText();
-                    System.out.println("** Program starting **");
-                } catch (ParseException e) {
-                    Window.getInstance().setEditable(true);
-                    Window.getInstance().handleParseException(e);
-                }
-            }
-            if (Window.getInstance().getSimulator().isDone()) {
-                Window.getInstance().setEditable(true);
-                Window.getInstance().handleProgramCompletion();
-                return;
-            }
-            try {
-                Window.getInstance().getSimulator().runOneLine();
-                resetButton.setEnabled(true);
-            } catch (ParseException e) {
-                Window.getInstance().handleParseException(e);
-                System.out.println("** Program terminated abnormally **");
-            }
-        }
-
-        private static void start() {
-            stepButton.setEnabled(false);
-            startButton.setEnabled(false);
-            stopButton.setEnabled(true);
-            pauseButton.setEnabled(true);
-            resumeButton.setEnabled(false);
-            resetButton.setEnabled(true);
-
-            // Run the content of the current file
-            try {
-                if (Window.getInstance().getEditable()) {
-                    Window.getInstance().setEditable(false);
-                    Window.getInstance().parseText();
-                    System.out.println("** Program starting **");
-                }
-                Window.getInstance().getSimulationThread()
-                        .setCompletionCallback(() -> Window.getInstance().handleProgramCompletion());
-                Window.getInstance().getSimulationThread().runLinesFromPC();
-            } catch (ParseException e) {
-                stop();
-                Window.getInstance().handleParseException(e);
-            }
-        }
-
-        private static void stop() {
-            // Should be started
-            Window.getInstance().getSimulationThread().interrupt();
-            Window.getInstance().getSimulationThread().awaitTermination();
-
-            handleProgramCompletion();
-        }
-
-        private static void pause() {
-            // Should be STARTED
-            stepButton.setEnabled(true);
-            startButton.setEnabled(false);
-            stopButton.setEnabled(true);
-            pauseButton.setEnabled(false);
-            resumeButton.setEnabled(true);
-            resetButton.setEnabled(true);
-
-            Window.getInstance().getSimulationThread().pause();
-        }
-
-        private static void resume() {
-            // Should be PAUSED
-            stepButton.setEnabled(true);
-            startButton.setEnabled(false);
-            stopButton.setEnabled(true);
-            pauseButton.setEnabled(true);
-            resumeButton.setEnabled(false);
-            resetButton.setEnabled(true);
-
-            Window.getInstance().getSimulationThread().resume();
-        }
-
-        private static void reset() {
-            Window.getInstance().getSimulationThread().interrupt();
-            Window.getInstance().getSimulationThread().awaitTermination();
-
-            Window.getInstance().getSimulator().resetAll();
-            Window.updateAll();
-            handleProgramCompletion();
-        }
-
     }
-
 }
