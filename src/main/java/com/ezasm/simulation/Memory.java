@@ -142,7 +142,7 @@ public class Memory {
     public byte[] read(int address, int count) throws SimulationAddressOutOfBoundsException {
         address = address - OFFSET;
         if (address < 0 || (address + count) > this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address);
+            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
         return Arrays.copyOfRange(memory, address, address + count);
     }
@@ -180,7 +180,7 @@ public class Memory {
             throw new SimulationException(String.format("String size cannot be %d", maxSize));
         }
         if (address < 0 || (address + maxSize) >= this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address);
+            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
 
         byte[] toString = new byte[maxSize];
@@ -202,7 +202,7 @@ public class Memory {
     public void write(int address, byte[] data) throws SimulationAddressOutOfBoundsException {
         address = address - OFFSET;
         if (address < 0 || (address + data.length) > this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address);
+            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
         System.arraycopy(data, 0, memory, address, data.length);
     }
@@ -230,7 +230,7 @@ public class Memory {
             throw new SimulationException(String.format("String size cannot be %d", maxSize));
         }
         if (address < 0 || (address + data.getBytes().length) >= this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address);
+            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
 
         for (int i = 0; i < data.getBytes().length && i < maxSize; ++i) {

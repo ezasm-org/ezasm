@@ -35,12 +35,15 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
     public DereferenceInputOutput(String text) throws ParseException {
         String offset = text.substring(0, text.indexOf('('));
         String register = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
-        System.out.println(offset + "\t" + register);
         this.register = new RegisterInputOutput(register);
-        if (offset.length() > 0) {
-            this.offset = Integer.parseInt(offset);
-        } else {
+        if (offset.length() == 0) {
             this.offset = 0;
+            return;
+        }
+        try {
+            this.offset = Integer.parseInt(offset);
+        } catch (NumberFormatException e) {
+            throw new ParseException(String.format("Offset %s is outside the range of valid offset numbers", offset));
         }
     }
 

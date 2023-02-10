@@ -132,6 +132,9 @@ public class TerminalInstructions {
      * Clears the scanner's buffer for use on error and program end.
      */
     public static void clearBuffer() {
-        inputReader.skip(".*");
+        try {
+            inputReader.skip(".*");
+        } catch (Exception ignored) {
+        }
     }
 }
