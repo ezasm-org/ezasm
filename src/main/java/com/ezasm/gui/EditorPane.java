@@ -89,6 +89,7 @@ public class EditorPane extends JPanel implements IThemeable {
             }
         });
 
+
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setRowHeaderView(lineNumbers);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -98,6 +99,8 @@ public class EditorPane extends JPanel implements IThemeable {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+
+        lineNumbers.adjustWidth();
     }
 
     private class LineNumberModelImpl implements ILineNumberModel {
@@ -168,5 +171,13 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void setText(String content) {
         textArea.setText(content);
+    }
+
+
+    /**
+     * Updates the width of line numbers. Only really used when starting up to initially display the numbers.
+     */
+    public void updateLineNumbers() {
+        lineNumbers.adjustWidth();
     }
 }

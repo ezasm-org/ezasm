@@ -7,6 +7,8 @@ import org.apache.commons.cli.*;
 
 import javax.swing.*;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Methods to handle the program arguments and begin the program correspondingly.
  */
@@ -89,6 +91,8 @@ public class Arguments {
         } else {
             SwingUtilities.invokeLater(() -> {
                 Window.instantiate(sim, config);
+
+                Window.getInstance().updateLineNumbers();
             });
         }
     }

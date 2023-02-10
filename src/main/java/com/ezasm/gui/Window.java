@@ -204,4 +204,13 @@ public class Window {
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
     }
+
+
+    /**
+     * Updates the width of line numbers. Only really used when starting up to initially display the numbers.
+     *
+     */
+    public void updateLineNumbers() {
+        editor.updateLineNumbers();
+    }
 }
