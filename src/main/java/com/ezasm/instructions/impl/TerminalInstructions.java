@@ -16,27 +16,28 @@ import com.ezasm.simulation.exception.SimulationException;
  */
 public class TerminalInstructions {
 
-    private static InputStream defaultInput = System.in;
-    private static PrintStream defaultOutput = System.out;
+    private static InputStream inputStream = System.in;
+    private static OutputStream outputStream = System.out;
 
     private final ISimulator simulator;
     private static Scanner inputReader;
     private static PrintStream outputWriter;
 
     static {
-        inputReader = new Scanner(defaultInput);
-        outputWriter = defaultOutput;
+        setInputOutput(inputStream, outputStream);
     }
 
     /**
      * Set the input and output of all terminal instructions.
      *
-     * @param newInput  the Scanner representing the input stream.
-     * @param newOutput the PrintStream representing the output stream.
+     * @param newInput  the input stream.
+     * @param newOutput the output stream.
      */
-    public static void setInputOutput(Scanner newInput, PrintStream newOutput) {
-        inputReader = newInput;
-        outputWriter = newOutput;
+    public static void setInputOutput(InputStream newInput, OutputStream newOutput) {
+        inputStream = newInput;
+        outputStream = newOutput;
+        inputReader = new Scanner(newInput);
+        outputWriter = new PrintStream(newOutput);
     }
 
     public TerminalInstructions(ISimulator simulator) {
@@ -133,7 +134,10 @@ public class TerminalInstructions {
      */
     public static void clearBuffer() {
         try {
-            inputReader.skip(".*");
+            inputStream.skipNBytes(inputStream.available());
+            // modifications to the input stream do not update the scanner
+            // and the scanner has no way to clear its buffer... so evil hack
+            inputReader = new Scanner(inputStream);
         } catch (Exception ignored) {
         }
     }
