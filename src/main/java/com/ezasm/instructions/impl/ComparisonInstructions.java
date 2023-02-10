@@ -34,7 +34,7 @@ public class ComparisonInstructions {
      * @param input2 the right-hand side of the operation.
      */
     private void compare(BiFunction<Long, Long, Boolean> op, IAbstractOutput output, IAbstractInput input1,
-                         IAbstractInput input2) throws SimulationException {
+            IAbstractInput input2) throws SimulationException {
 
         boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));
@@ -77,7 +77,7 @@ public class ComparisonInstructions {
      */
     @Instruction
     public void slt(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        compare((l,r) -> l < r, output, input1, input2);
+        compare((l, r) -> l < r, output, input1, input2);
     }
 
     /**
@@ -90,7 +90,7 @@ public class ComparisonInstructions {
      */
     @Instruction
     public void sle(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        compare((l,r) -> l <= r, output, input1, input2);
+        compare((l, r) -> l <= r, output, input1, input2);
     }
 
     /**
@@ -103,7 +103,7 @@ public class ComparisonInstructions {
      */
     @Instruction
     public void sgt(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        compare((l,r) -> l > r, output, input1, input2);
+        compare((l, r) -> l > r, output, input1, input2);
     }
 
     /**
@@ -116,6 +116,6 @@ public class ComparisonInstructions {
      */
     @Instruction
     public void sge(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        compare((l,r) -> l >= r, output, input1, input2);
+        compare((l, r) -> l >= r, output, input1, input2);
     }
 }

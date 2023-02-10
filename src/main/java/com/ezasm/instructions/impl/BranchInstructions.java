@@ -34,11 +34,12 @@ public class BranchInstructions {
      * @param input2 the right-hand side of the operation.
      */
     private void branch(BiFunction<Long, Long, Boolean> op, IAbstractInput label, IAbstractInput input1,
-                        IAbstractInput input2) throws SimulationException {
+            IAbstractInput input2) throws SimulationException {
 
         boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));
-        if (res) simulator.getRegisters().getRegister(Registers.PC).setBytes(label.get(simulator));
+        if (res)
+            simulator.getRegisters().getRegister(Registers.PC).setBytes(label.get(simulator));
     }
 
     /**
