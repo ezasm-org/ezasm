@@ -148,7 +148,7 @@ public class Memory {
     }
 
     /**
-     * Gets the one word of information from the memory at a certain address.
+     * Gets one word of information from the memory at a certain address.
      *
      * @param address the address to begin to read from.
      * @return the information read from the memory at a certain address.
@@ -175,22 +175,23 @@ public class Memory {
      * @return the String interpreted.
      */
     public String readString(int address, int maxSize) throws SimulationException {
-        address = address - OFFSET;
         if (maxSize < 0) {
             throw new SimulationException(String.format("String size cannot be %d", maxSize));
         }
-        if (address < 0 || (address + maxSize) >= this.MEMORY_SIZE) {
+        if (address < 0 || (address - OFFSET + maxSize) >= this.MEMORY_SIZE) {
             throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
 
-        byte[] toString = new byte[maxSize];
+        String toString = "";
         for (int i = 0; i < maxSize; ++i) {
-            toString[i] = memory[address + i];
-            if (memory[address + i] == '\0') {
+            char read = (char) Conversion.bytesToLong(read(address + (i * WORD_SIZE)));
+            toString += read;
+            if (read == '\0') {
+                System.out.println(i);
                 break;
             }
         }
-        return Conversion.bytesToString(toString);
+        return toString;
     }
 
     /**
