@@ -22,7 +22,8 @@ class LexerTest {
     void isLabel() {
         assertTrue(Lexer.isLabel("label:"));
         assertTrue(Lexer.isLabel("_label-:"));
-        assertTrue(Lexer.isLabel("123label:"));
+        assertTrue(Lexer.isLabel("abc123:"));
+        assertFalse(Lexer.isLabel("123label:"));
         assertFalse(Lexer.isLabel("my label:"));
         assertFalse(Lexer.isLabel(""));
     }
@@ -46,11 +47,31 @@ class LexerTest {
         assertTrue(Lexer.isImmediate("123"));
         assertTrue(Lexer.isImmediate("-123"));
         assertTrue(Lexer.isImmediate("1234567890123456789"));
-        // Future functionality of issue #29
-        // assertTrue(Lexer.isImmediate("0x1000"));
-        // assertTrue(Lexer.isImmediate("0xABCDEF"));
-        // assertTrue(Lexer.isImmediate("0b100101"));
-        assertFalse(Lexer.isImmediate("123.456"));
+
+        assertTrue(Lexer.isImmediate("0x1000"));
+        assertTrue(Lexer.isImmediate("0xABCDEF"));
+        assertTrue(Lexer.isImmediate("0b100101"));
+
+        assertTrue(Lexer.isImmediate("-0xABCDEF"));
+        assertTrue(Lexer.isImmediate("-0b100101"));
+
+        assertTrue(Lexer.isImmediate("123.456"));
+        assertTrue(Lexer.isImmediate("123."));
+        assertTrue(Lexer.isImmediate(".456"));
+        assertTrue(Lexer.isImmediate("0xABC.DEF"));
+        assertTrue(Lexer.isImmediate("0b1001.01"));
+
+        assertTrue(Lexer.isImmediate("-0xABC.DEF"));
+        assertTrue(Lexer.isImmediate("-0b1001.01"));
+
+        assertTrue(Lexer.isImmediate("0xABCDEF."));
+        assertTrue(Lexer.isImmediate("0b100101."));
+        assertTrue(Lexer.isImmediate("0x.ABCDEF"));
+        assertTrue(Lexer.isImmediate("0b.100101"));
+
+        assertFalse(Lexer.isImmediate(".123."));
+        assertFalse(Lexer.isImmediate("0xABCDEFG"));
+        assertFalse(Lexer.isImmediate("0b0121"));
         assertFalse(Lexer.isImmediate("ABC"));
         assertFalse(Lexer.isImmediate(""));
     }

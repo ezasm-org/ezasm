@@ -19,8 +19,9 @@ public class Lexer {
 
     private static boolean isAlNum(String text) {
         for (int i = 0; i < text.length(); ++i) {
-            if (!isAlNum(text.charAt(i)))
+            if (!isAlNum(text.charAt(i)) || (i == 0 && isNumeric(text.charAt(i)))) {
                 return false;
+            }
         }
         return true;
     }
@@ -31,11 +32,11 @@ public class Lexer {
 
     public static boolean isNumeric(String text) {
         try {
-            Double.parseDouble(text);
+            textToBytes(text);
             return true;
-        } catch (NumberFormatException ignored) {
+        } catch (ParseException ignored) {
         }
-        return isHexadecimal(text) || isBinary(text);
+        return false;
     }
 
     public static byte[] textToBytes(String text) throws ParseException {
@@ -46,6 +47,10 @@ public class Lexer {
         } else if (isBinary(text)) {
             base = 2;
             text = text.replace("0b", "");
+        }
+
+        if (text.indexOf('.') != text.lastIndexOf('.')) {
+            throw new ParseException("More than one decimal point in number");
         }
 
         try { // Try conversion to long
