@@ -3,12 +3,13 @@ package com.ezasm.instructions.targets.inputoutput;
 import com.ezasm.Conversion;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * The implementation of a register to be used as either an input or an output.
+ * The implementation of a dereference to be used as either an input or an output.
  */
 public class DereferenceInputOutput implements IAbstractInputOutput {
 
@@ -16,9 +17,10 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
     private final int offset;
 
     /**
-     * Construct the output based on the register reference number.
+     * Construct based on the register number and offset.
      *
      * @param register the register reference number.
+     * @param offset   the index offset.
      */
     public DereferenceInputOutput(int register, int offset) {
         this.register = new RegisterInputOutput(register);
@@ -26,9 +28,9 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
     }
 
     /**
-     * Construct the output based on the register reference string.
+     * Construct based on the dereference string.
      *
-     * @param register the register reference string.
+     * @param text the register reference string.
      */
     public DereferenceInputOutput(String text) throws ParseException {
         String offset = text.substring(0, text.indexOf('('));
@@ -43,13 +45,13 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
     }
 
     /**
-     * Gets the value stored within the register.
+     * Gets the value stored within the address.
      *
      * @param simulator the program simulator.
-     * @return the value stored within the register.
+     * @return the value stored within the address.
      */
     @Override
-    public byte[] get(ISimulator simulator) {
+    public byte[] get(ISimulator simulator) throws SimulationException {
         int address = (int) Conversion.bytesToLong(register.get(simulator));
         byte[] val = simulator.getMemory().read(address + offset);
         return Arrays.copyOf(val, val.length);
@@ -62,7 +64,7 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(ISimulator simulator, byte[] value) {
+    public void set(ISimulator simulator, byte[] value) throws SimulationException {
         int address = (int) Conversion.bytesToLong(register.get(simulator));
         simulator.getMemory().write(address + offset, value);
     }
@@ -73,8 +75,8 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        RegisterInputOutput that = (RegisterInputOutput) o;
-        return register.equals(that);
+        DereferenceInputOutput that = (DereferenceInputOutput) o;
+        return register.equals(that.register) && offset == that.offset;
     }
 
     @Override
