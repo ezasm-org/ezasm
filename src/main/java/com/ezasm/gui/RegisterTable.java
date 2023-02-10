@@ -7,6 +7,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
@@ -39,6 +41,27 @@ public class RegisterTable extends JPanel {
         setLayout(new BorderLayout());
         add(scrollPane);
     }
+
+    /**
+     * The function to highlight changed registers
+     */
+    public void ChangeCellColor(JTable table, int col_index, int row_index){
+        table.getColumnModel().getColumn(col_index).setCellRenderer(new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col){
+                final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+                if(row == row_index){
+                    c.setForeground(Color.red);
+                }
+                else{
+                    c.setForeground(Color.black);
+                }
+                return c;
+            }
+        });
+    }
+    
+    
 
     /**
      * Forcibly refreshes the display of the table
