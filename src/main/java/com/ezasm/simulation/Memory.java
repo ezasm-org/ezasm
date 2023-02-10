@@ -150,6 +150,16 @@ public class Memory {
     }
 
     /**
+     * Gets the one word of information from the memory at a certain address.
+     *
+     * @param address the address to begin to read from.
+     * @return the information read from the memory at a certain address.
+     */
+    public byte[] read(int address) {
+        return read(address, WORD_SIZE);
+    }
+
+    /**
      * Gets the information from the memory at a certain address interpreted as a long.
      *
      * @param address the address to begin to read from.
