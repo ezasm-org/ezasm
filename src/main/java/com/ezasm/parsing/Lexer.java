@@ -158,12 +158,7 @@ public class Lexer {
      * @return true if the given token is a valid dereference expression, false otherwise.
      */
     public static boolean isDereference(String token) {
-        if (token.length() < 5)
-            return false;
-        int first = token.indexOf('(');
-        int last = token.indexOf(')');
-        return (first != -1) && (last != -1) && (first == token.lastIndexOf('(')) && (last == token.lastIndexOf(')'))
-                && (isAlNum(token.substring(0, first))) && isRegister(token.substring(first + 1, last));
+        return token.matches("^(-?\\d+)?\\(\\$.+\\)$");
     }
 
     /**

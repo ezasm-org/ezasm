@@ -39,7 +39,15 @@ class LexerTest {
 
     @Test
     void isDereference() {
-        // Not yet properly implemented
+        assertTrue(Lexer.isDereference("($t0)"));
+        assertTrue(Lexer.isDereference("10($t0)"));
+        assertTrue(Lexer.isDereference("-4($t0)"));
+        assertFalse(Lexer.isDereference("-($t0)"));
+        assertFalse(Lexer.isDereference("10(t0)"));
+        assertFalse(Lexer.isDereference("10($t0)aaaa"));
+        assertFalse(Lexer.isDereference("#10($t0)"));
+        assertFalse(Lexer.isDereference(""));
+        assertFalse(Lexer.isDereference("()"));
     }
 
     @Test

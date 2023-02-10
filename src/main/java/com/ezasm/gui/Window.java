@@ -141,7 +141,6 @@ public class Window {
      * Handles the program completion and displays a message to the user about the status of the program.
      */
     public void handleProgramCompletion() {
-        TerminalInstructions.clearBuffer();
         System.out.println();
         if (simulator.isError()) {
             System.out.println("** Program terminated due to an error **");
@@ -150,6 +149,9 @@ public class Window {
         } else {
             System.out.println("** Program terminated forcefully **");
         }
+        // The buffer must be cleared at the end of the function;
+        // if it is not, System.out malfunctions
+        TerminalInstructions.clearBuffer();
     }
 
     /**

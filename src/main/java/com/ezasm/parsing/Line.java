@@ -5,6 +5,7 @@ import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.input.LabelReferenceInput;
+import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 
 import java.util.Arrays;
@@ -59,9 +60,8 @@ public class Line {
                         Conversion.longToBytes(Lexer.getCharacterImmediate(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);
-                // Code for parsing a dereference
-                // } else if(Lexer.isDereference(arguments[i])) {
-                // this.arguments[i] = new DereferenceToken(arguments[i]);
+            } else if (Lexer.isDereference(arguments[i])) {
+                this.arguments[i] = new DereferenceInputOutput(arguments[i]);
             } else if (Lexer.isLabelReference(arguments[i])) {
                 this.arguments[i] = new LabelReferenceInput(arguments[i]);
             } else {
