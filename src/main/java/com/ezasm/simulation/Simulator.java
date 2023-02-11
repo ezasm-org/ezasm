@@ -1,5 +1,6 @@
 package com.ezasm.simulation;
 
+import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
@@ -115,7 +116,6 @@ public class Simulator implements ISimulator {
         }
     }
 
-
     @Override
     public void executeProgramFromPC() throws SimulationException {
         while (!isDone() && !isError()) {
@@ -130,25 +130,6 @@ public class Simulator implements ISimulator {
      */
     public void executeLineFromPC() throws SimulationException {
         int lineNumber = validatePC();
-        Window.updateHighlight(lineNumber);
-        executeLine(lines.get(lineNumber));
-        int currentSP = validatePC();
-        if (currentSP == lineNumber) {
-            pc.setLong(currentSP + 1);
-        } // otherwise the PC was set by the program to a certain line and should be read
-          // as such
-        Window.updateAll();
-    }
-
-    /**
-     * Helper method to execute a line in a loop and return the new PC.
-     *
-     * @param i the current PC value.
-     * @return the new PC value.
-     * @throws ParseException if an error occurred within execution.
-     */
-    private int executeLineInLoop(int i) throws ParseException {
-        Window.updateHighlight(validatePC());
         runLine(lines.get(lineNumber));
         int currentPC = validatePC();
         pc.setLong(currentPC + 1);
@@ -192,7 +173,5 @@ public class Simulator implements ISimulator {
     public Memory getMemory() {
         return memory;
     }
-
-
 
 }

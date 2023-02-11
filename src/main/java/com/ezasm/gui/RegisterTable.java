@@ -57,7 +57,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        table.updateUI();
+        SwingUtilities.invokeLater(table::updateUI);
     }
 
     /**
@@ -97,6 +97,7 @@ public class RegisterTable extends JPanel implements IThemeable {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            fireTableCellUpdated(rowIndex, columnIndex);
         }
 
         @Override

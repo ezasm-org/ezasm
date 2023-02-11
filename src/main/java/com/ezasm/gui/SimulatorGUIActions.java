@@ -1,8 +1,9 @@
 package com.ezasm.gui;
 
-import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
+
+import java.util.concurrent.locks.LockSupport;
 
 import static com.ezasm.gui.ToolbarFactory.*;
 
@@ -88,8 +89,9 @@ public class SimulatorGUIActions {
             }
         } else {
             try {
+                Window.updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
-                Window.updateAll();
+                Window.updateRegisters();
             } catch (SimulationException e) {
                 setState(State.STOPPED);
                 System.err.println(e.getMessage());
@@ -122,7 +124,6 @@ public class SimulatorGUIActions {
         setState(State.STOPPED);
         killWorker();
         awaitWorkerTermination();
-        handleProgramCompletion();
     }
 
     /**
@@ -146,11 +147,10 @@ public class SimulatorGUIActions {
         if (state != State.STOPPED) {
             killWorker();
             awaitWorkerTermination();
-            handleProgramCompletion();
         }
         setState(State.IDLE);
         Window.getInstance().getSimulator().resetAll();
-        Window.updateAll();
+        Window.updateRegisters();
     }
 
     /**
@@ -160,29 +160,23 @@ public class SimulatorGUIActions {
     private static void simulationLoop() {
         while (!Window.getInstance().getSimulator().isDone() && (state == State.RUNNING || state == State.PAUSED)) {
             try {
+                Window.updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
-                Window.updateAll();
+                Window.updateRegisters();
             } catch (SimulationException e) {
                 Window.getInstance().handleParseException(e);
                 setState(State.STOPPED);
                 break;
             }
             try {
-                Thread.sleep(instructionDelayMS);
+                LockSupport.parkNanos(instructionDelayMS * 1_000_000);
                 while (state == State.PAUSED) { // busy wait
-                    Thread.sleep(LOOP_BUSY_WAIT_MS);
+                    LockSupport.parkNanos(LOOP_BUSY_WAIT_MS * 1_000_000);
                 }
-            } catch (InterruptedException e) {
-                return;
+            } catch (Exception e) {
+                break;
             }
         }
-        onSimulatorCompleteInLoop();
-    }
-
-    /**
-     * Is run upon the simulator exiting normally (not being forcibly stopped) during the execution of code.
-     */
-    private static void onSimulatorCompleteInLoop() {
         setState(State.STOPPED);
         handleProgramCompletion();
     }

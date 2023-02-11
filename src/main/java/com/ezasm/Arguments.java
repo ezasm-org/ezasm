@@ -88,9 +88,7 @@ public class Arguments {
             }
             cli.startSimulation();
         } else {
-            SwingUtilities.invokeLater(() -> {
-                Window.instantiate(sim, config);
-            });
+            Window.instantiate(sim, config);
         }
     }
 

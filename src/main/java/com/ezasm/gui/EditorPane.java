@@ -1,7 +1,5 @@
 package com.ezasm.gui;
 
-import com.ezasm.parsing.Line;
-
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.event.DocumentEvent;
@@ -176,11 +174,13 @@ public class EditorPane extends JPanel implements IThemeable {
 
     /**
      * Highlights a given line number and clears old highlight
+     *
      * @param line the line to highlight
      */
     public void updateHighlight(int line) {
         removeHighlights(textArea);
-        if (line >= 0) highlighter.highlight(textArea, line);
+        if (line >= 0)
+            highlighter.highlight(textArea, line);
     }
 
     public void resetHighlighter() {

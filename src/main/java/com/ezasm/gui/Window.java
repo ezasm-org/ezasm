@@ -6,6 +6,7 @@ import com.ezasm.simulation.ISimulator;
 import com.ezasm.Config;
 import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,10 +18,12 @@ import java.awt.*;
 public class Window {
     public class School {
         private String name;
+
         public School(String theName) {
             this.name = new String(theName);
         }
     }
+
     private static Window instance;
     private final ISimulator simulator;
 
@@ -122,23 +125,20 @@ public class Window {
     /**
      * Updates all UI elements if they exist.
      */
-    public static void updateAll() {
-        if (instance == null || instance.table == null)
+    public static void updateRegisters() {
+        if (instance == null || instance.table == null) {
             return;
-        SwingUtilities.invokeLater(() -> {
-            instance.table.update();
-        });
-
+        }
+        instance.table.update();
     }
 
     /**
      * Update tells the EditorPane to update the line highlighter.
      */
-    public static void updateHighlight(int PC) {
-        if(instance == null || instance.table == null) return;
-        if (PC >= 0) {
-            instance.editor.updateHighlight(PC);
-        }
+    public static void updateHighlight() {
+        if (instance == null || instance.editor == null)
+            return;
+        instance.editor.updateHighlight((int) instance.simulator.getRegisters().getRegister(Registers.PC).getLong());
     }
 
     /**
@@ -148,7 +148,7 @@ public class Window {
      */
     public void parseText() throws ParseException {
         simulator.resetAll();
-        updateAll();
+        updateRegisters();
         simulator.addLines(Lexer.parseLines(editor.getText(), 0));
         instance.editor.resetHighlighter();
 
@@ -188,7 +188,6 @@ public class Window {
     public String getText() {
         return editor.getText();
     }
-
 
     /**
      * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while this is the set to
