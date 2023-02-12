@@ -3,6 +3,7 @@ package com.ezasm.parsing;
 import com.ezasm.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -210,14 +211,13 @@ public class Lexer {
      * @throws ParseException if the line could not be properly parsed.
      */
     public static Line parseLine(String line, int lineNumber) throws ParseException {
+        line = StringUtils.substringBefore(line, '#');
         line = line.replaceAll("[\s\t,;]+", " ").trim();
+
         if (line.length() == 0)
             return null;
-        if (Lexer.isComment(line))
-            return null;
-        String[] tokens = line.split("[ ,]");
+        String[] tokens = line.split(" ");
         if (tokens.length == 0) {
-            // Empty line
             return null;
         }
         String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -240,8 +240,6 @@ public class Lexer {
         List<Line> linesLexed = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
-        lines = lines + "\n";
-
         // individually read lines treating semicolons as line breaks
         for (int i = 0; i < lines.length(); ++i) {
             char c = lines.charAt(i);
@@ -254,6 +252,7 @@ public class Lexer {
                 sb.append(c);
             }
         }
+        linesRead.add(sb.toString());
 
         for (String s : linesRead) {
             Line lexed = parseLine(s, linesLexed.size() + startingLine);
