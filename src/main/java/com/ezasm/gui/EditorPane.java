@@ -1,25 +1,23 @@
 package com.ezasm.gui;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.undo.UndoManager;
 
 import com.ezasm.Theme;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
 public class EditorPane extends JPanel implements IThemeable {
 
-    private final JTextArea textArea;
-    private final LineNumber lineNumbers;
-    private final LineNumberModelImpl model = new LineNumberModelImpl();
+    private final RSyntaxTextArea textArea;
+    private final RTextScrollPane scrollPane;
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
@@ -30,90 +28,22 @@ public class EditorPane extends JPanel implements IThemeable {
     public EditorPane() {
         super();
 
-        textArea = new JTextArea();
-        lineNumbers = new LineNumber(model);
+        AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
+        atmf.putMapping("text/ezasm", "com.ezasm.gui.EzASMTokenMaker");
+        textArea = new RSyntaxTextArea();
+        //textArea.setSyntaxEditingStyle("text/ezasm");
+        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86);
+        textArea.setCodeFoldingEnabled(false);
 
         textArea.setTabSize(2);
-        UndoManager manager = new UndoManager();
-        textArea.getDocument().addUndoableEditListener(manager);
-        textArea.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                lineNumbers.adjustWidth();
-            }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                lineNumbers.adjustWidth();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                lineNumbers.adjustWidth();
-            }
-
-        });
-        textArea.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-                int mod = keyEvent.getModifiersEx();
-                if ((mod & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-                    // The "control" button is pressed
-                    int key = keyEvent.getKeyCode();
-                    if (key == KeyEvent.VK_Z) {
-                        if ((mod & KeyEvent.SHIFT_DOWN_MASK) == KeyEvent.SHIFT_DOWN_MASK) {
-                            // ctrl + shift + z : redo
-                            if (manager.canRedo()) {
-                                manager.redo();
-                            }
-                        } else if (manager.canUndo()) {
-                            // ctrl + z : undo
-                            manager.undo();
-                        }
-                    } else if (key == KeyEvent.VK_Y) {
-                        // ctrl + y : redo
-                        if (manager.canRedo()) {
-                            manager.redo();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-            }
-        });
-
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setRowHeaderView(lineNumbers);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane = new RTextScrollPane(textArea);
+        scrollPane.setLineNumbersEnabled(true);
         scrollPane.setMinimumSize(textArea.getSize());
         scrollPane.setPreferredSize(textArea.getPreferredSize());
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
-    }
-
-    private class LineNumberModelImpl implements ILineNumberModel {
-        @Override
-        public int getNumberLines() {
-            return textArea.getLineCount();
-        }
-
-        @Override
-        public Rectangle getLineRect(int line) {
-            try {
-                return textArea.modelToView2D(textArea.getLineStartOffset(line)).getBounds();
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-                return new Rectangle();
-            }
-        }
     }
 
     /**
@@ -123,9 +53,10 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setBackground(theme.getBackground());
         textArea.setForeground(theme.getForeground());
         textArea.setCaretColor(theme.getForeground());
-        lineNumbers.setBackground(theme.getCurrentLine());
-        lineNumbers.setForeground(theme.getForeground().darker());
-        lineNumbers.setFont(font);
+        textArea.setCurrentLineHighlightColor(theme.getCurrentLine());
+        scrollPane.setBackground(theme.getBackground());
+        scrollPane.setForeground(theme.getForeground());
+        scrollPane.setFont(font);
         textArea.setFont(font);
         textArea.setEditable(true);
         textArea.setLineWrap(false);
