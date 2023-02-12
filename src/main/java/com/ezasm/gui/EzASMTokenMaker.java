@@ -125,7 +125,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                         }
 
                         case '#' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.COMMENT_EOL;
                         }
@@ -152,8 +152,8 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                             } else if (Lexer.isAlNum(c)) {
                                 currentTokenType = Token.IDENTIFIER;
                             } else {
-                                // Anything not currently handled - mark as identifier
-                                currentTokenType = Token.IDENTIFIER;
+                                // Anything not currently handled - mark as an identifier
+                                currentTokenType = Token.ERROR_IDENTIFIER;
                             }
                         }
 
@@ -170,6 +170,11 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                             addToken(text, currentTokenStart,i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
                             addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
+                        }
+                        case '#' -> {
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            currentTokenStart = i;
+                            currentTokenType = Token.COMMENT_EOL;
                         }
                         default -> {
                             if (! (Lexer.isAlNum(c) || c == ':')) {
@@ -192,6 +197,11 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                             addToken(text, currentTokenStart,i - 1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset + currentTokenStart);
                             addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
+                        }
+                        case '#' -> {
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            currentTokenStart = i;
+                            currentTokenType = Token.COMMENT_EOL;
                         }
                         default -> {
                             if (!(RSyntaxUtilities.isHexCharacter(c) || c == 'x' || c == 'b')) {
@@ -237,13 +247,32 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                             addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
                         }
+                        case '#' -> {
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            currentTokenStart = i;
+                            currentTokenType = Token.COMMENT_EOL;
+                        }
                         default -> {
                             if (!Lexer.isAlNum(c)) {
                                 // Not a valid register; remember this was an error and start over.
-                                addToken(text, currentTokenStart, i - 1, Token.ERROR_STRING_DOUBLE, newStartOffset + currentTokenStart);
+                                addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
                                 i--;
                                 currentTokenType = Token.NULL;
                             }
+                        }
+                    }
+                }
+                case Token.ERROR_IDENTIFIER -> {
+                    switch (c) {
+                        case ' ', '\t', ';', ',' -> {
+                            addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
+                            currentTokenStart = i;
+                            currentTokenType = Token.WHITESPACE;
+                        }
+                        case '#' -> {
+                            addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
+                            currentTokenStart = i;
+                            currentTokenType = Token.COMMENT_EOL;
                         }
                     }
                 }
