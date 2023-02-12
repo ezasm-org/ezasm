@@ -22,8 +22,7 @@ public class EditorPane extends JPanel implements IThemeable {
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
     /**
-     * Creates a text edit field with an "Undo Manager" to undo the user's actions with CTRL + Z or redo those undid
-     * actions with CTRL + SHIFT + Z or CTRL + Y.
+     * Creates a text edit field using RSyntaxTextArea features.
      */
     public EditorPane() {
         super();
@@ -31,8 +30,8 @@ public class EditorPane extends JPanel implements IThemeable {
         AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
         atmf.putMapping("text/ezasm", "com.ezasm.gui.EzASMTokenMaker");
         textArea = new RSyntaxTextArea();
-        //textArea.setSyntaxEditingStyle("text/ezasm");
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86);
+        textArea.setSyntaxEditingStyle("text/ezasm");
+        //textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86);
         textArea.setCodeFoldingEnabled(false);
 
         textArea.setTabSize(2);

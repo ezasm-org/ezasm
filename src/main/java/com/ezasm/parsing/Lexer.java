@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class Lexer {
 
-    private static boolean isAlNum(char c) {
-        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_') || (c == '-');
+    public static boolean isAlNum(char c) {
+        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_');
     }
 
     private static boolean isAlNum(String text) {
