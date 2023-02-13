@@ -1,12 +1,10 @@
-package com.ezasm.gui;
+package com.ezasm.gui.Editor;
 
 import com.ezasm.parsing.Lexer;
 
 import javax.swing.text.*;
 import java.awt.*;
 import java.util.ArrayList;
-
-import static com.ezasm.gui.Config.THEME;
 
 public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter {
     /**

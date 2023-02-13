@@ -1,6 +1,6 @@
 package com.ezasm.instructions.impl;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;

@@ -1,8 +1,9 @@
-package com.ezasm.gui;
+package com.ezasm.gui.Editor;
 
 import javax.swing.*;
 import javax.swing.text.Highlighter;
 
+import com.ezasm.gui.IThemeable;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -11,7 +12,7 @@ import java.io.IOException;
 
 import static com.ezasm.gui.Theme.applyFontAndTheme;
 
-import static com.ezasm.gui.LineHighlighter.removeHighlights;
+import static com.ezasm.gui.Editor.LineHighlighter.removeHighlights;
 
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
@@ -46,13 +47,13 @@ public class EditorPane extends JPanel implements IThemeable {
         setLayout(new BorderLayout());
         add(scrollPane);
 
-        highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
+        highlighter = new LineHighlighter(com.ezasm.gui.Window.currentTheme().yellow(), textArea);
     }
 
     /**
      * Themes the syntax text area according to the given font and theme.
      */
-    private void themeSyntaxTextArea(Font font, Theme newTheme) {
+    private void themeSyntaxTextArea(Font font, com.ezasm.gui.Theme newTheme) {
         try {
             // Load a good default theme for things we are not setting
             org.fife.ui.rsyntaxtextarea.Theme theme = org.fife.ui.rsyntaxtextarea.Theme
@@ -68,7 +69,7 @@ public class EditorPane extends JPanel implements IThemeable {
             theme.useSelectionFG = false;
 
             // Line number background theme
-            theme.gutterBackgroundColor = newTheme.modifyAwayFromBackground(newTheme.background().darker());
+            theme.gutterBackgroundColor = newTheme.modifyAwayFromBackground(newTheme.background());
             theme.gutterBorderColor = theme.gutterBackgroundColor;
 
             // Line number theme
@@ -124,7 +125,7 @@ public class EditorPane extends JPanel implements IThemeable {
     /**
      * Applies the proper theming to the editor area.
      */
-    public void applyTheme(Font font, Theme theme) {
+    public void applyTheme(Font font, com.ezasm.gui.Theme theme) {
         themeSyntaxTextArea(font, theme);
         setFont(textArea, font);
         applyFontAndTheme(scrollPane, font, theme);
@@ -186,7 +187,7 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void resetHighlighter() {
         removeHighlights(textArea);
-        highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
+        highlighter = new LineHighlighter(com.ezasm.gui.Window.currentTheme().yellow(), textArea);
     }
 
     /**
@@ -194,7 +195,7 @@ public class EditorPane extends JPanel implements IThemeable {
      *
      * @param theme the theme to recolor to
      */
-    private void recolorHighlights(Theme theme) {
+    private void recolorHighlights(com.ezasm.gui.Theme theme) {
         // Store the old highlights
         Highlighter highlight = textArea.getHighlighter();
         Highlighter.Highlight[] highlights = highlight.getHighlights();

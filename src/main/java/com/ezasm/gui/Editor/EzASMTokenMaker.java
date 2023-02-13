@@ -1,4 +1,4 @@
-package com.ezasm.gui;
+package com.ezasm.gui.Editor;
 
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.parsing.Lexer;

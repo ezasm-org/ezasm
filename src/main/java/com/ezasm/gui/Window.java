@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.gui.Editor.EditorPane;
 import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;

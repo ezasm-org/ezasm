@@ -1,6 +1,6 @@
 package com.ezasm.simulation;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
 
 import java.util.Arrays;
 

@@ -1,6 +1,6 @@
 package com.ezasm;
 
-import static com.ezasm.Arguments.handleArgs;
+import static com.ezasm.util.Arguments.handleArgs;
 
 /**
  * The main entrypoint of the program.

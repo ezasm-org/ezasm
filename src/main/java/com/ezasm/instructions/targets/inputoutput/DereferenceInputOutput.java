@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.inputoutput;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;

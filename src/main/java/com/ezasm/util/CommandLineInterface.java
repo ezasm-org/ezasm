@@ -1,4 +1,4 @@
-package com.ezasm;
+package com.ezasm.util;
 
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;

@@ -1,4 +1,4 @@
-package com.ezasm;
+package com.ezasm.util;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
