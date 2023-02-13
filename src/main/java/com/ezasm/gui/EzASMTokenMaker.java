@@ -297,6 +297,11 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                     currentTokenStart = i;
                     currentTokenType = Token.WHITESPACE;
                 }
+                case '(', ')' -> {
+                    addToken(text, currentTokenStart, i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
+                    addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
+                    currentTokenType = Token.NULL;
+                }
                 case '#' -> {
                     addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
                             newStartOffset + currentTokenStart);
@@ -352,7 +357,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                 currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
             } else {
                 currentTokenType = Token.ERROR_NUMBER_FORMAT;
-                expectHexadecimal = false;
+                expectHexadecimal = hasDecimalPoint = false;
             }
             return true;
         } else if (expectBinary) {
@@ -360,7 +365,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                 currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
             } else {
                 currentTokenType = Token.ERROR_NUMBER_FORMAT;
-                expectBinary = false;
+                expectBinary = hasDecimalPoint = false;
             }
             return true;
         }
