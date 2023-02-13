@@ -146,7 +146,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the state of the emulator be reset.
      */
     static void reset() {
-        Window.getInstance().resetHighlight();
+        Window.resetHighlight();
         if (state != State.STOPPED) {
             killWorker();
             awaitWorkerTermination();

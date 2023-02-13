@@ -136,13 +136,20 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setMinimumSize(MIN_SIZE);
         textArea.setDisabledTextColor(Color.DARK_GRAY);
 
+
+        // Store the old highlights
         Highlighter highlight = textArea.getHighlighter();
         Highlighter.Highlight[] highlights = highlight.getHighlights();
+
+        // clear old highlights
         removeHighlights(textArea);
+
+        // init new highlighter with new color
         if (highlights.length > 0) {
             highlighter = new LineHighlighter(theme.getRunLine(), textArea);
         }
 
+        // add new highlights with the new color
         for (int i = 0; i < highlights.length; i++) {
             int start = highlights[i].getStartOffset();
             int end = highlights[i].getEndOffset();
@@ -202,6 +209,12 @@ public class EditorPane extends JPanel implements IThemeable {
             highlighter.highlight(textArea, line);
     }
 
+    /**
+     * Reset a highlighter by removing all highlights
+     * and reinit-ing with a new color.
+     * Resets line counts.
+     * Should be called each program start
+     */
     public void resetHighlighter() {
         removeHighlights(textArea);
         highlighter = new LineHighlighter(Window.currentTheme().getRunLine(), textArea);

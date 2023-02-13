@@ -218,6 +218,10 @@ public class Window {
         return getTheme(getInstance().config.getTheme());
     }
 
+    /**
+     * Resets the editor highlighter, updating color to current theme
+     * and clearing all highlights
+     */
     public static void resetHighlight() {
         if (!Window.hasInstance()) return;
 
