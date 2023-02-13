@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.Highlighter;
 import javax.swing.undo.UndoManager;
 
 import com.ezasm.Theme;
@@ -19,7 +20,6 @@ import static com.ezasm.gui.LineHighlighter.removeHighlights;
  */
 public class EditorPane extends JPanel implements IThemeable {
     LineHighlighter highlighter;
-    public static final Color HIGHLIGHT_COLOR = Color.YELLOW;
     private final JTextArea textArea;
     private final LineNumber lineNumbers;
     private final LineNumberModelImpl model = new LineNumberModelImpl();
@@ -134,6 +134,9 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setLineWrap(false);
         textArea.setMinimumSize(MIN_SIZE);
         textArea.setDisabledTextColor(Color.DARK_GRAY);
+
+
+        recolorHighlights(theme);
     }
 
     /**
@@ -183,7 +186,45 @@ public class EditorPane extends JPanel implements IThemeable {
             highlighter.highlight(textArea, line);
     }
 
+    /**
+     * Reset a highlighter by removing all highlights
+     * and reinit-ing with a new color.
+     * Resets line counts.
+     * Should be called each program start
+     */
     public void resetHighlighter() {
-        highlighter = new LineHighlighter(Window.currentTheme().getCurrentLine(), textArea);
+        removeHighlights(textArea);
+        highlighter = new LineHighlighter(Window.currentTheme().getRunLine(), textArea);
+    }
+
+    /**
+     * Recolor the current highlight in accordance
+     * with the provided theme
+     * @param theme the theme to recolor to
+     */
+    private void recolorHighlights(Theme theme) {
+        // Store the old highlights
+        Highlighter highlight = textArea.getHighlighter();
+        Highlighter.Highlight[] highlights = highlight.getHighlights();
+
+        // clear old highlights
+        removeHighlights(textArea);
+
+        // init new highlighter with new color
+        if (highlights.length > 0) {
+            highlighter = new LineHighlighter(theme.getRunLine(), textArea);
+        }
+
+        // add new highlights with the new color
+        for (int i = 0; i < highlights.length; i++) {
+            int start = highlights[i].getStartOffset();
+            int end = highlights[i].getEndOffset();
+            try {
+                textArea.getHighlighter().addHighlight(start, end, highlighter);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            textArea.repaint();
+        }
     }
 }

@@ -101,6 +101,7 @@ public class Window {
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
         SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
+        this.config = config;
     }
 
     /**
@@ -217,5 +218,15 @@ public class Window {
         if (instance == null)
             return null;
         return getTheme(getInstance().config.getTheme());
+    }
+
+    /**
+     * Resets the editor highlighter, updating color to current theme
+     * and clearing all highlights
+     */
+    public static void resetHighlight() {
+        if (!Window.hasInstance()) return;
+
+        Window.getInstance().editor.resetHighlighter();
     }
 }
