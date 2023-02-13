@@ -12,6 +12,11 @@ import javax.swing.text.Segment;
 public class EzASMTokenMaker extends AbstractTokenMaker {
 
     private final int REGISTER_VARIABLE = Token.VARIABLE;
+    private int currentTokenStart;
+    private int currentTokenType;
+    private boolean expectIntegerTypeCharacter = false;
+    private boolean expectHexadecimal = false;
+    private boolean expectBinary = false;
 
     public EzASMTokenMaker() {
         super();
@@ -71,11 +76,11 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
         // 'newStartOffset+currentTokenStart'.
         int newStartOffset = startOffset - offset;
 
-        int currentTokenStart = offset;
-        int currentTokenType = initialTokenType;
-        boolean expectIntegerTypeCharacter = false;
-        boolean expectHexadecimal = false;
-        boolean expectBinary = false;
+        currentTokenStart = offset;
+        currentTokenType = initialTokenType;
+        expectIntegerTypeCharacter = false;
+        expectHexadecimal = false;
+        expectBinary = false;
 
         for (int i = offset; i < end; ++i) {
 
@@ -95,6 +100,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                         }
                         default -> {
                             if (RSyntaxUtilities.isDigit(c)) {
+                                expectIntegerTypeCharacter = c == '0';
                                 currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
                             } else if (Lexer.isAlNum(c)) {
                                 currentTokenType = Token.IDENTIFIER;
@@ -147,13 +153,18 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                             addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
                             currentTokenStart = i;
 
-                            if (RSyntaxUtilities.isDigit(c)) {
-                                currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-                            } else if (Lexer.isAlNum(c)) {
-                                currentTokenType = Token.IDENTIFIER;
-                            } else {
-                                // Anything not currently handled - mark as an identifier
-                                currentTokenType = Token.ERROR_IDENTIFIER;
+                            // Handle integer inputs
+
+                            if (!handleOtherInteger(c)) {
+                                if (RSyntaxUtilities.isDigit(c)) {
+                                    expectIntegerTypeCharacter = c == '0';
+                                    currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                                } else if (Lexer.isAlNum(c)) {
+                                    currentTokenType = Token.IDENTIFIER;
+                                } else {
+                                    // Anything not currently handled - mark as an identifier
+                                    currentTokenType = Token.ERROR_IDENTIFIER;
+                                }
                             }
                         }
 
@@ -189,22 +200,34 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                 case Token.LITERAL_NUMBER_DECIMAL_INT -> {
                     switch (c) {
                         case ' ', '\t', ';', ',' -> {
+                            expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
                             addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.WHITESPACE;
                         }
                         case '(', ')' -> {
+                            expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
                             addToken(text, currentTokenStart,i - 1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset + currentTokenStart);
                             addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
                         }
                         case '#' -> {
+                            expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
                             addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.COMMENT_EOL;
                         }
                         default -> {
-                            if (!(RSyntaxUtilities.isHexCharacter(c) || c == 'x' || c == 'b')) {
+                            if (!handleOtherInteger(c)) {
+                                if (RSyntaxUtilities.isDigit(c)) {
+                                    currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                                } else {
+                                    // Anything not currently handled - mark as an identifier
+                                    currentTokenType = Token.ERROR_NUMBER_FORMAT;
+                                }
+                            }
+
+                            if (currentTokenType != Token.LITERAL_NUMBER_DECIMAL_INT) {
                                 // Not a literal number; remember this was a number error and start over.
                                 addToken(text, currentTokenStart, i - 1, Token.ERROR_NUMBER_FORMAT, newStartOffset + currentTokenStart);
                                 i--;
@@ -288,5 +311,35 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
         // Return the first token in our linked list.
         return firstToken;
 
+    }
+
+    private boolean handleOtherInteger(char c) {
+        if (expectIntegerTypeCharacter) {
+            expectIntegerTypeCharacter = false;
+            if (c == 'x' || c == 'X') {
+                expectHexadecimal = true;
+                return true;
+            } else if (c == 'b' || c == 'B') {
+                expectBinary = true;
+                return true;
+            }
+        } else if (expectHexadecimal) {
+            if (RSyntaxUtilities.isHexCharacter(c)) {
+                currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+            } else {
+                currentTokenType = Token.ERROR_NUMBER_FORMAT;
+                expectHexadecimal = false;
+            }
+            return true;
+        } else if(expectBinary) {
+            if (c == '0' || c == '1') {
+                currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+            } else {
+                currentTokenType = Token.ERROR_NUMBER_FORMAT;
+                expectBinary = false;
+            }
+            return true;
+        }
+        return false;
     }
 }
