@@ -229,27 +229,6 @@ public class Lexer {
     }
 
     /**
-     * Parses the given text as a single line. Meant for use within a simulation of the programming language.
-     *
-     * @param line       the line of text.
-     * @return null if the line was empty, a comment, or a label; otherwise returns the line corresponding to the text.
-     * @throws ParseException if the line could not be properly parsed.
-     */
-    public static boolean isValidProgramLine(String line) {
-        line = line.replaceAll("[\s\t,;]+", " ").trim();
-        if (line.length() == 0)
-            return false;
-        if (Lexer.isComment(line))
-            return false;
-        String[] tokens = line.split("[ ,]");
-        if (tokens.length == 0) {
-            // Empty line
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Parses a String containing multiple lines.
      *
      * @param lines the text containing the lines to parse.
@@ -301,7 +280,7 @@ public class Lexer {
             return false;
         String[] tokens = line.split("[ ,]");
 
-        return tokens.length >= 2;// Not enough tokens
+        return tokens.length >= 1;// Not enough tokens
     }
 
 }
