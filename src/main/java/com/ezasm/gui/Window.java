@@ -3,8 +3,6 @@ package com.ezasm.gui;
 import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
-import com.ezasm.Config;
-import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
@@ -97,8 +95,10 @@ public class Window {
         case "Light" -> Theme.Light;
         default -> Theme.Light;
         };
+
         app.getContentPane().setBackground(theme.getBackground());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
+
         table.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);

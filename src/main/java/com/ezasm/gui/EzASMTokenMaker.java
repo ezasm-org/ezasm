@@ -23,17 +23,29 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
         super();
     }
 
+    /**
+     * Programmatically define keywords and reserved words.
+     *
+     * @return the new map of tokens.
+     */
     @Override
     public TokenMap getWordsToHighlight() {
         TokenMap tokenMap = new TokenMap();
-
         for (String instruction : InstructionDispatcher.getInstructions().keySet()) {
             tokenMap.put(instruction, Token.RESERVED_WORD);
         }
-
         return tokenMap;
     }
 
+    /**
+     * Process the text segment to identify keywords and reserved words defined in getWordsToHighlight().
+     *
+     * @param segment     the text segment.
+     * @param start       the starting index position.
+     * @param end         the ending index position.
+     * @param tokenType   the type of the token before it is added.
+     * @param startOffset the offset of the starting point.
+     */
     @Override
     public void addToken(Segment segment, int start, int end, int tokenType, int startOffset) {
         // This assumes all keywords, etc. were parsed as "identifiers."
@@ -334,6 +346,12 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
 
     }
 
+    /**
+     * Handles cases that are not standard base-10 numbers (e.g., binary, hexadecimal).
+     *
+     * @param c the character to be examined.
+     * @return true if the function categorized the character, false otherwise.
+     */
     private boolean handleOtherInteger(char c) {
         if (c == '.') {
             if (!hasDecimalPoint) {

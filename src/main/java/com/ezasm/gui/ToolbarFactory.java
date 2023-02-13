@@ -1,9 +1,9 @@
 package com.ezasm.gui;
 
-import com.ezasm.Theme;
 import static com.ezasm.gui.SimulatorGUIActions.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -55,25 +55,15 @@ public class ToolbarFactory {
      * Applies the proper theming to the toolbar
      */
     public static void applyTheme(Font font, Theme theme, JToolBar toolbar) {
-        toolbar.setBackground(theme.getBackground());
-        startButton.setFont(font);
-        pauseButton.setFont(font);
-        resumeButton.setFont(font);
-        stopButton.setFont(font);
-        resetButton.setFont(font);
-        stepButton.setFont(font);
-        startButton.setBackground(theme.getBackground());
-        pauseButton.setBackground(theme.getBackground());
-        resumeButton.setBackground(theme.getBackground());
-        stopButton.setBackground(theme.getBackground());
-        resetButton.setBackground(theme.getBackground());
-        stepButton.setBackground(theme.getBackground());
-        startButton.setForeground(theme.getForeground());
-        pauseButton.setForeground(theme.getForeground());
-        resumeButton.setForeground(theme.getForeground());
-        stopButton.setForeground(theme.getForeground());
-        resetButton.setForeground(theme.getForeground());
-        stepButton.setForeground(theme.getForeground());
+        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, theme.getForeground());
+        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, theme.getForeground());
+        Theme.applyFontThemeBorder(toolbar, font, theme, border);
+        Theme.applyFontThemeBorder(startButton, font, theme, buttonBorder);
+        Theme.applyFontThemeBorder(stopButton, font, theme, buttonBorder);
+        Theme.applyFontThemeBorder(pauseButton, font, theme, buttonBorder);
+        Theme.applyFontThemeBorder(resumeButton, font, theme, buttonBorder);
+        Theme.applyFontThemeBorder(stepButton, font, theme, buttonBorder);
+        Theme.applyFontThemeBorder(resetButton, font, theme, buttonBorder);
     }
 
     /**

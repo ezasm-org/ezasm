@@ -1,6 +1,5 @@
 package com.ezasm.gui;
 
-import com.ezasm.Theme;
 import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
@@ -14,6 +13,7 @@ public class RegisterTable extends JPanel implements IThemeable {
 
     private final JTable table;
     private final Registers registers;
+    private final JScrollPane scrollPane;
     private static final Dimension MIN_SIZE = new Dimension(150, 2000);
     private static final Dimension MAX_SIZE = new Dimension(200, 2000);
 
@@ -26,13 +26,13 @@ public class RegisterTable extends JPanel implements IThemeable {
         super();
         this.registers = registers;
         table = new JTable();
-        AbstractTableModel model = new RegistersTableModel(registers);
-        table.setModel(model);
-        JScrollPane scrollPane = new JScrollPane(table);
+        table.setModel(new RegistersTableModel(registers));
 
+        scrollPane = new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(table.getPreferredSize());
+
         setPreferredSize(new Dimension(MAX_SIZE.width, getHeight()));
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
@@ -43,14 +43,13 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Applies the proper theming to the editor area
      */
     public void applyTheme(Font font, Theme theme) {
-        this.setBackground(theme.getBackground());
+        theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
+        Theme.applyFontAndTheme(this, font, theme);
+        Theme.applyFontAndTheme(table, font, theme);
         table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
         table.getTableHeader().setBackground(theme.getCurrentLine());
         table.getTableHeader().setForeground(theme.getForeground());
-        table.setBackground(theme.getBackground());
-        table.setForeground(theme.getForeground());
-        table.setFont(font);
     }
 
     /**
