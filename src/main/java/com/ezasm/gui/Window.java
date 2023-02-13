@@ -128,7 +128,8 @@ public class Window {
     public static void updateHighlight() {
         if (instance == null || instance.editor == null)
             return;
-        instance.editor.updateHighlight((int) instance.simulator.getRegisters().getRegister(Registers.PC).getLong());
+        int PC = (int) instance.simulator.getRegisters().getRegister(Registers.PC).getLong();
+        instance.editor.updateHighlight(PC);
     }
 
     /**

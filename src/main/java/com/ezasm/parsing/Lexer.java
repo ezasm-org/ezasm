@@ -276,8 +276,8 @@ public class Lexer {
             return false;
         if (Lexer.isComment(line))
             return false;
-        if (Lexer.isLabel(line))
-            return false;
+//        if (Lexer.isLabel(line))
+//            return false;
         String[] tokens = line.split("[ ,]");
 
         return tokens.length >= 1;// Not enough tokens
