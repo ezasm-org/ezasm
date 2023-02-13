@@ -16,13 +16,6 @@ import java.awt.*;
  * relevant simulator.
  */
 public class Window {
-    public class School {
-        private String name;
-
-        public School(String theName) {
-            this.name = new String(theName);
-        }
-    }
 
     private static Window instance;
     private final ISimulator simulator;

@@ -6,6 +6,8 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.ezasm.Config.THEME;
+
 public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter {
     private final ArrayList<Integer> startLineNums = new ArrayList<Integer>();
     private final ArrayList<Integer> endLineNums = new ArrayList<Integer>();
