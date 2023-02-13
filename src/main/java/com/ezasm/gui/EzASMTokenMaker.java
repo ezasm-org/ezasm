@@ -17,6 +17,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
     private boolean expectIntegerTypeCharacter = false;
     private boolean expectHexadecimal = false;
     private boolean expectBinary = false;
+    private boolean hasDecimalPoint = false;
 
     public EzASMTokenMaker() {
         super();
@@ -82,6 +83,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
         expectIntegerTypeCharacter = false;
         expectHexadecimal = false;
         expectBinary = false;
+        hasDecimalPoint = false;
 
         for (int i = offset; i < end; ++i) {
 
@@ -194,21 +196,21 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
             case Token.LITERAL_NUMBER_DECIMAL_INT -> {
                 switch (c) {
                 case ' ', '\t', ';', ',' -> {
-                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
+                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = hasDecimalPoint = false;
                     addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT,
                             newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.WHITESPACE;
                 }
                 case '(', ')' -> {
-                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
+                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = hasDecimalPoint = false;
                     addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT,
                             newStartOffset + currentTokenStart);
                     addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                     currentTokenType = Token.NULL;
                 }
                 case '#' -> {
-                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
+                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = hasDecimalPoint = false;
                     addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.COMMENT_EOL;
@@ -217,6 +219,9 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                     if (!handleOtherInteger(c)) {
                         if (RSyntaxUtilities.isDigit(c)) {
                             currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                        } else if (array[i - 1] == '.' && !hasDecimalPoint) {
+                            currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                            hasDecimalPoint = true;
                         } else {
                             // Anything not currently handled - mark as an identifier
                             currentTokenType = Token.ERROR_NUMBER_FORMAT;
@@ -298,6 +303,17 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                     currentTokenStart = i;
                     currentTokenType = Token.COMMENT_EOL;
                 }
+                default -> {
+                    if (RSyntaxUtilities.isDigit(c)) {
+                        if (array[i - 1] == '-') {
+                            expectIntegerTypeCharacter = c == '0';
+                            currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                        } else if (array[i - 1] == '.') {
+                            hasDecimalPoint = true;
+                            currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                        }
+                    }
+                }
                 }
             }
             } // End of switch (currentTokenType).
@@ -314,6 +330,14 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
     }
 
     private boolean handleOtherInteger(char c) {
+        if (c == '.') {
+            if (!hasDecimalPoint) {
+                hasDecimalPoint = true;
+            } else {
+                currentTokenType = Token.ERROR_NUMBER_FORMAT;
+            }
+            return true;
+        }
         if (expectIntegerTypeCharacter) {
             expectIntegerTypeCharacter = false;
             if (c == 'x' || c == 'X') {
