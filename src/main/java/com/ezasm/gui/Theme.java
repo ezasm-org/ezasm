@@ -33,10 +33,10 @@ public record Theme (Color background, Color foreground, Color currentLine, Colo
 
     // based on https://github.com/endormi/vscode-2077-theme
     public static Theme Purple = new Theme(
-            new Color(0x0d0936), // background
-            new Color(0xee1682), // foreground
-            new Color(0x210b66), // currentLine
-            new Color(0x44475a), // selection
+            new Color(0x030d22), // background
+            new Color(0xfdfeff), // foreground
+            new Color(0x310072), // currentLine
+            new Color(0x35008b), // selection
             new Color(0x6272a4), // comment
             new Color(0x0ab2fa), // cyan
             new Color(0x06ad00), // green
@@ -49,16 +49,16 @@ public record Theme (Color background, Color foreground, Color currentLine, Colo
 
     // based on https://github.com/atom/one-light-syntax
     public static Theme Light = new Theme(
-            new Color(0xfafafa), // background
-            new Color(0x383a42), // foreground
-            new Color(0xa0a1a7), // currentLine
-            new Color(0x404045), // selection
+            new Color(0xebf8ff), // background
+            new Color(0x161b1d), // foreground
+            new Color(0xc1e4f6), // currentLine
+            new Color(0x7ea2b4), // selection
             new Color(0x383a42), // comment
-            new Color(0x0184bc), // cyan
+            new Color(0x004E9D), // cyan
             new Color(0x28a626), // green
-            new Color(0x986801), // orange
-            new Color(0xd548d3), // pink
-            new Color(0x8c329a), // purple
+            new Color(0xB28822), // orange
+            new Color(0x8c329a), // pink
+            new Color(0xd548d3), // purple
             new Color(0xd92020), // red
             new Color(0xfffb0f), // yellow
             true); // is a light theme
