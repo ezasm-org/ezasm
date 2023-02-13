@@ -1,6 +1,11 @@
 package com.ezasm.gui;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Highlighter;
+import javax.swing.undo.UndoManager;
 
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -10,11 +15,12 @@ import java.io.IOException;
 
 import static com.ezasm.gui.Theme.applyFontAndTheme;
 
+import static com.ezasm.gui.LineHighlighter.removeHighlights;
+
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
 public class EditorPane extends JPanel implements IThemeable {
-
     private final RSyntaxTextArea textArea;
     private final RTextScrollPane scrollPane;
     private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
@@ -118,10 +124,10 @@ public class EditorPane extends JPanel implements IThemeable {
     public void applyTheme(Font font, Theme theme) {
         themeSyntaxTextArea(font, theme);
         setFont(textArea, font);
-
         applyFontAndTheme(scrollPane, font, theme);
         theme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
         theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
+        recolorHighlights(theme);
     }
 
     /**
@@ -158,5 +164,56 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void setText(String content) {
         textArea.setText(content);
+    }
+
+    /**
+     * Highlights a given line number and clears old highlight
+     *
+     * @param line the line to highlight
+     */
+    public void updateHighlight(int line) {
+        removeHighlights(textArea);
+        if (line >= 0)
+            highlighter.highlight(textArea, line);
+    }
+
+    /**
+     * Reset a highlighter by removing all highlights and reinit-ing with a new color. Resets line counts. Should be
+     * called each program start
+     */
+    public void resetHighlighter() {
+        removeHighlights(textArea);
+        highlighter = new LineHighlighter(Window.currentTheme().getRunLine(), textArea);
+    }
+
+    /**
+     * Recolor the current highlight in accordance with the provided theme
+     *
+     * @param theme the theme to recolor to
+     */
+    private void recolorHighlights(Theme theme) {
+        // Store the old highlights
+        Highlighter highlight = textArea.getHighlighter();
+        Highlighter.Highlight[] highlights = highlight.getHighlights();
+
+        // clear old highlights
+        removeHighlights(textArea);
+
+        // init new highlighter with new color
+        if (highlights.length > 0) {
+            highlighter = new LineHighlighter(theme.getRunLine(), textArea);
+        }
+
+        // add new highlights with the new color
+        for (int i = 0; i < highlights.length; i++) {
+            int start = highlights[i].getStartOffset();
+            int end = highlights[i].getEndOffset();
+            try {
+                textArea.getHighlighter().addHighlight(start, end, highlighter);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            textArea.repaint();
+        }
     }
 }

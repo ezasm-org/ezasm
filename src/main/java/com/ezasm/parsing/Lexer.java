@@ -264,4 +264,23 @@ public class Lexer {
         return linesLexed;
     }
 
+    /**
+     * Checks if a given string is a valid line of ezasm code
+     *
+     * @param line a string with exactly 1 \n at the end
+     * @return true if a valid line of ezasm code, false if not
+     */
+    public static boolean validProgramLine(String line) {
+        line = line.replaceAll("[\s,;]+", " ").trim();
+        if (line.length() == 0)
+            return false;
+        if (Lexer.isComment(line))
+            return false;
+        // if (Lexer.isLabel(line))
+        // return false;
+        String[] tokens = line.split("[ ,]");
+
+        return tokens.length >= 1;// Not enough tokens
+    }
+
 }
