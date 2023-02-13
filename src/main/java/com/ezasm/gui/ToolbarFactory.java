@@ -55,8 +55,8 @@ public class ToolbarFactory {
      * Applies the proper theming to the toolbar
      */
     public static void applyTheme(Font font, Theme theme, JToolBar toolbar) {
-        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, theme.getForeground());
-        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, theme.getForeground());
+        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, theme.foreground());
+        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, theme.foreground());
         Theme.applyFontThemeBorder(toolbar, font, theme, border);
         Theme.applyFontThemeBorder(startButton, font, theme, buttonBorder);
         Theme.applyFontThemeBorder(stopButton, font, theme, buttonBorder);

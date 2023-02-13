@@ -48,8 +48,8 @@ public class RegisterTable extends JPanel implements IThemeable {
         Theme.applyFontAndTheme(table, font, theme);
         table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
-        table.getTableHeader().setBackground(theme.getCurrentLine());
-        table.getTableHeader().setForeground(theme.getForeground());
+        table.getTableHeader().setBackground(theme.currentLine());
+        table.getTableHeader().setForeground(theme.foreground());
     }
 
     /**

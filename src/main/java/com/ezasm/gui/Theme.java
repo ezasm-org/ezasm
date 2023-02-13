@@ -11,85 +11,57 @@ import java.awt.Font;
 /**
  * Represents a theme for components and text in the application.
  */
-public class Theme {
-
-    Color BACKGROUND, FOREGROUND, CURRENT_LINE, COMMENT, RUN_LINE, CYAN, GREEN, ORANGE, PINK, PURPLE, RED, YELLOW;
-    private final boolean isLight;
+public record Theme (Color background, Color foreground, Color currentLine, Color selection, Color comment,
+                     Color cyan, Color green, Color orange, Color pink, Color purple, Color red, Color yellow,
+                     boolean isLight) {
 
     // based on https://github.com/dracula/dracula-theme
-    public static Theme Dracula = new Theme(0x282a36, 0x44475a, 0xf8f8f2, 0x6272a4, 0xf1fa8c, 0x8be9fd, 0x50fa7b,
-            0xffb86c, 0xff79c6, 0xbd93f9, 0xff5555, 0xf1fa8c, false);
+    public static Theme Dracula = new Theme(
+            new Color(0x282a36), // background
+            new Color(0xf8f8f2), // foreground
+            new Color(0x44475a), // currentLine
+            new Color(0x44475a), // selection
+            new Color(0x6272a4), // comment
+            new Color(0x8be9fd), // cyan
+            new Color(0x50fa7b), // green
+            new Color(0xffb86c), // orange
+            new Color(0xff79c6), // pink
+            new Color(0xbd93f9), // purple
+            new Color(0xff5555), // red
+            new Color(0xf1fa8c), // yellow
+            false); // is a light theme
+
     // based on https://github.com/endormi/vscode-2077-theme
-    public static Theme Purple = new Theme(0x0d0936, 0x210b66, 0xe4eeff, 0x0098df, 0xffff99, 0x0ab2fa, 0x06ad00,
-            0xffd400, 0xea00d9, 0x6f46af, 0xee1682, 0xffff99, false);
+    public static Theme Purple = new Theme(
+            new Color(0x0d0936), // background
+            new Color(0xee1682), // foreground
+            new Color(0x210b66), // currentLine
+            new Color(0x44475a), // selection
+            new Color(0x6272a4), // comment
+            new Color(0x0ab2fa), // cyan
+            new Color(0x06ad00), // green
+            new Color(0xffd400), // orange
+            new Color(0xea00d9), // pink
+            new Color(0x6f46af), // purple
+            new Color(0xd92020), // red
+            new Color(0xffff99), // yellow
+            false); // is a light theme
+
     // based on https://github.com/atom/one-light-syntax
-    public static Theme Light = new Theme(0xfafafa, 0xa0a1a7, 0x383a42, 0x404045, 0xfffb0f, 0x0184bc, 0x28a626,
-            0x986801, 0xd548d3, 0x8c329a, 0xd92020, 0xfffb0f, true);
-
-    public Theme(int bg, int cl, int fg, int cmt, int rnln, int cyan, int grn, int org, int pnk, int prp, int red,
-            int ylw, boolean isLight) {
-        BACKGROUND = new Color(bg);
-        FOREGROUND = new Color(fg);
-        CURRENT_LINE = new Color(cl);
-        COMMENT = new Color(cmt);
-        CYAN = new Color(cyan);
-        GREEN = new Color(grn);
-        ORANGE = new Color(org);
-        PINK = new Color(pnk);
-        PURPLE = new Color(prp);
-        RED = new Color(red);
-        YELLOW = new Color(ylw);
-        RUN_LINE = new Color(rnln);
-        this.isLight = isLight;
-    }
-
-    public Color getBackground() {
-        return BACKGROUND;
-    }
-
-    public Color getForeground() {
-        return FOREGROUND;
-    }
-
-    public Color getCurrentLine() {
-        return CURRENT_LINE;
-    }
-
-    public Color getComment() {
-        return COMMENT;
-    }
-
-    public Color getRunLine() {
-        return RUN_LINE;
-    }
-
-    public Color getCyan() {
-        return CYAN;
-    }
-
-    public Color getGreen() {
-        return GREEN;
-    }
-
-    public Color getOrange() {
-        return ORANGE;
-    }
-
-    public Color getPink() {
-        return PINK;
-    }
-
-    public Color getPurple() {
-        return PURPLE;
-    }
-
-    public Color getRed() {
-        return RED;
-    }
-
-    public Color getYellow() {
-        return YELLOW;
-    }
+    public static Theme Light = new Theme(
+            new Color(0xfafafa), // background
+            new Color(0x383a42), // foreground
+            new Color(0xa0a1a7), // currentLine
+            new Color(0x404045), // selection
+            new Color(0x383a42), // comment
+            new Color(0x0184bc), // cyan
+            new Color(0x28a626), // green
+            new Color(0x986801), // orange
+            new Color(0xd548d3), // pink
+            new Color(0x8c329a), // purple
+            new Color(0xd92020), // red
+            new Color(0xfffb0f), // yellow
+            true); // is a light theme
 
     /**
      * Takes a string theme name and returns the corresponding theme object
@@ -129,8 +101,8 @@ public class Theme {
     }
 
     public void applyTheme(JComponent component) {
-        component.setBackground(BACKGROUND);
-        component.setForeground(FOREGROUND);
+        component.setBackground(background);
+        component.setForeground(foreground);
         component.setBorder(BorderFactory.createEmptyBorder());
     }
 

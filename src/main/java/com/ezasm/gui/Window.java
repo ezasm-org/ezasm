@@ -8,7 +8,6 @@ import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
-import com.ezasm.gui.Theme;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
@@ -92,7 +91,7 @@ public class Window {
 
     public void applyConfiguration(Config config) {
         Theme theme = Theme.getTheme(config.getTheme());
-        app.getContentPane().setBackground(theme.getBackground());
+        app.getContentPane().setBackground(theme.background());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
         table.applyTheme(font, theme);

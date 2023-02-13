@@ -17,7 +17,7 @@ public class EzASMScrollBarUI extends BasicScrollBarUI {
 
     @Override
     protected void configureScrollBarColors() {
-        this.trackColor = theme.getCurrentLine();
+        this.trackColor = theme.currentLine();
         this.thumbColor = this.trackColor.darker().darker();
         this.thumbDarkShadowColor = this.thumbColor;
     }
@@ -46,7 +46,7 @@ public class EzASMScrollBarUI extends BasicScrollBarUI {
         int borderDiameter = 8, offset = 4;
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Color.gray);
+        g2.setColor(thumbColor);
         g2.fillRoundRect(thumbBounds.x + offset, thumbBounds.y + offset, thumbRect.width - offset * 2,
                 thumbRect.height - offset * 2, borderDiameter, borderDiameter);
     }

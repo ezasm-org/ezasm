@@ -1,11 +1,7 @@
 package com.ezasm.gui;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.Highlighter;
-import javax.swing.undo.UndoManager;
 
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -50,7 +46,7 @@ public class EditorPane extends JPanel implements IThemeable {
         setLayout(new BorderLayout());
         add(scrollPane);
 
-        highlighter = new LineHighlighter(Window.currentTheme().getRunLine(), textArea);
+        highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
     }
 
     /**
@@ -63,35 +59,39 @@ public class EditorPane extends JPanel implements IThemeable {
                     .load(getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/idea.xml"));
 
             // Background and caret theme
-            theme.bgColor = newTheme.getBackground();
-            theme.marginLineColor = newTheme.getBackground();
-            theme.caretColor = newTheme.getForeground();
+            theme.bgColor = newTheme.background();
+            theme.marginLineColor = newTheme.background();
+            theme.caretColor = newTheme.foreground();
+
+            // Selection does not override the foreground color
+            theme.selectionBG = newTheme.selection();
+            theme.useSelectionFG = false;
 
             // Line number background theme
-            theme.gutterBackgroundColor = newTheme.getBackground().darker();
+            theme.gutterBackgroundColor = newTheme.modifyAwayFromBackground(newTheme.background().darker());
             theme.gutterBorderColor = theme.gutterBackgroundColor;
 
             // Line number theme
             theme.lineNumberFont = font.getFontName();
             theme.lineNumberFontSize = font.getSize();
-            theme.lineNumberColor = newTheme.modifyAwayFromBackground(newTheme.getBackground(), 3);
-            theme.currentLineNumberColor = newTheme.modifyTowardsBackground(newTheme.getForeground(), 1);
-            theme.currentLineHighlight = newTheme.getCurrentLine();
+            theme.lineNumberColor = newTheme.modifyAwayFromBackground(newTheme.background(), 3);
+            theme.currentLineNumberColor = newTheme.modifyAwayFromBackground(newTheme.background(), 5);
+            theme.currentLineHighlight = newTheme.currentLine();
 
             // Token-specific theme
-            theme.scheme.getStyle(Token.NULL).foreground = newTheme.getForeground();
-            theme.scheme.getStyle(Token.IDENTIFIER).foreground = newTheme.getForeground();
-            theme.scheme.getStyle(Token.SEPARATOR).foreground = newTheme.getForeground();
+            theme.scheme.getStyle(Token.NULL).foreground = newTheme.foreground();
+            theme.scheme.getStyle(Token.IDENTIFIER).foreground = newTheme.foreground();
+            theme.scheme.getStyle(Token.SEPARATOR).foreground = newTheme.foreground();
             theme.scheme.getStyle(Token.WHITESPACE).foreground = newTheme
-                    .modifyAwayFromBackground(newTheme.getCurrentLine());
-            theme.scheme.getStyle(Token.COMMENT_EOL).foreground = newTheme.getComment();
-            theme.scheme.getStyle(Token.LITERAL_CHAR).foreground = newTheme.getGreen();
-            theme.scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = newTheme.getGreen();
-            theme.scheme.getStyle(Token.LITERAL_NUMBER_DECIMAL_INT).foreground = newTheme.getPurple();
-            theme.scheme.getStyle(Token.RESERVED_WORD).foreground = newTheme.getCyan();
-            theme.scheme.getStyle(Token.VARIABLE).foreground = newTheme.getYellow();
-            theme.scheme.getStyle(Token.ERROR_IDENTIFIER).foreground = newTheme.getRed();
-            theme.scheme.getStyle(Token.ERROR_NUMBER_FORMAT).foreground = newTheme.getRed();
+                    .modifyAwayFromBackground(newTheme.currentLine());
+            theme.scheme.getStyle(Token.COMMENT_EOL).foreground = newTheme.comment();
+            theme.scheme.getStyle(Token.LITERAL_CHAR).foreground = newTheme.green();
+            theme.scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = newTheme.green();
+            theme.scheme.getStyle(Token.LITERAL_NUMBER_DECIMAL_INT).foreground = newTheme.orange();
+            theme.scheme.getStyle(Token.RESERVED_WORD).foreground = newTheme.cyan();
+            theme.scheme.getStyle(Token.VARIABLE).foreground = newTheme.pink();
+            theme.scheme.getStyle(Token.ERROR_IDENTIFIER).foreground = newTheme.red();
+            theme.scheme.getStyle(Token.ERROR_NUMBER_FORMAT).foreground = newTheme.red();
 
             theme.apply(textArea);
             setFont(textArea, font);
@@ -186,7 +186,7 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void resetHighlighter() {
         removeHighlights(textArea);
-        highlighter = new LineHighlighter(Window.currentTheme().getRunLine(), textArea);
+        highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
     }
 
     /**
@@ -204,7 +204,7 @@ public class EditorPane extends JPanel implements IThemeable {
 
         // init new highlighter with new color
         if (highlights.length > 0) {
-            highlighter = new LineHighlighter(theme.getRunLine(), textArea);
+            highlighter = new LineHighlighter(theme.yellow(), textArea);
         }
 
         // add new highlights with the new color
