@@ -18,6 +18,7 @@ public class EditorPane extends JPanel implements IThemeable {
 
     private final RSyntaxTextArea textArea;
     private final RTextScrollPane scrollPane;
+    private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
@@ -27,19 +28,18 @@ public class EditorPane extends JPanel implements IThemeable {
     public EditorPane() {
         super();
 
-        AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-        atmf.putMapping("text/ezasm", "com.ezasm.gui.EzASMTokenMaker");
         textArea = new RSyntaxTextArea();
-        textArea.setSyntaxEditingStyle("text/ezasm");
-        //textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86);
+        ((AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance()).putMapping(EZASM_TOKEN_MAKER_NAME,
+                EzASMTokenMaker.class.getName());
+        textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setCodeFoldingEnabled(false);
-
         textArea.setTabSize(2);
 
         scrollPane = new RTextScrollPane(textArea);
         scrollPane.setLineNumbersEnabled(true);
         scrollPane.setMinimumSize(textArea.getSize());
         scrollPane.setPreferredSize(textArea.getPreferredSize());
+
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);

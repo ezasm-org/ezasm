@@ -46,14 +46,15 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
     }
 
     /**
-     * Returns whether tokens of the specified type should have "mark occurrences" enabled for the current programming language.
+     * Returns whether tokens of the specified type should have "mark occurrences" enabled for the current programming
+     * language.
      *
      * @param type The token type.
      * @return Whether tokens of this type should have "mark occurrences" enabled.
      */
     @Override
     public boolean getMarkOccurrencesOfTokenType(int type) {
-        return type==Token.IDENTIFIER;
+        return type == Token.IDENTIFIER;
     }
 
     @Override
@@ -87,224 +88,223 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
             char c = array[i];
 
             switch (currentTokenType) {
-                case Token.NULL -> {
-                    currentTokenStart = i;   // Starting a new token here.
-                    switch (c) {
-                        case ' ', '\t', ';', ',' -> currentTokenType = Token.WHITESPACE;
-                        case '"' -> currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
-                        case '\'' -> currentTokenType = Token.LITERAL_CHAR;
-                        case '#' -> currentTokenType = Token.COMMENT_EOL;
-                        case '$' -> currentTokenType = REGISTER_VARIABLE;
-                        case '(', ')' -> {
-                            addToken(text, currentTokenStart, i, Token.SEPARATOR, newStartOffset+currentTokenStart);
-                        }
-                        default -> {
-                            if (RSyntaxUtilities.isDigit(c)) {
-                                expectIntegerTypeCharacter = c == '0';
-                                currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-                            } else if (Lexer.isAlNum(c)) {
-                                currentTokenType = Token.IDENTIFIER;
-                            } else {
-                                // Anything not currently handled - mark as an identifier
-                                currentTokenType = Token.ERROR_IDENTIFIER;
-                            }
-                        }
-                    } // End of switch (c).
+            case Token.NULL -> {
+                currentTokenStart = i; // Starting a new token here.
+                switch (c) {
+                case ' ', '\t', ';', ',' -> currentTokenType = Token.WHITESPACE;
+                case '"' -> currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
+                case '\'' -> currentTokenType = Token.LITERAL_CHAR;
+                case '#' -> currentTokenType = Token.COMMENT_EOL;
+                case '$' -> currentTokenType = REGISTER_VARIABLE;
+                case '(', ')' -> {
+                    addToken(text, currentTokenStart, i, Token.SEPARATOR, newStartOffset + currentTokenStart);
                 }
-                case Token.WHITESPACE -> {
-                    switch (c) {
-
-                        case ' ', '\t', ';', ',' -> {
-                            // Still whitespace.
-                        }
-
-                        case '"' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
-                        }
-
-                        case '\'' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.LITERAL_CHAR;
-                        }
-
-                        case '#' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.COMMENT_EOL;
-                        }
-
-                        case '$'  -> {
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = REGISTER_VARIABLE;
-                        }
-
-                        case '(', ')' -> {
-                            addToken(text, currentTokenStart,i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
-                            addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
-                            currentTokenType = Token.NULL;
-                        }
-
-                        default -> {
-                            // Add the whitespace token and start anew.
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-
-                            // Handle integer inputs
-
-                            if (!handleOtherInteger(c)) {
-                                if (RSyntaxUtilities.isDigit(c)) {
-                                    expectIntegerTypeCharacter = c == '0';
-                                    currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-                                } else if (Lexer.isAlNum(c)) {
-                                    currentTokenType = Token.IDENTIFIER;
-                                } else {
-                                    // Anything not currently handled - mark as an identifier
-                                    currentTokenType = Token.ERROR_IDENTIFIER;
-                                }
-                            }
-                        }
-
-                    } // End of switch (c).
+                default -> {
+                    if (RSyntaxUtilities.isDigit(c)) {
+                        expectIntegerTypeCharacter = c == '0';
+                        currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                    } else if (Lexer.isAlNum(c)) {
+                        currentTokenType = Token.IDENTIFIER;
+                    } else {
+                        // Anything not currently handled - mark as an identifier
+                        currentTokenType = Token.ERROR_IDENTIFIER;
+                    }
                 }
-                case Token.IDENTIFIER -> {
-                    switch (c) {
-                        case ' ', '\t', ';', ',' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.WHITESPACE;
-                        }
-                        case '(', ')' -> {
-                            addToken(text, currentTokenStart,i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
-                            addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
-                            currentTokenType = Token.NULL;
-                        }
-                        case '#' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.COMMENT_EOL;
-                        }
-                        default -> {
-                            if (! (Lexer.isAlNum(c) || c == ':')) {
-                                // Not an identifier; remember this was an identifier error and start over.
-                                addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
-                                i--;
-                                currentTokenType = Token.NULL;
-                            }
-                        }
-                    } // End of switch (c).
+                } // End of switch (c).
+            }
+            case Token.WHITESPACE -> {
+                switch (c) {
+                case ' ', '\t', ';', ',' -> {
+                    // Still whitespace.
                 }
-                case Token.LITERAL_NUMBER_DECIMAL_INT -> {
-                    switch (c) {
-                        case ' ', '\t', ';', ',' -> {
-                            expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
-                            addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.WHITESPACE;
-                        }
-                        case '(', ')' -> {
-                            expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
-                            addToken(text, currentTokenStart,i - 1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset + currentTokenStart);
-                            addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
-                            currentTokenType = Token.NULL;
-                        }
-                        case '#' -> {
-                            expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.COMMENT_EOL;
-                        }
-                        default -> {
-                            if (!handleOtherInteger(c)) {
-                                if (RSyntaxUtilities.isDigit(c)) {
-                                    currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-                                } else {
-                                    // Anything not currently handled - mark as an identifier
-                                    currentTokenType = Token.ERROR_NUMBER_FORMAT;
-                                }
-                            }
-
-                            if (currentTokenType != Token.LITERAL_NUMBER_DECIMAL_INT) {
-                                // Not a literal number; remember this was a number error and start over.
-                                addToken(text, currentTokenStart, i - 1, Token.ERROR_NUMBER_FORMAT, newStartOffset + currentTokenStart);
-                                i--;
-                                currentTokenType = Token.NULL;
-                            }
-                        }
-                    } // End of switch (c).
+                case '"' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
                 }
-                case Token.COMMENT_EOL -> {
-                    i = end - 1;
-                    addToken(text, currentTokenStart, i, Token.COMMENT_EOL, newStartOffset + currentTokenStart);
-                    // We need to set token type to null so at the bottom we don't add one more token.
+                case '\'' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.LITERAL_CHAR;
+                }
+                case '#' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.COMMENT_EOL;
+                }
+                case '$' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = REGISTER_VARIABLE;
+                }
+                case '(', ')' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                    addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                     currentTokenType = Token.NULL;
                 }
-                case Token.SEPARATOR -> {
-                    addToken(text, currentTokenStart, i - 1, Token.SEPARATOR, newStartOffset + currentTokenStart);
+                default -> {
+                    // Add the whitespace token and start anew.
+                    addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+
+                    // Handle integer inputs
+
+                    if (!handleOtherInteger(c)) {
+                        if (RSyntaxUtilities.isDigit(c)) {
+                            expectIntegerTypeCharacter = c == '0';
+                            currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                        } else if (Lexer.isAlNum(c)) {
+                            currentTokenType = Token.IDENTIFIER;
+                        } else {
+                            // Anything not currently handled - mark as an identifier
+                            currentTokenType = Token.ERROR_IDENTIFIER;
+                        }
+                    }
+                }
+                } // End of switch (c).
+            }
+            case Token.IDENTIFIER -> {
+                switch (c) {
+                case ' ', '\t', ';', ',' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.WHITESPACE;
+                }
+                case '(', ')' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                     currentTokenType = Token.NULL;
                 }
-                case Token.LITERAL_STRING_DOUBLE_QUOTE -> {
-                    if (c == '"') {
-                        addToken(text, currentTokenStart, i, Token.LITERAL_STRING_DOUBLE_QUOTE, newStartOffset + currentTokenStart);
+                case '#' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.COMMENT_EOL;
+                }
+                default -> {
+                    if (!(Lexer.isAlNum(c) || c == ':')) {
+                        // Not an identifier; remember this was an identifier error and start over.
+                        addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
+                                newStartOffset + currentTokenStart);
+                        i--;
                         currentTokenType = Token.NULL;
                     }
                 }
-                case Token.LITERAL_CHAR -> {
-                    if (c == '\'') {
-                        addToken(text, currentTokenStart, i, Token.LITERAL_CHAR, newStartOffset + currentTokenStart);
+                } // End of switch (c).
+            }
+            case Token.LITERAL_NUMBER_DECIMAL_INT -> {
+                switch (c) {
+                case ' ', '\t', ';', ',' -> {
+                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
+                    addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT,
+                            newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.WHITESPACE;
+                }
+                case '(', ')' -> {
+                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
+                    addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT,
+                            newStartOffset + currentTokenStart);
+                    addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
+                    currentTokenType = Token.NULL;
+                }
+                case '#' -> {
+                    expectIntegerTypeCharacter = expectHexadecimal = expectBinary = false;
+                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.COMMENT_EOL;
+                }
+                default -> {
+                    if (!handleOtherInteger(c)) {
+                        if (RSyntaxUtilities.isDigit(c)) {
+                            currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+                        } else {
+                            // Anything not currently handled - mark as an identifier
+                            currentTokenType = Token.ERROR_NUMBER_FORMAT;
+                        }
+                    }
+
+                    if (currentTokenType != Token.LITERAL_NUMBER_DECIMAL_INT) {
+                        // Not a literal number; remember this was a number error and start over.
+                        addToken(text, currentTokenStart, i - 1, Token.ERROR_NUMBER_FORMAT,
+                                newStartOffset + currentTokenStart);
+                        i--;
                         currentTokenType = Token.NULL;
                     }
                 }
-                case REGISTER_VARIABLE -> {
-                    switch (c) {
-                        case ' ', '\t', ';', ',' -> {
-                            addToken(text, currentTokenStart, i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.WHITESPACE;
-                        }
-                        case '(', ')' -> {
-                            addToken(text, currentTokenStart,i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
-                            addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
-                            currentTokenType = Token.NULL;
-                        }
-                        case '#' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.COMMENT_EOL;
-                        }
-                        default -> {
-                            if (!Lexer.isAlNum(c)) {
-                                // Not a valid register; remember this was an error and start over.
-                                addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
-                                i--;
-                                currentTokenType = Token.NULL;
-                            }
-                        }
+                } // End of switch (c).
+            }
+            case Token.COMMENT_EOL -> {
+                i = end - 1;
+                addToken(text, currentTokenStart, i, Token.COMMENT_EOL, newStartOffset + currentTokenStart);
+                // We need to set token type to null so at the bottom we don't add one more token.
+                currentTokenType = Token.NULL;
+            }
+            case Token.SEPARATOR -> {
+                addToken(text, currentTokenStart, i - 1, Token.SEPARATOR, newStartOffset + currentTokenStart);
+                currentTokenType = Token.NULL;
+            }
+            case Token.LITERAL_STRING_DOUBLE_QUOTE -> {
+                if (c == '"') {
+                    addToken(text, currentTokenStart, i, Token.LITERAL_STRING_DOUBLE_QUOTE,
+                            newStartOffset + currentTokenStart);
+                    currentTokenType = Token.NULL;
+                }
+            }
+            case Token.LITERAL_CHAR -> {
+                if (c == '\'') {
+                    addToken(text, currentTokenStart, i, Token.LITERAL_CHAR, newStartOffset + currentTokenStart);
+                    currentTokenType = Token.NULL;
+                }
+            }
+            case REGISTER_VARIABLE -> {
+                switch (c) {
+                case ' ', '\t', ';', ',' -> {
+                    addToken(text, currentTokenStart, i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.WHITESPACE;
+                }
+                case '(', ')' -> {
+                    addToken(text, currentTokenStart, i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
+                    addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
+                    currentTokenType = Token.NULL;
+                }
+                case '#' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.COMMENT_EOL;
+                }
+                default -> {
+                    if (!Lexer.isAlNum(c)) {
+                        // Not a valid register; remember this was an error and start over.
+                        addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
+                                newStartOffset + currentTokenStart);
+                        i--;
+                        currentTokenType = Token.NULL;
                     }
                 }
-                case Token.ERROR_IDENTIFIER -> {
-                    switch (c) {
-                        case ' ', '\t', ';', ',' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.WHITESPACE;
-                        }
-                        case '#' -> {
-                            addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
-                            currentTokenStart = i;
-                            currentTokenType = Token.COMMENT_EOL;
-                        }
-                    }
                 }
+            }
+            case Token.ERROR_IDENTIFIER -> {
+                switch (c) {
+                case ' ', '\t', ';', ',' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
+                            newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.WHITESPACE;
+                }
+                case '#' -> {
+                    addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
+                            newStartOffset + currentTokenStart);
+                    currentTokenStart = i;
+                    currentTokenType = Token.COMMENT_EOL;
+                }
+                }
+            }
             } // End of switch (currentTokenType).
-
         }
 
         if (currentTokenType != Token.NULL) {
-            addToken(text, currentTokenStart,end - 1, currentTokenType, newStartOffset + currentTokenStart);
+            addToken(text, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
         }
         addNullToken();
 
@@ -331,7 +331,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
                 expectHexadecimal = false;
             }
             return true;
-        } else if(expectBinary) {
+        } else if (expectBinary) {
             if (c == '0' || c == '1') {
                 currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
             } else {
