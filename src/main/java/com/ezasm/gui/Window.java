@@ -158,6 +158,7 @@ public class Window {
         } else {
             System.out.println("** Program terminated forcefully **");
         }
+        editor.resetHighlighter();
         // The buffer must be cleared at the end of the function;
         // if it is not, System.out malfunctions
         TerminalInstructions.clearBuffer();
@@ -221,11 +222,11 @@ public class Window {
     }
 
     /**
-     * Resets the editor highlighter, updating color to current theme
-     * and clearing all highlights
+     * Resets the editor highlighter, updating color to current theme and clearing all highlights
      */
     public static void resetHighlight() {
-        if (!Window.hasInstance()) return;
+        if (!Window.hasInstance())
+            return;
 
         Window.getInstance().editor.resetHighlighter();
     }
