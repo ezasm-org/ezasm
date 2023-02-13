@@ -41,7 +41,6 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
     }
 
     public void highlight(JTextComponent textComp, int line_number) {
-        System.out.println(line_number);
         try {
             textComp.getHighlighter().addHighlight(startLineNums.get(line_number), endLineNums.get(line_number), this);
             textComp.repaint();
