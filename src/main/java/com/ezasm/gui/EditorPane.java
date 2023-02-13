@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.Highlighter;
 import javax.swing.undo.UndoManager;
 
 import com.ezasm.Theme;
@@ -134,6 +135,24 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setLineWrap(false);
         textArea.setMinimumSize(MIN_SIZE);
         textArea.setDisabledTextColor(Color.DARK_GRAY);
+
+        Highlighter highlight = textArea.getHighlighter();
+        Highlighter.Highlight[] highlights = highlight.getHighlights();
+        removeHighlights(textArea);
+        if (highlights.length > 0) {
+            highlighter = new LineHighlighter(theme.getRunLine(), textArea);
+        }
+
+        for (int i = 0; i < highlights.length; i++) {
+            int start = highlights[i].getStartOffset();
+            int end = highlights[i].getEndOffset();
+            try {
+                textArea.getHighlighter().addHighlight(start, end, highlighter);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            textArea.repaint();
+        }
     }
 
     /**
