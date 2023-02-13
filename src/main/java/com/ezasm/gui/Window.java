@@ -101,6 +101,7 @@ public class Window {
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
         SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
+        this.config = config;
     }
 
     /**

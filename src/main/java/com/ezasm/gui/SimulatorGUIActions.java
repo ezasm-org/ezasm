@@ -111,7 +111,7 @@ public class SimulatorGUIActions {
             setState(State.RUNNING);
             System.out.println("** Program starting **");
             startWorker();
-            Window.getInstance().resetHighlight();
+            Window.resetHighlight();
         } catch (ParseException e) {
             setState(State.STOPPED);
             Window.getInstance().handleParseException(e);
@@ -122,7 +122,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the running program be forcibly stopped.
      */
     static void stop() {
-        Window.getInstance().resetHighlight();
+        Window.resetHighlight();
         setState(State.STOPPED);
         killWorker();
         awaitWorkerTermination();
@@ -146,7 +146,6 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the state of the emulator be reset.
      */
     static void reset() {
-        Window.resetHighlight();
         if (state != State.STOPPED) {
             killWorker();
             awaitWorkerTermination();
@@ -154,6 +153,7 @@ public class SimulatorGUIActions {
         setState(State.IDLE);
         Window.getInstance().getSimulator().resetAll();
         Window.updateRegisters();
+        Window.resetHighlight();
     }
 
     /**
