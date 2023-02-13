@@ -7,11 +7,11 @@ import java.awt.*;
 /**
  * ScrollBarUI to apply to scrollbars in this application's GUI.
  */
-public class EzASMScrollBarUI extends BasicScrollBarUI {
+public class ScrollBarUI extends BasicScrollBarUI {
 
     private final Theme theme;
 
-    public EzASMScrollBarUI(Theme theme) {
+    public ScrollBarUI(Theme theme) {
         this.theme = theme;
     }
 

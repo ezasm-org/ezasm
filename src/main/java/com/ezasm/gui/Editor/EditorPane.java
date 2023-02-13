@@ -32,7 +32,7 @@ public class EditorPane extends JPanel implements IThemeable {
         super();
 
         ((AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance()).putMapping(EZASM_TOKEN_MAKER_NAME,
-                EzASMTokenMaker.class.getName());
+                EzTokenMaker.class.getName());
         textArea = new RSyntaxTextArea();
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);

@@ -104,7 +104,7 @@ public record Theme(Color background, Color foreground, Color currentLine, Color
 
     public void applyThemeScrollbar(JScrollBar scrollbar) {
         applyTheme(scrollbar);
-        scrollbar.setUI(new EzASMScrollBarUI(this));
+        scrollbar.setUI(new ScrollBarUI(this));
     }
 
     public static void applyFontAndTheme(JComponent component, Font font, Theme theme) {

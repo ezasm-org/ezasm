@@ -9,7 +9,7 @@ import javax.swing.text.Segment;
 /**
  * Custom EzASM language syntax highlighter support.
  */
-public class EzASMTokenMaker extends AbstractTokenMaker {
+public class EzTokenMaker extends AbstractTokenMaker {
 
     private final int REGISTER_VARIABLE = Token.VARIABLE;
     private int currentTokenStart;
@@ -19,7 +19,7 @@ public class EzASMTokenMaker extends AbstractTokenMaker {
     private boolean expectBinary = false;
     private boolean hasDecimalPoint = false;
 
-    public EzASMTokenMaker() {
+    public EzTokenMaker() {
         super();
     }
 
