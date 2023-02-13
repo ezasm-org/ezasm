@@ -11,6 +11,8 @@ import com.ezasm.simulation.Registers;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.ezasm.Theme.getTheme;
+
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
  * relevant simulator.
@@ -92,12 +94,7 @@ public class Window {
     }
 
     public void applyConfiguration(Config config) {
-        Theme theme = switch (config.getTheme()) {
-        case "Dark" -> Theme.Dracula;
-        case "Purple" -> Theme.Purple;
-        case "Light" -> Theme.Light;
-        default -> Theme.Light;
-        };
+        Theme theme = Theme.getTheme(config.getTheme());
         app.getContentPane().setBackground(theme.getBackground());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
         table.applyTheme(font, theme);
@@ -208,5 +205,15 @@ public class Window {
      */
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
+    }
+
+    /**
+     * Returns the current theme being used.
+     * @return The current theme object
+     */
+    public static Theme currentTheme() {
+        if (instance == null)
+            return null;
+        return getTheme(getInstance().config.getTheme());
     }
 }

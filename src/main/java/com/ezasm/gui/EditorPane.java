@@ -184,6 +184,6 @@ public class EditorPane extends JPanel implements IThemeable {
     }
 
     public void resetHighlighter() {
-        highlighter = new LineHighlighter(HIGHLIGHT_COLOR, textArea);
+        highlighter = new LineHighlighter(Window.currentTheme().getCurrentLine(), textArea);
     }
 }

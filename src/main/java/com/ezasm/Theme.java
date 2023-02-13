@@ -76,4 +76,18 @@ public class Theme {
     public Color getYellow() {
         return YELLOW;
     }
+
+    /**
+     * Takes a string theme name and returns the corresponding theme object
+     * @param s the theme in plain text
+     * @return the theme object
+     */
+    public static Theme getTheme(String s) {
+        return switch (s) {
+            case "Dark" -> Theme.Dracula;
+            case "Purple" -> Theme.Purple;
+            case "Light" -> Theme.Light;
+            default -> Theme.Light;
+        };
+    }
 }
