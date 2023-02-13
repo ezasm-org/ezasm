@@ -24,10 +24,9 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         try {
             Document doc = textComp.getDocument();
             String text = doc.getText(0, doc.getLength());
-
             int start_line = 0;
             int end_line = Math.max(text.indexOf("\n", -1), 0);
-            while (true) {
+            while (end_line != -1) {
                 String line = text.substring(start_line, end_line);
                 if (Lexer.validProgramLine(line)) {
                     startLineNums.add(start_line);
@@ -35,12 +34,9 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
                 }
                 start_line = end_line + 1;
                 end_line = text.indexOf("\n", end_line + 1);
-                if (end_line == -1) {
-                    startLineNums.add(start_line);
-                    endLineNums.add(text.length());
-                    break;
-                }
             }
+            startLineNums.add(start_line);
+            endLineNums.add(text.length());
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
