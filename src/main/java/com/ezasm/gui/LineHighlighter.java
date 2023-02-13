@@ -37,11 +37,6 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-        for (int i = 0; i < startLineNums.size(); i++) {
-            System.out.print(startLineNums.get(i));
-            System.out.print(" ");
-            System.out.println(endLineNums.get(i));
-        }
 
     }
 
