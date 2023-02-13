@@ -6,7 +6,7 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static com.ezasm.Config.THEME;
+import static com.ezasm.gui.Config.THEME;
 
 public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter {
     /**
@@ -28,7 +28,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
             String text = doc.getText(0, doc.getLength());
 
             int start_line = 0;
-            int end_line = text.indexOf("\n", -1);
+            int end_line = Math.max(text.indexOf("\n", -1), 0);
             while (true) {
                 String line = text.substring(start_line, end_line);
                 if (Lexer.validProgramLine(line)) {

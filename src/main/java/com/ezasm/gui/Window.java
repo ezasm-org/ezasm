@@ -8,8 +8,7 @@ import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static com.ezasm.Theme.getTheme;
+import com.ezasm.gui.Theme;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
@@ -217,7 +216,7 @@ public class Window {
     public static Theme currentTheme() {
         if (instance == null)
             return null;
-        return getTheme(getInstance().config.getTheme());
+        return Theme.getTheme(getInstance().config.getTheme());
     }
 
     /**

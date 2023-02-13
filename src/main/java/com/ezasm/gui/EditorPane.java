@@ -23,6 +23,7 @@ import static com.ezasm.gui.LineHighlighter.removeHighlights;
 public class EditorPane extends JPanel implements IThemeable {
     private final RSyntaxTextArea textArea;
     private final RTextScrollPane scrollPane;
+    private LineHighlighter highlighter;
     private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
@@ -48,6 +49,8 @@ public class EditorPane extends JPanel implements IThemeable {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+
+        highlighter = new LineHighlighter(Window.currentTheme().getRunLine(), textArea);
     }
 
     /**
