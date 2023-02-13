@@ -1,4 +1,4 @@
-package com.ezasm.instructions.impl;
+package com.ezasm.instructions.implementation;
 
 import java.io.*;
 import java.util.Scanner;

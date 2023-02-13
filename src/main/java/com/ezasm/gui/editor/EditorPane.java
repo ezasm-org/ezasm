@@ -1,4 +1,4 @@
-package com.ezasm.gui.Editor;
+package com.ezasm.gui.editor;
 
 import javax.swing.*;
 import javax.swing.text.Highlighter;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static com.ezasm.gui.Theme.applyFontAndTheme;
 
-import static com.ezasm.gui.Editor.LineHighlighter.removeHighlights;
+import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.

@@ -1,7 +1,7 @@
 package com.ezasm.gui;
 
-import com.ezasm.gui.Editor.EditorPane;
-import com.ezasm.instructions.impl.TerminalInstructions;
+import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;

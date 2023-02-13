@@ -1,4 +1,4 @@
-package com.ezasm.instructions.impl;
+package com.ezasm.instructions.implementation;
 
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
