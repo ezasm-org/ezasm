@@ -217,4 +217,10 @@ public class Window {
             return null;
         return getTheme(getInstance().config.getTheme());
     }
+
+    public static void resetHighlight() {
+        if (!Window.hasInstance()) return;
+
+        Window.getInstance().editor.resetHighlighter();
+    }
 }
