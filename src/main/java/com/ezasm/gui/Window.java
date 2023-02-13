@@ -210,6 +210,7 @@ public class Window {
 
     /**
      * Returns the current theme being used.
+     *
      * @return The current theme object
      */
     public static Theme currentTheme() {
