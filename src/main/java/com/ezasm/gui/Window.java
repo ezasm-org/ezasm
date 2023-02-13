@@ -125,10 +125,10 @@ public class Window {
      * Update tells the EditorPane to update the line highlighter.
      */
     public static void updateHighlight() {
-        if (instance == null || instance.editor == null)
+        if (instance == null || instance.editor == null) {
             return;
-        int PC = (int) instance.simulator.getRegisters().getRegister(Registers.PC).getLong();
-        instance.editor.updateHighlight(PC);
+        }
+        instance.editor.updateHighlight();
     }
 
     /**

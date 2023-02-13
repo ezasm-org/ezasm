@@ -14,6 +14,8 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final JTable table;
     private final Registers registers;
     private final JScrollPane scrollPane;
+
+    private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(150, 2000);
     private static final Dimension MAX_SIZE = new Dimension(200, 2000);
 
@@ -63,8 +65,6 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Helper model class to inform the TableModel of how to construct and read from itself.
      */
     private class RegistersTableModel extends AbstractTableModel {
-
-        private static final String[] columns = { "Register", "Value" };
 
         private final Registers registers;
 

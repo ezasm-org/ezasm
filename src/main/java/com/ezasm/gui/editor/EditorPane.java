@@ -3,7 +3,9 @@ package com.ezasm.gui.editor;
 import javax.swing.*;
 import javax.swing.text.Highlighter;
 
+import com.ezasm.gui.Window;
 import com.ezasm.gui.IThemeable;
+import com.ezasm.simulation.Registers;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -47,7 +49,7 @@ public class EditorPane extends JPanel implements IThemeable {
         setLayout(new BorderLayout());
         add(scrollPane);
 
-        highlighter = new LineHighlighter(com.ezasm.gui.Window.currentTheme().yellow(), textArea);
+        highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
     }
 
     /**
@@ -175,10 +177,12 @@ public class EditorPane extends JPanel implements IThemeable {
      *
      * @param line the line to highlight
      */
-    public void updateHighlight(int line) {
+    public void updateHighlight() {
         removeHighlights(textArea);
-        if (line >= 0)
-            highlighter.highlight(textArea, line);
+        int pc = (int) Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
+        if (pc >= 0) {
+            highlighter.highlight(textArea, pc);
+        }
     }
 
     /**
