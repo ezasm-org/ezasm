@@ -7,6 +7,7 @@ import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.implementation.ArithmeticInstructions;
+import com.ezasm.instructions.implementation.FloatArithmeticInstructions;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.SimulationException;
@@ -28,6 +29,7 @@ public class InstructionDispatcher {
 
     static {
         registerInstructions(ArithmeticInstructions.class);
+        registerInstructions(FloatArithmeticInstructions.class);
         registerInstructions(TerminalInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
