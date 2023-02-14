@@ -1,6 +1,6 @@
 package com.ezasm.gui;
 
-import com.ezasm.FileIO;
+import com.ezasm.util.FileIO;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;

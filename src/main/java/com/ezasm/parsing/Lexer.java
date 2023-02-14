@@ -1,6 +1,6 @@
 package com.ezasm.parsing;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
 import org.apache.commons.lang3.StringUtils;
@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class Lexer {
 
-    private static boolean isAlNum(char c) {
-        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_') || (c == '-');
+    public static boolean isAlphaNumeric(char c) {
+        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_');
     }
 
-    private static boolean isAlNum(String text) {
+    private static boolean isAlphaNumeric(String text) {
         for (int i = 0; i < text.length(); ++i) {
-            if (!isAlNum(text.charAt(i)) || (i == 0 && isNumeric(text.charAt(i)))) {
+            if (!isAlphaNumeric(text.charAt(i)) || (i == 0 && isNumeric(text.charAt(i)))) {
                 return false;
             }
         }
@@ -127,7 +127,7 @@ public class Lexer {
         if (token.length() < 1)
             return false;
         int colon = token.indexOf(':');
-        return (colon == token.length() - 1) && isAlNum(token.substring(0, colon));
+        return (colon == token.length() - 1) && isAlphaNumeric(token.substring(0, colon));
     }
 
     /**
@@ -137,7 +137,7 @@ public class Lexer {
      * @return true if the token is a label reference, false otherwise.
      */
     public static boolean isLabelReference(String token) {
-        return isAlNum(token);
+        return isAlphaNumeric(token);
     }
 
     /**
@@ -261,6 +261,25 @@ public class Lexer {
             }
         }
         return linesLexed;
+    }
+
+    /**
+     * Checks if a given string is a valid line of ezasm code
+     *
+     * @param line a string with exactly 1 \n at the end
+     * @return true if a valid line of ezasm code, false if not
+     */
+    public static boolean validProgramLine(String line) {
+        line = line.replaceAll("[\s,;]+", " ").trim();
+        if (line.length() == 0)
+            return false;
+        if (Lexer.isComment(line))
+            return false;
+        // if (Lexer.isLabel(line))
+        // return false;
+        String[] tokens = line.split("[ ,]");
+
+        return tokens.length >= 1;// Not enough tokens
     }
 
 }
