@@ -89,14 +89,5 @@
             <artifactId>rsyntaxtextarea</artifactId>
             <version>3.3.2</version>
         </dependency>
-=======
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-
->>>>>>> 212e4e228764f8d87232453ef96da0dc106a83d9
     </dependencies>
 </project>
