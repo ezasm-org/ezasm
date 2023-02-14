@@ -1,15 +1,17 @@
 package com.ezasm.instructions;
 
-import com.ezasm.instructions.impl.FunctionInstructions;
-import com.ezasm.instructions.impl.MemoryInstructions;
-import com.ezasm.instructions.impl.ComparisonInstructions;
-import com.ezasm.instructions.impl.BranchInstructions;
+import com.ezasm.instructions.implementation.FunctionInstructions;
+import com.ezasm.instructions.implementation.MemoryInstructions;
+import com.ezasm.instructions.implementation.ComparisonInstructions;
+import com.ezasm.instructions.implementation.BranchInstructions;
+import com.ezasm.instructions.implementation.FunctionInstructions;
+import com.ezasm.instructions.implementation.MemoryInstructions;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
-import com.ezasm.instructions.impl.ArithmeticInstructions;
-import com.ezasm.instructions.impl.TerminalInstructions;
+import com.ezasm.instructions.implementation.ArithmeticInstructions;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.SimulationException;
 

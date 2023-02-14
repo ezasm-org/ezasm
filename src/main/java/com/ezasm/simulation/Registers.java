@@ -76,8 +76,8 @@ public class Registers {
     public static final String FLO = "FLO";
     public static final String FHI = "FHI";
 
-    private static Map<String, Integer> registerByString;
-    private static Map<Integer, String> registerByInt;
+    public static Map<String, Integer> registerByString;
+    public static Map<Integer, String> registerByInt;
     private static final int FLOAT_OFFSET = REGISTERS_COUNT;
 
     /**

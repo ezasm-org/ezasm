@@ -1,11 +1,11 @@
 package com.ezasm.gui;
 
-import com.ezasm.instructions.impl.TerminalInstructions;
+import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
-import com.ezasm.Config;
-import com.ezasm.Theme;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,18 +91,14 @@ public class Window {
     }
 
     public void applyConfiguration(Config config) {
-        Theme theme = switch (config.getTheme()) {
-        case "Dark" -> Theme.Dracula;
-        case "Purple" -> Theme.Purple;
-        case "Light" -> Theme.Light;
-        default -> Theme.Light;
-        };
-        app.getContentPane().setBackground(theme.getBackground());
+        Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
+
         table.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
         SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
+        this.config = config;
     }
 
     /**
@@ -117,13 +113,21 @@ public class Window {
     /**
      * Updates all UI elements if they exist.
      */
-    public static void updateAll() {
-        if (instance == null || instance.table == null)
+    public static void updateRegisters() {
+        if (instance == null || instance.table == null) {
             return;
-        SwingUtilities.invokeLater(() -> {
-            instance.table.update();
-        });
+        }
+        instance.table.update();
+    }
 
+    /**
+     * Update tells the EditorPane to update the line highlighter.
+     */
+    public static void updateHighlight() {
+        if (instance == null || instance.editor == null) {
+            return;
+        }
+        instance.editor.updateHighlight();
     }
 
     /**
@@ -133,8 +137,10 @@ public class Window {
      */
     public void parseText() throws ParseException {
         simulator.resetAll();
-        updateAll();
+        updateRegisters();
         simulator.addLines(Lexer.parseLines(editor.getText(), 0));
+        instance.editor.resetHighlighter();
+
     }
 
     /**
@@ -149,6 +155,7 @@ public class Window {
         } else {
             System.out.println("** Program terminated forcefully **");
         }
+        editor.resetHighlighter();
         // The buffer must be cleared at the end of the function;
         // if it is not, System.out malfunctions
         TerminalInstructions.clearBuffer();
@@ -198,5 +205,26 @@ public class Window {
      */
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
+    }
+
+    /**
+     * Returns the current theme being used.
+     *
+     * @return The current theme object
+     */
+    public static Theme currentTheme() {
+        if (instance == null)
+            return null;
+        return Theme.getTheme(getInstance().config.getTheme());
+    }
+
+    /**
+     * Resets the editor highlighter, updating color to current theme and clearing all highlights
+     */
+    public static void resetHighlight() {
+        if (!Window.hasInstance())
+            return;
+
+        Window.getInstance().editor.resetHighlighter();
     }
 }

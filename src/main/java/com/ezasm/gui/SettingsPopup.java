@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import com.ezasm.Config;
-
 public class SettingsPopup {
     private static SettingsPopup instance;
 
