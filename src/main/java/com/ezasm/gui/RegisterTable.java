@@ -36,6 +36,7 @@ public class RegisterTable extends JPanel implements IThemeable {
         scrollPane.setPreferredSize(table.getPreferredSize());
 
         setPreferredSize(new Dimension(MAX_SIZE.width, getHeight()));
+        setMinimumSize(MIN_SIZE);
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
@@ -45,6 +46,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Applies the proper theming to the editor area
      */
     public void applyTheme(Font font, Theme theme) {
+        scrollPane.setBackground(theme.background());
         theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         Theme.applyFontAndTheme(this, font, theme);
         Theme.applyFontAndTheme(table, font, theme);
