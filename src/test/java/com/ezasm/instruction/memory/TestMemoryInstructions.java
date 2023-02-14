@@ -13,8 +13,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestMemoryInstructions {
 
+
+public class TestMemoryInstructions {
 
     @Test
     public void TestAllocInstruction() throws SimulationException {
@@ -69,6 +70,7 @@ public class TestMemoryInstructions {
         mi.alloc(ao, ai);
         mi.store(ai, ai2);
         mi.load(loadOut, ai2);
+
 
         assertEquals(2, Conversion.bytesToLong(sim.getRegisters().getRegister("t1").getBytes()));
     }

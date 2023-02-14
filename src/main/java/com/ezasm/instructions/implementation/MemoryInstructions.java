@@ -1,3 +1,4 @@
+
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
@@ -66,6 +67,7 @@ public class MemoryInstructions {
     }
 
     @Instruction
+
     public void alloc(IAbstractOutput out, IAbstractInput inp) throws SimulationException{
         Memory m = this.simulator.getMemory();
         int bytesWritten = m.unsafeAllocate((int) Conversion.bytesToLong(inp.get(simulator)));
