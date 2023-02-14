@@ -16,8 +16,8 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final JScrollPane scrollPane;
 
     private static final String[] columns = { "Register", "Value" };
-    private static final Dimension MIN_SIZE = new Dimension(150, 2000);
-    private static final Dimension MAX_SIZE = new Dimension(200, 2000);
+    private static final Dimension MIN_SIZE = new Dimension(200, 2000);
+    private static final Dimension MAX_SIZE = new Dimension(350, 2000);
 
     /**
      * Given the registers, construct a table which displays the names and values of each one.
@@ -48,10 +48,9 @@ public class RegisterTable extends JPanel implements IThemeable {
         theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         Theme.applyFontAndTheme(this, font, theme);
         Theme.applyFontAndTheme(table, font, theme);
+        Theme.applyFontAndTheme(table.getTableHeader(), font, theme);
         table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
-        table.getTableHeader().setBackground(theme.currentLine());
-        table.getTableHeader().setForeground(theme.foreground());
     }
 
     /**

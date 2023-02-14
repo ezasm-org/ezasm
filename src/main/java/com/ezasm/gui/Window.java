@@ -92,7 +92,6 @@ public class Window {
 
     public void applyConfiguration(Config config) {
         Theme theme = Theme.getTheme(config.getTheme());
-        app.getContentPane().setBackground(theme.background());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
         table.applyTheme(font, theme);
