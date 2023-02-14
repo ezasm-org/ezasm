@@ -127,9 +127,9 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void itof(IAbstractInputOutput input) throws SimulationException {
+    public void itof(IAbstractOutput output, IAbstractInput input) throws SimulationException {
         long i = Conversion.bytesToLong(input.get(simulator));
-        input.set(simulator, Conversion.doubleToBytes((double) i));
+        output.set(simulator, Conversion.doubleToBytes((double) i));
     }
 
     /**
@@ -139,8 +139,8 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void floor(IAbstractInputOutput input) throws SimulationException {
+    public void ftoi(IAbstractOutput output, IAbstractInput input) throws SimulationException {
         long i = (long) Math.floor(Conversion.bytesToDouble(input.get(simulator)));
-        input.set(simulator, Conversion.longToBytes(i));
+        output.set(simulator, Conversion.longToBytes(i));
     }
 }
