@@ -62,7 +62,7 @@ public class SettingsPopup implements IThemeable {
         speedLabel.setOpaque(true);
         Theme.applyFontAndTheme(speedSlider, font, theme);
         Theme.applyFontAndTheme(themeInput, font, theme);
-        Theme.applyFontAndTheme(fontInput, font, theme);
+        Theme.applyFontThemeBorder(fontInput, font, theme, border);
         Theme.applyFontThemeBorder(save, font, theme, buttonBorder);
         Theme.applyFontThemeBorder(resetDefaults, font, theme, buttonBorder);
         Theme.applyFontAndTheme(speedLabel, font, theme);
