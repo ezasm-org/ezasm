@@ -33,8 +33,8 @@ public class BranchInstructions {
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
      */
-    private void branch(BiFunction<Long, Long, Boolean> op, IAbstractInput input1, IAbstractInput input2,
-            IAbstractInput label) throws SimulationException {
+    private void branch(BiFunction<Long, Long, Boolean> op, IAbstractInput label, IAbstractInput input1,
+            IAbstractInput input2) throws SimulationException {
 
         boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));

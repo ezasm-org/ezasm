@@ -22,7 +22,7 @@ public class BranchTest {
         try {
             prgm.add(new Line("test:", new String[] {}));
             prgm.add(new Line("add", new String[] { "$t0", "$t0", "1" }));
-            prgm.add(new Line("blt", new String[] { "test", "$t0", "10" }));
+            prgm.add(new Line("blt", new String[] { "$t0", "10", "test" }));
         } catch (ParseException e) {
             fail(e);
         }
