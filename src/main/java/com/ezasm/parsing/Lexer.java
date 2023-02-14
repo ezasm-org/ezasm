@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class Lexer {
 
-    public static boolean isAlNum(char c) {
+    public static boolean isAlphaNumeric(char c) {
         return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_');
     }
 
-    private static boolean isAlNum(String text) {
+    private static boolean isAlphaNumeric(String text) {
         for (int i = 0; i < text.length(); ++i) {
-            if (!isAlNum(text.charAt(i)) || (i == 0 && isNumeric(text.charAt(i)))) {
+            if (!isAlphaNumeric(text.charAt(i)) || (i == 0 && isNumeric(text.charAt(i)))) {
                 return false;
             }
         }
@@ -126,7 +126,7 @@ public class Lexer {
         if (token.length() < 1)
             return false;
         int colon = token.indexOf(':');
-        return (colon == token.length() - 1) && isAlNum(token.substring(0, colon));
+        return (colon == token.length() - 1) && isAlphaNumeric(token.substring(0, colon));
     }
 
     /**
@@ -136,7 +136,7 @@ public class Lexer {
      * @return true if the token is a label reference, false otherwise.
      */
     public static boolean isLabelReference(String token) {
-        return isAlNum(token);
+        return isAlphaNumeric(token);
     }
 
     /**

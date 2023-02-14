@@ -117,7 +117,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
                     if (RSyntaxUtilities.isDigit(c)) {
                         expectIntegerTypeCharacter = c == '0';
                         currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-                    } else if (Lexer.isAlNum(c)) {
+                    } else if (Lexer.isAlphaNumeric(c)) {
                         currentTokenType = Token.IDENTIFIER;
                     } else {
                         // Anything not currently handled - mark as an identifier
@@ -142,7 +142,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
                     currentTokenType = Token.LITERAL_CHAR;
                 }
                 case '#' -> {
-                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.COMMENT_EOL;
                 }
@@ -167,7 +167,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
                         if (RSyntaxUtilities.isDigit(c)) {
                             expectIntegerTypeCharacter = c == '0';
                             currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-                        } else if (Lexer.isAlNum(c)) {
+                        } else if (Lexer.isAlphaNumeric(c)) {
                             currentTokenType = Token.IDENTIFIER;
                         } else {
                             // Anything not currently handled - mark as an identifier
@@ -195,7 +195,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
                     currentTokenType = Token.COMMENT_EOL;
                 }
                 default -> {
-                    if (!(Lexer.isAlNum(c) || c == ':')) {
+                    if (!(Lexer.isAlphaNumeric(c) || c == ':')) {
                         // Not an identifier; remember this was an identifier error and start over.
                         addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
                                 newStartOffset + currentTokenStart);
@@ -223,7 +223,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
                 }
                 case '#' -> {
                     expectIntegerTypeCharacter = expectHexadecimal = expectBinary = hasDecimalPoint = false;
-                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.COMMENT_EOL;
                 }
@@ -239,7 +239,6 @@ public class EzTokenMaker extends AbstractTokenMaker {
                             currentTokenType = Token.ERROR_NUMBER_FORMAT;
                         }
                     }
-
                     if (currentTokenType != Token.LITERAL_NUMBER_DECIMAL_INT) {
                         // Not a literal number; remember this was a number error and start over.
                         addToken(text, currentTokenStart, i - 1, Token.ERROR_NUMBER_FORMAT,
@@ -286,12 +285,12 @@ public class EzTokenMaker extends AbstractTokenMaker {
                     currentTokenType = Token.NULL;
                 }
                 case '#' -> {
-                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                    addToken(text, currentTokenStart, i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.COMMENT_EOL;
                 }
                 default -> {
-                    if (!Lexer.isAlNum(c)) {
+                    if (!Lexer.isAlphaNumeric(c)) {
                         // Not a valid register; remember this was an error and start over.
                         addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
                                 newStartOffset + currentTokenStart);
@@ -310,7 +309,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
                     currentTokenType = Token.WHITESPACE;
                 }
                 case '(', ')' -> {
-                    addToken(text, currentTokenStart, i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
+                    addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
                     addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                     currentTokenType = Token.NULL;
                 }

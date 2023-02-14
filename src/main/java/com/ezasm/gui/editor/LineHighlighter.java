@@ -24,18 +24,21 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         try {
             Document doc = textComp.getDocument();
             String text = doc.getText(0, doc.getLength());
-            int start_line = 0;
-            int end_line = Math.max(text.indexOf("\n", -1), 0);
-            while (end_line != -1) {
-                String line = text.substring(start_line, end_line);
-                if (Lexer.validProgramLine(line)) {
-                    startLineNums.add(start_line);
-                    endLineNums.add(end_line);
-                }
-                start_line = end_line + 1;
-                end_line = text.indexOf("\n", end_line + 1);
+            int startLine = 0;
+            int endLine = text.indexOf("\n");
+            if (endLine == -1) {
+                endLine = text.length();
             }
-            startLineNums.add(start_line);
+            while (endLine != -1) {
+                String line = text.substring(startLine, endLine);
+                if (Lexer.validProgramLine(line)) {
+                    startLineNums.add(startLine);
+                    endLineNums.add(endLine);
+                }
+                startLine = endLine + 1;
+                endLine = text.indexOf("\n", endLine + 1);
+            }
+            startLineNums.add(startLine);
             endLineNums.add(text.length());
         } catch (BadLocationException e) {
             e.printStackTrace();
