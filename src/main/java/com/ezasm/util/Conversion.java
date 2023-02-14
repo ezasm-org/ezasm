@@ -1,4 +1,4 @@
-package com.ezasm;
+package com.ezasm.util;
 
 import java.nio.ByteBuffer;
 

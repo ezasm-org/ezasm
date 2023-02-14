@@ -21,7 +21,7 @@ class LexerTest {
     @Test
     void isLabel() {
         assertTrue(Lexer.isLabel("label:"));
-        assertTrue(Lexer.isLabel("_label-:"));
+        assertTrue(Lexer.isLabel("_label:"));
         assertTrue(Lexer.isLabel("abc123:"));
         assertFalse(Lexer.isLabel("123label:"));
         assertFalse(Lexer.isLabel("my label:"));

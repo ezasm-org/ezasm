@@ -1,6 +1,6 @@
 package com.ezasm.simulation;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
 import com.ezasm.simulation.exception.SimulationAddressOutOfBoundsException;
 import com.ezasm.simulation.exception.SimulationException;
 
