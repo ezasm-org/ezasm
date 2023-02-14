@@ -2,13 +2,15 @@ package com.ezasm.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
-public class SettingsPopup {
+public class SettingsPopup implements IThemeable {
     private static SettingsPopup instance;
 
     private static final String FONTSIZE = "Font Size";
@@ -21,6 +23,7 @@ public class SettingsPopup {
     private JSlider speedSlider;
     private JTextField fontInput;
     private JComboBox themeInput;
+    private JPanel grid;
     private JButton resetDefaults;
     private JButton save;
     private JLabel speedLabel, fontSizeLabel, themeLabel;
@@ -49,6 +52,24 @@ public class SettingsPopup {
         return instance != null;
     }
 
+    public void applyTheme(Font font, Theme theme) {
+        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, theme.foreground());
+        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, theme.foreground());
+        grid.setBackground(theme.background());
+        fontInput.setCaretColor(theme.foreground());
+        themeLabel.setOpaque(true);
+        fontSizeLabel.setOpaque(true);
+        speedLabel.setOpaque(true);
+        Theme.applyFontAndTheme(speedSlider, font, theme);
+        Theme.applyFontAndTheme(themeInput, font, theme);
+        Theme.applyFontAndTheme(fontInput, font, theme);
+        Theme.applyFontThemeBorder(save, font, theme, buttonBorder);
+        Theme.applyFontThemeBorder(resetDefaults, font, theme, buttonBorder);
+        Theme.applyFontAndTheme(speedLabel, font, theme);
+        Theme.applyFontAndTheme(fontSizeLabel, font, theme);
+        Theme.applyFontAndTheme(themeLabel, font, theme);
+    }
+
     private void initialize() {
         buttonActionListener = new ButtonActionListener();
         layout = new BorderLayout();
@@ -69,7 +90,7 @@ public class SettingsPopup {
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
-        JPanel grid = new JPanel(gridLayout);
+        grid = new JPanel(gridLayout);
         grid.add(fontSizeLabel);
         grid.add(fontInput);
         grid.add(speedLabel);
@@ -91,6 +112,8 @@ public class SettingsPopup {
         popup.validate();
         popup.pack();
         popup.setVisible(true);
+        this.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize()),
+                Theme.getTheme(config.getTheme()));
     }
 
     private static class ButtonActionListener implements ActionListener {
@@ -113,6 +136,8 @@ public class SettingsPopup {
                 instance.config.setSimSpeed(instance.speedSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
+                instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
+                        Theme.getTheme(instance.config.getTheme()));
                 Window.getInstance().applyConfiguration(instance.config);
             }
             if (action.startsWith("Reset")) {
