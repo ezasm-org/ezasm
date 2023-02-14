@@ -68,7 +68,6 @@ public class RegisterTable extends JPanel {
      */
     public void update() {
         table.updateUI();
-        System.out.println("OUtPUT");
     }
 
     /**
