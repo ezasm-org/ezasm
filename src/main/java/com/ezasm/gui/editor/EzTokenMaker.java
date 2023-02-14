@@ -223,7 +223,8 @@ public class EzTokenMaker extends AbstractTokenMaker {
                 }
                 case '#' -> {
                     expectIntegerTypeCharacter = expectHexadecimal = expectBinary = hasDecimalPoint = false;
-                    addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset + currentTokenStart);
+                    addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT,
+                            newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.COMMENT_EOL;
                 }
@@ -309,7 +310,8 @@ public class EzTokenMaker extends AbstractTokenMaker {
                     currentTokenType = Token.WHITESPACE;
                 }
                 case '(', ')' -> {
-                    addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER, newStartOffset + currentTokenStart);
+                    addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
+                            newStartOffset + currentTokenStart);
                     addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                     currentTokenType = Token.NULL;
                 }
