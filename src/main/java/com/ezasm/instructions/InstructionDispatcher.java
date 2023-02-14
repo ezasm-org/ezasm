@@ -2,6 +2,7 @@ package com.ezasm.instructions;
 
 import com.ezasm.instructions.implementation.FunctionInstructions;
 import com.ezasm.instructions.implementation.MemoryInstructions;
+import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.implementation.ComparisonInstructions;
 import com.ezasm.instructions.implementation.BranchInstructions;
 import com.ezasm.simulation.ISimulator;
@@ -14,6 +15,7 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
+import com.sun.source.tree.Tree;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +30,7 @@ public class InstructionDispatcher {
     /**
      * The internal backing map for Strings and loaded instructions.
      */
-    private static final HashMap<String, DispatchInstruction> instructions = new HashMap<>();
+    private static final HashMap<InstructionPrototype, DispatchInstruction> instructions = new HashMap<>();
 
     static {
         registerInstructions(ArithmeticInstructions.class);
@@ -66,6 +68,12 @@ public class InstructionDispatcher {
         }
         validateInstruction(method);
         instructions.put(name, new DispatchInstruction(parent, method));
+
+        InstructionPrototype prototype = new InstructionPrototype(name, method.getParameterTypes());
+
+        System.out.println(prototype.toString() + "  " + prototype.hashCode());
+
+        instructions.put(new InstructionPrototype(name, method.getParameterTypes()), new DispatchInstruction(parent, method));
     }
 
     private static void validateInstruction(Method method) {
@@ -80,7 +88,7 @@ public class InstructionDispatcher {
      *
      * @return the map of registered Instructions.
      */
-    public static Map<String, DispatchInstruction> getInstructions() {
+    public static Map<InstructionPrototype, DispatchInstruction> getInstructions() {
         return Collections.unmodifiableMap(instructions);
     }
 

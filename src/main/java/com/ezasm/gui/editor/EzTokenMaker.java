@@ -1,6 +1,7 @@
 package com.ezasm.gui.editor;
 
 import com.ezasm.instructions.InstructionDispatcher;
+import com.ezasm.instructions.InstructionPrototype;
 import com.ezasm.parsing.Lexer;
 import org.fife.ui.rsyntaxtextarea.*;
 
@@ -31,8 +32,8 @@ public class EzTokenMaker extends AbstractTokenMaker {
     @Override
     public TokenMap getWordsToHighlight() {
         TokenMap tokenMap = new TokenMap();
-        for (String instruction : InstructionDispatcher.getInstructions().keySet()) {
-            tokenMap.put(instruction, Token.RESERVED_WORD);
+        for (InstructionPrototype instruction : InstructionDispatcher.getInstructions().keySet()) {
+            tokenMap.put(instruction.name(), Token.RESERVED_WORD);
         }
         return tokenMap;
     }
