@@ -33,8 +33,8 @@ public class BranchInstructions {
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
      */
-    private void branch(BiFunction<Long, Long, Boolean> op, IAbstractInput label, IAbstractInput input1,
-            IAbstractInput input2) throws SimulationException {
+    private void branch(BiFunction<Long, Long, Boolean> op, IAbstractInput input1,
+            IAbstractInput input2, IAbstractInput label) throws SimulationException {
 
         boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));
@@ -51,7 +51,7 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void beq(IAbstractInput label, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void beq(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
         branch(Long::equals, label, input1, input2);
     }
 
@@ -64,7 +64,7 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void bne(IAbstractInput label, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void bne(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
         branch((l, r) -> l.longValue() != r.longValue(), label, input1, input2);
     }
 
@@ -77,7 +77,7 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void blt(IAbstractInput label, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void blt(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
         branch((l, r) -> l < r, label, input1, input2);
     }
 
@@ -90,7 +90,7 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void ble(IAbstractInput label, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void ble(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
         branch((l, r) -> l <= r, label, input1, input2);
     }
 
@@ -103,7 +103,7 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void bgt(IAbstractInput label, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void bgt(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
         branch((l, r) -> l > r, label, input1, input2);
     }
 
@@ -116,7 +116,7 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void bge(IAbstractInput label, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void bge(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
         branch((l, r) -> l >= r, label, input1, input2);
     }
 }
