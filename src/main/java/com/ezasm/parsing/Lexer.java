@@ -1,8 +1,8 @@
 package com.ezasm.parsing;
 
+import com.ezasm.util.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
-import com.ezasm.util.RawData;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -242,7 +242,21 @@ public class Lexer {
      * @param token the token String in question.
      * @return true if the token is a registered instruction, false otherwise.
      */
-    public static boolean isInstruction(String token) {
+    public static boolean isInstructionName(String token) {
+        for (InstructionPrototype instruction : InstructionDispatcher.getInstructions().keySet()) {
+            if (instruction.name().equals(token)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determines if a given prototype is a valid instruction or not.
+     *
+     * @param token the token String in question.
+     * @return true if the token is a registered instruction, false otherwise.
+     */
+    public static boolean isInstruction(InstructionPrototype token) {
+        System.out.println("Looking for: " + token);
         return InstructionDispatcher.getInstructions().containsKey(token);
     }
 
@@ -256,6 +270,7 @@ public class Lexer {
      */
     public static Line parseLine(String line, int lineNumber) throws ParseException {
         line = StringUtils.substringBefore(line, '#');
+        line = line.replaceAll("[\s\t,;]+", " ").trim();
 
         if (line.length() == 0)
             return null;
@@ -283,6 +298,7 @@ public class Lexer {
         List<Line> linesLexed = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
+        // individually read lines treating semicolons as line breaks
         for (int i = 0; i < lines.length(); ++i) {
             char c = lines.charAt(i);
             if (c == '\n') {
