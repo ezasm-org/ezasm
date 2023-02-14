@@ -106,7 +106,7 @@ public class FloatArithmeticInstructions {
      */
     @Instruction
     public void decf(IAbstractInputOutput input) throws SimulationException {
-        input.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) - 1));
+        input.set(this.simulator, Conversion.doubleToBytes(Conversion.bytesToDouble(input.get(this.simulator)) - 1));
     }
 
     /**
@@ -117,7 +117,7 @@ public class FloatArithmeticInstructions {
      */
     @Instruction
     public void incf(IAbstractInputOutput input) throws SimulationException {
-        input.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) + 1));
+        input.set(this.simulator, Conversion.doubleToBytes(Conversion.bytesToDouble(input.get(this.simulator)) + 1));
     }
 
     /**
@@ -127,7 +127,7 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void intof(IAbstractInputOutput input) throws SimulationException {
+    public void itof(IAbstractInputOutput input) throws SimulationException {
         long i = Conversion.bytesToLong(input.get(simulator));
         input.set(simulator, Conversion.doubleToBytes((double) i));
     }
