@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 public class TestMemoryInstructions {
 
     @Test
@@ -32,7 +30,6 @@ public class TestMemoryInstructions {
         mi.alloc(ao, ai);
         long bytesAfterSecondCall = Conversion.bytesToLong(sim.getRegisters().getRegister("t0").getBytes());
         assertEquals(bytesAfter + 2, bytesAfterSecondCall);
-
 
     }
 
@@ -70,7 +67,6 @@ public class TestMemoryInstructions {
         mi.alloc(ao, ai);
         mi.store(ai, ai2);
         mi.load(loadOut, ai2);
-
 
         assertEquals(2, Conversion.bytesToLong(sim.getRegisters().getRegister("t1").getBytes()));
     }
