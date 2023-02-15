@@ -65,7 +65,6 @@ public class CommandLineInterface {
     public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
-        System.out.println(inputFilePath);
         try {
             this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
             if (inputFilePath.length() > 0)
