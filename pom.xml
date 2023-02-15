@@ -82,6 +82,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fifesoft/rsyntaxtextarea -->
+        <dependency>
+            <groupId>com.fifesoft</groupId>
+            <artifactId>rsyntaxtextarea</artifactId>
+            <version>3.3.2</version>
+        </dependency>
     </dependencies>
-    
 </project>

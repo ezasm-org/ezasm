@@ -1,6 +1,6 @@
 package com.ezasm.parsing;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;

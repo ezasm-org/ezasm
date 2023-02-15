@@ -1,10 +1,10 @@
-package com.ezasm.instructions.impl;
+package com.ezasm.instructions.implementation;
 
 import java.io.*;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;

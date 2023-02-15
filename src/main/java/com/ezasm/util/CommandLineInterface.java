@@ -1,4 +1,4 @@
-package com.ezasm;
+package com.ezasm.util;
 
 import com.ezasm.instructions.impl.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
