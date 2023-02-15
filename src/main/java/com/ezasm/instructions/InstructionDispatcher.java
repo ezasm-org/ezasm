@@ -2,6 +2,8 @@ package com.ezasm.instructions;
 
 import com.ezasm.instructions.implementation.FunctionInstructions;
 import com.ezasm.instructions.implementation.MemoryInstructions;
+import com.ezasm.instructions.implementation.ComparisonInstructions;
+import com.ezasm.instructions.implementation.BranchInstructions;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
@@ -31,6 +33,8 @@ public class InstructionDispatcher {
         registerInstructions(ArithmeticInstructions.class);
         registerInstructions(FloatArithmeticInstructions.class);
         registerInstructions(TerminalInstructions.class);
+        registerInstructions(BranchInstructions.class);
+        registerInstructions(ComparisonInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
     }
