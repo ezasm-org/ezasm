@@ -39,6 +39,14 @@ public class Arguments {
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 
+        Option inputOption = new Option("i", "input", true, "A file name to get standard input from.");
+        options.addOption(inputOption);
+        inputOption.setArgName("input replacement file path");
+
+        Option outputOption = new Option("o", "output", true, "A file name to send standard output to.");
+        options.addOption(outputOption);
+        outputOption.setArgName("output replacement file path");
+
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = null;
 
@@ -78,17 +86,30 @@ public class Arguments {
             filepath = commandLine.getOptionValue(fileOption);
         }
 
+        String inputpath = "";
+        if (commandLine.hasOption(inputOption)) {
+            inputpath = commandLine.getOptionValue(inputOption);
+        }
+
+        String outputpath = "";
+        if (commandLine.hasOption(outputOption)) {
+            outputpath = commandLine.getOptionValue(outputOption);
+        }
+
         if (commandLine.hasOption(windowlessOption)) {
             CommandLineInterface cli;
             if (filepath.equals("")) {
                 cli = new CommandLineInterface(sim);
-            } else {
+            } else if (inputpath.equals("") && outputpath.equals("")) {
                 cli = new CommandLineInterface(sim, filepath);
+            } else {
+                cli = new CommandLineInterface(sim, filepath, inputpath, outputpath);
             }
             cli.startSimulation();
         } else {
             Window.instantiate(sim, config);
         }
+
     }
 
     /**
