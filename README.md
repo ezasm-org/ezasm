@@ -80,6 +80,9 @@ Arithmetic \
 `load` (register) (ptr) \
 `store` (register/immediate) (ptr) 
 
+Comparison \
+`seq` `sne` `slt` `sgt` `sle` `sge` (store register) (reg1/imm1) (reg2/imm2)
+
 Function \
 `call` (line number / label, equivalent to ‘jal’) \
 `return` (0-3 registers / immediate arguments copied into return registers) 
@@ -87,7 +90,7 @@ Function \
 Jump (and conditional jump) \
 `j`(ump) (line number / label) \
 `jal` (line number / label, puts line number in return register) \
-`bne` `beq` `blt` `bgt` `ble` `bge` - command (reg1/imm1) (reg2/imm2) (line number / label) 
+`beq` `bne` `blt` `bgt` `ble` `bge` (line number / label) (reg1/imm1) (reg2/imm2) 
 
 String manip (first argument is source, second is destination) \
 `strlen` (ptr, stores value in return register) \
