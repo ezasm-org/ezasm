@@ -79,7 +79,10 @@ public class CommandLineInterface {
                 outputStream = new FileOutputStream(outputFile);
             } else
                 outputStream = System.out;
-        } catch (ParseException | IOException e) {
+        } catch (ParseException e) {
+            System.err.println("Unable to parse the given file: " + e.getMessage());
+            System.exit(1);
+        } catch (IOException e) {
             System.err.println("Unable to read or write file: " + e.getMessage());
             System.exit(1);
         }
