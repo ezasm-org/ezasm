@@ -65,13 +65,14 @@ public class CommandLineInterface {
     public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
-        System.out.println(inputFilePath);
         try {
             this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
-            if (inputFilePath.length() > 0)
+            if (inputFilePath.length() > 0) {
                 inputStream = new FileInputStream(new File(inputFilePath));
-            else
+            }
+            else {
                 inputStream = System.in;
+            }
             if (outputFilePath.length() > 0) {
                 File outputFile = new File(outputFilePath);
                 outputFile.createNewFile();
@@ -79,7 +80,7 @@ public class CommandLineInterface {
             } else
                 outputStream = System.out;
         } catch (ParseException | IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Unable to read or write file: " + e.getMessage());
             System.exit(1);
         }
     }
