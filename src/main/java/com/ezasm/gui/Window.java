@@ -5,7 +5,6 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +20,7 @@ public class Window {
 
     private Config config;
     private JFrame app;
+    private JPanel panel;
     private JToolBar toolbar;
     private JMenuBar menubar;
     private EditorPane editor;
@@ -70,6 +70,7 @@ public class Window {
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setMinimumSize(new Dimension(800, 600));
+        panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();
         toolbar = ToolbarFactory.makeToolbar();
@@ -77,14 +78,16 @@ public class Window {
         table = new RegisterTable(simulator.getRegisters());
 
         app.setJMenuBar(menubar);
-        app.add(toolbar, BorderLayout.PAGE_START);
-        app.add(editor, BorderLayout.CENTER);
-        app.add(table, BorderLayout.EAST);
+        panel.setLayout(new BorderLayout());
+        panel.add(toolbar, BorderLayout.PAGE_START);
+        panel.add(editor, BorderLayout.CENTER);
+        panel.add(table, BorderLayout.EAST);
 
         ToolbarFactory.setButtonsEnabled(true);
 
         applyConfiguration(config);
 
+        app.getContentPane().add(panel);
         app.validate();
         app.pack();
         app.setVisible(true);
@@ -94,6 +97,7 @@ public class Window {
         Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
+        panel.setBackground(theme.background());
         table.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
