@@ -57,33 +57,41 @@ public class CommandLineInterface {
     /**
      * Constructs a CLI based ont he given Simulator for operating code from a file with redirected input and/or output
      *
-     * @param simulator the given Simulator.
-     * @param file      the file to read code from.
-     * @param input     the file to read the input from.
-     * @param output    the file to write the output to.
+     * @param simulator         the given Simulator.
+     * @param file              the file to read code from.
+     * @param inputFilePath     the file to read the input from.
+     * @param outputFilePath    the file to write the output to.
      */
     public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
         try {
             this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
+        } catch (ParseException | IOException e) {
+            System.err.println("Unable to parse the given file: " + e.getMessage());
+            System.exit(1);
+        }
+
+        try {
             if (inputFilePath.length() > 0) {
                 inputStream = new FileInputStream(new File(inputFilePath));
-            }
-            else {
+            } else {
                 inputStream = System.in;
             }
+        } catch (IOException e) {
+            System.err.printf("Unable to read input from %s: %s", inputFilePath , e.getMessage());
+            System.exit(1);
+        }
+
+        try {
             if (outputFilePath.length() > 0) {
                 File outputFile = new File(outputFilePath);
                 outputFile.createNewFile();
                 outputStream = new FileOutputStream(outputFile);
             } else
                 outputStream = System.out;
-        } catch (ParseException e) {
-            System.err.println("Unable to parse the given file: " + e.getMessage());
-            System.exit(1);
         } catch (IOException e) {
-            System.err.println("Unable to read or write file: " + e.getMessage());
+            System.err.printf("Unable to write output to %s: %s", outputFilePath , e.getMessage());
             System.exit(1);
         }
     }
