@@ -111,7 +111,6 @@ public class CommandLineInterface {
                 Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
                 simulator.runLine(line);
             } catch (ParseException | SimulationException e) {
-                System.err.println(e.getMessage());
                 System.err.flush();
             }
             System.out.print("> ");
