@@ -1,6 +1,6 @@
 package com.ezasm.util;
 
-import com.ezasm.instructions.impl.TerminalInstructions;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
@@ -110,7 +110,6 @@ public class CommandLineInterface {
                 Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
                 simulator.runLine(line);
             } catch (ParseException | SimulationException e) {
-                System.err.println(e.getMessage());
                 System.err.flush();
             }
             System.out.print("> ");
