@@ -136,6 +136,13 @@ public class Simulator implements ISimulator {
     }
 
     /**
+     * Causes the program to terminate naturally.
+     */
+    public void exit() {
+        pc.setLong(lines.size() - 1);
+    }
+
+    /**
      * A helper function to validate the state of the PC register.
      *
      * @return the validated PC.

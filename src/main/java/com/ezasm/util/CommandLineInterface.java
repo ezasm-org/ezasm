@@ -5,6 +5,7 @@ import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.io.File;
@@ -141,7 +142,7 @@ public class CommandLineInterface {
         } catch (SimulationException e) {
             System.err.println(e.getMessage());
         }
-
+        System.exit((int) simulator.getRegisters().getRegister(Registers.R0).getLong());
     }
 
 }

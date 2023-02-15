@@ -30,6 +30,8 @@ public interface ISimulator {
 
     void executeLineFromPC() throws SimulationException;
 
+    void exit();
+
     Map<String, Integer> getLabels();
 
     Registers getRegisters();

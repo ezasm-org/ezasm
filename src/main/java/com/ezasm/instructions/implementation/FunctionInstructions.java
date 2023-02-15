@@ -85,4 +85,14 @@ public class FunctionInstructions {
         memoryInstructions.pop(new RegisterInputOutput(Registers.RA));
     }
 
+    /**
+     * Exit the program naturally.
+     *
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public void exit() throws SimulationException {
+        simulator.exit();
+    }
+
 }
