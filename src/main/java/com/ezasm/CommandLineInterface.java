@@ -62,19 +62,21 @@ public class CommandLineInterface {
      * @param input     the file to read the input from.
      * @param output    the file to write the output to.
      */
-    public CommandLineInterface(ISimulator simulator, String file, String inputFile, String outputFile) {
+    public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
-        System.out.println(inputFile);
+        System.out.println(inputFilePath);
         try {
             this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
-            if (inputFile.length() > 0)
-                inputStream = new FileInputStream(new File(inputFile));
+            if (inputFilePath.length() > 0)
+                inputStream = new FileInputStream(new File(inputFilePath));
             else
                 inputStream = System.in;
-            if (outputFile.length() > 0)
-                outputStream = new FileOutputStream(new File(outputFile));
-            else
+            if (outputFilePath.length() > 0) {
+                File outputFile = new File(outputFilePath);
+                outputFile.createNewFile();
+                outputStream = new FileOutputStream(outputFile);
+            } else
                 outputStream = System.out;
         } catch (ParseException | IOException e) {
             System.err.println(e.getMessage());
