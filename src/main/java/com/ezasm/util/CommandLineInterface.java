@@ -57,10 +57,10 @@ public class CommandLineInterface {
     /**
      * Constructs a CLI based ont he given Simulator for operating code from a file with redirected input and/or output
      *
-     * @param simulator         the given Simulator.
-     * @param file              the file to read code from.
-     * @param inputFilePath     the file to read the input from.
-     * @param outputFilePath    the file to write the output to.
+     * @param simulator      the given Simulator.
+     * @param file           the file to read code from.
+     * @param inputFilePath  the file to read the input from.
+     * @param outputFilePath the file to write the output to.
      */
     public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
@@ -79,7 +79,7 @@ public class CommandLineInterface {
                 inputStream = System.in;
             }
         } catch (IOException e) {
-            System.err.printf("Unable to read input from %s: %s", inputFilePath , e.getMessage());
+            System.err.printf("Unable to read input from %s: %s", inputFilePath, e.getMessage());
             System.exit(1);
         }
 
@@ -91,7 +91,7 @@ public class CommandLineInterface {
             } else
                 outputStream = System.out;
         } catch (IOException e) {
-            System.err.printf("Unable to write output to %s: %s", outputFilePath , e.getMessage());
+            System.err.printf("Unable to write output to %s: %s", outputFilePath, e.getMessage());
             System.exit(1);
         }
     }
