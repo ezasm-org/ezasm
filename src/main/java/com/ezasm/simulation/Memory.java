@@ -221,7 +221,7 @@ public class Memory {
      * Writes a String to the specified address.
      *
      * @param address the address to write at.
-     * @param string    the String to write.
+     * @param string  the String to write.
      * @param maxSize the maximum size of the String to be in bytes.
      */
     public void writeString(int address, String string, int maxSize) throws SimulationException {

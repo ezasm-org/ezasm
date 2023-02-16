@@ -57,7 +57,7 @@ public class Conversion {
      */
     public static byte[][] stringToBytes(String data) {
         byte[][] bytes = new byte[data.length() + 1][0];
-        for(int i = 0; i < data.length(); ++i) {
+        for (int i = 0; i < data.length(); ++i) {
             bytes[i] = Conversion.longToBytes(data.charAt(i));
         }
         bytes[bytes.length - 1] = Conversion.longToBytes(0);
