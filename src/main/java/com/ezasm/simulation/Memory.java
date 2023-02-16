@@ -148,7 +148,7 @@ public class Memory {
     }
 
     /**
-     * Gets the one word of information from the memory at a certain address.
+     * Gets one word of information from the memory at a certain address.
      *
      * @param address the address to begin to read from.
      * @return the information read from the memory at a certain address.
@@ -175,22 +175,22 @@ public class Memory {
      * @return the String interpreted.
      */
     public String readString(int address, int maxSize) throws SimulationException {
-        address = address - OFFSET;
         if (maxSize < 0) {
             throw new SimulationException(String.format("String size cannot be %d", maxSize));
         }
-        if (address < 0 || (address + maxSize) >= this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
+        if (address - OFFSET < 0 || (address + maxSize - OFFSET) >= this.MEMORY_SIZE) {
+            throw new SimulationAddressOutOfBoundsException(address);
         }
 
-        byte[] toString = new byte[maxSize];
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < maxSize; ++i) {
-            toString[i] = memory[address + i];
-            if (memory[address + i] == '\0') {
+            char c = (char) Conversion.bytesToLong(read(address + i * WORD_SIZE));
+            if (c == '\0') {
                 break;
             }
+            sb.append(c);
         }
-        return Conversion.bytesToString(toString);
+        return sb.toString();
     }
 
     /**
@@ -221,24 +221,27 @@ public class Memory {
      * Writes a String to the specified address.
      *
      * @param address the address to write at.
-     * @param data    the String to write.
+     * @param string  the String to write.
      * @param maxSize the maximum size of the String to be in bytes.
      */
-    public void writeString(int address, String data, int maxSize) throws SimulationException {
-        address = address - OFFSET;
+    public void writeString(int address, String string, int maxSize) throws SimulationException {
+        int realAddress = address - OFFSET;
+
         if (maxSize < 0) {
             throw new SimulationException(String.format("String size cannot be %d", maxSize));
         }
-        if (address < 0 || (address + data.getBytes().length) >= this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
+        if (realAddress < 0 || (realAddress + string.length()) >= this.MEMORY_SIZE) {
+            throw new SimulationAddressOutOfBoundsException(address);
         }
 
-        for (int i = 0; i < data.getBytes().length && i < maxSize; ++i) {
-            memory[address + i] = data.getBytes()[i];
+        byte[][] data = Conversion.stringToBytes(string);
+
+        for (int i = 0; i < data.length && i < maxSize; ++i) {
+            write(address + i * WORD_SIZE, data[i]);
         }
 
-        if (maxSize <= data.getBytes().length) {
-            memory[address + maxSize] = '\0';
+        if (maxSize <= data.length) {
+            write(address + maxSize * WORD_SIZE, Conversion.longToBytes('\0'));
         }
     }
 

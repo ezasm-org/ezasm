@@ -18,12 +18,12 @@ public class Registers {
     public static final String PC = "PC";
     public static final String SP = "SP";
     public static final String RA = "RA";
-    public static final String ARG1 = "ARG1";
-    public static final String ARG2 = "ARG2";
-    public static final String ARG3 = "ARG3";
-    public static final String RETURN1 = "R1";
-    public static final String RETURN2 = "R2";
-    public static final String RETURN3 = "R3";
+    public static final String A0 = "A0";
+    public static final String A1 = "A1";
+    public static final String A2 = "A2";
+    public static final String R0 = "R0";
+    public static final String R1 = "R1";
+    public static final String R2 = "R2";
 
     public static final String S0 = "S0";
     public static final String S1 = "S1";
@@ -90,12 +90,12 @@ public class Registers {
         addRegister(PC, 1);
         addRegister(SP, 2);
         addRegister(RA, 3);
-        addRegister(ARG1, 4);
-        addRegister(ARG2, 5);
-        addRegister(ARG3, 6);
-        addRegister(RETURN1, 7);
-        addRegister(RETURN2, 8);
-        addRegister(RETURN3, 9);
+        addRegister(A0, 4);
+        addRegister(A1, 5);
+        addRegister(A2, 6);
+        addRegister(R0, 7);
+        addRegister(R1, 8);
+        addRegister(R2, 9);
 
         addRegister(S0, 10);
         addRegister(S1, 11);

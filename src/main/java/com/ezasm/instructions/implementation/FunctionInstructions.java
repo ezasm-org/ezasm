@@ -6,6 +6,7 @@ import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.Conversion;
 
 /**
  * An implementation of standard function call instructions for the simulation.
@@ -83,6 +84,19 @@ public class FunctionInstructions {
     public void _return() throws SimulationException {
         jump(new RegisterInputOutput(Registers.RA));
         memoryInstructions.pop(new RegisterInputOutput(Registers.RA));
+    }
+
+    /**
+     * Exit the program naturally and sets the exit code to the given value.
+     *
+     * @param input the status code.
+     *
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public void exit(IAbstractInput input) throws SimulationException {
+        simulator.getRegisters().getRegister(Registers.R0).setLong(Conversion.bytesToLong(input.get(simulator)));
+        simulator.exit();
     }
 
 }
