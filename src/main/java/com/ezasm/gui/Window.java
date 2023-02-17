@@ -8,6 +8,12 @@ import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
@@ -25,6 +31,8 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
+    private InputStream inputStream = null;
+    private OutputStream outputStream = null;
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -52,6 +60,43 @@ public class Window {
     public static void instantiate(ISimulator simulator, Config config) {
         if (instance == null)
             new Window(simulator, config);
+    }
+
+    /**
+     * Generate the singleton Window instance if it does not exist.
+     *
+     * @param simulator      the simulator to use.
+     * @param config         the program configuration.
+     * @param inputFilePath  the desired file to use for the InputStream.
+     * @param outputFilePath the desired file to use for the OutputStream.
+     */
+    public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
+        if (instance == null) {
+            new Window(simulator, config);
+            try {
+                if (inputFilePath.length() > 0) {
+                    instance.inputStream = new FileInputStream(new File(inputFilePath));
+                } else {
+                    instance.inputStream = System.in;
+                }
+            } catch (IOException e) {
+                System.err.printf("Unable to read input from %s: %s", inputFilePath, e.getMessage());
+                System.exit(1);
+            }
+
+            try {
+                if (outputFilePath.length() > 0) {
+                    File outputFile = new File(outputFilePath);
+                    outputFile.createNewFile();
+                    instance.outputStream = new FileOutputStream(outputFile);
+                } else
+                    instance.outputStream = System.out;
+            } catch (IOException e) {
+                System.err.printf("Unable to write output to %s: %s", outputFilePath, e.getMessage());
+                System.exit(1);
+            }
+            TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+        }
     }
 
     /**

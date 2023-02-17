@@ -107,6 +107,11 @@ public class Arguments {
             }
             cli.startSimulation();
         } else {
+            if (!inputpath.equals("") || !outputpath.equals("")) {
+                Window.instantiate(sim, config, inputpath, outputpath);
+                return;
+            }
+
             Window.instantiate(sim, config);
         }
 
