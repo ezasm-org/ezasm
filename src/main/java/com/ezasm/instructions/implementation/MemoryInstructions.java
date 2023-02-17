@@ -53,24 +53,28 @@ public class MemoryInstructions {
     }
 
     @Instruction
-    public void load(IAbstractOutput out, IAbstractInput inp) throws SimulationException {
+    public void load(IAbstractOutput output, IAbstractInput input) throws SimulationException {
         Memory m = this.simulator.getMemory();
-        byte[] word = m.read((int) Conversion.bytesToLong(inp.get(simulator)), m.WORD_SIZE);
-        out.set(this.simulator, word);
+        byte[] word = m.read((int) Conversion.bytesToLong(input.get(simulator)), m.WORD_SIZE);
+        output.set(this.simulator, word);
     }
 
     @Instruction
-    public void store(IAbstractInput inp1, IAbstractInput inp2) throws SimulationException {
+    public void store(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         Memory m = this.simulator.getMemory();
-        m.write((int) Conversion.bytesToLong(inp2.get(simulator)), inp1.get(simulator));
+        m.write((int) Conversion.bytesToLong(input2.get(simulator)), input1.get(simulator));
     }
 
     @Instruction
 
-    public void alloc(IAbstractOutput out, IAbstractInput inp) throws SimulationException {
+    public void alloc(IAbstractOutput output, IAbstractInput input) throws SimulationException {
         Memory m = this.simulator.getMemory();
-        int bytesWritten = m.unsafeAllocate((int) Conversion.bytesToLong(inp.get(simulator)));
-        out.set(this.simulator, Conversion.longToBytes(bytesWritten));
+        int bytesWritten = m.unsafeAllocate((int) Conversion.bytesToLong(input.get(simulator)));
+        output.set(this.simulator, Conversion.longToBytes(bytesWritten));
+    }
+
+    public void mv(IAbstractOutput output, IAbstractInput input) throws SimulationException{
+        output.set(simulator, input.get(simulator));
     }
 
 }
