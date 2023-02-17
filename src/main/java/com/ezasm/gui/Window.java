@@ -171,14 +171,20 @@ public class Window {
      *
      * @param filePath the path of the file to set.
      */
-    public void setLoadedFile(String filePath) { loadedFile = filePath; }
+    public void setLoadedFile(String filePath) {
+        loadedFile = filePath;
+    }
 
     /**
      * Gets the path to the file loaded in the window.
      */
-    public String getLoadedFile() { if(loadedFile != null) { return loadedFile; } else { return ""; } }
-
-
+    public String getLoadedFile() {
+        if (loadedFile != null) {
+            return loadedFile;
+        } else {
+            return "";
+        }
+    }
 
     /**
      * Sets the text of the editor to the given content.

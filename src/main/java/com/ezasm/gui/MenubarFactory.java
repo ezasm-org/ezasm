@@ -113,7 +113,7 @@ public class MenubarFactory {
                         FileWriter writer = new FileWriter(fileToUpdate.getPath());
                         writer.write(content);
                         writer.close();
-                    } catch(IOException ex) {
+                    } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                 } else {
