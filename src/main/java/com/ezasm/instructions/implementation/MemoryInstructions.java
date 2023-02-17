@@ -73,7 +73,7 @@ public class MemoryInstructions {
         output.set(this.simulator, Conversion.longToBytes(bytesWritten));
     }
 
-    public void mv(IAbstractOutput output, IAbstractInput input) throws SimulationException{
+    public void mv(IAbstractOutput output, IAbstractInput input) throws SimulationException {
         output.set(simulator, input.get(simulator));
     }
 
