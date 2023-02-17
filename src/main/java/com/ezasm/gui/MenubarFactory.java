@@ -70,6 +70,92 @@ public class MenubarFactory {
     }
 
     /**
+     * HELPER
+     *
+     * Runs the action event for save as.
+     */
+    private static void saveAs() {
+        JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setSelectedFile(new File("code.ez"));
+        FileIO.filterFileChooser(fileChooser);
+        int fileChooserOption = fileChooser.showSaveDialog(null);
+        if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            Window.getInstance().setLoadedFile(file.getPath());
+            boolean overwrite = true;
+            if (file.exists()) {
+                // File exists, prompt user to overwrite
+                int confirmDialogOption = JOptionPane.showConfirmDialog(null,
+                        "The given file '" + file.getName() + "' already exits.\n" + "Would you like to overwrite it?",
+                        "File Already Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
+            }
+            if (overwrite) {
+                try {
+                    FileIO.writeFile(file, Window.getInstance().getText());
+                } catch (IOException ex) {
+                    // TODO handle
+                    ex.printStackTrace();
+                    throw new RuntimeException();
+                }
+            }
+        }
+    }
+
+    /**
+     * HELPER
+     *
+     * Runs the action event for save.
+     */
+    private static void save() {
+        File fileToUpdate = new File(Window.getInstance().getLoadedFile());
+
+        if (!fileToUpdate.exists()) {
+            saveAs();
+        } else {
+            if (fileToUpdate != null && fileToUpdate.exists() && fileToUpdate.canRead()) {
+                String content = Window.getInstance().getText();
+                try {
+                    FileWriter writer = new FileWriter(fileToUpdate.getPath());
+                    writer.write(content);
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "ERROR: Not able to save file.");
+            }
+        }
+    }
+
+    /**
+     * HELPER
+     *
+     * Runs the action event for load.
+     */
+    private static void load() {
+        JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+        System.getProperty("user.home");
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        FileIO.filterFileChooser(fileChooser);
+        int fileChooserOption = fileChooser.showOpenDialog(null);
+        if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (file != null && file.exists() && file.canRead()) {
+                try {
+                    String content = FileIO.readFile(file);
+                    Window.getInstance().setText(content);
+                    Window.getInstance().setLoadedFile(file.getPath());
+                } catch (IOException ex) {
+                    // TODO handle
+                    throw new RuntimeException();
+                }
+            }
+        }
+    }
+
+    /**
      * Helper action listener class to handle options in the menu.
      */
     private static class MenuActionListener implements ActionListener {
@@ -77,69 +163,15 @@ public class MenubarFactory {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
             case SAVE_AS -> {
-                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                fileChooser.setSelectedFile(new File("code.ez"));
-                FileIO.filterFileChooser(fileChooser);
-                int fileChooserOption = fileChooser.showSaveDialog(null);
-                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
-                    boolean overwrite = true;
-                    if (file.exists()) {
-                        // File exists, prompt user to overwrite
-                        int confirmDialogOption = JOptionPane.showConfirmDialog(null,
-                                "The given file '" + file.getName() + "' already exits.\n"
-                                        + "Would you like to overwrite it?",
-                                "File Already Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
-                    }
-                    if (overwrite) {
-                        try {
-                            FileIO.writeFile(file, Window.getInstance().getText());
-                        } catch (IOException ex) {
-                            // TODO handle
-                            ex.printStackTrace();
-                            throw new RuntimeException();
-                        }
-                    }
-                }
+                saveAs();
             }
 
             case SAVE -> {
-                File fileToUpdate = new File(Window.getInstance().getLoadedFile());
-                if (fileToUpdate != null && fileToUpdate.exists() && fileToUpdate.canRead()) {
-                    String content = Window.getInstance().getText();
-                    try {
-                        FileWriter writer = new FileWriter(fileToUpdate.getPath());
-                        writer.write(content);
-                        writer.close();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "ERROR: Not able to save file.");
-                }
+                save();
             }
 
             case LOAD -> {
-                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-                System.getProperty("user.home");
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                FileIO.filterFileChooser(fileChooser);
-                int fileChooserOption = fileChooser.showOpenDialog(null);
-                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
-                    if (file != null && file.exists() && file.canRead()) {
-                        try {
-                            String content = FileIO.readFile(file);
-                            Window.getInstance().setText(content);
-                            Window.getInstance().setLoadedFile(file.getPath());
-                        } catch (IOException ex) {
-                            // TODO handle
-                            throw new RuntimeException();
-                        }
-                    }
-                }
+                load();
             }
             case EXIT -> {
                 System.exit(0);
