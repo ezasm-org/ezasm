@@ -74,7 +74,7 @@ public class MemoryInstructions {
     }
 
     @Instruction
-    public void mv(IAbstractOutput output, IAbstractInput input) throws SimulationException {
+    public void move(IAbstractOutput output, IAbstractInput input) throws SimulationException {
         output.set(simulator, input.get(simulator));
     }
 
