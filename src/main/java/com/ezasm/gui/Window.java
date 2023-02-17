@@ -5,7 +5,6 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
-import javax.swing.text.Highlighter.Highlight;
 
 import java.awt.*;
 

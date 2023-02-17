@@ -3,12 +3,11 @@ package com.ezasm.gui;
 import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.CellRendererPane;
 
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
@@ -21,6 +20,7 @@ public class RegisterTable extends JPanel {
     private static final Dimension MAX_SIZE = new Dimension(200, 2000);
     private String changedRegister = "";
     private int changedRegisterNum = 0;
+    private CellRendererPane rendererPane = new CellRendererPane();
     /**
      * Given the registers, construct a table which displays the names and values of each one.
      * @param registers the registers to read from.
@@ -31,6 +31,7 @@ public class RegisterTable extends JPanel {
         table = new JTable();
         AbstractTableModel model = new RegistersTableModel(registers);
         table.setModel(model);
+        
         JScrollPane scrollPane = new JScrollPane(table);
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -56,6 +57,7 @@ public class RegisterTable extends JPanel {
                 else{
                     c.setForeground(Color.black);
                 }
+                rendererPane.add(c);
                 return c;
             }
         });
@@ -67,6 +69,7 @@ public class RegisterTable extends JPanel {
      * Forcibly refreshes the display of the table
      */
     public void update() {
+        ChangeCellColor(table, 0, this.changedRegisterNum-1);
         table.updateUI();
     }
 
@@ -128,8 +131,6 @@ public class RegisterTable extends JPanel {
           this.changedRegisterNum=number;
           //Don't need to care about Register Zero
           this.changedRegisterNum+=1;
-          System.out.println(this.changedRegister);
-          System.out.println(this.changedRegisterNum);
     }
     
 }
