@@ -139,7 +139,6 @@ public class InstructionDispatcher {
         assert object != null;
 
         dispatch.invoke(object, line);
-
     }
 
 }

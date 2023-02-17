@@ -5,6 +5,8 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 
 import javax.swing.*;
+import javax.swing.text.Highlighter.Highlight;
+
 import java.awt.*;
 
 /**
@@ -173,5 +175,8 @@ public class Window {
      */
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
+    }
+    public static void highlightValue(String register, int number){
+        instance.table.addHighlightValue(register,number);
     }
 }

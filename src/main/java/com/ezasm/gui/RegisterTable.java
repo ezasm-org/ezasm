@@ -19,7 +19,8 @@ public class RegisterTable extends JPanel {
     private final Registers registers;
     private static final Dimension MIN_SIZE = new Dimension(150, 2000);
     private static final Dimension MAX_SIZE = new Dimension(200, 2000);
-
+    private String changedRegister = "";
+    private int changedRegisterNum = 0;
     /**
      * Given the registers, construct a table which displays the names and values of each one.
      * @param registers the registers to read from.
@@ -30,7 +31,6 @@ public class RegisterTable extends JPanel {
         table = new JTable();
         AbstractTableModel model = new RegistersTableModel(registers);
         table.setModel(model);
-        table.getModel().addTableModelListener(new RegisterTableListener(table));
         JScrollPane scrollPane = new JScrollPane(table);
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -95,7 +95,6 @@ public class RegisterTable extends JPanel {
         public Object getValueAt(int row, int col) {
             if(col == 0) {
                 // labels
-                //System.out.println("OUtPUT");
                 return "$" + Registers.getRegisterName(row);
             } else if(col == 1) {
                 // values
@@ -118,48 +117,19 @@ public class RegisterTable extends JPanel {
         public String getColumnName(int column) {
             return columns[column];
         }
+        
     }
-    class RegisterTableListener implements TableModelListener {
-        JTable table;
-      
-        RegisterTableListener(JTable table) {
-          this.table = table;
-        }
-      
-        public void tableChanged(TableModelEvent e) {
-          int firstRow = e.getFirstRow();
-          int lastRow = e.getLastRow();
-          int index = e.getColumn();
-          
-          switch (e.getType()) {
-          case TableModelEvent.INSERT:
-            for (int i = firstRow; i <= lastRow; i++) {
-              System.out.println(i);
-            }
-            break;
-          case TableModelEvent.UPDATE:
-            if (firstRow == TableModelEvent.HEADER_ROW) {
-              if (index == TableModelEvent.ALL_COLUMNS) {
-                System.out.println("A column was added");
-              } else {
-                System.out.println(index + "in header changed");
-              }
-            } else {
-              for (int i = firstRow; i <= lastRow; i++) {
-                if (index == TableModelEvent.ALL_COLUMNS) {
-                  System.out.println("All columns have changed");
-                } else {
-                  System.out.println(index);
-                }
-              }
-            }
-            break;
-          case TableModelEvent.DELETE:
-            for (int i = firstRow; i <= lastRow; i++) {
-              System.out.println(i);
-            }
-            break;
-          }
-        }
-      }
+    /**
+     *Tell the table what the changed resgiter when execute the line
+     * @param var the string of the changed variable
+     */
+    public void addHighlightValue(String var,int number){
+          this.changedRegister=var;
+          this.changedRegisterNum=number;
+          //Don't need to care about Register Zero
+          this.changedRegisterNum+=1;
+          System.out.println(this.changedRegister);
+          System.out.println(this.changedRegisterNum);
+    }
+    
 }
