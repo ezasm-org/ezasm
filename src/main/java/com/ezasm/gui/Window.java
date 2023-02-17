@@ -31,8 +31,9 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
-    private InputStream inputStream = null;
-    private OutputStream outputStream = null;
+    private String inputFilePath, outputFilePath;
+    private InputStream inputStream = System.in;
+    private OutputStream outputStream = System.out;
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -72,8 +73,8 @@ public class Window {
     }
 
     /**
-     * Generate the singleton Window instance if it does not exist.
-     * Sets the input/output streams for our TerminalInstructions to files
+     * Generate the singleton Window instance if it does not exist. Sets the input/output streams for our
+     * TerminalInstructions to files
      *
      * @param simulator      the simulator to use.
      * @param config         the program configuration.
@@ -83,40 +84,54 @@ public class Window {
     public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
         if (instance == null) {
             new Window(simulator, config);
-            setInputOutputStreams(inputFilePath, outputFilePath);
+            setInputStream(inputFilePath);
         }
     }
 
     /**
-     * Sets the input/output streams for our TerminalInstructions to files
+     * Sets the input stream for our TerminalInstructions to files
      *
-     * @param inputFilePath  the desired file to use for the InputStream.
-     * @param outputFilePath the desired file to use for the OutputStream.
+     * @param inputFilePath the desired file to use for the InputStream.
      */
-    public static void setInputOutputStreams(String inputFilePath, String outputFilePath){
-            try {
-                if (inputFilePath.length() > 0) {
-                    instance.inputStream = new FileInputStream(new File(inputFilePath));
-                } else {
-                    instance.inputStream = System.in;
-                }
-            } catch (IOException e) {
-                System.err.printf("Unable to read input from %s: %s", inputFilePath, e.getMessage());
-                System.exit(1);
+    public static void setInputStream(String inputFilePath) {
+        instance.inputFilePath = inputFilePath;
+        try {
+            if (inputFilePath.length() > 0) {
+                instance.inputStream = new FileInputStream(new File(inputFilePath));
+            } else {
+                instance.inputStream = System.in;
             }
+        } catch (IOException e) {
+            System.err.printf("Unable to read input from %s: %s", inputFilePath, e.getMessage());
+            System.exit(1);
+        }
 
-            try {
-                if (outputFilePath.length() > 0) {
-                    File outputFile = new File(outputFilePath);
-                    outputFile.createNewFile();
-                    instance.outputStream = new FileOutputStream(outputFile);
-                } else
-                    instance.outputStream = System.out;
-            } catch (IOException e) {
-                System.err.printf("Unable to write output to %s: %s", outputFilePath, e.getMessage());
-                System.exit(1);
-            }
-            TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+        TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+    }
+
+    /**
+     * Sets the input stream for our TerminalInstructions to files
+     *
+     * @param inputFilePath the desired file to use for the InputStream.
+     */
+    public static void setOutputStream(String outputFilePath) {
+        instance.outputFilePath = outputFilePath;
+        try {
+            if (outputFilePath.length() > 0) {
+                File outputFile = new File(outputFilePath);
+                outputFile.createNewFile();
+                instance.outputStream = new FileOutputStream(outputFile);
+            } else
+                instance.outputStream = System.out;
+        } catch (IOException e) {
+            System.err.printf("Unable to write output to %s: %s", outputFilePath, e.getMessage());
+            System.exit(1);
+        }
+        TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+    }
+
+    public static String getInputFilePath() {
+        return instance.inputFilePath;
     }
 
     /**
@@ -209,7 +224,6 @@ public class Window {
         updateRegisters();
         simulator.addLines(Lexer.parseLines(editor.getText(), 0));
         instance.editor.resetHighlighter();
-
     }
 
     /**
@@ -295,5 +309,12 @@ public class Window {
             return;
 
         Window.getInstance().editor.resetHighlighter();
+    }
+
+    /**
+     * Resets the input stream, used primarily to go back to the start of files
+     */
+    public static void resetInputStream() {
+        TerminalInstructions.resetInputStream();
     }
 }

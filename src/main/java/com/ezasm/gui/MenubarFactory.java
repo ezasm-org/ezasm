@@ -93,7 +93,6 @@ public class MenubarFactory {
                 filePicker.setFile("*.ez");
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-                System.out.println(fileChosen);
                 File file = new File(fileChosen);
                 try {
                     FileIO.writeFile(file, Window.getInstance().getText());
@@ -119,6 +118,32 @@ public class MenubarFactory {
                 } catch (IOException ex) {
                     throw new RuntimeException();
                 }
+            }
+            case INPUTFILE -> {
+                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose a file",
+                        FileDialog.LOAD);
+                filePicker.setDirectory(System.getProperty("user.home"));
+                filePicker.setFile("*");
+                filePicker.setVisible(true);
+
+                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
+                if (fileChosen.length() == 0)
+                    return;
+
+                Window.setInputStream(fileChosen);
+            }
+            case OUTPUTFILE -> {
+                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name your file",
+                        FileDialog.SAVE);
+                filePicker.setDirectory(System.getProperty("user.home"));
+                filePicker.setFile("*.ez");
+                filePicker.setVisible(true);
+                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
+
+                if (fileChosen.length() == 0)
+                    return;
+
+                Window.setOutputStream(fileChosen);
             }
             case EXIT -> {
                 System.exit(0);

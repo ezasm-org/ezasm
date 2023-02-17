@@ -112,6 +112,7 @@ public class SimulatorGUIActions {
             System.out.println("** Program starting **");
             startWorker();
             Window.resetHighlight();
+            Window.resetInputStream();
         } catch (ParseException e) {
             setState(State.STOPPED);
             Window.getInstance().handleParseException(e);

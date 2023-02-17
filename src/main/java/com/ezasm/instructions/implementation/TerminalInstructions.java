@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.ezasm.util.Conversion;
+import com.ezasm.gui.Window;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;
@@ -38,6 +39,17 @@ public class TerminalInstructions {
         outputStream = newOutput;
         inputReader = new Scanner(newInput);
         outputWriter = new PrintStream(newOutput);
+    }
+
+    public static void resetInputStream() {
+        try {
+            if (inputStream instanceof FileInputStream) {
+                inputReader = new Scanner(new FileInputStream(Window.getInputFilePath()));
+            }
+
+        } catch (IOException ignored) {
+
+        }
     }
 
     public TerminalInstructions(ISimulator simulator) {
