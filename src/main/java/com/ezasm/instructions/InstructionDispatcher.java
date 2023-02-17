@@ -30,14 +30,11 @@ public class InstructionDispatcher {
     /**
      * The internal backing map for Strings and loaded instructions.
      */
-    private static final HashMap<InstructionPrototype, DispatchInstruction> instructions = new HashMap<>();
+    private static final HashMap<String, ArrayList<InstructionOverload>> instructions = new HashMap<>();
 
     static {
         registerInstructions(ArithmeticInstructions.class);
-        registerInstructions(FloatArithmeticInstructions.class);
         registerInstructions(TerminalInstructions.class);
-        registerInstructions(BranchInstructions.class);
-        registerInstructions(ComparisonInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
     }
@@ -69,10 +66,11 @@ public class InstructionDispatcher {
         validateInstruction(method);
         instructions.put(name, new DispatchInstruction(parent, method));
 
-        InstructionPrototype prototype = new InstructionPrototype(name, method.getParameterTypes());
+        InstructionOverload overload = new InstructionOverload(method.getParameterTypes(),
+                new DispatchInstruction(parent, method));
 
-        System.out.println(prototype.toString() + "  " + prototype.hashCode());
-
+        instructions.putIfAbsent(name, new ArrayList<>());
+        instructions.get(name).add(overload);
         instructions.put(new InstructionPrototype(name, method.getParameterTypes()), new DispatchInstruction(parent, method));
     }
 
@@ -88,8 +86,22 @@ public class InstructionDispatcher {
      *
      * @return the map of registered Instructions.
      */
-    public static Map<InstructionPrototype, DispatchInstruction> getInstructions() {
+    public static Map<String, ArrayList<InstructionOverload>> getInstructions() {
         return Collections.unmodifiableMap(instructions);
+    }
+
+    public static DispatchInstruction getOverload(String name, Class<?>[] args) {
+        ArrayList<InstructionOverload> overloads = instructions.get(name);
+
+        if (overloads == null)
+            return null;
+
+        for (InstructionOverload overload : overloads) {
+            if (overload.isCallableWith(args))
+                return overload.dispatch();
+        }
+
+        return null;
     }
 
     /**
@@ -118,9 +130,10 @@ public class InstructionDispatcher {
      * For all registered instructions, load an instance for each handler and bind it to a simulator.
      */
     private void loadInstructionHandlers() {
-        InstructionDispatcher.instructions.values().stream()
-                .filter(instruction -> instructionHandlerInstances.get(instruction.getParent()) == null)
-                .forEach(this::loadInstructionHandler);
+        InstructionDispatcher.instructions.values()
+                .forEach(overloads -> overloads.stream()
+                        .filter(overload -> instructionHandlerInstances.get(overload.dispatch().getParent()) == null)
+                        .forEach(overload -> loadInstructionHandler(overload.dispatch())));
     }
 
     /**
@@ -148,7 +161,7 @@ public class InstructionDispatcher {
      *                                      {@link IllegalInstructionException} if the instruction is unrecognized.
      */
     public void execute(Line line) throws SimulationException {
-        DispatchInstruction dispatch = instructions.get(line.getInstruction().text());
+        DispatchInstruction dispatch = getOverload(line.getInstruction().text(), line.getArgumentTypes());
         if (dispatch == null)
             throw new IllegalInstructionException(line.getInstruction().text());
 

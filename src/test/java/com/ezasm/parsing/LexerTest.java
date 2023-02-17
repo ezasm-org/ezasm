@@ -1,9 +1,6 @@
 package com.ezasm.parsing;
 
 import com.ezasm.instructions.InstructionDispatcher;
-import com.ezasm.instructions.InstructionPrototype;
-import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.Registers;
 import org.junit.jupiter.api.Test;
 
@@ -97,12 +94,12 @@ class LexerTest {
 
     @Test
     void isInstruction() {
-        for (InstructionPrototype instruction : InstructionDispatcher.getInstructions().keySet()) {
+        for (String instruction : InstructionDispatcher.getInstructions().keySet()) {
             assertTrue(Lexer.isInstruction(instruction));
         }
-        assertFalse(Lexer.isInstruction(new InstructionPrototype("add0", IAbstractOutput.class, IAbstractInput.class, IAbstractInput.class)));
-        assertFalse(Lexer.isInstruction(new InstructionPrototype("#add", IAbstractOutput.class, IAbstractInput.class, IAbstractInput.class)));
-        assertFalse(Lexer.isInstruction(new InstructionPrototype("")));
+        assertFalse(Lexer.isInstruction("add0"));
+        assertFalse(Lexer.isInstruction("#add"));
+        assertFalse(Lexer.isInstruction(""));
     }
 
     private static boolean testLineAgainstString(Line line, String string) {

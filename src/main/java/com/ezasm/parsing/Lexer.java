@@ -255,8 +255,7 @@ public class Lexer {
      * @param token the token String in question.
      * @return true if the token is a registered instruction, false otherwise.
      */
-    public static boolean isInstruction(InstructionPrototype token) {
-        System.out.println("Looking for: " + token);
+    public static boolean isInstruction(String token) {
         return InstructionDispatcher.getInstructions().containsKey(token);
     }
 
