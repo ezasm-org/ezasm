@@ -15,7 +15,7 @@ import java.io.IOException;
 public class MenubarFactory {
 
     // Menu options to be referenced elsewhere
-    private static final String LOAD = "Load File";
+    private static final String LOAD = "Open File";
     private static final String SAVE = "Save File";
     private static final String EXIT = "Exit";
     private static final String CONFIG = "Config";
