@@ -19,6 +19,8 @@ public class MenubarFactory {
     private static final String SAVE = "Save File";
     private static final String EXIT = "Exit";
     private static final String CONFIG = "Config";
+    private static final String INPUTFILE = "Choose Input File";
+    private static final String OUTPUTFILE = "Choose Output File";
 
     private static final MenuActionListener actionListener = new MenuActionListener();
 
@@ -54,6 +56,15 @@ public class MenubarFactory {
         menu.getAccessibleContext().setAccessibleDescription("Popups related to settings");
         menubar.add(menu);
         addMenuItem(menu, CONFIG);
+
+        /*
+         * IO
+         */
+        menu = new JMenu("IO Direction");
+        menu.getAccessibleContext().setAccessibleDescription("Popups related to input and output redirection");
+        menubar.add(menu);
+        addMenuItem(menu, INPUTFILE);
+        addMenuItem(menu, OUTPUTFILE);
 
         return menubar;
     }

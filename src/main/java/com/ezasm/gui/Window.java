@@ -64,6 +64,7 @@ public class Window {
 
     /**
      * Generate the singleton Window instance if it does not exist.
+     * Sets the input/output streams for our TerminalInstructions to files
      *
      * @param simulator      the simulator to use.
      * @param config         the program configuration.
@@ -73,6 +74,17 @@ public class Window {
     public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
         if (instance == null) {
             new Window(simulator, config);
+            setInputOutputStreams(inputFilePath, outputFilePath);
+        }
+    }
+
+    /**
+     * Sets the input/output streams for our TerminalInstructions to files
+     *
+     * @param inputFilePath  the desired file to use for the InputStream.
+     * @param outputFilePath the desired file to use for the OutputStream.
+     */
+    public static void setInputOutputStreams(String inputFilePath, String outputFilePath){
             try {
                 if (inputFilePath.length() > 0) {
                     instance.inputStream = new FileInputStream(new File(inputFilePath));
@@ -96,7 +108,6 @@ public class Window {
                 System.exit(1);
             }
             TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
-        }
     }
 
     /**
