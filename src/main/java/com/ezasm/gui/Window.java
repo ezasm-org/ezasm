@@ -25,6 +25,7 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
+    private String loadedFile;
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -164,6 +165,20 @@ public class Window {
         // if it is not, System.out malfunctions
         TerminalInstructions.clearBuffer();
     }
+
+    /**
+     * Sets the currently viewed file in the window.
+     *
+     * @param filePath the path of the file to set.
+     */
+    public void setLoadedFile(String filePath) { loadedFile = filePath; }
+
+    /**
+     * Gets the path to the file loaded in the window.
+     */
+    public String getLoadedFile() { if(loadedFile != null) { return loadedFile; } else { return ""; } }
+
+
 
     /**
      * Sets the text of the editor to the given content.

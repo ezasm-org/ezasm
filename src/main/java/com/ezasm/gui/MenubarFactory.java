@@ -7,6 +7,7 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -16,7 +17,8 @@ public class MenubarFactory {
 
     // Menu options to be referenced elsewhere
     private static final String LOAD = "Open File";
-    private static final String SAVE = "Save File";
+    private static final String SAVE = "Save";
+    private static final String SAVE_AS = "Save as...";
     private static final String EXIT = "Exit";
     private static final String CONFIG = "Config";
 
@@ -44,6 +46,7 @@ public class MenubarFactory {
 
         addMenuItem(menu, LOAD);
         addMenuItem(menu, SAVE);
+        addMenuItem(menu, SAVE_AS);
         menu.addSeparator();
         addMenuItem(menu, EXIT);
 
@@ -73,7 +76,7 @@ public class MenubarFactory {
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
-            case SAVE -> {
+            case SAVE_AS -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 fileChooser.setSelectedFile(new File("code.ez"));
@@ -101,6 +104,23 @@ public class MenubarFactory {
                     }
                 }
             }
+
+            case SAVE -> {
+                File fileToUpdate = new File(Window.getInstance().getLoadedFile());
+                if (fileToUpdate != null && fileToUpdate.exists() && fileToUpdate.canRead()) {
+                    String content = Window.getInstance().getText();
+                    try {
+                        FileWriter writer = new FileWriter(fileToUpdate.getPath());
+                        writer.write(content);
+                        writer.close();
+                    } catch(IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "ERROR: Not able to save file.");
+                }
+            }
+
             case LOAD -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                 System.getProperty("user.home");
@@ -113,6 +133,7 @@ public class MenubarFactory {
                         try {
                             String content = FileIO.readFile(file);
                             Window.getInstance().setText(content);
+                            Window.getInstance().setLoadedFile(file.getPath());
                         } catch (IOException ex) {
                             // TODO handle
                             throw new RuntimeException();
