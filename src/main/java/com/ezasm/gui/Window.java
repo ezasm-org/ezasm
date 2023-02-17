@@ -102,8 +102,6 @@ public class Window {
                 instance.inputStream = System.in;
             }
         } catch (IOException e) {
-            System.err.printf("Unable to read input from %s: %s", inputFilePath, e.getMessage());
-            System.exit(1);
         }
 
         TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
@@ -112,7 +110,7 @@ public class Window {
     /**
      * Sets the input stream for our TerminalInstructions to files
      *
-     * @param inputFilePath the desired file to use for the InputStream.
+     * @param outputFilePath the desired file to use for the InputStream.
      */
     public static void setOutputStream(String outputFilePath) {
         instance.outputFilePath = outputFilePath;
@@ -124,8 +122,6 @@ public class Window {
             } else
                 instance.outputStream = System.out;
         } catch (IOException e) {
-            System.err.printf("Unable to write output to %s: %s", outputFilePath, e.getMessage());
-            System.exit(1);
         }
         TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
     }

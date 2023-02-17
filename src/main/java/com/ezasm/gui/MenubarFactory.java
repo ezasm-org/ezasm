@@ -90,7 +90,7 @@ public class MenubarFactory {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name your file",
                         FileDialog.SAVE);
                 filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("*.ez");
+                filePicker.setFile("code.ez");
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
                 File file = new File(fileChosen);
@@ -110,20 +110,22 @@ public class MenubarFactory {
                 filePicker.setFile("*.ez");
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-                if (fileChosen.length() == 0)
+                if (fileChosen.length() == 0 || fileChosen.equals("nullnull")) {
                     return;
+                }
 
                 try {
                     Window.getInstance().setText(FileIO.readFile(new File(fileChosen)));
                 } catch (IOException ex) {
+                    // TODO handle
+                    ex.printStackTrace();
                     throw new RuntimeException();
                 }
             }
             case INPUTFILE -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose a file",
+                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose an input file",
                         FileDialog.LOAD);
                 filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("*");
                 filePicker.setVisible(true);
 
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
@@ -133,10 +135,10 @@ public class MenubarFactory {
                 Window.setInputStream(fileChosen);
             }
             case OUTPUTFILE -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name your file",
+                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name an output file",
                         FileDialog.SAVE);
                 filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("*.ez");
+                filePicker.setFile("output.txt");
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
 
