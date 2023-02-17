@@ -1,17 +1,15 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.simulation.transform.TransformationSequence;
-import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.util.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.util.RawData;
 
 import java.util.function.BinaryOperator;
-import java.util.function.UnaryOperator;
 
 /**
  * An implementation of standard arithmetic instructions for the simulation.
