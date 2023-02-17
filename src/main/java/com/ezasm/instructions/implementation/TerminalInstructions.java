@@ -17,8 +17,10 @@ import com.ezasm.simulation.exception.SimulationException;
  */
 public class TerminalInstructions {
 
-    private static InputStream inputStream = System.in;
-    private static OutputStream outputStream = System.out;
+    public static InputStream defaultInputStream = System.in;
+    public static OutputStream defaultOutputStream = System.out;
+    private static InputStream inputStream = defaultInputStream;
+    private static OutputStream outputStream = defaultOutputStream;
 
     private final ISimulator simulator;
     private static Scanner inputReader;
@@ -35,10 +37,18 @@ public class TerminalInstructions {
      * @param newOutput the output stream.
      */
     public static void setInputOutput(InputStream newInput, OutputStream newOutput) {
-        inputStream = newInput;
+        setInputStream(newInput);
+        setOutputStream(newOutput);
+    }
+
+    public static void setOutputStream(OutputStream newOutput) {
         outputStream = newOutput;
-        inputReader = new Scanner(newInput);
         outputWriter = new PrintStream(newOutput);
+    }
+
+    public static void setInputStream(InputStream newInput) {
+        inputStream = newInput;
+        inputReader = new Scanner(newInput);
     }
 
     public static void resetInputStream() {

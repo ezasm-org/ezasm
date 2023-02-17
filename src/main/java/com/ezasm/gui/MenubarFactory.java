@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.util.FileIO;
 
 import javax.swing.*;
@@ -21,8 +22,10 @@ public class MenubarFactory {
     private static final String SAVE = "Save File";
     private static final String EXIT = "Exit";
     private static final String CONFIG = "Config";
-    private static final String INPUTFILE = "Choose Input File";
-    private static final String OUTPUTFILE = "Choose Output File";
+    private static final String INPUT_FILE = "Choose Input File";
+    private static final String OUTPUT_FILE = "Choose Output File";
+    private static final String RESET_INPUT_REDIRECT = "Reset Input Redirect";
+    private static final String RESET_OUTPUT_REDIRECT = "Reset Output Redirect";
 
     private static final MenuActionListener actionListener = new MenuActionListener();
 
@@ -65,8 +68,10 @@ public class MenubarFactory {
         menu = new JMenu("IO Direction");
         menu.getAccessibleContext().setAccessibleDescription("Popups related to input and output redirection");
         menubar.add(menu);
-        addMenuItem(menu, INPUTFILE);
-        addMenuItem(menu, OUTPUTFILE);
+        addMenuItem(menu, INPUT_FILE);
+        addMenuItem(menu, OUTPUT_FILE);
+        addMenuItem(menu, RESET_INPUT_REDIRECT);
+        addMenuItem(menu, RESET_OUTPUT_REDIRECT);
 
         return menubar;
     }
@@ -122,7 +127,7 @@ public class MenubarFactory {
                     throw new RuntimeException();
                 }
             }
-            case INPUTFILE -> {
+            case INPUT_FILE -> {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose an input file",
                         FileDialog.LOAD);
                 filePicker.setDirectory(System.getProperty("user.home"));
@@ -134,7 +139,7 @@ public class MenubarFactory {
 
                 Window.setInputStream(fileChosen);
             }
-            case OUTPUTFILE -> {
+            case OUTPUT_FILE -> {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name an output file",
                         FileDialog.SAVE);
                 filePicker.setDirectory(System.getProperty("user.home"));
@@ -146,6 +151,12 @@ public class MenubarFactory {
                     return;
 
                 Window.setOutputStream(fileChosen);
+            }
+            case RESET_INPUT_REDIRECT -> {
+                TerminalInstructions.setInputStream(TerminalInstructions.defaultInputStream);
+            }
+            case RESET_OUTPUT_REDIRECT -> {
+                TerminalInstructions.setOutputStream(TerminalInstructions.defaultOutputStream);
             }
             case EXIT -> {
                 System.exit(0);
