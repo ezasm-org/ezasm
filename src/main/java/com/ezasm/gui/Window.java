@@ -107,7 +107,6 @@ public class Window {
         instance.outputFilePath = outputFile.getPath();
         try {
             if (outputFile.length() > 0) {
-                File outputFile = new File(outputFile);
                 outputFile.createNewFile();
                 instance.outputStream = new FileOutputStream(outputFile);
             } else
