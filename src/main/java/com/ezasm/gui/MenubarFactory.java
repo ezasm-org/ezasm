@@ -93,7 +93,7 @@ public class MenubarFactory {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
@@ -126,7 +126,7 @@ public class MenubarFactory {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 System.getProperty("user.home");
@@ -148,9 +148,10 @@ public class MenubarFactory {
             }
             case INPUT_FILE -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                fileChooser.setDialogTitle("Choose an input file");
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 System.getProperty("user.home");
@@ -166,9 +167,10 @@ public class MenubarFactory {
             }
             case OUTPUT_FILE -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                fileChooser.setDialogTitle("Choose an output file");
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
