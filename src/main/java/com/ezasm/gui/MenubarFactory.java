@@ -98,9 +98,13 @@ public class MenubarFactory {
                 filePicker.setFile("code.ez");
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-                File file = new File(fileChosen);
+
+                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
+                    return;
+                }
+
                 try {
-                    FileIO.writeFile(file, Window.getInstance().getText());
+                    FileIO.writeFile(new File(fileChosen), Window.getInstance().getText());
                 } catch (IOException ex) {
                     // TODO handle
                     ex.printStackTrace();
@@ -112,10 +116,10 @@ public class MenubarFactory {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose a file",
                         FileDialog.LOAD);
                 filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("*.ez");
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-                if (fileChosen.length() == 0 || fileChosen.equals("nullnull")) {
+
+                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
                     return;
                 }
 
@@ -132,10 +136,11 @@ public class MenubarFactory {
                         FileDialog.LOAD);
                 filePicker.setDirectory(System.getProperty("user.home"));
                 filePicker.setVisible(true);
-
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-                if (fileChosen.length() == 0)
+
+                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
                     return;
+                }
 
                 Window.setInputStream(fileChosen);
             }
@@ -147,8 +152,9 @@ public class MenubarFactory {
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
 
-                if (fileChosen.length() == 0)
+                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
                     return;
+                }
 
                 Window.setOutputStream(fileChosen);
             }
