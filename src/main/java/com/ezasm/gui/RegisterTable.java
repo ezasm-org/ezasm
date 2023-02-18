@@ -7,8 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.CellRendererPane;
-
+import javax.swing.table.TableCellRenderer;
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
  */
@@ -32,7 +31,6 @@ public class RegisterTable extends JPanel {
         table.setModel(model);
         
         JScrollPane scrollPane = new JScrollPane(table);
-        CellRendererPane rendererPane = new CellRendererPane();
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(table.getPreferredSize());
@@ -45,23 +43,21 @@ public class RegisterTable extends JPanel {
     /**
      * The function to highlight changed registers
      */
-    public void ChangeCellColor(int col_index, int row_index){
-        table.getColumnModel().getColumn(col_index).setCellRenderer(new DefaultTableCellRenderer(){
+    public void ChangeCellColor(int row_index){
+        TableCellRenderer render = new DefaultTableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col){
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
                 if(row == row_index){
                     c.setForeground(Color.red);
                 }
-                else if(c == null){
-                    System.out.println("Yes");
-                }
                 else{
                     c.setForeground(Color.black);
                 }
                 return c;
-            }
-        });
+            }      
+        };
+        table.getColumnModel().getColumn(0).setCellRenderer(render);
     }
     
     
@@ -70,7 +66,7 @@ public class RegisterTable extends JPanel {
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        ChangeCellColor(0, changedRegisterNum-1);
+        ChangeCellColor(changedRegisterNum-1);
         table.updateUI();
     }
 
