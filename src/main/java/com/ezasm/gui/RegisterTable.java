@@ -63,7 +63,7 @@ public class RegisterTable extends JPanel implements IThemeable {
         table.getColumnModel().getColumn(0).setCellRenderer(render);
     }
     
-   
+     /**
      * Applies the proper theming to the editor area
      */
     public void applyTheme(Font font, Theme theme) {
