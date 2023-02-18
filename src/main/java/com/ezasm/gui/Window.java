@@ -142,7 +142,7 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         updateRegisters();
-        simulator.addLines(Lexer.parseLines(editor.getText(), 0));
+        simulator.addLines(Lexer.parseLines(editor.getText()));
         instance.editor.resetHighlighter();
 
     }
@@ -217,8 +217,9 @@ public class Window {
      * @return The current theme object
      */
     public static Theme currentTheme() {
-        if (instance == null)
+        if (instance == null) {
             return null;
+        }
         return Theme.getTheme(getInstance().config.getTheme());
     }
 
@@ -226,9 +227,9 @@ public class Window {
      * Resets the editor highlighter, updating color to current theme and clearing all highlights
      */
     public static void resetHighlight() {
-        if (!Window.hasInstance())
+        if (!Window.hasInstance()) {
             return;
-
+        }
         Window.getInstance().editor.resetHighlighter();
     }
 }

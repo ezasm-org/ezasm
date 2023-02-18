@@ -48,7 +48,7 @@ public class CommandLineInterface {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
+            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file))));
         } catch (ParseException | IOException e) {
             System.err.println(e.getMessage());
             System.exit(1);
@@ -67,7 +67,7 @@ public class CommandLineInterface {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
+            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file))));
         } catch (ParseException | IOException e) {
             System.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
