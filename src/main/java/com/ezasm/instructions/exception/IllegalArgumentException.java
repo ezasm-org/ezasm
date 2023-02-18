@@ -6,6 +6,7 @@ package com.ezasm.instructions.exception;
 public class IllegalArgumentException extends java.lang.IllegalArgumentException {
 
     private final int argIndex;
+
     public IllegalArgumentException(int argIndex) {
         this.argIndex = argIndex;
     }

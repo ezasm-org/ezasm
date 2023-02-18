@@ -1,17 +1,17 @@
 package com.ezasm.simulation;
 
-import com.ezasm.Conversion;
+import com.ezasm.util.Conversion;
+import com.ezasm.simulation.exception.SimulationAddressOutOfBoundsException;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.Arrays;
 
 /**
- * Represents the system memory.
- * There will be a single and contiguous array of memory which represents both the stack and heap
- * with the stack growing downward and the heap growing upward.
- * Implements an "offset" for the address spacing to not start at 0.
- * Keeps track of allocated memory and throws an exception when the heap crosses the stack.
- * Has a default size of 2^16 words (or 2^19 bytes).
- * Has a default word size of 8 bytes (the typical long integer or long float size).
+ * Represents the system memory. There will be a single and contiguous array of memory which represents both the stack
+ * and heap with the stack growing downward and the heap growing upward. Implements an "offset" for the address spacing
+ * to not start at 0. Keeps track of allocated memory and throws an exception when the heap crosses the stack. Has a
+ * default size of 2^16 words (or 2^19 bytes). Has a default word size of 8 bytes (the typical long integer or long
+ * float size).
  */
 public class Memory {
 
@@ -47,7 +47,8 @@ public class Memory {
 
     /**
      * Constructs memory with different parameters for word size and memory size.
-     * @param wordSize the word size in bytes.
+     *
+     * @param wordSize   the word size in bytes.
      * @param memorySize the memory size in words.
      */
     public Memory(int wordSize, int memorySize) {
@@ -58,8 +59,7 @@ public class Memory {
     }
 
     /**
-     * Resets the memory by setting all values to zero and returning the allocation
-     * pointer to zero.
+     * Resets the memory by setting all values to zero and returning the allocation pointer to zero.
      */
     public void reset() {
         Arrays.fill(memory, (byte) 0);
@@ -68,6 +68,7 @@ public class Memory {
 
     /**
      * Gets the size of the memory as a number of words.
+     *
      * @return the size of the memory as a number of words.
      */
     public int size() {
@@ -76,6 +77,7 @@ public class Memory {
 
     /**
      * Gets the initial stack pointer of the memory.
+     *
      * @return the initial stack pointer of the memory.
      */
     public int initialStackPointer() {
@@ -84,6 +86,7 @@ public class Memory {
 
     /**
      * Gets the initial heap pointer of the memory.
+     *
      * @return the initial heap pointer of the memory.
      */
     public int initialHeapPointer() {
@@ -92,26 +95,25 @@ public class Memory {
 
     /**
      * Gets the current heap pointer of the memory.
+     *
      * @return the current heap pointer of the memory.
      */
     public int currentHeapPointer() {
         return alloc + OFFSET;
     }
 
-
-
     /**
-     * Allocates a certain number of bytes with a check based on stack pointer to ensure that
-     * the heap pointer does not cross the stack pointer.
+     * Allocates a certain number of bytes with a check based on stack pointer to ensure that the heap pointer does not
+     * cross the stack pointer.
+     *
      * @param bytes the number of bytes to allocate.
-     * @param sp the current stack pointer of the program.
+     * @param sp    the current stack pointer of the program.
      * @return the allocated memory starting point
      */
-    public int allocate(int bytes, int sp) {
-        if(alloc + bytes + OFFSET > sp) {
-            // Error: Attempted to allocate onto the stack
-            System.out.println("Error allocating");
-            return 0;
+    public int allocate(int bytes, int sp) throws SimulationException {
+        if (alloc + bytes + OFFSET > sp) {
+            throw new SimulationException(String.format(
+                    "Allocating %d bytes with $SP at %d would cause the heap to overwrite the stack", bytes, sp));
         }
         int addr = alloc;
         alloc = alloc + bytes;
@@ -120,10 +122,11 @@ public class Memory {
 
     /**
      * Allocates a certain number of bytes without a check based on stack pointer.
+     *
      * @param bytes the number of bytes to allocate.
-     * @return the allocated memory starting point
+     * @return the allocated memory starting point.
      */
-    public int allocate(int bytes) {
+    public int unsafeAllocate(int bytes) {
         int addr = alloc;
         alloc = alloc + bytes;
         return addr + OFFSET;
@@ -131,105 +134,114 @@ public class Memory {
 
     /**
      * Gets the information from the memory at a certain address.
+     *
      * @param address the address to begin to read from.
-     * @param count the number of bytes to read.
+     * @param count   the number of bytes to read.
      * @return the information read from the memory at a certain address.
      */
-    public byte[] read(int address, int count) {
+    public byte[] read(int address, int count) throws SimulationAddressOutOfBoundsException {
         address = address - OFFSET;
-        if(address < 0 || (address + count) >= this.MEMORY_SIZE) {
-            // Error: address is out of bounds
-            System.out.println("Error: possible read out of bounds with address" + address);
-            return null;
+        if (address < 0 || (address + count) > this.MEMORY_SIZE) {
+            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
-
         return Arrays.copyOfRange(memory, address, address + count);
     }
 
     /**
+     * Gets one word of information from the memory at a certain address.
+     *
+     * @param address the address to begin to read from.
+     * @return the information read from the memory at a certain address.
+     */
+    public byte[] read(int address) throws SimulationAddressOutOfBoundsException {
+        return read(address, WORD_SIZE);
+    }
+
+    /**
      * Gets the information from the memory at a certain address interpreted as a long.
+     *
      * @param address the address to begin to read from.
      * @return the long read from the memory at a certain address.
      */
-    public long readLong(int address) {
+    public long readLong(int address) throws SimulationAddressOutOfBoundsException {
         return Conversion.bytesToLong(read(address, WORD_SIZE));
     }
 
     /**
      * Gets the information from the memory at a certain address interpreted as a String.
+     *
      * @param address the starting address to read from.
      * @param maxSize the maximum size of the String to be in bytes.
      * @return the String interpreted.
      */
-    public String readString(int address, int maxSize) {
-        address = address - OFFSET;
-        if(maxSize < 0) {
-            System.out.println("Error: max string size cannot be less than zero");
+    public String readString(int address, int maxSize) throws SimulationException {
+        if (maxSize < 0) {
+            throw new SimulationException(String.format("String size cannot be %d", maxSize));
         }
-        if(address < 0 || (address + maxSize) >= this.MEMORY_SIZE) {
-            // Error: address is out of bounds
-            System.out.println("Error: possible read out of bounds with address " + address);
-            return null;
+        if (address - OFFSET < 0 || (address + maxSize - OFFSET) >= this.MEMORY_SIZE) {
+            throw new SimulationAddressOutOfBoundsException(address);
         }
 
-        byte[] toString = new byte[maxSize];
-        for(int i = 0; i < maxSize; ++i) {
-            toString[i] = memory[address + i];
-            if(memory[address + i] == '\0') {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < maxSize; ++i) {
+            char c = (char) Conversion.bytesToLong(read(address + i * WORD_SIZE));
+            if (c == '\0') {
                 break;
             }
+            sb.append(c);
         }
-        return Conversion.bytesToString(toString);
+        return sb.toString();
     }
 
     /**
      * Writes data to the specified address.
+     *
      * @param address the address to write at.
-     * @param data the data to write.
+     * @param data    the data to write.
      */
-    public void write(int address, byte[] data) {
+    public void write(int address, byte[] data) throws SimulationAddressOutOfBoundsException {
         address = address - OFFSET;
-        if(address < 0 || (address + data.length) >= this.MEMORY_SIZE) {
-            // Error: address is out of bounds
-            System.out.println("Error: address is out of bounds");
-            return;
+        if (address < 0 || (address + data.length) > this.MEMORY_SIZE) {
+            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
         System.arraycopy(data, 0, memory, address, data.length);
     }
 
     /**
      * Writes a long to the specified address.
+     *
      * @param address the address to write at.
-     * @param data the long to write.
+     * @param data    the long to write.
      */
-    public void writeLong(int address, long data) {
+    public void writeLong(int address, long data) throws SimulationAddressOutOfBoundsException {
         write(address, Conversion.longToBytes(data));
     }
 
     /**
      * Writes a String to the specified address.
+     *
      * @param address the address to write at.
-     * @param data the String to write.
+     * @param string  the String to write.
      * @param maxSize the maximum size of the String to be in bytes.
      */
-    public void writeString(int address, String data, int maxSize) {
-        address = address - OFFSET;
-        if(maxSize < 0) {
-            System.out.println("Error: max string size cannot be less than zero");
-            return;
+    public void writeString(int address, String string, int maxSize) throws SimulationException {
+        int realAddress = address - OFFSET;
+
+        if (maxSize < 0) {
+            throw new SimulationException(String.format("String size cannot be %d", maxSize));
         }
-        if(address < 0 || (address + data.getBytes().length) >= this.MEMORY_SIZE) {
-            // Error: address is out of bounds
-            System.out.println("Error: address is out of bounds");
-            return;
+        if (realAddress < 0 || (realAddress + string.length()) >= this.MEMORY_SIZE) {
+            throw new SimulationAddressOutOfBoundsException(address);
         }
 
-        for(int i = 0; i < data.getBytes().length && i < maxSize; ++i) {
-            memory[address + i] = data.getBytes()[i];
+        byte[][] data = Conversion.stringToBytes(string);
+
+        for (int i = 0; i < data.length && i < maxSize; ++i) {
+            write(address + i * WORD_SIZE, data[i]);
         }
 
-        if(maxSize <= data.getBytes().length) {
-            memory[address + maxSize] = '\0';
+        if (maxSize <= data.length) {
+            write(address + maxSize * WORD_SIZE, Conversion.longToBytes('\0'));
         }
     }
 

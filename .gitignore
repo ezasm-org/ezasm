@@ -1,6 +1,6 @@
-.idea
-*.iml
-/out/
-bin/**/*
-/src/main/resources/runtime/
+.idea/
 /target/
+*.iml
+.settings
+.classpath
+.project
