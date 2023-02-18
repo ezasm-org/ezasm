@@ -44,15 +44,6 @@ public class Window {
     }
 
     /**
-     * Return the main JFrame of the current instance.
-     *
-     * @return the JFrame.
-     */
-    public JFrame getFrame() {
-        return app;
-    }
-
-    /**
      * Generate the singleton Window instance if it does not exist.
      *
      * @param simulator the simulator to use.

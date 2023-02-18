@@ -4,8 +4,6 @@ import com.ezasm.util.FileIO;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
-
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -76,37 +74,50 @@ public class MenubarFactory {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
             case SAVE -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name your file",
-                        FileDialog.SAVE);
-                filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("*.ez");
-                filePicker.setVisible(true);
-                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-                System.out.println(fileChosen);
-                File file = new File(fileChosen);
-                try {
-                    FileIO.writeFile(file, Window.getInstance().getText());
-                } catch (IOException ex) {
-                    // TODO handle
-                    ex.printStackTrace();
-                    throw new RuntimeException();
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setSelectedFile(new File("code.ez"));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showSaveDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    boolean overwrite = true;
+                    if (file.exists()) {
+                        // File exists, prompt user to overwrite
+                        int confirmDialogOption = JOptionPane.showConfirmDialog(null,
+                                "The given file '" + file.getName() + "' already exits.\n"
+                                        + "Would you like to overwrite it?",
+                                "File Already Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
+                    }
+                    if (overwrite) {
+                        try {
+                            FileIO.writeFile(file, Window.getInstance().getText());
+                        } catch (IOException ex) {
+                            // TODO handle
+                            ex.printStackTrace();
+                            throw new RuntimeException();
+                        }
+                    }
                 }
-
             }
             case LOAD -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose a file",
-                        FileDialog.LOAD);
-                filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("*.ez");
-                filePicker.setVisible(true);
-                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-                if (fileChosen.length() == 0)
-                    return;
-
-                try {
-                    Window.getInstance().setText(FileIO.readFile(new File(fileChosen)));
-                } catch (IOException ex) {
-                    throw new RuntimeException();
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                System.getProperty("user.home");
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showOpenDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    if (file != null && file.exists() && file.canRead()) {
+                        try {
+                            String content = FileIO.readFile(file);
+                            Window.getInstance().setText(content);
+                        } catch (IOException ex) {
+                            // TODO handle
+                            throw new RuntimeException();
+                        }
+                    }
                 }
             }
             case EXIT -> {
