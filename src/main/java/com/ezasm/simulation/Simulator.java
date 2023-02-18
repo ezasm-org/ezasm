@@ -116,7 +116,7 @@ public class Simulator implements ISimulator {
     public void runLine(Line line) throws SimulationException {
         if (line != null && !line.isLabel()) {
             instructionDispatcher.execute(line);
-            Window.highlightValue(line.getStoreRegister().getRegister(),line.getStoreRegister().getRegisterNumber());
+            Window.highlightValue(line.getStoreRegister().getRegisterNumber());
         }
     }
 

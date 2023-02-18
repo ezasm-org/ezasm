@@ -16,7 +16,6 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final JTable table;
     private final Registers registers;
     private final JScrollPane scrollPane;
-    private String changedRegister = "";
     private int changedRegisterNum = 0;
     private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 2000);
@@ -138,8 +137,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      *Tell the table what the changed resgiter when execute the line
      * @param var the string of the changed variable
      */
-    public void addHighlightValue(String var,int number){
-          this.changedRegister=var;
+    public void addHighlightValue(int number){
           this.changedRegisterNum=number;
           //Don't need to care about Register Zero
           this.changedRegisterNum+=1;

@@ -237,14 +237,14 @@ public class Window {
     /**
     *  Connection function for passing the changed value
     */
-    public static void highlightValue(String register, int number){
-        instance.table.addHighlightValue(register,number);
+    public static void highlightValue(int number){
+        instance.table.addHighlightValue(number);
     }
     
     /**
     * Caller function for removing the highlight
     */
     public static void removehighlight(){
-        instance.table.addHighlightValue("None", -1);
+        instance.table.addHighlightValue(-1);
     }
 }
