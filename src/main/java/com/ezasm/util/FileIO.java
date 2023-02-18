@@ -2,10 +2,6 @@ package com.ezasm.util;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-
-import org.codehaus.plexus.util.FileUtils;
-
-import java.awt.FileDialog;
 import java.io.*;
 
 /**
@@ -50,21 +46,24 @@ public class FileIO {
      *
      * @param fileChooser the JFileChooser to act on.
      */
-    public static void filterFileChooser(FileDialog fileChooser, String[] extensions) {
-        FilenameFilter filter = new QuickFileFilter(extensions, "Acceptable files.");
-        fileChooser.setFilenameFilter(filter);
+    public static void filterFileChooser(JFileChooser fileChooser) {
+        FileFilter ezasm = new QuickFileFilter(".ez", "EzASM file");
+        FileFilter plain = new QuickFileFilter(".txt", "Text file");
+        fileChooser.addChoosableFileFilter(ezasm);
+        fileChooser.addChoosableFileFilter(plain);
+        fileChooser.setFileFilter(ezasm);
     }
 
     /**
      * Helper class to generate a file filter based on an extension and a description.
      */
-    private static class QuickFileFilter extends FileFilter implements FilenameFilter {
+    private static class QuickFileFilter extends FileFilter {
 
-        private final String[] extensions;
+        private final String extension;
         private final String description;
 
-        public QuickFileFilter(String[] extensions, String description) {
-            this.extensions = extensions;
+        public QuickFileFilter(String extension, String description) {
+            this.extension = extension;
             this.description = description;
         }
 
@@ -73,25 +72,12 @@ public class FileIO {
             if (file.isDirectory())
                 return true;
             else
-                return accept(null, file.getName());
-        }
-
-        @Override
-        public boolean accept(File file, String s) {
-            String extension = FileUtils.getExtension(s);
-            for (String ext : extensions) {
-                if (extension == null)
-                    return false;
-                if (ext.equals("*") || ext.equalsIgnoreCase(extension)) {
-                    return true;
-                }
-            }
-            return false;
+                return file.getName().toLowerCase().endsWith(extension);
         }
 
         @Override
         public String getDescription() {
-            return description + String.format(" (*%s)", extensions);
+            return description + String.format(" (*%s)", extension);
         }
     }
 
