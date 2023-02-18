@@ -94,6 +94,7 @@ public class MenubarFactory {
             case SAVE -> {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name your file",
                         FileDialog.SAVE);
+                FileIO.filterFileChooser(filePicker, new String[] { "ez", "txt" });
                 filePicker.setDirectory(System.getProperty("user.home"));
                 filePicker.setFile("code.ez");
                 filePicker.setVisible(true);
@@ -115,6 +116,7 @@ public class MenubarFactory {
             case LOAD -> {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose a file",
                         FileDialog.LOAD);
+                FileIO.filterFileChooser(filePicker, new String[] { "ez", "txt" });
                 filePicker.setDirectory(System.getProperty("user.home"));
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
@@ -134,6 +136,7 @@ public class MenubarFactory {
             case INPUT_FILE -> {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose an input file",
                         FileDialog.LOAD);
+                FileIO.filterFileChooser(filePicker, new String[] { "txt" });
                 filePicker.setDirectory(System.getProperty("user.home"));
                 filePicker.setVisible(true);
                 String fileChosen = filePicker.getDirectory() + filePicker.getFile();
@@ -147,6 +150,7 @@ public class MenubarFactory {
             case OUTPUT_FILE -> {
                 FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name an output file",
                         FileDialog.SAVE);
+                FileIO.filterFileChooser(filePicker, new String[] { "txt" });
                 filePicker.setDirectory(System.getProperty("user.home"));
                 filePicker.setFile("output.txt");
                 filePicker.setVisible(true);
