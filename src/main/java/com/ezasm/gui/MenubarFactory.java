@@ -75,6 +75,11 @@ public class MenubarFactory {
             switch (e.getActionCommand()) {
             case SAVE -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }catch(Exception ex) {
+                    ex.printStackTrace();
+                }
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 fileChooser.setSelectedFile(new File("code.ez"));
                 FileIO.filterFileChooser(fileChooser);
@@ -103,6 +108,11 @@ public class MenubarFactory {
             }
             case LOAD -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }catch(Exception ex) {
+                    ex.printStackTrace();
+                }
                 System.getProperty("user.home");
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 FileIO.filterFileChooser(fileChooser);
