@@ -156,7 +156,7 @@ public class MenubarFactory {
                 }
                 System.getProperty("user.home");
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                FileIO.filterFileChooser(fileChooser);
+                FileIO.filterFileChooserTXT(fileChooser);
                 int fileChooserOption = fileChooser.showOpenDialog(null);
                 if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
@@ -175,7 +175,7 @@ public class MenubarFactory {
                 }
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 fileChooser.setSelectedFile(new File("code.ez"));
-                FileIO.filterFileChooser(fileChooser);
+                FileIO.filterFileChooserTXT(fileChooser);
                 int fileChooserOption = fileChooser.showSaveDialog(null);
                 if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
