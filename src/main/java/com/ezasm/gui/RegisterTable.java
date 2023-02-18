@@ -138,7 +138,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     /**
      * Tell the table what the changed resgiter when execute the line
      *
-     * @param var the string of the changed variable
+     * @param number the index of changed register
      */
     public void addHighlightValue(int number) {
         this.changedRegisterNum = number;

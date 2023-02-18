@@ -238,6 +238,9 @@ public class Window {
      * Connection function for passing the changed value
      */
     public static void highlightValue(int number) {
+        if (instance == null || instance.table == null) {
+            return;
+        }
         instance.table.addHighlightValue(number);
     }
 
@@ -245,6 +248,9 @@ public class Window {
      * Caller function for removing the highlight
      */
     public static void removehighlight() {
+        if (instance == null || instance.table == null) {
+            return;
+        }
         instance.table.addHighlightValue(-1);
     }
 }
