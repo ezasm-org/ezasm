@@ -7,6 +7,7 @@ import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.Registers;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,7 +20,7 @@ public class Line {
     private final Instruction instruction;
     private final IAbstractTarget[] arguments;
     private final String label;
-
+    private int registerNum;
     /**
      * Creates and validates a line based on the given tokens.
      *
@@ -32,6 +33,7 @@ public class Line {
             this.label = instruction.substring(0, instruction.length() - 1);
             this.instruction = null;
             this.arguments = null;
+            this.registerNum = 0;
             if (arguments != null && arguments.length > 0) {
                 throw new ParseException(String.format("Unexpected token after label: '%s'", arguments[0]));
             }
@@ -44,7 +46,6 @@ public class Line {
                 InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget());
         this.arguments = new IAbstractTarget[arguments.length];
         this.label = null;
-
         if (this.instruction.target().getParameterCount() != arguments.length) {
             throw new ParseException(
                     String.format("Incorrect number of arguments for instruction '%s': expected %d but got %d",
@@ -59,7 +60,11 @@ public class Line {
                 this.arguments[i] = new ImmediateInput(
                         Conversion.longToBytes(Lexer.getCharacterImmediate(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
-                this.arguments[i] = new RegisterInputOutput(arguments[i]);
+                //Get the Stored Register Number
+                if(registerNum==0){
+                    this.registerNum = Registers.getRegisterNumber(arguments[i]);
+                }
+                this.arguments[i] = new RegisterInputOutput(arguments[i]);     
             } else if (Lexer.isDereference(arguments[i])) {
                 this.arguments[i] = new DereferenceInputOutput(arguments[i]);
             } else if (Lexer.isLabelReference(arguments[i])) {
@@ -113,6 +118,15 @@ public class Line {
      */
     public String getLabel() {
         return label;
+    }
+    
+    /**
+     * Get the Stored Register Number
+     * 
+     * @return the Stored Register Number
+     */
+    public int getRegisterNum(){
+        return this.registerNum;
     }
 
     @Override
