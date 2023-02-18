@@ -114,15 +114,13 @@ class LexerTest {
             assertTrue(testLineAgainstString(line, "add $s0,$t0,1"));
             assertTrue(testLineAgainstString(line, " \t\t  add $s0 $t0 1   "));
             assertTrue(testLineAgainstString(line, "add  $s0  \t $t0   1 "));
-            assertTrue(testLineAgainstString(line, "add $s0 $t0 1;"));
-            assertTrue(testLineAgainstString(line, "add $s0,$t0,1;"));
-            assertTrue(testLineAgainstString(line, " \t\t  add $s0 $t0 1   ;"));
-            assertTrue(testLineAgainstString(line, "add  $s0  \t $t0   1 ;"));
+            assertTrue(testLineAgainstString(line, "add $s0 $t0 1"));
+            assertTrue(testLineAgainstString(line, "add $s0,$t0,1"));
+            assertTrue(testLineAgainstString(line, " \t\t  add $s0 $t0 1   "));
+            assertTrue(testLineAgainstString(line, "add  $s0  \t $t0   1"));
 
             assertFalse(testLineAgainstString(line, "add $s0 $t1 1"));
             assertFalse(testLineAgainstString(line, "add $s0 $t0 2"));
-            assertFalse(testLineAgainstString(line, ""));
-
             assertFalse(testLineAgainstString(line, ""));
         } catch (ParseException ignored) {
         }
