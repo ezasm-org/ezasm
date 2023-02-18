@@ -5,8 +5,6 @@ import com.ezasm.util.FileIO;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
-
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -92,75 +90,107 @@ public class MenubarFactory {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
             case SAVE -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name your file",
-                        FileDialog.SAVE);
-                FileIO.filterFileChooser(filePicker, new String[] { "ez", "txt" });
-                filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("code.ez");
-                filePicker.setVisible(true);
-                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-
-                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
-                    return;
-                }
-
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                 try {
-                    FileIO.writeFile(new File(fileChosen), Window.getInstance().getText());
-                } catch (IOException ex) {
-                    // TODO handle
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }catch(Exception ex) {
                     ex.printStackTrace();
-                    throw new RuntimeException();
                 }
-
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setSelectedFile(new File("code.ez"));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showSaveDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    boolean overwrite = true;
+                    if (file.exists()) {
+                        // File exists, prompt user to overwrite
+                        int confirmDialogOption = JOptionPane.showConfirmDialog(null,
+                                "The given file '" + file.getName() + "' already exits.\n"
+                                        + "Would you like to overwrite it?",
+                                "File Already Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
+                    }
+                    if (overwrite) {
+                        try {
+                            FileIO.writeFile(file, Window.getInstance().getText());
+                        } catch (IOException ex) {
+                            // TODO handle
+                            ex.printStackTrace();
+                            throw new RuntimeException();
+                        }
+                    }
+                }
             }
             case LOAD -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose a file",
-                        FileDialog.LOAD);
-                FileIO.filterFileChooser(filePicker, new String[] { "ez", "txt" });
-                filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setVisible(true);
-                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-
-                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
-                    return;
-                }
-
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                 try {
-                    Window.getInstance().setText(FileIO.readFile(new File(fileChosen)));
-                } catch (IOException ex) {
-                    // TODO handle
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }catch(Exception ex) {
                     ex.printStackTrace();
-                    throw new RuntimeException();
+                }
+                System.getProperty("user.home");
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showOpenDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    if (file != null && file.exists() && file.canRead()) {
+                        try {
+                            String content = FileIO.readFile(file);
+                            Window.getInstance().setText(content);
+                        } catch (IOException ex) {
+                            // TODO handle
+                            throw new RuntimeException();
+                        }
+                    }
                 }
             }
             case INPUT_FILE -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Choose an input file",
-                        FileDialog.LOAD);
-                FileIO.filterFileChooser(filePicker, new String[] { "txt" });
-                filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setVisible(true);
-                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-
-                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
-                    return;
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }catch(Exception ex) {
+                    ex.printStackTrace();
                 }
-
-                Window.setInputStream(fileChosen);
+                System.getProperty("user.home");
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showOpenDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    if (file != null && file.exists() && file.canRead()) {
+                        Window.setInputStream(file.getPath());
+                    }
+                }
             }
             case OUTPUT_FILE -> {
-                FileDialog filePicker = new FileDialog(Window.getInstance().getFrame(), "Name an output file",
-                        FileDialog.SAVE);
-                FileIO.filterFileChooser(filePicker, new String[] { "txt" });
-                filePicker.setDirectory(System.getProperty("user.home"));
-                filePicker.setFile("output.txt");
-                filePicker.setVisible(true);
-                String fileChosen = filePicker.getDirectory() + filePicker.getFile();
-
-                if (fileChosen.length() == 0 || filePicker.getFiles().length == 0) {
-                    return;
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setSelectedFile(new File("code.ez"));
+                FileIO.filterFileChooser(fileChooser);
+                int fileChooserOption = fileChooser.showSaveDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    boolean overwrite = true;
+                    if (file.exists()) {
+                        // File exists, prompt user to overwrite
+                        int confirmDialogOption = JOptionPane.showConfirmDialog(null,
+                                "The given file '" + file.getName() + "' already exits.\n"
+                                        + "Would you like to overwrite it?",
+                                "File Already Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
+                    }
+                    if (overwrite) {
+                        Window.setOutputStream(file.getPath());
+                    }
                 }
 
-                Window.setOutputStream(fileChosen);
             }
             case RESET_INPUT_REDIRECT -> {
                 TerminalInstructions.setInputStream(TerminalInstructions.defaultInputStream);
