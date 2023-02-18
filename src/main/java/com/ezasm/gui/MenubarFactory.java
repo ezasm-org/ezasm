@@ -174,7 +174,7 @@ public class MenubarFactory {
                     ex.printStackTrace();
                 }
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                fileChooser.setSelectedFile(new File("code.ez"));
+                fileChooser.setSelectedFile(new File("output.txt"));
                 FileIO.filterFileChooserTXT(fileChooser);
                 int fileChooserOption = fileChooser.showSaveDialog(null);
                 if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
