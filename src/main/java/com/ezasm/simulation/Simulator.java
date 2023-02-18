@@ -68,6 +68,7 @@ public class Simulator {
         resetMemory();
         lines.clear();
         labels.clear();
+        Window.removehighlight();
     }
 
     /**

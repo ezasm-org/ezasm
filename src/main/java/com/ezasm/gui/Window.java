@@ -178,4 +178,7 @@ public class Window {
     public static void highlightValue(String register, int number){
         instance.table.addHighlightValue(register,number);
     }
+    public static void removehighlight(){
+        instance.table.addHighlightValue("None", -1);
+    }
 }
