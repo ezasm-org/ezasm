@@ -233,18 +233,18 @@ public class Window {
         }
         Window.getInstance().editor.resetHighlighter();
     }
-    
+
     /**
-    *  Connection function for passing the changed value
-    */
-    public static void highlightValue(int number){
+     * Connection function for passing the changed value
+     */
+    public static void highlightValue(int number) {
         instance.table.addHighlightValue(number);
     }
-    
+
     /**
-    * Caller function for removing the highlight
-    */
-    public static void removehighlight(){
+     * Caller function for removing the highlight
+     */
+    public static void removehighlight() {
         instance.table.addHighlightValue(-1);
     }
 }

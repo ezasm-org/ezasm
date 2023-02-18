@@ -21,6 +21,7 @@ public class Line {
     private final IAbstractTarget[] arguments;
     private final String label;
     private int registerNum;
+
     /**
      * Creates and validates a line based on the given tokens.
      *
@@ -60,11 +61,11 @@ public class Line {
                 this.arguments[i] = new ImmediateInput(
                         Conversion.longToBytes(Lexer.getCharacterImmediate(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
-                //Get the Stored Register Number
-                if(registerNum==0){
+                // Get the Stored Register Number
+                if (registerNum == 0) {
                     this.registerNum = Registers.getRegisterNumber(arguments[i]);
                 }
-                this.arguments[i] = new RegisterInputOutput(arguments[i]);     
+                this.arguments[i] = new RegisterInputOutput(arguments[i]);
             } else if (Lexer.isDereference(arguments[i])) {
                 this.arguments[i] = new DereferenceInputOutput(arguments[i]);
             } else if (Lexer.isLabelReference(arguments[i])) {
@@ -119,13 +120,13 @@ public class Line {
     public String getLabel() {
         return label;
     }
-    
+
     /**
      * Get the Stored Register Number
-     * 
+     *
      * @return the Stored Register Number
      */
-    public int getRegisterNum(){
+    public int getRegisterNum() {
         return this.registerNum;
     }
 

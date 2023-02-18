@@ -8,6 +8,7 @@ import java.awt.*;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
  */
@@ -20,6 +21,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 2000);
     private static final Dimension MAX_SIZE = new Dimension(350, 2000);
+
     /**
      * Given the registers, construct a table which displays the names and values of each one.
      *
@@ -43,26 +45,26 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * The function to highlight changed registers
-     */
-    public void ChangeCellColor(int row_index){
-        TableCellRenderer render = new DefaultTableCellRenderer(){
+     *      * The function to highlight changed registers      
+     */
+    public void ChangeCellColor(int row_index) {
+        TableCellRenderer render = new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col){
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                if(row == row_index || row == 1){
+                if (row == row_index || row == 1) {
                     c.setForeground(Color.red);
-                }
-                else{
+                } else {
                     c.setForeground(Color.black);
                 }
                 return c;
-            }      
+            }
         };
         table.getColumnModel().getColumn(0).setCellRenderer(render);
     }
-    
-     /**
+
+    /**
      * Applies the proper theming to the editor area
      */
     public void applyTheme(Font font, Theme theme) {
@@ -75,12 +77,11 @@ public class RegisterTable extends JPanel implements IThemeable {
         table.getTableHeader().setOpaque(false);
     }
 
-
     /**
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        ChangeCellColor(changedRegisterNum-1);
+        ChangeCellColor(changedRegisterNum - 1);
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -131,16 +132,18 @@ public class RegisterTable extends JPanel implements IThemeable {
         public String getColumnName(int column) {
             return columns[column];
         }
-        
+
     }
+
     /**
-     *Tell the table what the changed resgiter when execute the line
+     * Tell the table what the changed resgiter when execute the line
+     *
      * @param var the string of the changed variable
      */
-    public void addHighlightValue(int number){
-          this.changedRegisterNum=number;
-          //Don't need to care about Register Zero
-          this.changedRegisterNum+=1;
+    public void addHighlightValue(int number) {
+        this.changedRegisterNum = number;
+        // Don't need to care about Register Zero
+        this.changedRegisterNum += 1;
     }
-    
+
 }

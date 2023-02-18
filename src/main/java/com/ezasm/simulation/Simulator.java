@@ -1,6 +1,5 @@
 package com.ezasm.simulation;
 
-
 import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
@@ -116,7 +115,7 @@ public class Simulator implements ISimulator {
     public void runLine(Line line) throws SimulationException {
         if (line != null && !line.isLabel()) {
             instructionDispatcher.execute(line);
-            //Highlight changed Value
+            // Highlight changed Value
             Window.highlightValue(line.getRegisterNum());
         }
     }
