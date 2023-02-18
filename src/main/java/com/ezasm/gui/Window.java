@@ -75,20 +75,20 @@ public class Window {
     public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
         if (instance == null) {
             new Window(simulator, config);
-            setInputStream(inputFilePath);
+            setInputStream(new File(inputFilePath));
         }
     }
 
     /**
      * Sets the input stream for our TerminalInstructions to files
      *
-     * @param inputFilePath the desired file to use for the InputStream.
+     * @param inputFile the desired file to use for the InputStream.
      */
-    public static void setInputStream(String inputFilePath) {
-        instance.inputFilePath = inputFilePath;
+    public static void setInputStream(File inputFile) {
+        instance.inputFilePath = inputFile.getPath();
         try {
-            if (inputFilePath.length() > 0) {
-                instance.inputStream = new FileInputStream(new File(inputFilePath));
+            if (inputFile.length() > 0) {
+                instance.inputStream = new FileInputStream(inputFile);
             } else {
                 instance.inputStream = System.in;
             }
@@ -101,13 +101,13 @@ public class Window {
     /**
      * Sets the input stream for our TerminalInstructions to files
      *
-     * @param outputFilePath the desired file to use for the InputStream.
+     * @param outputFile the desired file to use for the InputStream.
      */
-    public static void setOutputStream(String outputFilePath) {
-        instance.outputFilePath = outputFilePath;
+    public static void setOutputStream(File outputFile) {
+        instance.outputFilePath = outputFile.getPath();
         try {
-            if (outputFilePath.length() > 0) {
-                File outputFile = new File(outputFilePath);
+            if (outputFile.length() > 0) {
+                File outputFile = new File(outputFile);
                 outputFile.createNewFile();
                 instance.outputStream = new FileOutputStream(outputFile);
             } else

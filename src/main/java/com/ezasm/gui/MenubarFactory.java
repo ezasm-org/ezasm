@@ -161,7 +161,7 @@ public class MenubarFactory {
                 if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
                     if (file != null && file.exists() && file.canRead()) {
-                        Window.setInputStream(file.getPath());
+                        Window.setInputStream(file);
                     }
                 }
             }
@@ -189,7 +189,7 @@ public class MenubarFactory {
                         overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
                     }
                     if (overwrite) {
-                        Window.setOutputStream(file.getPath());
+                        Window.setOutputStream(file);
                     }
                 }
 
