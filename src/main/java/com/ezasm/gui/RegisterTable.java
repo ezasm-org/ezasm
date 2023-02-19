@@ -18,6 +18,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final Registers registers;
     private final JScrollPane scrollPane;
     private int changedRegisterNum = 0;
+    private Config config;
     private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 2000);
     private static final Dimension MAX_SIZE = new Dimension(350, 2000);
@@ -45,16 +46,17 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     *      * The function to highlight changed registers      
+     * The function to highlight changed registers      
      */
-    public void ChangeCellColor(int row_index) {
+    public void ChangeCellColor(int row_index, Config config) {
+        Theme theme = Theme.getTheme(config.getTheme());
         TableCellRenderer render = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
                 if (row == row_index || (row == 1 && row_index != -1)) {
-                    c.setForeground(Color.red);
+                    c.setForeground(theme.red());
                 } else {
                     c.setForeground(Color.black);
                 }
@@ -81,7 +83,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        ChangeCellColor(changedRegisterNum - 1);
+        ChangeCellColor(changedRegisterNum - 1, config);
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -140,10 +142,11 @@ public class RegisterTable extends JPanel implements IThemeable {
      *
      * @param number the index of changed register
      */
-    public void addHighlightValue(int number) {
+    public void addHighlightValue(int number, Config config) {
         this.changedRegisterNum = number;
         // Don't need to care about Register Zero
         this.changedRegisterNum += 1;
+        this.config = config;
     }
 
 }

@@ -241,7 +241,7 @@ public class Window {
         if (instance == null || instance.table == null) {
             return;
         }
-        instance.table.addHighlightValue(number);
+        instance.table.addHighlightValue(number, instance.config);
     }
 
     /**
@@ -251,6 +251,6 @@ public class Window {
         if (instance == null || instance.table == null) {
             return;
         }
-        instance.table.addHighlightValue(-1);
+        instance.table.addHighlightValue(-1, instance.config);
     }
 }
