@@ -5,6 +5,7 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -220,7 +221,8 @@ public class Window {
         if (simulator.isError()) {
             System.out.println("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
-            System.out.println("** Program terminated normally **");
+            System.out.printf("** Program terminated with exit code %d **\n",
+                    simulator.getRegisters().getRegister(Registers.R0).getLong());
         } else {
             System.out.println("** Program terminated forcefully **");
         }

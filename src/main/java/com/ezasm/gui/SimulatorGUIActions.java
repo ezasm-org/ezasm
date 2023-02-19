@@ -95,7 +95,6 @@ public class SimulatorGUIActions {
             } catch (SimulationException e) {
                 setState(State.STOPPED);
                 System.err.println(e.getMessage());
-                handleProgramCompletion();
             }
         }
     }
