@@ -82,6 +82,7 @@ public class SimulatorGUIActions {
             try {
                 Window.getInstance().parseText();
                 System.out.println("** Program starting **");
+                Window.resetInputStream();
                 startWorker();
             } catch (ParseException e) {
                 setState(State.IDLE);
