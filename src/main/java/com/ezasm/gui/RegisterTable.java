@@ -53,7 +53,7 @@ public class RegisterTable extends JPanel implements IThemeable {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                if (row == row_index || row == 1) {
+                if (row == row_index || (row == 1 && row_index != -1)) {
                     c.setForeground(Color.red);
                 } else {
                     c.setForeground(Color.black);
