@@ -5,9 +5,16 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
@@ -25,6 +32,9 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
+    private String inputFilePath, outputFilePath;
+    private InputStream inputStream = System.in;
+    private OutputStream outputStream = System.out;
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -52,6 +62,63 @@ public class Window {
     public static void instantiate(ISimulator simulator, Config config) {
         if (instance == null)
             new Window(simulator, config);
+    }
+
+    /**
+     * Generate the singleton Window instance if it does not exist. Sets the input/output streams for our
+     * TerminalInstructions to files
+     *
+     * @param simulator      the simulator to use.
+     * @param config         the program configuration.
+     * @param inputFilePath  the desired file to use for the InputStream.
+     * @param outputFilePath the desired file to use for the OutputStream.
+     */
+    public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
+        if (instance == null) {
+            new Window(simulator, config);
+            setInputStream(new File(inputFilePath));
+        }
+    }
+
+    /**
+     * Sets the input stream for our TerminalInstructions to files
+     *
+     * @param inputFile the desired file to use for the InputStream.
+     */
+    public static void setInputStream(File inputFile) {
+        instance.inputFilePath = inputFile.getPath();
+        try {
+            if (inputFile.length() > 0) {
+                instance.inputStream = new FileInputStream(inputFile);
+            } else {
+                instance.inputStream = System.in;
+            }
+        } catch (IOException e) {
+        }
+
+        TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+    }
+
+    /**
+     * Sets the input stream for our TerminalInstructions to files
+     *
+     * @param outputFile the desired file to use for the InputStream.
+     */
+    public static void setOutputStream(File outputFile) {
+        instance.outputFilePath = outputFile.getPath();
+        try {
+            if (outputFile.length() > 0) {
+                outputFile.createNewFile();
+                instance.outputStream = new FileOutputStream(outputFile);
+            } else
+                instance.outputStream = System.out;
+        } catch (IOException e) {
+        }
+        TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+    }
+
+    public static String getInputFilePath() {
+        return instance.inputFilePath;
     }
 
     /**
@@ -144,18 +211,17 @@ public class Window {
         updateRegisters();
         simulator.addLines(Lexer.parseLines(editor.getText()));
         instance.editor.resetHighlighter();
-
     }
 
     /**
      * Handles the program completion and displays a message to the user about the status of the program.
      */
     public void handleProgramCompletion() {
-        System.out.println();
         if (simulator.isError()) {
             System.out.println("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
-            System.out.println("** Program terminated normally **");
+            System.out.printf("** Program terminated with exit code %d **\n",
+                    simulator.getRegisters().getRegister(Registers.R0).getLong());
         } else {
             System.out.println("** Program terminated forcefully **");
         }
@@ -231,5 +297,12 @@ public class Window {
             return;
         }
         Window.getInstance().editor.resetHighlighter();
+    }
+
+    /**
+     * Resets the input stream, used primarily to go back to the start of files
+     */
+    public static void resetInputStream() {
+        TerminalInstructions.resetInputStream();
     }
 }

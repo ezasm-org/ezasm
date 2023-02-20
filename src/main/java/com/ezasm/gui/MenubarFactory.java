@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.util.FileIO;
 
 import javax.swing.*;
@@ -19,6 +20,10 @@ public class MenubarFactory {
     private static final String SAVE = "Save File";
     private static final String EXIT = "Exit";
     private static final String CONFIG = "Config";
+    private static final String INPUT_FILE = "Choose Input File";
+    private static final String OUTPUT_FILE = "Choose Output File";
+    private static final String RESET_INPUT_REDIRECT = "Reset Input Redirect";
+    private static final String RESET_OUTPUT_REDIRECT = "Reset Output Redirect";
 
     private static final MenuActionListener actionListener = new MenuActionListener();
 
@@ -55,6 +60,17 @@ public class MenubarFactory {
         menubar.add(menu);
         addMenuItem(menu, CONFIG);
 
+        /*
+         * IO
+         */
+        menu = new JMenu("IO Direction");
+        menu.getAccessibleContext().setAccessibleDescription("Popups related to input and output redirection");
+        menubar.add(menu);
+        addMenuItem(menu, INPUT_FILE);
+        addMenuItem(menu, OUTPUT_FILE);
+        addMenuItem(menu, RESET_INPUT_REDIRECT);
+        addMenuItem(menu, RESET_OUTPUT_REDIRECT);
+
         return menubar;
     }
 
@@ -75,6 +91,11 @@ public class MenubarFactory {
             switch (e.getActionCommand()) {
             case SAVE -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 fileChooser.setSelectedFile(new File("code.ez"));
                 FileIO.filterFileChooser(fileChooser);
@@ -103,6 +124,11 @@ public class MenubarFactory {
             }
             case LOAD -> {
                 JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 System.getProperty("user.home");
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 FileIO.filterFileChooser(fileChooser);
@@ -119,6 +145,60 @@ public class MenubarFactory {
                         }
                     }
                 }
+            }
+            case INPUT_FILE -> {
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                fileChooser.setDialogTitle("Choose an input file");
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                System.getProperty("user.home");
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                FileIO.filterFileChooserTXT(fileChooser);
+                int fileChooserOption = fileChooser.showOpenDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    if (file != null && file.exists() && file.canRead()) {
+                        Window.setInputStream(file);
+                    }
+                }
+            }
+            case OUTPUT_FILE -> {
+                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                fileChooser.setDialogTitle("Choose an output file");
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setSelectedFile(new File("output.txt"));
+                FileIO.filterFileChooserTXT(fileChooser);
+                int fileChooserOption = fileChooser.showSaveDialog(null);
+                if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    boolean overwrite = true;
+                    if (file.exists()) {
+                        // File exists, prompt user to overwrite
+                        int confirmDialogOption = JOptionPane.showConfirmDialog(null,
+                                "The given file '" + file.getName() + "' already exits.\n"
+                                        + "Would you like to overwrite it?",
+                                "File Already Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        overwrite = confirmDialogOption == JOptionPane.YES_OPTION;
+                    }
+                    if (overwrite) {
+                        Window.setOutputStream(file);
+                    }
+                }
+
+            }
+            case RESET_INPUT_REDIRECT -> {
+                TerminalInstructions.setInputStream(TerminalInstructions.defaultInputStream);
+            }
+            case RESET_OUTPUT_REDIRECT -> {
+                TerminalInstructions.setOutputStream(TerminalInstructions.defaultOutputStream);
             }
             case EXIT -> {
                 System.exit(0);

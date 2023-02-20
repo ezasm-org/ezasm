@@ -55,6 +55,17 @@ public class FileIO {
     }
 
     /**
+     * Initializes a JFileChooser with the file types which could be associated with code for an EzASM program.
+     *
+     * @param fileChooser the JFileChooser to act on.
+     */
+    public static void filterFileChooserTXT(JFileChooser fileChooser) {
+        FileFilter plain = new QuickFileFilter("txt", "Text file");
+        fileChooser.addChoosableFileFilter(plain);
+        fileChooser.setFileFilter(plain);
+    }
+
+    /**
      * Helper class to generate a file filter based on an extension and a description.
      */
     private static class QuickFileFilter extends FileFilter {
