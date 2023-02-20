@@ -1,13 +1,30 @@
 package com.ezasm.util;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 
 /**
  * A utility class to provide file I/O functionality.
  */
 public class FileIO {
+
+    /**
+     * Store the home directory for use with file operations default locations.
+     */
+    private static final File HOME_DIRECTORY_FILE = SystemUtils.getUserHome();
+
+    /**
+     * Get the user's home directory as a file.
+     *
+     * @return the user's home directory as a file.
+     */
+    public static File getHomeDirectoryFile() {
+        return HOME_DIRECTORY_FILE;
+    }
 
     /**
      * Reads the text from a given file.
@@ -41,17 +58,59 @@ public class FileIO {
         writer.close();
     }
 
+    // Extensible file type masks. Larger numbers have higher priority for being the default type selected
+
     /**
-     * Initializes a JFileChooser with the file types which could be associated with code for an EzASM program.
-     *
-     * @param fileChooser the JFileChooser to act on.
+     * The absence of a type mask for constructing a file chooser.
      */
-    public static void filterFileChooser(JFileChooser fileChooser) {
-        FileFilter ezasm = new QuickFileFilter(".ez", "EzASM file");
-        FileFilter plain = new QuickFileFilter(".txt", "Text file");
-        fileChooser.addChoosableFileFilter(ezasm);
-        fileChooser.addChoosableFileFilter(plain);
-        fileChooser.setFileFilter(ezasm);
+    public static final int NO_FILE_MASK = 0b0000_0000;
+
+    /**
+     * Text file type mask for constructing a file chooser.
+     */
+    public static final int TEXT_FILE_MASK = 0b0000_0001;
+
+    /**
+     * Text file type mask for constructing a file chooser.
+     */
+    public static final int EZ_FILE_MASK = 0b0000_1000;
+
+    /**
+     * Construct a file chooser with the given window title and file type selection.
+     *
+     * @param windowTitle          the title of the popup file chooser window.
+     * @param acceptedFileTypeMask the mask of the file type desired e.g., <code>EZ_FILE_MASK & TEXT_FILE_MASK</code>
+     *                             for both EzASM files and text files or <code>NO_FILE_MASK</code> to not apply any
+     *                             file mask.
+     * @return the new JFileChooser object.
+     */
+    public static JFileChooser createFileChooser(String windowTitle, int acceptedFileTypeMask) {
+        JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+        fileChooser.setDialogTitle(windowTitle);
+        fileChooser.setCurrentDirectory(getHomeDirectoryFile());
+
+        // This if statement chain should be ordered from the least significant extension type to most significant
+        if ((acceptedFileTypeMask & TEXT_FILE_MASK) != 0) {
+            addFileFilter(fileChooser, ".txt", "Text file");
+        }
+        if ((acceptedFileTypeMask & EZ_FILE_MASK) != 0) {
+            addFileFilter(fileChooser, ".ez", "EzASM code file");
+        }
+
+        return fileChooser;
+    }
+
+    /**
+     * Adds the given file filter to the given JFileChooser
+     *
+     * @param fileChooser the JFileChooser to apply the settings to.
+     * @param extension   the file extension.
+     * @param description the file extension's description.
+     */
+    private static void addFileFilter(JFileChooser fileChooser, String extension, String description) {
+        FileFilter filter = new QuickFileFilter(extension, description);
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.setFileFilter(filter);
     }
 
     /**

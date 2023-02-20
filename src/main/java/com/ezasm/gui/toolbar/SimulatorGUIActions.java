@@ -1,11 +1,12 @@
-package com.ezasm.gui;
+package com.ezasm.gui.toolbar;
 
+import com.ezasm.gui.Window;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
 
-import static com.ezasm.gui.ToolbarFactory.*;
+import static com.ezasm.gui.toolbar.ToolbarFactory.*;
 
 /**
  * Possible actions through the GUI which need to be handled.
@@ -78,10 +79,10 @@ public class SimulatorGUIActions {
             return;
         }
         if (state == State.IDLE || state == State.STOPPED) {
-            setState(State.PAUSED);
             try {
                 Window.getInstance().parseText();
                 System.out.println("** Program starting **");
+                setState(State.PAUSED);
                 startWorker();
             } catch (ParseException e) {
                 setState(State.IDLE);
@@ -95,7 +96,6 @@ public class SimulatorGUIActions {
             } catch (SimulationException e) {
                 setState(State.STOPPED);
                 System.err.println(e.getMessage());
-                handleProgramCompletion();
             }
         }
     }
@@ -111,7 +111,6 @@ public class SimulatorGUIActions {
             setState(State.RUNNING);
             System.out.println("** Program starting **");
             startWorker();
-            Window.resetHighlight();
         } catch (ParseException e) {
             setState(State.STOPPED);
             Window.getInstance().handleParseException(e);
@@ -146,10 +145,8 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the state of the emulator be reset.
      */
     static void reset() {
-        if (state != State.STOPPED) {
-            killWorker();
-            awaitWorkerTermination();
-        }
+        killWorker();
+        awaitWorkerTermination();
         setState(State.IDLE);
         Window.getInstance().getSimulator().resetAll();
         Window.updateRegisters();
@@ -161,14 +158,14 @@ public class SimulatorGUIActions {
      * Handles changing between states and buffering delays between instructions.
      */
     private static void simulationLoop() {
-        while (!Window.getInstance().getSimulator().isDone() && (state == State.RUNNING || state == State.PAUSED)) {
+        while (!Window.getInstance().getSimulator().isDone() && (state == State.RUNNING || state == State.PAUSED)
+                && !Thread.currentThread().isInterrupted()) {
             try {
                 Window.updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
                 Window.updateRegisters();
             } catch (SimulationException e) {
                 Window.getInstance().handleParseException(e);
-                setState(State.STOPPED);
                 break;
             }
             try {
@@ -190,7 +187,10 @@ public class SimulatorGUIActions {
     private static void startWorker() {
         if (worker != null) {
             killWorker();
+            awaitWorkerTermination();
         }
+        Window.resetHighlight();
+        Window.resetInputStream();
         worker = new Thread(SimulatorGUIActions::simulationLoop);
         worker.start();
     }

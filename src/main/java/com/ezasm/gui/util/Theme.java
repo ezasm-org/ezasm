@@ -1,4 +1,4 @@
-package com.ezasm.gui;
+package com.ezasm.gui.util;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;

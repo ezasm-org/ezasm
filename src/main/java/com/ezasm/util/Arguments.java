@@ -1,6 +1,6 @@
 package com.ezasm.util;
 
-import com.ezasm.gui.Config;
+import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.Window;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Memory;
@@ -107,6 +107,11 @@ public class Arguments {
             }
             cli.startSimulation();
         } else {
+            if (!inputpath.equals("") || !outputpath.equals("")) {
+                Window.instantiate(sim, config, inputpath, outputpath);
+                return;
+            }
+
             Window.instantiate(sim, config);
         }
 

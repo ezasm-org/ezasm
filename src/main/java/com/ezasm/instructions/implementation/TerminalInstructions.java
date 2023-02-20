@@ -5,19 +5,24 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.ezasm.util.Conversion;
+import com.ezasm.gui.Window;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
 
+import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
+
 /**
  * An implementation of standard terminal I/O instructions for simulation.
  */
 public class TerminalInstructions {
 
-    private static InputStream inputStream = System.in;
-    private static OutputStream outputStream = System.out;
+    public static final InputStream DEFAULT_INPUT_STREAM = System.in;
+    public static final OutputStream DEFAULT_OUTPUT_STREAM = System.out;
+    private static InputStream inputStream = DEFAULT_INPUT_STREAM;
+    private static OutputStream outputStream = DEFAULT_OUTPUT_STREAM;
 
     private final ISimulator simulator;
     private static Scanner inputReader;
@@ -34,10 +39,29 @@ public class TerminalInstructions {
      * @param newOutput the output stream.
      */
     public static void setInputOutput(InputStream newInput, OutputStream newOutput) {
-        inputStream = newInput;
+        setInputStream(newInput);
+        setOutputStream(newOutput);
+    }
+
+    public static void setOutputStream(OutputStream newOutput) {
         outputStream = newOutput;
-        inputReader = new Scanner(newInput);
         outputWriter = new PrintStream(newOutput);
+    }
+
+    public static void setInputStream(InputStream newInput) {
+        inputStream = newInput;
+        inputReader = new Scanner(newInput);
+    }
+
+    public static void resetInputStream() {
+        try {
+            if (inputStream instanceof FileInputStream) {
+                inputReader = new Scanner(new FileInputStream(Window.getInputFilePath()));
+            }
+        } catch (IOException e) {
+            promptWarningDialog("Error Reading File",
+                    String.format("There was an error reading from '%s'", Window.getInputFilePath()));
+        }
     }
 
     public TerminalInstructions(ISimulator simulator) {
@@ -46,17 +70,33 @@ public class TerminalInstructions {
 
     @Instruction
     public void printi(IAbstractInput input) throws SimulationException {
-        outputWriter.print(Conversion.bytesToLong(input.get(simulator)));
+        try {
+            outputWriter.print(Conversion.bytesToLong(input.get(simulator)));
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            throw new SimulationException("Error writing integer to output");
+        }
     }
 
     @Instruction
     public void printf(IAbstractInput input) throws SimulationException {
-        outputWriter.print(Conversion.bytesToDouble(input.get(simulator)));
+        try {
+            outputWriter.print(Conversion.bytesToDouble(input.get(simulator)));
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            throw new SimulationException("Error writing float to output");
+        }
     }
 
     @Instruction
     public void printc(IAbstractInput input) throws SimulationException {
-        outputWriter.print((char) Conversion.bytesToLong(input.get(simulator)));
+        try {
+            outputWriter.print((char) Conversion.bytesToLong(input.get(simulator)));
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            throw new SimulationException("Error writing character to output");
+        }
+
     }
 
     @Instruction
@@ -64,7 +104,12 @@ public class TerminalInstructions {
         int address = (int) Conversion.bytesToLong(input1.get(simulator));
         int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
         String s = simulator.getMemory().readString(address, maxSize);
-        outputWriter.print(s);
+        try {
+            outputWriter.print(s);
+        } catch (Exception e) {
+            // TODO make I/O simulation exception
+            throw new SimulationException("Error writing string to output");
+        }
     }
 
     @Instruction
