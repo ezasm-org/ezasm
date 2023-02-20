@@ -1,6 +1,4 @@
-package com.ezasm.gui;
-
-import com.ezasm.gui.Theme;
+package com.ezasm.gui.util;
 
 import javax.swing.text.BadLocationException;
 import java.awt.Font;

@@ -1,11 +1,12 @@
-package com.ezasm.gui;
+package com.ezasm.gui.toolbar;
 
+import com.ezasm.gui.Window;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
 
-import static com.ezasm.gui.ToolbarFactory.*;
+import static com.ezasm.gui.toolbar.ToolbarFactory.*;
 
 /**
  * Possible actions through the GUI which need to be handled.
@@ -64,9 +65,7 @@ public class SimulatorGUIActions {
     }
 
     private static void handleProgramCompletion() {
-        if (state != State.IDLE) {
-            Window.getInstance().handleProgramCompletion();
-        }
+        Window.getInstance().handleProgramCompletion();
     }
 
     /**

@@ -1,6 +1,11 @@
 package com.ezasm.gui;
 
 import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.toolbar.SimulatorGUIActions;
+import com.ezasm.gui.toolbar.ToolbarFactory;
+import com.ezasm.gui.settings.Config;
+import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
@@ -15,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
@@ -32,9 +39,11 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
+
+    private String loadedFile;
     private String inputFilePath, outputFilePath;
-    private InputStream inputStream = System.in;
-    private OutputStream outputStream = System.out;
+    private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
+    private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -77,6 +86,7 @@ public class Window {
         if (instance == null) {
             new Window(simulator, config);
             setInputStream(new File(inputFilePath));
+            setOutputStream(new File(outputFilePath));
         }
     }
 
@@ -86,17 +96,15 @@ public class Window {
      * @param inputFile the desired file to use for the InputStream.
      */
     public static void setInputStream(File inputFile) {
-        instance.inputFilePath = inputFile.getPath();
         try {
-            if (inputFile.length() > 0) {
-                instance.inputStream = new FileInputStream(inputFile);
-            } else {
-                instance.inputStream = System.in;
-            }
-        } catch (IOException e) {
-        }
+            instance.inputStream = new FileInputStream(inputFile);
+            instance.inputFilePath = inputFile.getPath();
 
-        TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+        } catch (IOException e) {
+            promptWarningDialog("Error Reading File",
+                    String.format("There was an error reading from '%s'\nOperation cancelled", inputFile.getName()));
+        }
+        TerminalInstructions.setInputStream(instance.inputStream);
     }
 
     /**
@@ -105,16 +113,15 @@ public class Window {
      * @param outputFile the desired file to use for the InputStream.
      */
     public static void setOutputStream(File outputFile) {
-        instance.outputFilePath = outputFile.getPath();
         try {
-            if (outputFile.length() > 0) {
-                outputFile.createNewFile();
-                instance.outputStream = new FileOutputStream(outputFile);
-            } else
-                instance.outputStream = System.out;
+            outputFile.createNewFile();
+            instance.outputStream = new FileOutputStream(outputFile);
+            instance.outputFilePath = outputFile.getPath();
         } catch (IOException e) {
+            promptWarningDialog("Error Writing File",
+                    String.format("There was an error writing to '%s'\nOperation cancelled", outputFile.getName()));
         }
-        TerminalInstructions.setInputOutput(instance.inputStream, instance.outputStream);
+        TerminalInstructions.setOutputStream(instance.outputStream);
     }
 
     public static String getInputFilePath() {
@@ -134,6 +141,12 @@ public class Window {
      * Helper initialization function. Initialized UI elements.
      */
     private void initialize() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.err.println("Unable to set look and feel");
+        }
+
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setMinimumSize(new Dimension(800, 600));
@@ -229,6 +242,26 @@ public class Window {
         // The buffer must be cleared at the end of the function;
         // if it is not, System.out malfunctions
         TerminalInstructions.clearBuffer();
+    }
+
+    /**
+     * Sets the currently viewed file in the window.
+     *
+     * @param filePath the path of the file to set.
+     */
+    public void setLoadedFile(String filePath) {
+        loadedFile = filePath;
+    }
+
+    /**
+     * Gets the path to the file loaded in the window.
+     */
+    public String getLoadedFile() {
+        if (loadedFile != null) {
+            return loadedFile;
+        } else {
+            return "";
+        }
     }
 
     /**

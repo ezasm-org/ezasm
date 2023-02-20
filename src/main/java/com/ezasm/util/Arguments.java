@@ -1,6 +1,6 @@
 package com.ezasm.util;
 
-import com.ezasm.gui.Config;
+import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.Window;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Memory;

@@ -1,4 +1,8 @@
-package com.ezasm.gui;
+package com.ezasm.gui.settings;
+
+import com.ezasm.gui.Window;
+import com.ezasm.gui.util.IThemeable;
+import com.ezasm.gui.util.Theme;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -1,6 +1,8 @@
-package com.ezasm.gui;
+package com.ezasm.gui.toolbar;
 
-import static com.ezasm.gui.SimulatorGUIActions.*;
+import com.ezasm.gui.util.Theme;
+
+import static com.ezasm.gui.toolbar.SimulatorGUIActions.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
