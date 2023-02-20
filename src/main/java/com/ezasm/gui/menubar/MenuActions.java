@@ -83,8 +83,8 @@ public class MenuActions {
         int fileChooserOption = fileChooser.showOpenDialog(null);
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            if (file != null && file.exists()) {
-                if (file.canRead()) {
+            if (file != null) {
+                if (file.exists() && file.canRead()) {
                     Window.setInputStream(file);
                 } else {
                     promptWarningDialog("Error Reading File",
@@ -103,9 +103,11 @@ public class MenuActions {
         int fileChooserOption = fileChooser.showSaveDialog(null);
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            boolean overwrite = promptOverwriteDialog(file);
-            if (overwrite) {
-                Window.setOutputStream(file);
+            if (file != null) {
+                boolean overwrite = promptOverwriteDialog(file);
+                if (overwrite) {
+                    Window.setOutputStream(file);
+                }
             }
         }
     }

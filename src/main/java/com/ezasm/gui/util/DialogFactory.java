@@ -16,9 +16,8 @@ public class DialogFactory {
      */
     public static boolean promptOverwriteDialog(File file) {
         if (file.exists()) {
-            return promptYesNoDialog(
-                    String.format("The file '%s' already exits.\nWould you like to overwrite it?", file.getName()),
-                    "File Already Exists");
+            return promptYesNoDialog("File Already Exists",
+                    String.format("The file '%s' already exits.\nWould you like to overwrite it?", file.getName()));
         }
         return true;
     }

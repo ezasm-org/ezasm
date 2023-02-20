@@ -65,9 +65,7 @@ public class SimulatorGUIActions {
     }
 
     private static void handleProgramCompletion() {
-        if (state != State.IDLE) {
-            Window.getInstance().handleProgramCompletion();
-        }
+        Window.getInstance().handleProgramCompletion();
     }
 
     /**

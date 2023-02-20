@@ -42,8 +42,8 @@ public class Window {
 
     private String loadedFile;
     private String inputFilePath, outputFilePath;
-    private InputStream inputStream = System.in;
-    private OutputStream outputStream = System.out;
+    private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
+    private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -96,13 +96,10 @@ public class Window {
      * @param inputFile the desired file to use for the InputStream.
      */
     public static void setInputStream(File inputFile) {
-        instance.inputFilePath = inputFile.getPath();
         try {
-            if (inputFile.length() > 0) {
-                instance.inputStream = new FileInputStream(inputFile);
-            } else {
-                instance.inputStream = System.in;
-            }
+            instance.inputStream = new FileInputStream(inputFile);
+            instance.inputFilePath = inputFile.getPath();
+
         } catch (IOException e) {
             promptWarningDialog("Error Reading File",
                     String.format("There was an error reading from '%s'\nOperation cancelled", inputFile.getName()));
@@ -116,13 +113,10 @@ public class Window {
      * @param outputFile the desired file to use for the InputStream.
      */
     public static void setOutputStream(File outputFile) {
-        instance.outputFilePath = outputFile.getPath();
         try {
-            if (outputFile.length() > 0) {
-                outputFile.createNewFile();
-                instance.outputStream = new FileOutputStream(outputFile);
-            } else
-                instance.outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
+            outputFile.createNewFile();
+            instance.outputStream = new FileOutputStream(outputFile);
+            instance.outputFilePath = outputFile.getPath();
         } catch (IOException e) {
             promptWarningDialog("Error Writing File",
                     String.format("There was an error writing to '%s'\nOperation cancelled", outputFile.getName()));
