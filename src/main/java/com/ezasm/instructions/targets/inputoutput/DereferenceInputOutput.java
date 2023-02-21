@@ -24,7 +24,7 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @param register the register reference number.
      * @param offset   the index offset.
      */
-    public DereferenceInputOutput(int register, int offset) {
+    public DereferenceInputOutput(String register, int offset) {
         this.register = new RegisterInputOutput(register);
         this.offset = offset;
     }

@@ -3,8 +3,7 @@ package com.ezasm.instructions.implementation;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
-import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.Conversion;
 
@@ -33,8 +32,9 @@ public class FunctionInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void jump(IAbstractInput input) throws SimulationException {
-        simulator.getRegisters().getRegister(Registers.PC).setBytes(input.get(simulator));
+    public TransformationSequence jump(IAbstractInput input) throws SimulationException {
+        RegisterInputOutput pc = new RegisterInputOutput(Registers.PC);
+        return new TransformationSequence(pc, pc.get(simulator), input.get(simulator));
     }
 
     /**
@@ -44,8 +44,8 @@ public class FunctionInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void j(IAbstractInput input) throws SimulationException {
-        jump(input);
+    public TransformationSequence j(IAbstractInput input) throws SimulationException {
+        return jump(input);
     }
 
     /**
@@ -56,11 +56,14 @@ public class FunctionInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void call(IAbstractInput input) throws SimulationException {
-        memoryInstructions.push(new RegisterInputOutput(Registers.RA));
-        simulator.getRegisters().getRegister(Registers.RA)
-                .setBytes(simulator.getRegisters().getRegister(Registers.PC).getBytes());
-        jump(input);
+    public TransformationSequence call(IAbstractInput input) throws SimulationException {
+        RegisterInputOutput ra = new RegisterInputOutput(Registers.RA);
+        Register pc = simulator.getRegisters().getRegister(Registers.PC);
+        TransformationSequence t = new TransformationSequence();
+        t = t.concatenate(memoryInstructions.push(ra));
+        t = t.concatenate(new TransformationSequence(ra, ra.get(simulator), pc.getBytes()));
+        t = t.concatenate(jump(input));
+        return t;
     }
 
     /**
@@ -71,8 +74,8 @@ public class FunctionInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void jal(IAbstractInput input) throws SimulationException {
-        call(input);
+    public TransformationSequence jal(IAbstractInput input) throws SimulationException {
+        return call(input);
     }
 
     /**
@@ -81,9 +84,11 @@ public class FunctionInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void _return() throws SimulationException {
-        jump(new RegisterInputOutput(Registers.RA));
-        memoryInstructions.pop(new RegisterInputOutput(Registers.RA));
+    public TransformationSequence _return() throws SimulationException {
+        TransformationSequence t = new TransformationSequence();
+        t = t.concatenate(jump(new RegisterInputOutput(Registers.RA)));
+        t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.RA)));
+        return t;
     }
 
     /**
@@ -94,9 +99,12 @@ public class FunctionInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void exit(IAbstractInput input) throws SimulationException {
-        simulator.getRegisters().getRegister(Registers.R0).setLong(Conversion.bytesToLong(input.get(simulator)));
-        simulator.exit();
+    public TransformationSequence exit(IAbstractInput input) throws SimulationException {
+        RegisterInputOutput r0 = new RegisterInputOutput(Registers.R0);
+        RegisterInputOutput pc = new RegisterInputOutput(Registers.PC);
+        Transformation t1 = new Transformation(r0, r0.get(simulator), input.get(simulator));
+        Transformation t2 = new Transformation(pc, pc.get(simulator), Conversion.longToBytes(simulator.endPC()));
+        return new TransformationSequence(t1, t2);
     }
 
 }

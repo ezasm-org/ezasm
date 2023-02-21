@@ -1,5 +1,7 @@
 package com.ezasm.simulation;
 
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.ArrayDeque;
@@ -8,7 +10,7 @@ import java.util.Deque;
 /**
  * Represents the series of transformations on a simulation for an instruction to complete its action.
  */
-public class TransformationSequence {
+public final class TransformationSequence {
 
     private final Transformation[] transformations;
     private final static Deque<TransformationSequence> transformationSequences = new ArrayDeque<>();
@@ -20,10 +22,31 @@ public class TransformationSequence {
      * @throws RuntimeException if no transformations are given.
      */
     public TransformationSequence(Transformation... transformations) {
-        if (transformations == null || transformations.length == 0) {
-            throw new RuntimeException("No transformations given");
+        if (transformations == null) {
+            throw new RuntimeException("Bad transformations list");
         }
         this.transformations = transformations;
+    }
+
+    public TransformationSequence(IAbstractOutput output, byte[] from, byte[] to) {
+        this.transformations = new Transformation[] { new Transformation(output, from, to) };
+    }
+
+    /**
+     * Concatenate another transformation sequence onto the end of this transformation sequence.
+     *
+     * @param other the transformation sequence to be appended.
+     * @return the resultant transformation sequence.
+     */
+    public TransformationSequence concatenate(TransformationSequence other) {
+        Transformation[] newTransformations = new Transformation[transformations.length + other.transformations.length];
+        for (int i = 0; i < transformations.length; ++i) {
+            newTransformations[i] = transformations[i];
+        }
+        for (int i = 0; i < other.transformations.length; ++i) {
+            newTransformations[i + transformations.length] = other.transformations[i];
+        }
+        return new TransformationSequence(newTransformations);
     }
 
     /**
@@ -34,7 +57,7 @@ public class TransformationSequence {
     public TransformationSequence invert() {
         Transformation[] newTransformations = new Transformation[transformations.length];
         for (int i = 0; i < transformations.length; ++i) {
-            newTransformations[transformations.length - i - 1]  = transformations[i].invert();
+            newTransformations[transformations.length - i - 1] = transformations[i].invert();
         }
         return new TransformationSequence(newTransformations);
     }

@@ -7,13 +7,14 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * Represents a transformation on a simulation. Implemented so that transforms can be reversible.
- * The contents of <code>from</code> and <code>to</code> are never to be modified. They are read-only.
+ * Represents a transformation on a simulation. Implemented so that transforms can be reversible. The contents of
+ * <code>from</code> and <code>to</code> are never to be modified. They are read-only.
  */
 public record Transformation(IAbstractOutput output, byte[] from, byte[] to) {
 
     /**
      * Inverts the transformation to get the opposite operation.
+     *
      * @return the new inverse transformation.
      */
     public Transformation invert() {
@@ -32,8 +33,10 @@ public record Transformation(IAbstractOutput output, byte[] from, byte[] to) {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Transformation that = (Transformation) o;
         return output.equals(that.output) && Arrays.equals(from, that.from) && Arrays.equals(to, that.to);
     }

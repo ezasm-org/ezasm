@@ -3,7 +3,6 @@ package com.ezasm.instructions.targets.inputoutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.Transformation;
-import com.ezasm.simulation.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.Arrays;

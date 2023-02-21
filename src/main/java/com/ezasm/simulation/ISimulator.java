@@ -32,6 +32,8 @@ public interface ISimulator {
 
     void exit();
 
+    long endPC();
+
     Map<String, Integer> getLabels();
 
     Registers getRegisters();

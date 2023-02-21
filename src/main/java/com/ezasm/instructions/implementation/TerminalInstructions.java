@@ -5,6 +5,9 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.inputoutput.mock.MemoryInputOutput;
+import com.ezasm.simulation.Transformation;
+import com.ezasm.simulation.TransformationSequence;
 import com.ezasm.util.Conversion;
 import com.ezasm.gui.Window;
 import com.ezasm.instructions.Instruction;
@@ -14,6 +17,7 @@ import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
+import static org.apache.commons.lang3.math.NumberUtils.min;
 
 /**
  * An implementation of standard terminal I/O instructions for simulation.
@@ -70,38 +74,40 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void printi(IAbstractInput input) throws SimulationException {
+    public TransformationSequence printi(IAbstractInput input) throws SimulationException {
         try {
             outputWriter.print(Conversion.bytesToLong(input.get(simulator)));
         } catch (Exception e) {
             // TODO make I/O simulation exception
             throw new SimulationException("Error writing integer to output");
         }
+        return new TransformationSequence();
     }
 
     @Instruction
-    public void printf(IAbstractInput input) throws SimulationException {
+    public TransformationSequence printf(IAbstractInput input) throws SimulationException {
         try {
             outputWriter.print(Conversion.bytesToDouble(input.get(simulator)));
         } catch (Exception e) {
             // TODO make I/O simulation exception
             throw new SimulationException("Error writing float to output");
         }
+        return new TransformationSequence();
     }
 
     @Instruction
-    public void printc(IAbstractInput input) throws SimulationException {
+    public TransformationSequence printc(IAbstractInput input) throws SimulationException {
         try {
             outputWriter.print((char) Conversion.bytesToLong(input.get(simulator)));
         } catch (Exception e) {
             // TODO make I/O simulation exception
             throw new SimulationException("Error writing character to output");
         }
-
+        return new TransformationSequence();
     }
 
     @Instruction
-    public void prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public TransformationSequence prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         int address = (int) Conversion.bytesToLong(input1.get(simulator));
         int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
         String s = simulator.getMemory().readString(address, maxSize);
@@ -111,12 +117,14 @@ public class TerminalInstructions {
             // TODO make I/O simulation exception
             throw new SimulationException("Error writing string to output");
         }
+        return new TransformationSequence();
     }
 
     @Instruction
-    public void readi(IAbstractInputOutput output) throws SimulationException {
+    public TransformationSequence readi(IAbstractInputOutput output) throws SimulationException {
         try {
-            output.set(simulator, Conversion.longToBytes(inputReader.nextLong()));
+            return new TransformationSequence(output, output.get(simulator),
+                    Conversion.longToBytes(inputReader.nextLong()));
         } catch (Exception e) {
             // TODO make I/O simulation exception
             throw new SimulationException("Error reading integer from input");
@@ -124,9 +132,11 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void readf(IAbstractInputOutput output) throws SimulationException {
+    public TransformationSequence readf(IAbstractInputOutput output) throws SimulationException {
         try {
             output.set(simulator, Conversion.doubleToBytes(inputReader.nextDouble()));
+            return new TransformationSequence(output, output.get(simulator),
+                    Conversion.doubleToBytes(inputReader.nextDouble()));
         } catch (Exception e) {
             // TODO make I/O simulation exception
             throw new SimulationException("Error reading double from input");
@@ -134,7 +144,7 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void readc(IAbstractInputOutput output) throws SimulationException {
+    public TransformationSequence readc(IAbstractInputOutput output) throws SimulationException {
         Pattern oldDelimiter = inputReader.delimiter();
         inputReader.useDelimiter("");
         try {
@@ -142,8 +152,8 @@ public class TerminalInstructions {
             while (current.matches("\\s")) {
                 current = inputReader.next();
             }
-            output.set(simulator, Conversion.longToBytes(current.charAt(0)));
             inputReader.useDelimiter(oldDelimiter);
+            return new TransformationSequence(output, output.get(simulator), Conversion.longToBytes(current.charAt(0)));
         } catch (Exception e) {
             // TODO make I/O simulation exception
             inputReader.useDelimiter(oldDelimiter);
@@ -152,11 +162,22 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void reads(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public TransformationSequence reads(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         try {
             int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
             int address = (int) Conversion.bytesToLong(input1.get(simulator));
-            simulator.getMemory().writeString(address, inputReader.next(), maxSize);
+            String string = inputReader.next();
+
+            int size = min(maxSize, string.length());
+            Transformation[] transformations = new Transformation[size];
+
+            for (int i = 0; i < size; ++i) {
+                MemoryInputOutput m = new MemoryInputOutput(address);
+                transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
+                address = address + simulator.getMemory().WORD_SIZE;
+            }
+
+            return new TransformationSequence(transformations);
         } catch (Exception e) {
             // TODO make I/O simulation exception
             throw new SimulationException("Error reading string from input");
@@ -164,11 +185,22 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void readline(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public TransformationSequence readline(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         try {
             int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
             int address = (int) Conversion.bytesToLong(input1.get(simulator));
-            simulator.getMemory().writeString(address, inputReader.nextLine(), maxSize);
+            String string = inputReader.nextLine();
+
+            int size = min(maxSize, string.length());
+            Transformation[] transformations = new Transformation[size];
+
+            for (int i = 0; i < size; ++i) {
+                MemoryInputOutput m = new MemoryInputOutput(address);
+                transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
+                address = address + simulator.getMemory().WORD_SIZE;
+            }
+
+            return new TransformationSequence(transformations);
         } catch (Exception e) {
             // TODO make I/O simulation exception
             throw new SimulationException("Error reading string from input");

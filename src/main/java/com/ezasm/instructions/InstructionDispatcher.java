@@ -12,6 +12,7 @@ import com.ezasm.instructions.implementation.ArithmeticInstructions;
 import com.ezasm.instructions.implementation.FloatArithmeticInstructions;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Line;
+import com.ezasm.simulation.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.lang.reflect.Constructor;
@@ -153,10 +154,14 @@ public class InstructionDispatcher {
             throw new IllegalInstructionException(line.getInstruction().text());
 
         Object object = this.instructionHandlerInstances.get(dispatch.getParent());
+
         // TODO assume loaded for now
         assert object != null;
 
-        dispatch.invoke(object, line);
+        Object result = dispatch.invoke(object, line);
+        if (result instanceof TransformationSequence t) {
+            t.applyToStack(simulator);
+        }
     }
 
 }

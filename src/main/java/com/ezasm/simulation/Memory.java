@@ -103,6 +103,15 @@ public class Memory {
     }
 
     /**
+     * Sets the current heap pointer of the memory.
+     *
+     * @param address the new heap pointer for the memory.
+     */
+    public void setHeapPointer(int address) {
+        alloc = address - OFFSET;
+    }
+
+    /**
      * Allocates a certain number of bytes with a check based on stack pointer to ensure that the heap pointer does not
      * cross the stack pointer.
      *

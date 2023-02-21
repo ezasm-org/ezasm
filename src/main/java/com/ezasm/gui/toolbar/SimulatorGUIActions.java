@@ -108,18 +108,20 @@ public class SimulatorGUIActions {
     static void stepBack() {
         if (TransformationSequence.isEmpty()) {
             setState(State.IDLE);
-            return;
+        } else {
+            setState(State.PAUSED);
+            try {
+                TransformationSequence.popStack().invert().apply(Window.getInstance().getSimulator());
+                Register PC = Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC);
+                PC.setLong(PC.getLong() - 1);
+                Window.updateHighlight();
+                Window.updateRegisters();
+            } catch (SimulationException e) {
+                setState(State.STOPPED);
+                System.err.println(e.getMessage());
+            }
         }
-        try {
-            TransformationSequence.popStack().invert().apply(Window.getInstance().getSimulator());
-            Register PC = Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC);
-            PC.setLong(PC.getLong() - 1);
-            Window.updateHighlight();
-            Window.updateRegisters();
-        } catch (SimulationException e) {
-            setState(State.STOPPED);
-            System.err.println(e.getMessage());
-        }
+
     }
 
     /**

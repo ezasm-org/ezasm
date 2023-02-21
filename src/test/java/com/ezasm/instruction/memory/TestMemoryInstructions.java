@@ -1,5 +1,7 @@
 package com.ezasm.instruction.memory;
 
+import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.implementation.MemoryInstructions;
@@ -7,7 +9,6 @@ import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.Simulator;
 import org.junit.jupiter.api.Test;
 
@@ -22,13 +23,13 @@ public class TestMemoryInstructions {
         IAbstractInputOutput register = new RegisterInputOutput("t0");
         IAbstractInput immediateTwo = new ImmediateInput(Conversion.longToBytes(2));
 
-        long bytesBefore = Conversion.bytesToLong(sim.getRegisters().getRegister("t0").getBytes());
-        memoryInstructions.alloc(register, immediateTwo);
-        long bytesAfter = Conversion.bytesToLong(sim.getRegisters().getRegister("t0").getBytes());
+        long bytesBefore = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.alloc(register, immediateTwo).apply(sim);
+        long bytesAfter = sim.getRegisters().getRegister("t0").getLong();
         assertEquals(bytesBefore + 65536, bytesAfter);
 
-        memoryInstructions.alloc(register, immediateTwo);
-        long bytesAfterSecondCall = Conversion.bytesToLong(sim.getRegisters().getRegister("t0").getBytes());
+        memoryInstructions.alloc(register, immediateTwo).apply(sim);
+        long bytesAfterSecondCall = sim.getRegisters().getRegister("t0").getLong();
         assertEquals(bytesAfter + 2, bytesAfterSecondCall);
 
     }
@@ -39,12 +40,13 @@ public class TestMemoryInstructions {
 
         MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
 
-        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInputOutput register = new RegisterInputOutput(Registers.T0);
 
         IAbstractInput aiimmediateTwo = new ImmediateInput(Conversion.longToBytes(2));
 
-        memoryInstructions.alloc(register, aiimmediateTwo);
-        memoryInstructions.store(aiimmediateTwo, register);
+        memoryInstructions.alloc(register, aiimmediateTwo).apply(sim);
+        DereferenceInputOutput d = new DereferenceInputOutput(Registers.T0, 0);
+        memoryInstructions.store(aiimmediateTwo, d).apply(sim);
 
         assertEquals(2,
                 Conversion.bytesToLong(sim.getMemory().read((int) Conversion.bytesToLong(register.get(sim)), 16)));
@@ -57,15 +59,16 @@ public class TestMemoryInstructions {
 
         MemoryInstructions mi = new MemoryInstructions(sim);
 
-        IAbstractInputOutput t0Register = new RegisterInputOutput("t0");
+        IAbstractInputOutput t0Register = new RegisterInputOutput(Registers.T0);
 
         IAbstractInput immediateTwo = new ImmediateInput(Conversion.longToBytes(2));
 
-        IAbstractInputOutput loadOut = new RegisterInputOutput("t1");
+        IAbstractInputOutput loadOut = new RegisterInputOutput(Registers.T1);
 
-        mi.alloc(t0Register, immediateTwo);
-        mi.store(immediateTwo, t0Register);
-        mi.load(loadOut, t0Register);
+        mi.alloc(t0Register, immediateTwo).apply(sim);
+        DereferenceInputOutput d = new DereferenceInputOutput(Registers.T0, 0);
+        mi.store(immediateTwo, d).apply(sim);
+        mi.load(loadOut, d).apply(sim);
 
         assertEquals(2, Conversion.bytesToLong(loadOut.get(sim)));
     }

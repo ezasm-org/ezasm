@@ -53,9 +53,9 @@ public class DispatchInstruction {
      * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#getParent()}.
      * @param line   the parsed line to interpret.
      */
-    public void invoke(Object parent, Line line) throws SimulationException {
+    public Object invoke(Object parent, Line line) throws SimulationException {
         try {
-            this.invocationTarget.invoke(parent, line.getArguments());
+            return this.invocationTarget.invoke(parent, line.getArguments());
         } catch (InvocationTargetException e) {
             throw new SimulationException(e.getTargetException().getMessage());
         } catch (IllegalAccessException | IllegalArgumentException e) {
