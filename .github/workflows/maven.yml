@@ -26,7 +26,7 @@ jobs:
 
       - run: |
           ref="${GITHUB_REF#refs/heads/}" && echo "::set-output name=branch::${ref////-}"
-          FILE_NAME=$(basename $(find -name '*-full.jar')")
+          FILE_NAME=$(basename $(find -name '*-full.jar'))
           echo "::set-output name=file::$FILE_NAME"
           mkdir staging && cp "target/$FILE_NAME" "staging/$FILE_NAME"
         id: res
