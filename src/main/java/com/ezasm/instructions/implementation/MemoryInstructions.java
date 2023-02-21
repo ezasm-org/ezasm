@@ -3,6 +3,7 @@ package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
@@ -46,14 +47,14 @@ public class MemoryInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void pop(IAbstractOutput output) throws SimulationException {
+    public void pop(IAbstractInputOutput output) throws SimulationException {
         long sp = simulator.getRegisters().getRegister(Registers.SP).getLong();
         output.set(simulator, simulator.getMemory().read((int) sp, simulator.getMemory().WORD_SIZE));
         simulator.getRegisters().getRegister(Registers.SP).setLong(sp + simulator.getMemory().WORD_SIZE);
     }
 
     @Instruction
-    public void load(IAbstractOutput output, IAbstractInput input) throws SimulationException {
+    public void load(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
         Memory m = this.simulator.getMemory();
         byte[] word = m.read((int) Conversion.bytesToLong(input.get(simulator)), m.WORD_SIZE);
         output.set(this.simulator, word);
@@ -67,14 +68,14 @@ public class MemoryInstructions {
 
     @Instruction
 
-    public void alloc(IAbstractOutput output, IAbstractInput input) throws SimulationException {
+    public void alloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
         Memory m = this.simulator.getMemory();
         int bytesWritten = m.unsafeAllocate((int) Conversion.bytesToLong(input.get(simulator)));
         output.set(this.simulator, Conversion.longToBytes(bytesWritten));
     }
 
     @Instruction
-    public void move(IAbstractOutput output, IAbstractInput input) throws SimulationException {
+    public void move(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
         output.set(simulator, input.get(simulator));
     }
 

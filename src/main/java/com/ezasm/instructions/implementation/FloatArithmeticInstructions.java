@@ -35,7 +35,7 @@ public class FloatArithmeticInstructions {
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
      */
-    private void floatArithmetic(BinaryOperator<Double> op, IAbstractOutput output, IAbstractInput input1,
+    private void floatArithmetic(BinaryOperator<Double> op, IAbstractInputOutput output, IAbstractInput input1,
             IAbstractInput input2) throws SimulationException {
 
         double res = op.apply(Conversion.bytesToDouble(input1.get(simulator)),
@@ -52,7 +52,7 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void addf(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void addf(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         floatArithmetic(Double::sum, output, input1, input2);
     }
 
@@ -65,7 +65,7 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void subf(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void subf(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         floatArithmetic((a, b) -> a - b, output, input1, input2);
     }
 
@@ -78,7 +78,7 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void mulf(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void mulf(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         floatArithmetic((a, b) -> a * b, output, input1, input2);
     }
 
@@ -91,7 +91,7 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void divf(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void divf(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         if (Conversion.bytesToLong(input2.get(simulator)) == 0) {
             throw new IllegalArgumentException(-1);
         }
@@ -127,7 +127,7 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void itof(IAbstractOutput output, IAbstractInput input) throws SimulationException {
+    public void itof(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
         long i = Conversion.bytesToLong(input.get(simulator));
         output.set(simulator, Conversion.doubleToBytes((double) i));
     }
@@ -139,7 +139,7 @@ public class FloatArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void ftoi(IAbstractOutput output, IAbstractInput input) throws SimulationException {
+    public void ftoi(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
         long i = (long) Math.floor(Conversion.bytesToDouble(input.get(simulator)));
         output.set(simulator, Conversion.longToBytes(i));
     }

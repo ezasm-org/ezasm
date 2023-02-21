@@ -1,9 +1,10 @@
 package com.ezasm.instructions.implementation;
 
+import com.ezasm.simulation.Transformation;
+import com.ezasm.simulation.TransformationSequence;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
@@ -35,12 +36,13 @@ public class ArithmeticInstructions {
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
      */
-    private void arithmetic(BinaryOperator<Long> op, IAbstractOutput output, IAbstractInput input1,
+    private void arithmetic(BinaryOperator<Long> op, IAbstractInputOutput output, IAbstractInput input1,
             IAbstractInput input2) throws SimulationException {
 
         long res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));
-        output.set(this.simulator, Conversion.longToBytes(res));
+        TransformationSequence t = new TransformationSequence(output.transformation(simulator, Conversion.longToBytes(res)));
+        t.applyToStack(simulator);
     }
 
     /**
@@ -52,7 +54,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void add(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void add(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic(Long::sum, output, input1, input2);
     }
 
@@ -65,7 +67,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sub(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void sub(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic((a, b) -> a - b, output, input1, input2);
     }
 
@@ -78,7 +80,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void mul(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void mul(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic((a, b) -> a * b, output, input1, input2);
     }
 
@@ -91,7 +93,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void div(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void div(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         if (Conversion.bytesToLong(input2.get(simulator)) == 0) {
             throw new IllegalArgumentException(-1);
         }
@@ -107,7 +109,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void and(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void and(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic((a, b) -> a & b, output, input1, input2);
     }
 
@@ -120,7 +122,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void or(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void or(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic((a, b) -> a | b, output, input1, input2);
     }
 
@@ -133,7 +135,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void xor(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void xor(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic((a, b) -> a ^ b, output, input1, input2);
     }
 
@@ -145,7 +147,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void not(IAbstractOutput output, IAbstractInput input) throws SimulationException {
+    public void not(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
         byte[] bytes = input.get(this.simulator);
         long val = Conversion.bytesToLong(bytes);
         val = ~val;
@@ -161,7 +163,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sll(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void sll(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic((a, b) -> a << b, output, input1, input2);
     }
 
@@ -174,7 +176,7 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void srl(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void srl(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         arithmetic((a, b) -> a >> b, output, input1, input2);
     }
 

@@ -19,7 +19,7 @@ public class TestMemoryInstructions {
     public void TestAllocInstruction() throws SimulationException {
         Simulator sim = new Simulator(8, 16);
         MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
-        IAbstractOutput register = new RegisterInputOutput("t0");
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
         IAbstractInput immediateTwo = new ImmediateInput(Conversion.longToBytes(2));
 
         long bytesBefore = Conversion.bytesToLong(sim.getRegisters().getRegister("t0").getBytes());

@@ -2,6 +2,9 @@ package com.ezasm.gui.toolbar;
 
 import com.ezasm.gui.Window;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Register;
+import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
@@ -59,6 +62,7 @@ public class SimulatorGUIActions {
         startButton.setEnabled(isDone);
         stopButton.setEnabled(state == State.RUNNING);
         stepButton.setEnabled(state != State.RUNNING);
+        stepBackButton.setEnabled(state == State.PAUSED || state == State.STOPPED);
         pauseButton.setEnabled(state == State.RUNNING);
         resumeButton.setEnabled(state == State.PAUSED);
         resetButton.setEnabled(state != State.IDLE);
@@ -95,6 +99,26 @@ public class SimulatorGUIActions {
                 setState(State.STOPPED);
                 System.err.println(e.getMessage());
             }
+        }
+    }
+
+    /**
+     * Handles if the user requests that the program runs one individual line of code from the current state.
+     */
+    static void stepBack() {
+        if (TransformationSequence.isEmpty()) {
+            setState(State.IDLE);
+            return;
+        }
+        try {
+            TransformationSequence.popStack().invert().apply(Window.getInstance().getSimulator());
+            Register PC = Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC);
+            PC.setLong(PC.getLong() - 1);
+            Window.updateHighlight();
+            Window.updateRegisters();
+        } catch (SimulationException e) {
+            setState(State.STOPPED);
+            System.err.println(e.getMessage());
         }
     }
 

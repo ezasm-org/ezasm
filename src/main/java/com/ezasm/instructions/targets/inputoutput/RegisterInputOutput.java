@@ -2,6 +2,9 @@ package com.ezasm.instructions.targets.inputoutput;
 
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.Transformation;
+import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -52,6 +55,18 @@ public class RegisterInputOutput implements IAbstractInputOutput {
     @Override
     public void set(ISimulator simulator, byte[] value) {
         simulator.getRegisters().getRegister(register).setBytes(value);
+    }
+
+    /**
+     * Gets the transformation corresponding to calling set on this object.
+     *
+     * @param simulator the program simulator.
+     * @param value     the value to set.
+     * @return the transformation corresponding to this action.
+     */
+    @Override
+    public Transformation transformation(ISimulator simulator, byte[] value) throws SimulationException {
+        return new Transformation(this, get(simulator), value);
     }
 
     @Override

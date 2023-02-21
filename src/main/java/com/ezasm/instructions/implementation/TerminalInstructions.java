@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.util.Conversion;
 import com.ezasm.gui.Window;
 import com.ezasm.instructions.Instruction;
@@ -113,7 +114,7 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void readi(IAbstractOutput output) throws SimulationException {
+    public void readi(IAbstractInputOutput output) throws SimulationException {
         try {
             output.set(simulator, Conversion.longToBytes(inputReader.nextLong()));
         } catch (Exception e) {
@@ -123,7 +124,7 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void readf(IAbstractOutput output) throws SimulationException {
+    public void readf(IAbstractInputOutput output) throws SimulationException {
         try {
             output.set(simulator, Conversion.doubleToBytes(inputReader.nextDouble()));
         } catch (Exception e) {
@@ -133,7 +134,7 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public void readc(IAbstractOutput output) throws SimulationException {
+    public void readc(IAbstractInputOutput output) throws SimulationException {
         Pattern oldDelimiter = inputReader.delimiter();
         inputReader.useDelimiter("");
         try {

@@ -1,9 +1,9 @@
 package com.ezasm.instructions.implementation;
 
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -33,8 +33,8 @@ public class ComparisonInstructions {
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
      */
-    private void compare(BiFunction<Long, Long, Boolean> op, IAbstractOutput output, IAbstractInput input1,
-            IAbstractInput input2) throws SimulationException {
+    private void compare(BiFunction<Long, Long, Boolean> op, IAbstractInputOutput output, IAbstractInput input1,
+                         IAbstractInput input2) throws SimulationException {
 
         boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
                 Conversion.bytesToLong(input2.get(simulator)));
@@ -50,7 +50,7 @@ public class ComparisonInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void seq(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void seq(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         compare(Long::equals, output, input1, input2);
     }
 
@@ -63,7 +63,7 @@ public class ComparisonInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sne(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void sne(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         compare((l, r) -> l.longValue() != r.longValue(), output, input1, input2);
     }
 
@@ -76,7 +76,7 @@ public class ComparisonInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void slt(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void slt(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         compare((l, r) -> l < r, output, input1, input2);
     }
 
@@ -89,7 +89,7 @@ public class ComparisonInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sle(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void sle(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         compare((l, r) -> l <= r, output, input1, input2);
     }
 
@@ -102,7 +102,7 @@ public class ComparisonInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sgt(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void sgt(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         compare((l, r) -> l > r, output, input1, input2);
     }
 
@@ -115,7 +115,7 @@ public class ComparisonInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sge(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public void sge(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         compare((l, r) -> l >= r, output, input1, input2);
     }
 }
