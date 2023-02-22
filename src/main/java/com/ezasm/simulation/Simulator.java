@@ -161,7 +161,7 @@ public class Simulator implements ISimulator {
      * @throws SimulationException if an error occurs in the transformation.
      */
     public boolean undoLastTransformations() throws SimulationException {
-        if(transforms.isEmpty()) {
+        if (transforms.isEmpty()) {
             return false;
         }
         transforms.pop().invert().apply();
