@@ -167,16 +167,6 @@ public class Memory {
     }
 
     /**
-     * Gets the information from the memory at a certain address interpreted as a long.
-     *
-     * @param address the address to begin to read from.
-     * @return the long read from the memory at a certain address.
-     */
-    public long readLong(int address) throws SimulationAddressOutOfBoundsException {
-        return Conversion.bytesToLong(read(address, WORD_SIZE));
-    }
-
-    /**
      * Gets the information from the memory at a certain address interpreted as a String.
      *
      * @param address the starting address to read from.
@@ -214,44 +204,6 @@ public class Memory {
             throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
         System.arraycopy(data, 0, memory, address, data.length);
-    }
-
-    /**
-     * Writes a long to the specified address.
-     *
-     * @param address the address to write at.
-     * @param data    the long to write.
-     */
-    public void writeLong(int address, long data) throws SimulationAddressOutOfBoundsException {
-        write(address, Conversion.longToBytes(data));
-    }
-
-    /**
-     * Writes a String to the specified address.
-     *
-     * @param address the address to write at.
-     * @param string  the String to write.
-     * @param maxSize the maximum size of the String to be in bytes.
-     */
-    public void writeString(int address, String string, int maxSize) throws SimulationException {
-        int realAddress = address - OFFSET;
-
-        if (maxSize < 0) {
-            throw new SimulationException(String.format("String size cannot be %d", maxSize));
-        }
-        if (realAddress < 0 || (realAddress + string.length()) >= this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address);
-        }
-
-        byte[][] data = Conversion.stringToBytes(string);
-
-        for (int i = 0; i < data.length && i < maxSize; ++i) {
-            write(address + i * WORD_SIZE, data[i]);
-        }
-
-        if (maxSize <= data.length) {
-            write(address + maxSize * WORD_SIZE, Conversion.longToBytes('\0'));
-        }
     }
 
 }

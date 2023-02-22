@@ -1,6 +1,7 @@
 package com.ezasm.gui.toolbar;
 
 import com.ezasm.gui.Window;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Register;
 import com.ezasm.simulation.Registers;
@@ -214,7 +215,7 @@ public class SimulatorGUIActions {
             awaitWorkerTermination();
         }
         Window.resetHighlight();
-        Window.resetInputStream();
+        TerminalInstructions.streams().resetInputStream();
         worker = new Thread(SimulatorGUIActions::simulationLoop);
         worker.start();
     }

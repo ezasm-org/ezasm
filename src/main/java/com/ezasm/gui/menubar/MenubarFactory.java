@@ -103,10 +103,10 @@ public class MenubarFactory {
             case INPUT_FILE -> selectInputFile();
             case OUTPUT_FILE -> selectOutputFile();
             case RESET_INPUT_REDIRECT -> {
-                TerminalInstructions.setInputStream(TerminalInstructions.DEFAULT_INPUT_STREAM);
+                TerminalInstructions.streams().setInputStream(TerminalInstructions.DEFAULT_INPUT_STREAM);
             }
             case RESET_OUTPUT_REDIRECT -> {
-                TerminalInstructions.setOutputStream(TerminalInstructions.DEFAULT_OUTPUT_STREAM);
+                TerminalInstructions.streams().setOutputStream(TerminalInstructions.DEFAULT_OUTPUT_STREAM);
             }
 
             // Unimplemented
