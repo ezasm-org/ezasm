@@ -33,7 +33,7 @@ Run that jar file with `java -jar target/*.jar`
 - [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - [IntelliJ Idea](https://www.jetbrains.com/idea/)
 
-#### Instrctions:
+#### Instructions:
 
 Open IntelliJ and select open project \
 Navigate to the EzASM source directory and open it \
