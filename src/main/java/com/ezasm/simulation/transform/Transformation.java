@@ -47,4 +47,5 @@ public record Transformation(AbstractTransformable output, RawData from, RawData
         result = 31 * result + to.hashCode();
         return result;
     }
+
 }

@@ -2,6 +2,7 @@ package com.ezasm.simulation;
 
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.TransformationSequence;
 
 import java.util.Collection;
 import java.util.Map;
@@ -29,6 +30,10 @@ public interface ISimulator {
     void executeProgramFromPC() throws SimulationException;
 
     void executeLineFromPC() throws SimulationException;
+
+    void applyTransformations(TransformationSequence transformationSequence) throws SimulationException;
+
+    boolean undoLastTransformations() throws SimulationException;
 
     void exit();
 

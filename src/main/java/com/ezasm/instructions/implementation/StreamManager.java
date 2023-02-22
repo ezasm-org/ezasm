@@ -11,7 +11,7 @@ public class StreamManager {
     private OutputStream outputStream;
     private long cursorPosition;
 
-    private InputStreamReader inputReader;
+    private BufferedReader inputReader;
     private PrintStream outputWriter;
 
     public StreamManager(InputStream inputStream, OutputStream outputStream) {
@@ -21,7 +21,7 @@ public class StreamManager {
 
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
-        this.inputReader = new InputStreamReader(this.inputStream);
+        this.inputReader = new BufferedReader(new InputStreamReader(this.inputStream));
     }
 
     public void setOutputStream(OutputStream outputStream) {
@@ -46,7 +46,7 @@ public class StreamManager {
             inputStream.skipNBytes(inputStream.available());
             // modifications to the input stream do not update the scanner
             // and the scanner has no way to clear its buffer... so evil hack
-            inputReader = new InputStreamReader(inputStream);
+            setInputStream(inputStream);
         } catch (Exception ignored) {
         }
     }
@@ -61,7 +61,7 @@ public class StreamManager {
             try {
                 fileReader.seek(nextPosition);
                 cursorPosition = nextPosition;
-                this.inputReader = new InputStreamReader(this.inputStream);
+                setInputStream(inputStream);
             } catch (IOException e) {
                 System.err.println("Unable to seek to new location");
             }

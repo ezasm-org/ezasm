@@ -3,8 +3,6 @@ package com.ezasm.gui.toolbar;
 import com.ezasm.gui.Window;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.Register;
-import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -107,20 +105,19 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the program runs one individual line of code from the current state.
      */
     static void stepBack() {
-        if (TransformationSequence.isEmpty()) {
-            setState(State.IDLE);
-        } else {
-            setState(State.PAUSED);
-            try {
-                TransformationSequence.popStack().invert().apply();
-                Register PC = Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC);
-                PC.setLong(PC.getLong() - 1);
+        try {
+            if (Window.getInstance().getSimulator().undoLastTransformations()) {
+                // Some inverse transform was executed
+                setState(State.PAUSED);
                 Window.updateHighlight();
                 Window.updateRegisters();
-            } catch (SimulationException e) {
-                setState(State.STOPPED);
-                System.err.println(e.getMessage());
+            } else {
+                // No transform was executed; we are done
+                setState(State.IDLE);
             }
+        } catch (SimulationException e) {
+            setState(State.STOPPED);
+            System.err.println(e.getMessage());
         }
 
     }

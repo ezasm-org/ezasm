@@ -160,7 +160,10 @@ public class InstructionDispatcher {
 
         Object result = dispatch.invoke(object, line);
         if (result instanceof TransformationSequence t) {
-            t.applyToStack();
+            simulator.applyTransformations(t);
+        } else {
+            // TODO instruction did not return the proper type? handle better
+            throw new RuntimeException();
         }
     }
 

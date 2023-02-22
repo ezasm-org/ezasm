@@ -13,7 +13,6 @@ import java.util.Deque;
 public final class TransformationSequence {
 
     private final Transformation[] transformations;
-    private final static Deque<TransformationSequence> transformationSequences = new ArrayDeque<>();
 
     /**
      * Requires at least one transformation. Represents the transformations done to a simulator by an instruction.
@@ -71,28 +70,6 @@ public final class TransformationSequence {
         for (int i = 0; i < transformations.length; ++i) {
             transformations[i].apply();
         }
-    }
-
-    /**
-     * Applies the transformation sequence to the simulator, then adds the transformation to the stack.
-     *
-     * @throws SimulationException if an error occurs applying the transformations.
-     */
-    public void applyToStack() throws SimulationException {
-        transformationSequences.push(this);
-        apply();
-    }
-
-    public static void resetStack() {
-        transformationSequences.clear();
-    }
-
-    public static TransformationSequence popStack() {
-        return transformationSequences.pop();
-    }
-
-    public static boolean isEmpty() {
-        return transformationSequences.isEmpty();
     }
 
 }
