@@ -97,7 +97,7 @@ public class StreamManager {
         try {
             outputWriter.print(c);
         } catch (Exception e) {
-            throw new SimulationException("Unable to write double");
+            throw new SimulationException("Unable to write character");
         }
     }
 
@@ -105,7 +105,7 @@ public class StreamManager {
         try {
             outputWriter.print(s);
         } catch (Exception e) {
-            throw new SimulationException("Unable to write double");
+            throw new SimulationException("Unable to write string");
         }
     }
 
@@ -119,7 +119,6 @@ public class StreamManager {
             if (c == -1) {
                 throw new SimulationException("Reached the end of file while reading");
             }
-            System.out.println(cursorPosition);
             return (char) c;
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
@@ -143,7 +142,6 @@ public class StreamManager {
                 ++cursorPosition;
             } while (!Character.isWhitespace(c) && !(c == -1));
 
-            System.out.println(cursorPosition);
             return sb.toString();
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
@@ -159,13 +157,17 @@ public class StreamManager {
             if (c == -1) {
                 throw new SimulationException("Reached the end of file while reading");
             }
-            while ((c != eol.charAt(0)) && !(c == -1)) {
+            while (c != -1) {
                 c = inputReader.read();
                 ++cursorPosition;
                 sb.append((char) c);
+
+                // Check if reached full newline signal
+                if (sb.length() >= eol.length() && sb.substring(sb.length() - eol.length()).equals(eol)) {
+                    break;
+                }
             }
 
-            // TODO handle case with first character of EOL without others?
             cursorPosition += inputReader.skip(eol.length() - 1);
 
             return sb.toString();
@@ -178,7 +180,7 @@ public class StreamManager {
         try {
             return Long.parseLong(walkWord());
         } catch (Exception e) {
-            throw new SimulationException("Unable to read double");
+            throw new SimulationException("Unable to read long");
         }
     }
 
@@ -202,7 +204,7 @@ public class StreamManager {
         try {
             return walkWord();
         } catch (Exception e) {
-            throw new SimulationException("Unable to read double");
+            throw new SimulationException("Unable to read string");
         }
     }
 
@@ -210,7 +212,7 @@ public class StreamManager {
         try {
             return walkLine();
         } catch (Exception e) {
-            throw new SimulationException("Unable to read double");
+            throw new SimulationException("Unable to read line");
         }
     }
 

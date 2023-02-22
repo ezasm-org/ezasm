@@ -12,7 +12,7 @@ import com.ezasm.instructions.implementation.ArithmeticInstructions;
 import com.ezasm.instructions.implementation.FloatArithmeticInstructions;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Line;
-import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.lang.reflect.Constructor;
@@ -160,7 +160,7 @@ public class InstructionDispatcher {
 
         Object result = dispatch.invoke(object, line);
         if (result instanceof TransformationSequence t) {
-            t.applyToStack(simulator);
+            t.applyToStack();
         }
     }
 

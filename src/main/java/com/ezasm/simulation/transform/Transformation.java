@@ -1,16 +1,16 @@
-package com.ezasm.simulation;
+package com.ezasm.simulation.transform;
 
-import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.transformable.AbstractTransformable;
+import com.ezasm.util.RawData;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
  * Represents a transformation on a simulation. Implemented so that transforms can be reversible. The contents of
  * <code>from</code> and <code>to</code> are never to be modified. They are read-only.
  */
-public record Transformation(IAbstractOutput output, byte[] from, byte[] to) {
+public record Transformation(AbstractTransformable output, RawData from, RawData to) {
 
     /**
      * Inverts the transformation to get the opposite operation.
@@ -24,11 +24,10 @@ public record Transformation(IAbstractOutput output, byte[] from, byte[] to) {
     /**
      * Applies this transformation to the given simulator.
      *
-     * @param simulator the simulator to apply the transformation to.
      * @throws SimulationException if there is an exception in applying the transformation.
      */
-    public void apply(ISimulator simulator) throws SimulationException {
-        output.set(simulator, to);
+    public void apply() throws SimulationException {
+        output.set(to);
     }
 
     @Override
@@ -38,20 +37,14 @@ public record Transformation(IAbstractOutput output, byte[] from, byte[] to) {
         if (o == null || getClass() != o.getClass())
             return false;
         Transformation that = (Transformation) o;
-        return output.equals(that.output) && Arrays.equals(from, that.from) && Arrays.equals(to, that.to);
+        return output.equals(that.output) && from.equals(that.from) && to.equals(that.to);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(output);
-        result = 31 * result + Arrays.hashCode(from);
-        result = 31 * result + Arrays.hashCode(to);
+        result = 31 * result + from.hashCode();
+        result = 31 * result + to.hashCode();
         return result;
-    }
-
-    @Override
-    public Transformation clone() {
-        // A call to super.clone would be redundant and waste resources
-        return new Transformation(output, from.clone(), to.clone());
     }
 }

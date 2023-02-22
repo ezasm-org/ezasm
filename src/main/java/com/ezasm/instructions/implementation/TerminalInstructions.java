@@ -3,15 +3,17 @@ package com.ezasm.instructions.implementation;
 import java.io.*;
 
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
-import com.ezasm.instructions.targets.inputoutput.mock.FileReadInputOutput;
-import com.ezasm.instructions.targets.inputoutput.mock.MemoryInputOutput;
-import com.ezasm.simulation.Transformation;
-import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.simulation.transform.Transformation;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.FileReadTransformation;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.simulation.transform.transformable.MemoryTransformable;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
 import static org.apache.commons.lang3.math.NumberUtils.min;
 
@@ -37,74 +39,74 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence printi(IAbstractInput input) throws SimulationException {
-        streams.write(Conversion.bytesToLong(input.get(simulator)));
+        streams.write(input.get(simulator).intValue());
         return new TransformationSequence();
     }
 
     @Instruction
     public TransformationSequence printf(IAbstractInput input) throws SimulationException {
-        streams.write(Conversion.bytesToDouble(input.get(simulator)));
+        streams.write(input.get(simulator).floatValue());
         return new TransformationSequence();
     }
 
     @Instruction
     public TransformationSequence printc(IAbstractInput input) throws SimulationException {
-        streams.write((char) Conversion.bytesToLong(input.get(simulator)));
+        streams.write((char) input.get(simulator).intValue());
         return new TransformationSequence();
     }
 
     @Instruction
     public TransformationSequence prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        int address = (int) Conversion.bytesToLong(input1.get(simulator));
-        int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
+        int address = (int) input1.get(simulator).intValue();
+        int maxSize = (int) input2.get(simulator).intValue();
         String s = simulator.getMemory().readString(address, maxSize);
         streams.write(s);
         return new TransformationSequence();
     }
 
     private interface DataSupplier {
-        byte[] get() throws SimulationException;
+        RawData get() throws SimulationException;
     }
 
     private TransformationSequence read(DataSupplier supplier, IAbstractInputOutput output) throws SimulationException {
-        FileReadInputOutput f = new FileReadInputOutput(streams().getCursor());
-        byte[] data = supplier.get();
-        System.out.println("--> " + Conversion.bytesToLong(data));
-        Transformation t1 = f.transformation(simulator, Conversion.longToBytes(streams().getCursor()));
-        Transformation t2 = new Transformation(output, output.get(simulator), data);
+        FileReadTransformation f = new FileReadTransformation(simulator, streams().getCursor());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        RawData data = supplier.get();
+        Transformation t1 = f.transformation(new RawData(streams().getCursor()));
+        Transformation t2 = io.transformation(data);
         return new TransformationSequence(t1, t2);
     }
 
     @Instruction
     public TransformationSequence readi(IAbstractInputOutput output) throws SimulationException {
-        return read(() -> Conversion.longToBytes(streams.readLong()), output);
+        return read(() -> new RawData(streams.readLong()), output);
     }
 
     @Instruction
     public TransformationSequence readf(IAbstractInputOutput output) throws SimulationException {
-        return read(() -> Conversion.doubleToBytes(streams.readDouble()), output);
+        return read(() -> new RawData(streams.readDouble()), output);
     }
 
     @Instruction
     public TransformationSequence readc(IAbstractInputOutput output) throws SimulationException {
-        return read(() -> Conversion.longToBytes(streams.readChar()), output);
+        return read(() -> new RawData(streams.readChar()), output);
     }
 
     @Instruction
     public TransformationSequence reads(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
-        int address = (int) Conversion.bytesToLong(input1.get(simulator));
+        int address = (int) input1.get(simulator).intValue();
+        int maxSize = (int) input2.get(simulator).intValue();
 
-        FileReadInputOutput f = new FileReadInputOutput(streams().getCursor());
+        FileReadTransformation f = new FileReadTransformation(simulator, streams().getCursor());
         String string = streams.readString();
 
         int size = min(maxSize, string.length());
         Transformation[] transformations = new Transformation[size + 1];
-        transformations[0] = f.transformation(simulator, Conversion.longToBytes(streams().getCursor()));
+        transformations[0] = f.transformation(new RawData(streams().getCursor()));
 
         for (int i = 1; i <= size; ++i) {
-            MemoryInputOutput m = new MemoryInputOutput(address);
-            transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
+            MemoryTransformable m = new MemoryTransformable(simulator, address);
+            transformations[i] = m.transformation(new RawData(string.charAt(i)));
             address = address + simulator.getMemory().WORD_SIZE;
         }
 
@@ -113,19 +115,19 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence readline(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
-        int address = (int) Conversion.bytesToLong(input1.get(simulator));
+        int address = (int) input1.get(simulator).intValue();
+        int maxSize = (int) input2.get(simulator).intValue();
 
-        FileReadInputOutput f = new FileReadInputOutput(streams().getCursor());
+        FileReadTransformation f = new FileReadTransformation(simulator, streams().getCursor());
         String string = streams.readLine();
 
         int size = min(maxSize, string.length());
         Transformation[] transformations = new Transformation[size + 1];
-        transformations[0] = f.transformation(simulator, Conversion.longToBytes(streams().getCursor()));
+        transformations[0] = f.transformation(new RawData(streams().getCursor()));
 
         for (int i = 1; i <= size; ++i) {
-            MemoryInputOutput m = new MemoryInputOutput(address);
-            transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
+            MemoryTransformable m = new MemoryTransformable(simulator, address);
+            transformations[i] = m.transformation(new RawData(string.charAt(i)));
             address = address + simulator.getMemory().WORD_SIZE;
         }
 

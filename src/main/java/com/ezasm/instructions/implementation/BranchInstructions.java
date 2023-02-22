@@ -1,7 +1,8 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
-import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
@@ -38,11 +39,11 @@ public class BranchInstructions {
     private TransformationSequence branch(BiFunction<Long, Long, Boolean> op, IAbstractInput label,
             IAbstractInput input1, IAbstractInput input2) throws SimulationException {
 
-        boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
-                Conversion.bytesToLong(input2.get(simulator)));
+        boolean res = op.apply(input1.get(simulator).intValue(), input2.get(simulator).intValue());
         if (res) {
-            return new TransformationSequence(
-                    (new RegisterInputOutput(Registers.PC)).transformation(simulator, label.get(simulator)));
+            InputOutputTransformable io = new InputOutputTransformable(simulator,
+                    new RegisterInputOutput(Registers.PC));
+            return new TransformationSequence(io.transformation(label.get(simulator)));
         }
         return new TransformationSequence();
     }

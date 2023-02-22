@@ -2,10 +2,8 @@ package com.ezasm.instructions.targets.inputoutput;
 
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Registers;
-import com.ezasm.simulation.Transformation;
-import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -40,9 +38,9 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * @return the value stored within the register.
      */
     @Override
-    public byte[] get(ISimulator simulator) {
-        byte[] val = simulator.getRegisters().getRegister(register).getBytes();
-        return Arrays.copyOf(val, val.length);
+    public RawData get(ISimulator simulator) {
+        RawData val = simulator.getRegisters().getRegister(register).getData();
+        return val.copy();
     }
 
     /**
@@ -52,20 +50,8 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(ISimulator simulator, byte[] value) {
-        simulator.getRegisters().getRegister(register).setBytes(value);
-    }
-
-    /**
-     * Gets the transformation corresponding to calling set on this object.
-     *
-     * @param simulator the program simulator.
-     * @param value     the value to set.
-     * @return the transformation corresponding to this action.
-     */
-    @Override
-    public Transformation transformation(ISimulator simulator, byte[] value) throws SimulationException {
-        return new Transformation(this, get(simulator), value);
+    public void set(ISimulator simulator, RawData value) {
+        simulator.getRegisters().getRegister(register).setData(value);
     }
 
     @Override

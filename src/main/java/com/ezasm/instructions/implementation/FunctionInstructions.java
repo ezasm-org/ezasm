@@ -5,7 +5,11 @@ import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.Transformation;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.Conversion;
+import com.ezasm.util.RawData;
 
 /**
  * An implementation of standard function call instructions for the simulation.
@@ -33,8 +37,8 @@ public class FunctionInstructions {
      */
     @Instruction
     public TransformationSequence jump(IAbstractInput input) throws SimulationException {
-        RegisterInputOutput pc = new RegisterInputOutput(Registers.PC);
-        return new TransformationSequence(pc, pc.get(simulator), input.get(simulator));
+        InputOutputTransformable pc = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.PC));
+        return new TransformationSequence(pc.transformation(input.get(simulator)));
     }
 
     /**
@@ -58,10 +62,11 @@ public class FunctionInstructions {
     @Instruction
     public TransformationSequence call(IAbstractInput input) throws SimulationException {
         RegisterInputOutput ra = new RegisterInputOutput(Registers.RA);
+        InputOutputTransformable raio = new InputOutputTransformable(simulator, ra);
         Register pc = simulator.getRegisters().getRegister(Registers.PC);
         TransformationSequence t = new TransformationSequence();
         t = t.concatenate(memoryInstructions.push(ra));
-        t = t.concatenate(new TransformationSequence(ra, ra.get(simulator), pc.getBytes()));
+        t = t.concatenate(new TransformationSequence(raio.transformation(pc.getData())));
         t = t.concatenate(jump(input));
         return t;
     }
@@ -100,10 +105,10 @@ public class FunctionInstructions {
      */
     @Instruction
     public TransformationSequence exit(IAbstractInput input) throws SimulationException {
-        RegisterInputOutput r0 = new RegisterInputOutput(Registers.R0);
-        RegisterInputOutput pc = new RegisterInputOutput(Registers.PC);
-        Transformation t1 = new Transformation(r0, r0.get(simulator), input.get(simulator));
-        Transformation t2 = new Transformation(pc, pc.get(simulator), Conversion.longToBytes(simulator.endPC()));
+        InputOutputTransformable r0 = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.R0));
+        InputOutputTransformable pc = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.PC));
+        Transformation t1 = r0.transformation(input.get(simulator));
+        Transformation t2 = pc.transformation(new RawData(simulator.endPC()));
         return new TransformationSequence(t1, t2);
     }
 

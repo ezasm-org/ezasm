@@ -1,12 +1,16 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
-import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
 import java.util.function.BiFunction;
 
@@ -37,9 +41,9 @@ public class ComparisonInstructions {
     private TransformationSequence compare(BiFunction<Long, Long, Boolean> op, IAbstractInputOutput output,
             IAbstractInput input1, IAbstractInput input2) throws SimulationException {
 
-        boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
-                Conversion.bytesToLong(input2.get(simulator)));
-        return new TransformationSequence(output.transformation(simulator, Conversion.longToBytes(res ? 1 : 0)));
+        boolean res = op.apply(input1.get(simulator).intValue(), input2.get(simulator).intValue());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(new RawData(res ? 1 : 0)));
     }
 
     /**

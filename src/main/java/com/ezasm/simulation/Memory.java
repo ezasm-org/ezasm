@@ -1,8 +1,8 @@
 package com.ezasm.simulation;
 
-import com.ezasm.util.Conversion;
 import com.ezasm.simulation.exception.SimulationAddressOutOfBoundsException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
 import java.util.Arrays;
 
@@ -148,12 +148,12 @@ public class Memory {
      * @param count   the number of bytes to read.
      * @return the information read from the memory at a certain address.
      */
-    public byte[] read(int address, int count) throws SimulationAddressOutOfBoundsException {
+    public RawData read(int address, int count) throws SimulationAddressOutOfBoundsException {
         address = address - OFFSET;
         if (address < 0 || (address + count) > this.MEMORY_SIZE) {
             throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
-        return Arrays.copyOfRange(memory, address, address + count);
+        return new RawData(Arrays.copyOfRange(memory, address, address + count));
     }
 
     /**
@@ -162,7 +162,7 @@ public class Memory {
      * @param address the address to begin to read from.
      * @return the information read from the memory at a certain address.
      */
-    public byte[] read(int address) throws SimulationAddressOutOfBoundsException {
+    public RawData read(int address) throws SimulationAddressOutOfBoundsException {
         return read(address, WORD_SIZE);
     }
 
@@ -183,7 +183,7 @@ public class Memory {
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < maxSize; ++i) {
-            char c = (char) Conversion.bytesToLong(read(address + i * WORD_SIZE));
+            char c = (char) read(address + i * WORD_SIZE).intValue();
             if (c == '\0') {
                 break;
             }
@@ -198,12 +198,12 @@ public class Memory {
      * @param address the address to write at.
      * @param data    the data to write.
      */
-    public void write(int address, byte[] data) throws SimulationAddressOutOfBoundsException {
+    public void write(int address, RawData data) throws SimulationAddressOutOfBoundsException {
         address = address - OFFSET;
-        if (address < 0 || (address + data.length) > this.MEMORY_SIZE) {
+        if (address < 0 || (address + data.data().length) > this.MEMORY_SIZE) {
             throw new SimulationAddressOutOfBoundsException(address + OFFSET);
         }
-        System.arraycopy(data, 0, memory, address, data.length);
+        System.arraycopy(data.data(), 0, memory, address, data.data().length);
     }
 
 }

@@ -3,6 +3,7 @@ package com.ezasm.parsing;
 import com.ezasm.util.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
+import com.ezasm.util.RawData;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class Lexer {
         return false;
     }
 
-    public static byte[] textToBytes(String text) throws ParseException {
+    public static RawData textToBytes(String text) throws ParseException {
         int base = 10;
         if (isHexadecimal(text)) {
             base = 16;
@@ -55,12 +56,12 @@ public class Lexer {
         }
 
         try { // Try conversion to long
-            return Conversion.longToBytes(Long.parseLong(text, base));
+            return new RawData(Long.parseLong(text, base));
         } catch (NumberFormatException ignored) {
         }
 
         try { // Try conversion to double
-            return Conversion.doubleToBytes(stringToDouble(text, base));
+            return new RawData(stringToDouble(text, base));
         } catch (NumberFormatException ignored) {
         }
 

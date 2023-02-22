@@ -5,7 +5,7 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Register;
 import com.ezasm.simulation.Registers;
-import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
@@ -112,7 +112,7 @@ public class SimulatorGUIActions {
         } else {
             setState(State.PAUSED);
             try {
-                TransformationSequence.popStack().invert().apply(Window.getInstance().getSimulator());
+                TransformationSequence.popStack().invert().apply();
                 Register PC = Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC);
                 PC.setLong(PC.getLong() - 1);
                 Window.updateHighlight();

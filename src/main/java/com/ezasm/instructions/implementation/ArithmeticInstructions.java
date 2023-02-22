@@ -1,6 +1,7 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
@@ -8,7 +9,7 @@ import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.util.Operations;
+import com.ezasm.util.RawData;
 
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
@@ -40,8 +41,9 @@ public class ArithmeticInstructions {
     private TransformationSequence arithmetic(BinaryOperator<Long> op, IAbstractInputOutput output,
             IAbstractInput input1, IAbstractInput input2) throws SimulationException {
 
-        byte[] res = Operations.applyToIntegerBytes(op, input1.get(simulator), input2.get(simulator));
-        return new TransformationSequence(output.transformation(simulator, res));
+        long res = op.apply(input1.get(simulator).intValue(), input2.get(simulator).intValue());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(new RawData(res)));
     }
 
     /**
@@ -54,8 +56,9 @@ public class ArithmeticInstructions {
     private TransformationSequence unaryOperation(UnaryOperator<Long> op, IAbstractInputOutput output,
             IAbstractInput input) throws SimulationException {
 
-        long res = op.apply(Conversion.bytesToLong(input.get(simulator)));
-        return new TransformationSequence(output.transformation(simulator, Conversion.longToBytes(res)));
+        long res = op.apply(input.get(simulator).intValue());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(new RawData(res)));
     }
 
     /**
@@ -111,7 +114,7 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence div(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        if (Conversion.bytesToLong(input2.get(simulator)) == 0) {
+        if (input2.get(simulator).intValue() == 0) {
             throw new IllegalArgumentException(-1);
         }
         return arithmetic((a, b) -> a / b, output, input1, input2);

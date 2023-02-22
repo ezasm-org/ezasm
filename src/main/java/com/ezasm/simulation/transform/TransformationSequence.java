@@ -1,8 +1,8 @@
-package com.ezasm.simulation;
+package com.ezasm.simulation.transform;
 
-import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.transformable.OutputTransformable;
+import com.ezasm.util.RawData;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -28,7 +28,7 @@ public final class TransformationSequence {
         this.transformations = transformations;
     }
 
-    public TransformationSequence(IAbstractOutput output, byte[] from, byte[] to) {
+    public TransformationSequence(OutputTransformable output, RawData from, RawData to) {
         this.transformations = new Transformation[] { new Transformation(output, from, to) };
     }
 
@@ -65,24 +65,22 @@ public final class TransformationSequence {
     /**
      * Applies the transformation sequence to the simulator.
      *
-     * @param simulator the simulator on which the operations are to be applied.
      * @throws SimulationException if an error occurs applying the transformations.
      */
-    public void apply(ISimulator simulator) throws SimulationException {
+    public void apply() throws SimulationException {
         for (int i = 0; i < transformations.length; ++i) {
-            transformations[i].apply(simulator);
+            transformations[i].apply();
         }
     }
 
     /**
      * Applies the transformation sequence to the simulator, then adds the transformation to the stack.
      *
-     * @param simulator the simulator on which the operations are to be applied.
      * @throws SimulationException if an error occurs applying the transformations.
      */
-    public void applyToStack(ISimulator simulator) throws SimulationException {
+    public void applyToStack() throws SimulationException {
         transformationSequences.push(this);
-        apply(simulator);
+        apply();
     }
 
     public static void resetStack() {

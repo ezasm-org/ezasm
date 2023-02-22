@@ -6,12 +6,15 @@ import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
-import com.ezasm.instructions.targets.inputoutput.mock.HeapPointerInputOutput;
-import com.ezasm.instructions.targets.inputoutput.mock.MemoryInputOutput;
 import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.Transformation;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.HeapPointerTransformation;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.simulation.transform.transformable.MemoryTransformable;
 import com.ezasm.util.Conversion;
-import com.ezasm.util.Operations;
+import com.ezasm.util.RawData;
 
 /**
  * An implementation of memory manipulation instructions for the simulation.
@@ -37,12 +40,11 @@ public class MemoryInstructions {
      */
     @Instruction
     public TransformationSequence push(IAbstractInput input) throws SimulationException {
-
         RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
-        Transformation t1 = new Transformation(sp, sp.get(simulator), Operations.addIntegerBytes(sp.get(simulator),
-                Conversion.longToBytes(-simulator.getMemory().WORD_SIZE)));
-        MemoryInputOutput memory = new MemoryInputOutput(Conversion.bytesToLong(t1.to()));
-        Transformation t2 = memory.transformation(simulator, input.get(simulator));
+        Transformation t1 = new Transformation(new InputOutputTransformable(simulator, sp), sp.get(simulator),
+                new RawData(sp.get(simulator).intValue() - simulator.getMemory().WORD_SIZE));
+        MemoryTransformable m = new MemoryTransformable(simulator, t1.to().intValue());
+        Transformation t2 = m.transformation(input.get(simulator));
         return new TransformationSequence(t1, t2);
     }
 
@@ -55,38 +57,41 @@ public class MemoryInstructions {
     @Instruction
     public TransformationSequence pop(IAbstractInputOutput output) throws SimulationException {
         RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
-        MemoryInputOutput memory = new MemoryInputOutput(Conversion.bytesToLong(sp.get(simulator)));
-        Transformation t1 = new Transformation(output, output.get(simulator), memory.get(simulator));
-        Transformation t2 = new Transformation(sp, sp.get(simulator),
-                Operations.addIntegerBytes(sp.get(simulator), Conversion.longToBytes(simulator.getMemory().WORD_SIZE)));
-
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        Transformation t1 = io.transformation(simulator.getMemory().read((int) sp.get(simulator).intValue()));
+        Transformation t2 = (new InputOutputTransformable(simulator, sp)
+                .transformation(new RawData(sp.get(simulator).intValue() + simulator.getMemory().WORD_SIZE)));
         return new TransformationSequence(t1, t2);
     }
 
     @Instruction
     public TransformationSequence load(IAbstractInputOutput output, DereferenceInputOutput input)
             throws SimulationException {
-        return new TransformationSequence(output.transformation(simulator, input.get(simulator)));
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
     @Instruction
     public TransformationSequence store(IAbstractInput input, DereferenceInputOutput output)
             throws SimulationException {
-        return new TransformationSequence(output.transformation(simulator, input.get(simulator)));
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
     @Instruction
     public TransformationSequence alloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
-        HeapPointerInputOutput h = new HeapPointerInputOutput();
-        Transformation t1 = new Transformation(h, h.get(simulator),
-                Operations.addIntegerBytes(h.get(simulator), input.get(simulator)));
-        Transformation t2 = output.transformation(simulator, t1.from());
+        HeapPointerTransformation h = new HeapPointerTransformation(simulator);
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        Transformation t1 = new Transformation(h, h.get(),
+                new RawData(h.get().intValue() + input.get(simulator).intValue()));
+        Transformation t2 = io.transformation(t1.from());
         return new TransformationSequence(t1, t2);
     }
 
     @Instruction
     public TransformationSequence move(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
-        return new TransformationSequence(output.transformation(simulator, input.get(simulator)));
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.simulation.TransformationSequence;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
@@ -8,7 +9,7 @@ import com.ezasm.simulation.ISimulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.util.Operations;
+import com.ezasm.util.RawData;
 
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
@@ -40,8 +41,9 @@ public class FloatArithmeticInstructions {
     private TransformationSequence floatArithmetic(BinaryOperator<Double> op, IAbstractInputOutput output,
             IAbstractInput input1, IAbstractInput input2) throws SimulationException {
 
-        byte[] res = Operations.applyToFloatBytes(op, input1.get(simulator), input2.get(simulator));
-        return new TransformationSequence(output.transformation(simulator, res));
+        RawData res = new RawData(op.apply(input1.get(simulator).floatValue(), input2.get(simulator).floatValue()));
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(res));
     }
 
     /**
@@ -53,8 +55,9 @@ public class FloatArithmeticInstructions {
      */
     private TransformationSequence unaryFloatOperation(UnaryOperator<Double> op, IAbstractInputOutput output,
             IAbstractInput input) throws SimulationException {
-        double res = op.apply(Conversion.bytesToDouble(input.get(simulator)));
-        return new TransformationSequence(output.transformation(simulator, Conversion.doubleToBytes(res)));
+        RawData res = new RawData(op.apply(input.get(simulator).floatValue()));
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(res));
     }
 
     /**
@@ -110,7 +113,7 @@ public class FloatArithmeticInstructions {
     @Instruction
     public TransformationSequence divf(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        double f = Conversion.bytesToDouble(input2.get(simulator));
+        double f = input2.get(simulator).floatValue();
         // Ensure the number is not "NaN" "infinity" or extremely close to zero (probably zero with rounding error)
         if (Double.isNaN(f) || Double.isInfinite(f) || (f >= -1e-15 || f <= 1e-15)) {
             throw new IllegalArgumentException(-1);
@@ -151,8 +154,9 @@ public class FloatArithmeticInstructions {
      */
     @Instruction
     public TransformationSequence itof(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
-        double f = (double) Conversion.bytesToLong(input.get(simulator));
-        return new TransformationSequence(output.transformation(simulator, Conversion.doubleToBytes(f)));
+        RawData data = new RawData((double) input.get(simulator).intValue());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(data));
     }
 
     /**
@@ -164,7 +168,8 @@ public class FloatArithmeticInstructions {
      */
     @Instruction
     public TransformationSequence ftoi(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
-        long i = (long) Conversion.bytesToDouble(input.get(simulator));
-        return new TransformationSequence(output.transformation(simulator, Conversion.longToBytes(i)));
+        RawData data = new RawData((long) input.get(simulator).floatValue());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(data));
     }
 }

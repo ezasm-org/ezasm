@@ -1,13 +1,10 @@
 package com.ezasm.instructions.targets.inputoutput;
 
-import com.ezasm.simulation.Transformation;
-import com.ezasm.simulation.TransformationSequence;
-import com.ezasm.util.Conversion;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -56,10 +53,9 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @return the value stored within the address.
      */
     @Override
-    public byte[] get(ISimulator simulator) throws SimulationException {
-        int address = (int) Conversion.bytesToLong(register.get(simulator));
-        byte[] val = simulator.getMemory().read(address + offset);
-        return Arrays.copyOf(val, val.length);
+    public RawData get(ISimulator simulator) throws SimulationException {
+        int address = (int) register.get(simulator).intValue();
+        return simulator.getMemory().read(address + offset).copy();
     }
 
     /**
@@ -69,21 +65,9 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(ISimulator simulator, byte[] value) throws SimulationException {
-        int address = (int) Conversion.bytesToLong(register.get(simulator));
+    public void set(ISimulator simulator, RawData value) throws SimulationException {
+        int address = (int) register.get(simulator).intValue();
         simulator.getMemory().write(address + offset, value);
-    }
-
-    /**
-     * Gets the transformation corresponding to calling set on this object.
-     *
-     * @param simulator the program simulator.
-     * @param value     the value to set.
-     * @return the transformation corresponding to this action.
-     */
-    @Override
-    public Transformation transformation(ISimulator simulator, byte[] value) throws SimulationException {
-        return new Transformation(this, get(simulator), value);
     }
 
     @Override
