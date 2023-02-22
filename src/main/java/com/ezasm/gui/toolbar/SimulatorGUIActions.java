@@ -2,6 +2,7 @@ package com.ezasm.gui.toolbar;
 
 import com.ezasm.gui.Window;
 import com.ezasm.instructions.implementation.TerminalInstructions;
+import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
@@ -58,6 +59,7 @@ public class SimulatorGUIActions {
         boolean isDone = state == State.IDLE || state == State.STOPPED;
 
         Window.getInstance().setEditable(isDone);
+        MenubarFactory.setRedirectionEnable(isDone);
         startButton.setEnabled(isDone);
         stopButton.setEnabled(state == State.RUNNING);
         stepButton.setEnabled(state != State.RUNNING);
