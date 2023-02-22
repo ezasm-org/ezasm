@@ -28,6 +28,7 @@ public class MenubarFactory {
     private static final MenuActionListener actionListener = new MenuActionListener();
 
     private static JMenuBar menubar;
+    private static JMenu redirectionMenu;
 
     /**
      * Generate the menu bar if it does not already exist and initialize its menus and menu items.
@@ -65,6 +66,7 @@ public class MenubarFactory {
          * IO
          */
         menu = new JMenu("IO Direction");
+        redirectionMenu = menu;
         menu.getAccessibleContext().setAccessibleDescription("Popups related to input and output redirection");
         menubar.add(menu);
         addMenuItem(menu, INPUT_FILE);
@@ -81,6 +83,10 @@ public class MenubarFactory {
         JMenuItem item = new JMenuItem(name);
         item.addActionListener(actionListener);
         menu.add(item);
+    }
+
+    public static void setRedirectionEnable(boolean state) {
+        redirectionMenu.setEnabled(state);
     }
 
     /**
