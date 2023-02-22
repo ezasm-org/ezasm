@@ -1,9 +1,9 @@
 package com.ezasm.instructions.implementation;
 
 import java.io.*;
-import java.util.regex.Pattern;
 
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.inputoutput.mock.FileReadInputOutput;
 import com.ezasm.instructions.targets.inputoutput.mock.MemoryInputOutput;
 import com.ezasm.simulation.Transformation;
 import com.ezasm.simulation.TransformationSequence;
@@ -37,34 +37,19 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence printi(IAbstractInput input) throws SimulationException {
-        try {
-            streams.outputWriter().print(Conversion.bytesToLong(input.get(simulator)));
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error writing integer to output");
-        }
+        streams.write(Conversion.bytesToLong(input.get(simulator)));
         return new TransformationSequence();
     }
 
     @Instruction
     public TransformationSequence printf(IAbstractInput input) throws SimulationException {
-        try {
-            streams.outputWriter().print(Conversion.bytesToDouble(input.get(simulator)));
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error writing float to output");
-        }
+        streams.write(Conversion.bytesToDouble(input.get(simulator)));
         return new TransformationSequence();
     }
 
     @Instruction
     public TransformationSequence printc(IAbstractInput input) throws SimulationException {
-        try {
-            streams.outputWriter().print((char) Conversion.bytesToLong(input.get(simulator)));
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error writing character to output");
-        }
+        streams.write((char) Conversion.bytesToLong(input.get(simulator)));
         return new TransformationSequence();
     }
 
@@ -73,100 +58,77 @@ public class TerminalInstructions {
         int address = (int) Conversion.bytesToLong(input1.get(simulator));
         int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
         String s = simulator.getMemory().readString(address, maxSize);
-        try {
-            streams.outputWriter().print(s);
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error writing string to output");
-        }
+        streams.write(s);
         return new TransformationSequence();
+    }
+
+    private interface DataSupplier {
+        byte[] get() throws SimulationException;
+    }
+
+    private TransformationSequence read(DataSupplier supplier, IAbstractInputOutput output) throws SimulationException {
+        FileReadInputOutput f = new FileReadInputOutput(streams().getCursor());
+        byte[] data = supplier.get();
+        Transformation t1 = f.transformation(simulator, Conversion.longToBytes(streams().getCursor()));
+        Transformation t2 = new Transformation(output, output.get(simulator), data);
+        return new TransformationSequence(t1, t2);
     }
 
     @Instruction
     public TransformationSequence readi(IAbstractInputOutput output) throws SimulationException {
-        try {
-            return new TransformationSequence(output, output.get(simulator),
-                    Conversion.longToBytes(streams.inputReader().nextLong()));
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error reading integer from input");
-        }
+        return read(() -> Conversion.longToBytes(streams().readLong()), output);
     }
 
     @Instruction
     public TransformationSequence readf(IAbstractInputOutput output) throws SimulationException {
-        try {
-            output.set(simulator, Conversion.doubleToBytes(streams.inputReader().nextDouble()));
-            return new TransformationSequence(output, output.get(simulator),
-                    Conversion.doubleToBytes(streams.inputReader().nextDouble()));
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error reading double from input");
-        }
+        return read(() -> Conversion.doubleToBytes(streams.readDouble()), output);
     }
 
     @Instruction
     public TransformationSequence readc(IAbstractInputOutput output) throws SimulationException {
-        Pattern oldDelimiter = streams.inputReader().delimiter();
-        streams.inputReader().useDelimiter("");
-        try {
-            String current = " ";
-            while (current.matches("\\s")) {
-                current = streams.inputReader().next();
-            }
-            streams.inputReader().useDelimiter(oldDelimiter);
-            return new TransformationSequence(output, output.get(simulator), Conversion.longToBytes(current.charAt(0)));
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            streams.inputReader().useDelimiter(oldDelimiter);
-            throw new SimulationException("Error reading character from input");
-        }
+        return read(() -> Conversion.longToBytes(streams().readChar()), output);
     }
 
     @Instruction
     public TransformationSequence reads(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        try {
-            int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
-            int address = (int) Conversion.bytesToLong(input1.get(simulator));
-            String string = streams.inputReader().next();
+        int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
+        int address = (int) Conversion.bytesToLong(input1.get(simulator));
 
-            int size = min(maxSize, string.length());
-            Transformation[] transformations = new Transformation[size];
+        FileReadInputOutput f = new FileReadInputOutput(streams().getCursor());
+        String string = streams.readString();
 
-            for (int i = 0; i < size; ++i) {
-                MemoryInputOutput m = new MemoryInputOutput(address);
-                transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
-                address = address + simulator.getMemory().WORD_SIZE;
-            }
+        int size = min(maxSize, string.length());
+        Transformation[] transformations = new Transformation[size + 1];
+        transformations[0] = f.transformation(simulator, Conversion.longToBytes(streams().getCursor()));
 
-            return new TransformationSequence(transformations);
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error reading string from input");
+        for (int i = 1; i <= size; ++i) {
+            MemoryInputOutput m = new MemoryInputOutput(address);
+            transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
+            address = address + simulator.getMemory().WORD_SIZE;
         }
+
+        return new TransformationSequence(transformations);
     }
 
     @Instruction
     public TransformationSequence readline(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        try {
-            int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
-            int address = (int) Conversion.bytesToLong(input1.get(simulator));
-            String string = streams.inputReader().nextLine();
+        int maxSize = (int) Conversion.bytesToLong(input2.get(simulator));
+        int address = (int) Conversion.bytesToLong(input1.get(simulator));
 
-            int size = min(maxSize, string.length());
-            Transformation[] transformations = new Transformation[size];
+        FileReadInputOutput f = new FileReadInputOutput(streams().getCursor());
+        String string = streams.readLine();
 
-            for (int i = 0; i < size; ++i) {
-                MemoryInputOutput m = new MemoryInputOutput(address);
-                transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
-                address = address + simulator.getMemory().WORD_SIZE;
-            }
+        int size = min(maxSize, string.length());
+        Transformation[] transformations = new Transformation[size + 1];
+        transformations[0] = f.transformation(simulator, Conversion.longToBytes(streams().getCursor()));
 
-            return new TransformationSequence(transformations);
-        } catch (Exception e) {
-            // TODO make I/O simulation exception
-            throw new SimulationException("Error reading string from input");
+        for (int i = 1; i <= size; ++i) {
+            MemoryInputOutput m = new MemoryInputOutput(address);
+            transformations[i] = m.transformation(simulator, Conversion.longToBytes(string.charAt(i)));
+            address = address + simulator.getMemory().WORD_SIZE;
         }
+
+        return new TransformationSequence(transformations);
     }
 
 }

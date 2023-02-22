@@ -15,6 +15,10 @@ public class FileReader extends InputStream {
         file.seek(pos);
     }
 
+    public long cursorPosition() throws IOException {
+        return file.getFilePointer();
+    }
+
     @Override
     public int read() throws IOException {
         return file.read();

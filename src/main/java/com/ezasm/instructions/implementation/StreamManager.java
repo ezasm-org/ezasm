@@ -1,10 +1,12 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.gui.Window;
+import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.FileReader;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
@@ -16,8 +18,6 @@ public class StreamManager {
 
     private Scanner inputReader;
     private PrintStream outputWriter;
-
-    private static final int INPUT_STREAM_READ_LIMIT = 0x10000;
 
     public StreamManager(InputStream inputStream, OutputStream outputStream) {
         setInputStream(inputStream);
@@ -33,14 +33,6 @@ public class StreamManager {
         this.cursorPosition = 0;
         this.outputStream = outputStream;
         this.outputWriter = new PrintStream(this.outputStream);
-    }
-
-    public Scanner inputReader() {
-        return inputReader;
-    }
-
-    public PrintStream outputWriter() {
-        return outputWriter;
     }
 
     public void resetInputStream() {
@@ -85,4 +77,114 @@ public class StreamManager {
             }
         }
     }
+
+    /**
+     * Gets the cursor's position within the currently open file.
+     *
+     * @return the cursor's position within the currently open file.
+     */
+    public long getCursor() {
+        return cursorPosition;
+    }
+
+    /**
+     * Updates the cursor variable to where the cursor currently is within the file.
+     *
+     * @throws IOException if an error occurs finding the cursor position.
+     */
+    private void updateCursor() throws IOException {
+        if (inputStream instanceof FileReader fileReader) {
+            cursorPosition = fileReader.cursorPosition();
+        }
+    }
+
+    public void write(long l) throws SimulationException {
+        try {
+            outputWriter.print(l);
+        } catch (Exception e) {
+            throw new SimulationException("Unable to write long");
+        }
+    }
+
+    public void write(double d) throws SimulationException {
+        try {
+            outputWriter.print(d);
+        } catch (Exception e) {
+            throw new SimulationException("Unable to write double");
+        }
+    }
+
+    public void write(char c) throws SimulationException {
+        try {
+            outputWriter.print(c);
+        } catch (Exception e) {
+            throw new SimulationException("Unable to write double");
+        }
+    }
+
+    public void write(String s) throws SimulationException {
+        try {
+            outputWriter.print(s);
+        } catch (Exception e) {
+            throw new SimulationException("Unable to write double");
+        }
+    }
+
+    public long readLong() throws SimulationException {
+        try {
+            long x = inputReader.nextLong();
+            updateCursor();
+            return x;
+        } catch (Exception e) {
+            throw new SimulationException("Unable to read double");
+        }
+    }
+
+    public double readDouble() throws SimulationException {
+        try {
+            double x = inputReader.nextDouble();
+            updateCursor();
+            return x;
+        } catch (Exception e) {
+            throw new SimulationException("Unable to read double");
+        }
+    }
+
+    public char readChar() throws SimulationException {
+        Pattern oldDelimiter = inputReader.delimiter();
+        try {
+            inputReader.useDelimiter("");
+            String current = " ";
+            while (current.matches("\\s")) {
+                current = inputReader.next();
+            }
+            updateCursor();
+            inputReader.useDelimiter(oldDelimiter);
+            return current.charAt(0);
+        } catch (Exception e) {
+            inputReader.useDelimiter(oldDelimiter);
+            throw new SimulationException("Unable to read character");
+        }
+    }
+
+    public String readString() throws SimulationException {
+        try {
+            String x = inputReader.next();
+            updateCursor();
+            return x;
+        } catch (Exception e) {
+            throw new SimulationException("Unable to read double");
+        }
+    }
+
+    public String readLine() throws SimulationException {
+        try {
+            String x = inputReader.nextLine();
+            updateCursor();
+            return x;
+        } catch (Exception e) {
+            throw new SimulationException("Unable to read double");
+        }
+    }
+
 }

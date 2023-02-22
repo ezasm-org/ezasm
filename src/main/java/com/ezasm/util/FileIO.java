@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
+import java.io.FileReader;
 
 /**
  * A utility class to provide file I/O functionality.
