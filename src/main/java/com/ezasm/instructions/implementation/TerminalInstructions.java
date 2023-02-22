@@ -69,6 +69,7 @@ public class TerminalInstructions {
     private TransformationSequence read(DataSupplier supplier, IAbstractInputOutput output) throws SimulationException {
         FileReadInputOutput f = new FileReadInputOutput(streams().getCursor());
         byte[] data = supplier.get();
+        System.out.println("--> " + Conversion.bytesToLong(data));
         Transformation t1 = f.transformation(simulator, Conversion.longToBytes(streams().getCursor()));
         Transformation t2 = new Transformation(output, output.get(simulator), data);
         return new TransformationSequence(t1, t2);
@@ -76,7 +77,7 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence readi(IAbstractInputOutput output) throws SimulationException {
-        return read(() -> Conversion.longToBytes(streams().readLong()), output);
+        return read(() -> Conversion.longToBytes(streams.readLong()), output);
     }
 
     @Instruction
@@ -86,7 +87,7 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence readc(IAbstractInputOutput output) throws SimulationException {
-        return read(() -> Conversion.longToBytes(streams().readChar()), output);
+        return read(() -> Conversion.longToBytes(streams.readChar()), output);
     }
 
     @Instruction

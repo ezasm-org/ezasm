@@ -1,14 +1,9 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.gui.Window;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.FileReader;
 
 import java.io.*;
-import java.util.Scanner;
-import java.util.regex.Pattern;
-
-import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
 public class StreamManager {
 
@@ -16,7 +11,7 @@ public class StreamManager {
     private OutputStream outputStream;
     private long cursorPosition;
 
-    private Scanner inputReader;
+    private InputStreamReader inputReader;
     private PrintStream outputWriter;
 
     public StreamManager(InputStream inputStream, OutputStream outputStream) {
@@ -26,7 +21,7 @@ public class StreamManager {
 
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
-        this.inputReader = new Scanner(this.inputStream);
+        this.inputReader = new InputStreamReader(this.inputStream);
     }
 
     public void setOutputStream(OutputStream outputStream) {
@@ -36,16 +31,10 @@ public class StreamManager {
     }
 
     public void resetInputStream() {
-        try {
-            if (inputStream instanceof FileReader f) {
-                cursorPosition = 0;
-                inputReader = new Scanner(new FileReader(new File(Window.getInputFilePath())));
-            } else {
-                clearBuffer();
-            }
-        } catch (IOException e) {
-            promptWarningDialog("Error Reading File",
-                    String.format("There was an error reading from '%s'", Window.getInputFilePath()));
+        if (inputStream instanceof FileReader f) {
+            moveCursor(0);
+        } else {
+            clearBuffer();
         }
     }
 
@@ -57,7 +46,7 @@ public class StreamManager {
             inputStream.skipNBytes(inputStream.available());
             // modifications to the input stream do not update the scanner
             // and the scanner has no way to clear its buffer... so evil hack
-            inputReader = new Scanner(inputStream);
+            inputReader = new InputStreamReader(inputStream);
         } catch (Exception ignored) {
         }
     }
@@ -69,9 +58,10 @@ public class StreamManager {
      */
     public void moveCursor(long nextPosition) {
         if (inputStream instanceof FileReader fileReader) {
-            cursorPosition = nextPosition;
             try {
-                fileReader.seek(cursorPosition);
+                fileReader.seek(nextPosition);
+                cursorPosition = nextPosition;
+                this.inputReader = new InputStreamReader(this.inputStream);
             } catch (IOException e) {
                 System.err.println("Unable to seek to new location");
             }
@@ -85,17 +75,6 @@ public class StreamManager {
      */
     public long getCursor() {
         return cursorPosition;
-    }
-
-    /**
-     * Updates the cursor variable to where the cursor currently is within the file.
-     *
-     * @throws IOException if an error occurs finding the cursor position.
-     */
-    private void updateCursor() throws IOException {
-        if (inputStream instanceof FileReader fileReader) {
-            cursorPosition = fileReader.cursorPosition();
-        }
     }
 
     public void write(long l) throws SimulationException {
@@ -130,11 +109,74 @@ public class StreamManager {
         }
     }
 
+    private char walkChar() throws SimulationException {
+        try {
+            int c;
+            do {
+                c = inputReader.read();
+                ++cursorPosition;
+            } while (Character.isWhitespace(c));
+            if (c == -1) {
+                throw new SimulationException("Reached the end of file while reading");
+            }
+            System.out.println(cursorPosition);
+            return (char) c;
+        } catch (Exception e) {
+            throw new SimulationException("Unable to read from input stream");
+        }
+    }
+
+    private String walkWord() throws SimulationException {
+        try {
+            StringBuilder sb = new StringBuilder();
+            int c;
+            do {
+                c = inputReader.read();
+                ++cursorPosition;
+            } while (Character.isWhitespace(c));
+            if (c == -1) {
+                throw new SimulationException("Reached the end of file while reading");
+            }
+            do {
+                sb.append((char) c);
+                c = inputReader.read();
+                ++cursorPosition;
+            } while (!Character.isWhitespace(c) && !(c == -1));
+
+            System.out.println(cursorPosition);
+            return sb.toString();
+        } catch (Exception e) {
+            throw new SimulationException("Unable to read from input stream");
+        }
+    }
+
+    private String walkLine() throws SimulationException {
+        String eol = System.lineSeparator();
+        // the EOL delimiter is assumed to be of at least length 1
+        try {
+            StringBuilder sb = new StringBuilder();
+            int c = inputReader.read();
+            if (c == -1) {
+                throw new SimulationException("Reached the end of file while reading");
+            }
+            while ((c != eol.charAt(0)) && !(c == -1)) {
+                c = inputReader.read();
+                ++cursorPosition;
+                sb.append((char) c);
+            }
+
+            // TODO handle case with first character of EOL without others?
+            cursorPosition += inputReader.skip(eol.length() - 1);
+
+            return sb.toString();
+        } catch (Exception e) {
+            throw new SimulationException("Unable to read from input stream");
+        }
+    }
+
     public long readLong() throws SimulationException {
         try {
-            long x = inputReader.nextLong();
-            updateCursor();
-            return x;
+            return Long.parseLong(walkWord());
         } catch (Exception e) {
             throw new SimulationException("Unable to read double");
         }
@@ -142,36 +184,23 @@ public class StreamManager {
 
     public double readDouble() throws SimulationException {
         try {
-            double x = inputReader.nextDouble();
-            updateCursor();
-            return x;
+            return Double.parseDouble(walkWord());
         } catch (Exception e) {
             throw new SimulationException("Unable to read double");
         }
     }
 
     public char readChar() throws SimulationException {
-        Pattern oldDelimiter = inputReader.delimiter();
         try {
-            inputReader.useDelimiter("");
-            String current = " ";
-            while (current.matches("\\s")) {
-                current = inputReader.next();
-            }
-            updateCursor();
-            inputReader.useDelimiter(oldDelimiter);
-            return current.charAt(0);
+            return walkChar();
         } catch (Exception e) {
-            inputReader.useDelimiter(oldDelimiter);
             throw new SimulationException("Unable to read character");
         }
     }
 
     public String readString() throws SimulationException {
         try {
-            String x = inputReader.next();
-            updateCursor();
-            return x;
+            return walkWord();
         } catch (Exception e) {
             throw new SimulationException("Unable to read double");
         }
@@ -179,9 +208,7 @@ public class StreamManager {
 
     public String readLine() throws SimulationException {
         try {
-            String x = inputReader.nextLine();
-            updateCursor();
-            return x;
+            return walkLine();
         } catch (Exception e) {
             throw new SimulationException("Unable to read double");
         }

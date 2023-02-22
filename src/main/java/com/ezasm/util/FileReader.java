@@ -16,7 +16,7 @@ public class FileReader extends InputStream {
     }
 
     public long cursorPosition() throws IOException {
-        return file.getFilePointer();
+        return file.getChannel().position();
     }
 
     @Override
