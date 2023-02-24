@@ -112,7 +112,7 @@ public class MenubarFactory {
                     File file = fileChooser.getSelectedFile();
                     if (file != null && file.exists() && file.canRead()) {
                         try {
-                            DiscordActivity.setDetails("in file "+file.getName());
+                            DiscordActivity.setDetails("Open file: "+file.getName());
                             String content = FileIO.readFile(file);
                             Window.getInstance().setText(content);
                         } catch (IOException ex) {
