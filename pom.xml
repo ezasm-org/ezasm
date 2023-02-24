@@ -4,9 +4,9 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>EzASM</groupId>
-	<artifactId>EzASM</artifactId>
-	<version>0.2</version>
+  <groupId>EzASM</groupId>
+  <artifactId>EzASM</artifactId>
+  <version>1.0-beta</version>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
