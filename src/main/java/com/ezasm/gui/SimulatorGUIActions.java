@@ -1,6 +1,9 @@
 package com.ezasm.gui;
 
+import com.ezasm.DiscordActivity;
+import com.ezasm.gui.editor.LineHighlighter;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
@@ -89,6 +92,9 @@ public class SimulatorGUIActions {
             }
         } else {
             try {
+                final var pc = (int)Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
+                
+                DiscordActivity.setState("On line "+pc);
                 Window.updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
                 Window.updateRegisters();

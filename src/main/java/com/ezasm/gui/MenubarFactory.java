@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.DiscordActivity;
 import com.ezasm.util.FileIO;
 
 import javax.swing.*;
@@ -111,6 +112,7 @@ public class MenubarFactory {
                     File file = fileChooser.getSelectedFile();
                     if (file != null && file.exists() && file.canRead()) {
                         try {
+                            DiscordActivity.setDetails("in file "+file.getName());
                             String content = FileIO.readFile(file);
                             Window.getInstance().setText(content);
                         } catch (IOException ex) {
