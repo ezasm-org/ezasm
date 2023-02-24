@@ -34,17 +34,7 @@ public class Autocomplete implements DocumentListener {
 
     @Override
     public void changedUpdate(DocumentEvent ev) {
-        keywords.clear();
-        String s = textField.getText();
-        Matcher m = line_finder.matcher(s);
-        while (m.find()) {
-            String label = m.group().strip().replace(" ","").replace(":","");
-            if (!keywords.contains(label)) {
-                keywords.add(label);
-            }
-        }
-        Collections.sort(keywords);
-//        System.out.println(keywords);
+
     }
 
     @Override
@@ -72,8 +62,21 @@ public class Autocomplete implements DocumentListener {
         }
 
         // Too few chars
-        if (pos - w < 2)
+        if (pos - w < 2) {
             return;
+        } else {
+            //only recheck keywords once we've typed 3 non-space characters
+            keywords.clear();
+            String s = textField.getText();
+            Matcher m = line_finder.matcher(s);
+            while (m.find()) {
+                String label = m.group().strip().replace(" ","").replace(":","");
+                if (!keywords.contains(label)) {
+                    keywords.add(label);
+                }
+            }
+            Collections.sort(keywords);
+        }
 
         String prefix = content.substring(w + 1).toLowerCase();
         int n = Collections.binarySearch(keywords, prefix);
