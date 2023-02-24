@@ -253,4 +253,10 @@ public class Window {
         }
         instance.table.addHighlightValue(-1, instance.config);
     }
+    public static void resethighlight() {
+        if (instance == null || instance.table == null) {
+            return;
+        }
+        instance.table.removeHighlightValue();
+    }
 }
