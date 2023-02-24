@@ -103,11 +103,13 @@ public class TerminalInstructions {
         Transformation[] transformations = new Transformation[size + 1];
         transformations[0] = f.transformation(new RawData(streams().getCursor()));
 
-        for (int i = 1; i <= size; ++i) {
+        for (int i = 1; i < size; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
             address = address + simulator.getMemory().WORD_SIZE;
         }
+        MemoryTransformable m = new MemoryTransformable(simulator, address);
+        transformations[transformations.length-1] = m.transformation(new RawData('\0'));
 
         return new TransformationSequence(transformations);
     }
@@ -124,11 +126,13 @@ public class TerminalInstructions {
         Transformation[] transformations = new Transformation[size + 1];
         transformations[0] = f.transformation(new RawData(streams().getCursor()));
 
-        for (int i = 1; i <= size; ++i) {
+        for (int i = 1; i < size; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
             address = address + simulator.getMemory().WORD_SIZE;
         }
+        MemoryTransformable m = new MemoryTransformable(simulator, address);
+        transformations[transformations.length-1] = m.transformation(new RawData('\0'));
 
         return new TransformationSequence(transformations);
     }

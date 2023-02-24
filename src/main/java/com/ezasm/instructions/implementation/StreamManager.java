@@ -156,6 +156,8 @@ public class StreamManager {
             int c = inputReader.read();
             if (c == -1) {
                 throw new SimulationException("Reached the end of file while reading");
+            } else {
+                sb.append((char) c);
             }
             while (c != -1) {
                 c = inputReader.read();
