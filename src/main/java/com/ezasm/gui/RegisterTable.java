@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -50,18 +49,21 @@ public class RegisterTable extends JPanel implements IThemeable {
     /**
      * The function to highlight changed registers      
      */
-    public void ChangeCellColor(int row_index, Config config) {
+    public void ChangeCellColor(Config config) {
         Theme theme = Theme.getTheme(config.getTheme());
         TableCellRenderer render = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                if (row == row_index) {
+                Long temp = Long.valueOf(row);
+                if(changedRegisterNums.contains(temp)){
                     c.setForeground(theme.red());
-                } else {
-                    c.setForeground(Color.black);
                 }
+                else{
+                    c.setForeground(theme.foreground());
+                }
+                changedRegisterNums.clear();
                 return c;
             }
         };
@@ -85,9 +87,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        System.out.println(changedRegisterNums);
-        //ChangeCellColor((int)changedRegisterNum, config);
-        changedRegisterNums.clear();
+        ChangeCellColor(config);
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -148,7 +148,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      */
     public void addHighlightValue(long number, Config config) {
         this.changedRegisterNums.add(number);
-        System.out.println(changedRegisterNums.get(0));
+        //System.out.println(changedRegisterNums.get(0));
         this.config = config;
     }
 
