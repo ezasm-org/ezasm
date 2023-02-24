@@ -1,7 +1,7 @@
 package com.ezasm.simulation;
 
+import com.ezasm.gui.Window;
 import com.ezasm.util.Conversion;
-
 import java.util.Arrays;
 
 /**
@@ -68,6 +68,8 @@ public class Register {
     public void setBytes(byte[] data) {
         if (number != 0)
             System.arraycopy(data, 0, this.data, 0, this.data.length);
+            Window.highlightValue(this.number);
+            System.out.println(this.number);
     }
 
     /**

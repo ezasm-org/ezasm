@@ -237,7 +237,7 @@ public class Window {
     /**
      * Connection function for passing the changed value
      */
-    public static void highlightValue(int number) {
+    public static void highlightValue(long number) {
         if (instance == null || instance.table == null) {
             return;
         }

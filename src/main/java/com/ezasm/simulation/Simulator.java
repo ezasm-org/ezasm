@@ -116,7 +116,7 @@ public class Simulator implements ISimulator {
         if (line != null && !line.isLabel()) {
             instructionDispatcher.execute(line);
             // Highlight changed Value
-            Window.highlightValue(line.getRegisterNum());
+           
         }
     }
 

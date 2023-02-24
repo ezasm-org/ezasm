@@ -5,6 +5,8 @@ import com.ezasm.simulation.Registers;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -17,7 +19,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final JTable table;
     private final Registers registers;
     private final JScrollPane scrollPane;
-    private int changedRegisterNum = 0;
+    private ArrayList<Long> changedRegisterNums = new ArrayList<Long>();
     private Config config;
     private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 2000);
@@ -55,7 +57,7 @@ public class RegisterTable extends JPanel implements IThemeable {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                if (row == row_index || (row == 1 && row_index != -1)) {
+                if (row == row_index) {
                     c.setForeground(theme.red());
                 } else {
                     c.setForeground(Color.black);
@@ -83,7 +85,9 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        ChangeCellColor(changedRegisterNum - 1, config);
+        System.out.println(changedRegisterNums);
+        //ChangeCellColor((int)changedRegisterNum, config);
+        changedRegisterNums.clear();
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -142,10 +146,9 @@ public class RegisterTable extends JPanel implements IThemeable {
      *
      * @param number the index of changed register
      */
-    public void addHighlightValue(int number, Config config) {
-        this.changedRegisterNum = number;
-        // Don't need to care about Register Zero
-        this.changedRegisterNum += 1;
+    public void addHighlightValue(long number, Config config) {
+        this.changedRegisterNums.add(number);
+        System.out.println(changedRegisterNums.get(0));
         this.config = config;
     }
 
