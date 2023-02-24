@@ -57,13 +57,13 @@ public class RegisterTable extends JPanel implements IThemeable {
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
                 Long temp = Long.valueOf(row);
+                System.out.println(changedRegisterNums.size());
                 if(changedRegisterNums.contains(temp)){
                     c.setForeground(theme.red());
                 }
                 else{
                     c.setForeground(theme.foreground());
                 }
-                changedRegisterNums.clear();
                 return c;
             }
         };
@@ -148,7 +148,6 @@ public class RegisterTable extends JPanel implements IThemeable {
      */
     public void addHighlightValue(long number, Config config) {
         this.changedRegisterNums.add(number);
-        //System.out.println(changedRegisterNums.get(0));
         this.config = config;
     }
     public void removeHighlightValue() {
