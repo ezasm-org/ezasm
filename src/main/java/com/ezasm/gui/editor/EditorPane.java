@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
-import com.ezasm.gui.IThemeable;
+import com.ezasm.gui.util.IThemeable;
 import com.ezasm.simulation.Registers;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -12,7 +12,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import java.awt.*;
 import java.io.IOException;
 
-import static com.ezasm.gui.Theme.applyFontAndTheme;
+import static com.ezasm.gui.util.Theme.applyFontAndTheme;
 
 import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 
@@ -55,7 +55,7 @@ public class EditorPane extends JPanel implements IThemeable {
     /**
      * Themes the syntax text area according to the given font and theme.
      */
-    private void themeSyntaxTextArea(Font font, com.ezasm.gui.Theme newTheme) {
+    private void themeSyntaxTextArea(Font font, com.ezasm.gui.util.Theme newTheme) {
         try {
             // Load a good default theme for things we are not setting
             org.fife.ui.rsyntaxtextarea.Theme theme = org.fife.ui.rsyntaxtextarea.Theme
@@ -127,7 +127,7 @@ public class EditorPane extends JPanel implements IThemeable {
     /**
      * Applies the proper theming to the editor area.
      */
-    public void applyTheme(Font font, com.ezasm.gui.Theme theme) {
+    public void applyTheme(Font font, com.ezasm.gui.util.Theme theme) {
         themeSyntaxTextArea(font, theme);
         setFont(textArea, font);
         applyFontAndTheme(scrollPane, font, theme);
@@ -199,7 +199,7 @@ public class EditorPane extends JPanel implements IThemeable {
      *
      * @param theme the theme to recolor to
      */
-    private void recolorHighlights(com.ezasm.gui.Theme theme) {
+    private void recolorHighlights(com.ezasm.gui.util.Theme theme) {
         // Store the old highlights
         Highlighter highlight = textArea.getHighlighter();
         Highlighter.Highlight[] highlights = highlight.getHighlights();

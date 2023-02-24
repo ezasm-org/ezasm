@@ -1,13 +1,27 @@
 package com.ezasm.gui;
 
 import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.toolbar.SimulatorGUIActions;
+import com.ezasm.gui.toolbar.ToolbarFactory;
+import com.ezasm.gui.settings.Config;
+import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
@@ -25,6 +39,11 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
+
+    private String loadedFile;
+    private String inputFilePath, outputFilePath;
+    private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
+    private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -55,6 +74,61 @@ public class Window {
     }
 
     /**
+     * Generate the singleton Window instance if it does not exist. Sets the input/output streams for our
+     * TerminalInstructions to files
+     *
+     * @param simulator      the simulator to use.
+     * @param config         the program configuration.
+     * @param inputFilePath  the desired file to use for the InputStream.
+     * @param outputFilePath the desired file to use for the OutputStream.
+     */
+    public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
+        if (instance == null) {
+            new Window(simulator, config);
+            setInputStream(new File(inputFilePath));
+            setOutputStream(new File(outputFilePath));
+        }
+    }
+
+    /**
+     * Sets the input stream for our TerminalInstructions to files
+     *
+     * @param inputFile the desired file to use for the InputStream.
+     */
+    public static void setInputStream(File inputFile) {
+        try {
+            instance.inputStream = new FileInputStream(inputFile);
+            instance.inputFilePath = inputFile.getPath();
+
+        } catch (IOException e) {
+            promptWarningDialog("Error Reading File",
+                    String.format("There was an error reading from '%s'\nOperation cancelled", inputFile.getName()));
+        }
+        TerminalInstructions.setInputStream(instance.inputStream);
+    }
+
+    /**
+     * Sets the input stream for our TerminalInstructions to files
+     *
+     * @param outputFile the desired file to use for the InputStream.
+     */
+    public static void setOutputStream(File outputFile) {
+        try {
+            outputFile.createNewFile();
+            instance.outputStream = new FileOutputStream(outputFile);
+            instance.outputFilePath = outputFile.getPath();
+        } catch (IOException e) {
+            promptWarningDialog("Error Writing File",
+                    String.format("There was an error writing to '%s'\nOperation cancelled", outputFile.getName()));
+        }
+        TerminalInstructions.setOutputStream(instance.outputStream);
+    }
+
+    public static String getInputFilePath() {
+        return instance.inputFilePath;
+    }
+
+    /**
      * Tells the caller whether the instance has been initialized.
      *
      * @return true if the instance has been initialized, false otherwise.
@@ -67,6 +141,12 @@ public class Window {
      * Helper initialization function. Initialized UI elements.
      */
     private void initialize() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.err.println("Unable to set look and feel");
+        }
+
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setMinimumSize(new Dimension(800, 600));
@@ -142,20 +222,19 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         updateRegisters();
-        simulator.addLines(Lexer.parseLines(editor.getText(), 0));
+        simulator.addLines(Lexer.parseLines(editor.getText()));
         instance.editor.resetHighlighter();
-
     }
 
     /**
      * Handles the program completion and displays a message to the user about the status of the program.
      */
     public void handleProgramCompletion() {
-        System.out.println();
         if (simulator.isError()) {
             System.out.println("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
-            System.out.println("** Program terminated normally **");
+            System.out.printf("** Program terminated with exit code %d **\n",
+                    simulator.getRegisters().getRegister(Registers.R0).getLong());
         } else {
             System.out.println("** Program terminated forcefully **");
         }
@@ -163,6 +242,26 @@ public class Window {
         // The buffer must be cleared at the end of the function;
         // if it is not, System.out malfunctions
         TerminalInstructions.clearBuffer();
+    }
+
+    /**
+     * Sets the currently viewed file in the window.
+     *
+     * @param filePath the path of the file to set.
+     */
+    public void setLoadedFile(String filePath) {
+        loadedFile = filePath;
+    }
+
+    /**
+     * Gets the path to the file loaded in the window.
+     */
+    public String getLoadedFile() {
+        if (loadedFile != null) {
+            return loadedFile;
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -217,8 +316,9 @@ public class Window {
      * @return The current theme object
      */
     public static Theme currentTheme() {
-        if (instance == null)
+        if (instance == null) {
             return null;
+        }
         return Theme.getTheme(getInstance().config.getTheme());
     }
 
@@ -226,9 +326,16 @@ public class Window {
      * Resets the editor highlighter, updating color to current theme and clearing all highlights
      */
     public static void resetHighlight() {
-        if (!Window.hasInstance())
+        if (!Window.hasInstance()) {
             return;
-
+        }
         Window.getInstance().editor.resetHighlighter();
+    }
+
+    /**
+     * Resets the input stream, used primarily to go back to the start of files
+     */
+    public static void resetInputStream() {
+        TerminalInstructions.resetInputStream();
     }
 }
