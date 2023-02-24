@@ -1,5 +1,6 @@
 package com.ezasm.gui.menubar;
 
+import com.ezasm.DiscordActivity;
 import com.ezasm.gui.Window;
 import com.ezasm.util.FileIO;
 
@@ -63,6 +64,7 @@ public class MenuActions {
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             if (file != null && file.exists() && file.canRead()) {
+                DiscordActivity.setDetails("In file: "+file.getName());
                 try {
                     String content = FileIO.readFile(file);
                     Window.getInstance().setText(content);
