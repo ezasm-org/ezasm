@@ -113,7 +113,7 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public TransformationSequence readline(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public TransformationSequence readln(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         int address = (int) input1.get(simulator).intValue();
         int maxSize = (int) input2.get(simulator).intValue();
 

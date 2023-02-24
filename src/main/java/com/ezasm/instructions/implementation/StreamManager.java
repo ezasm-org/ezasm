@@ -140,7 +140,7 @@ public class StreamManager {
                 sb.append((char) c);
                 c = inputReader.read();
                 ++cursorPosition;
-            } while (!Character.isWhitespace(c) && !(c == -1));
+            } while (!Character.isWhitespace(c) && c != -1);
 
             return sb.toString();
         } catch (Exception e) {
