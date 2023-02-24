@@ -35,14 +35,18 @@ public final class DiscordActivity {
     public static void runCore() {
         while (true) {
             core.runCallbacks();
-            try { Thread.sleep(16); }
-            catch(InterruptedException e) { e.printStackTrace(); }
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     /**
      * The "details" field is the first line of text under the title when
      * looking at the activity on Discord.
+     * 
      * @param details
      */
     public static void setDetails(String details) {
@@ -53,6 +57,7 @@ public final class DiscordActivity {
     /**
      * The "state" field is the second line of text under the title when
      * looking at the activity on Discord.
+     * 
      * @param state
      */
     public static void setState(String state) {
