@@ -11,6 +11,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static com.ezasm.gui.Theme.applyFontAndTheme;
 
@@ -26,6 +27,10 @@ public class EditorPane extends JPanel implements IThemeable {
     private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
+    Autocomplete autoComplete;
+    private static final String COMMIT_ACTION = "commit";
+
+    private ArrayList<String> keywords = new ArrayList<>();
 
     /**
      * Creates a text edit field using RSyntaxTextArea features.
@@ -50,6 +55,20 @@ public class EditorPane extends JPanel implements IThemeable {
         add(scrollPane);
 
         highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
+
+
+        textArea.setFocusTraversalKeysEnabled(false);
+
+        keywords = new ArrayList<String>();
+        keywords.add("example");
+        keywords.add("autocomplete");
+        keywords.add("stackabuse");
+        keywords.add("java");
+        autoComplete = new Autocomplete(textArea, keywords);
+        textArea.getDocument().addDocumentListener(autoComplete);
+
+        textArea.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
+        textArea.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
     }
 
     /**
