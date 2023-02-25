@@ -13,7 +13,6 @@ import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.HeapPointerTransformation;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.simulation.transform.transformable.MemoryTransformable;
-import com.ezasm.util.Conversion;
 import com.ezasm.util.RawData;
 
 /**

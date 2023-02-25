@@ -28,6 +28,11 @@ public class TerminalInstructions {
 
     private final ISimulator simulator;
 
+    /**
+     * Returns the program I/O streams representation.
+     *
+     * @return the program I/O streams representation.
+     */
     public static StreamManager streams() {
         return streams;
     }
@@ -109,7 +114,7 @@ public class TerminalInstructions {
             address = address + simulator.getMemory().WORD_SIZE;
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
-        transformations[transformations.length-1] = m.transformation(new RawData('\0'));
+        transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
 
         return new TransformationSequence(transformations);
     }
@@ -132,7 +137,7 @@ public class TerminalInstructions {
             address = address + simulator.getMemory().WORD_SIZE;
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
-        transformations[transformations.length-1] = m.transformation(new RawData('\0'));
+        transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
 
         return new TransformationSequence(transformations);
     }

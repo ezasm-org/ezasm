@@ -8,7 +8,6 @@ import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
-import com.ezasm.util.Conversion;
 import com.ezasm.util.RawData;
 
 /**

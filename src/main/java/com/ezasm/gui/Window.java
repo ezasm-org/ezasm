@@ -11,12 +11,11 @@ import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
-import com.ezasm.util.FileReader;
+import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,7 +97,7 @@ public class Window {
      */
     public static void setInputStream(File inputFile) {
         try {
-            instance.inputStream = new FileReader(inputFile);
+            instance.inputStream = new RandomAccessFileStream(inputFile);
             instance.inputFilePath = inputFile.getPath();
 
         } catch (IOException e) {

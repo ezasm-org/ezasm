@@ -2,7 +2,6 @@ package com.ezasm.instructions.implementation;
 
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
-import com.ezasm.util.Conversion;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.simulation.ISimulator;

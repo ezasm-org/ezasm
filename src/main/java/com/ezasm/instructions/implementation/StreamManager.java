@@ -1,10 +1,13 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.util.FileReader;
+import com.ezasm.util.RandomAccessFileStream;
 
 import java.io.*;
 
+/**
+ * A class representing file I/O for use in simulation.
+ */
 public class StreamManager {
 
     private InputStream inputStream;
@@ -14,24 +17,43 @@ public class StreamManager {
     private BufferedReader inputReader;
     private PrintStream outputWriter;
 
+    /**
+     * Construct a stream manager based on an input stream and an output stream.
+     *
+     * @param inputStream  the input stream to use.
+     * @param outputStream the output stream to use.
+     */
     public StreamManager(InputStream inputStream, OutputStream outputStream) {
         setInputStream(inputStream);
         setOutputStream(outputStream);
     }
 
+    /**
+     * Sets the input stream being used by this object to read from.
+     *
+     * @param inputStream the new input stream to use.
+     */
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
         this.inputReader = new BufferedReader(new InputStreamReader(this.inputStream));
     }
 
+    /**
+     * Sets the output stream being used by this object to write to.
+     *
+     * @param outputStream the new output stream to use.
+     */
     public void setOutputStream(OutputStream outputStream) {
         this.cursorPosition = 0;
         this.outputStream = outputStream;
         this.outputWriter = new PrintStream(this.outputStream);
     }
 
+    /**
+     * Resets the state of the input stream.
+     */
     public void resetInputStream() {
-        if (inputStream instanceof FileReader f) {
+        if (inputStream instanceof RandomAccessFileStream f) {
             moveCursor(0);
         } else {
             clearBuffer();
@@ -39,13 +61,11 @@ public class StreamManager {
     }
 
     /**
-     * Clears the scanner's buffer for use on error and program end.
+     * Clears the inputs buffer for use on program end.
      */
     private void clearBuffer() {
         try {
             inputStream.skipNBytes(inputStream.available());
-            // modifications to the input stream do not update the scanner
-            // and the scanner has no way to clear its buffer... so evil hack
             setInputStream(inputStream);
         } catch (Exception ignored) {
         }
@@ -57,7 +77,7 @@ public class StreamManager {
      * @param nextPosition the new position to seek to.
      */
     public void moveCursor(long nextPosition) {
-        if (inputStream instanceof FileReader fileReader) {
+        if (inputStream instanceof RandomAccessFileStream fileReader) {
             try {
                 fileReader.seek(nextPosition);
                 cursorPosition = nextPosition;
@@ -69,14 +89,20 @@ public class StreamManager {
     }
 
     /**
-     * Gets the cursor's position within the currently open file.
+     * Gets the cursor's position within the currently open file if it exists, 0 otherwise.
      *
-     * @return the cursor's position within the currently open file.
+     * @return the cursor's position within the currently open file if it exists, 0 otherwise.
      */
     public long getCursor() {
         return cursorPosition;
     }
 
+    /**
+     * Writes a long to the output stream.
+     *
+     * @param l the long to write.
+     * @throws SimulationException if an error occurs in writing the number.
+     */
     public void write(long l) throws SimulationException {
         try {
             outputWriter.print(l);
@@ -85,6 +111,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Writes a double to the output stream.
+     *
+     * @param d the double to write.
+     * @throws SimulationException if an error occurs in writing the number.
+     */
     public void write(double d) throws SimulationException {
         try {
             outputWriter.print(d);
@@ -93,6 +125,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Writes a character to the output stream.
+     *
+     * @param c the character to write.
+     * @throws SimulationException if an error occurs in writing the character.
+     */
     public void write(char c) throws SimulationException {
         try {
             outputWriter.print(c);
@@ -101,6 +139,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Writes a string to the output stream.
+     *
+     * @param s the string to write.
+     * @throws SimulationException if an error occurs in writing the character.
+     */
     public void write(String s) throws SimulationException {
         try {
             outputWriter.print(s);
@@ -109,6 +153,13 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Walks the stream forward until it reaches a non-whitespace character, then returns the character. The cursor is
+     * then pointed at the character after the first non-whitespace character found.
+     *
+     * @return the first non-whitespace character found.
+     * @throws SimulationException if an error occurs reading from the stream or if it ends while seeking a char.
+     */
     private char walkChar() throws SimulationException {
         try {
             int c;
@@ -125,6 +176,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Walks te stream forward through whitespace until it reaches a string "word", then returns the string.
+     *
+     * @return the word string found.
+     * @throws SimulationException if an error occurs reading from the stream of if it ends while seeking a word.
+     */
     private String walkWord() throws SimulationException {
         try {
             StringBuilder sb = new StringBuilder();
@@ -148,6 +205,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Walks te stream forward through until it reaches the end-of-line sequence, then returns the read string.
+     *
+     * @return the line string found.
+     * @throws SimulationException if an error occurs reading from the stream of if it ends while seeking a word.
+     */
     private String walkLine() throws SimulationException {
         String eol = System.lineSeparator();
         // the EOL delimiter is assumed to be of at least length 1
@@ -170,14 +233,18 @@ public class StreamManager {
                 }
             }
 
-            cursorPosition += inputReader.skip(eol.length() - 1);
-
             return sb.toString();
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
         }
     }
 
+    /**
+     * Reads a long from the input stream.
+     *
+     * @return the next non-whitespace long read from the input stream.
+     * @throws SimulationException if there was an error reading from the stream or the word read was not a long.
+     */
     public long readLong() throws SimulationException {
         try {
             return Long.parseLong(walkWord());
@@ -186,6 +253,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Reads a double from the input stream.
+     *
+     * @return the next non-whitespace double read from the input stream.
+     * @throws SimulationException if there was an error reading from the stream or the word read was not a double.
+     */
     public double readDouble() throws SimulationException {
         try {
             return Double.parseDouble(walkWord());
@@ -194,6 +267,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Reads a character from the input stream.
+     *
+     * @return the first non-whitespace character read from the input stream.
+     * @throws SimulationException if there was an error reading from the stream.
+     */
     public char readChar() throws SimulationException {
         try {
             return walkChar();
@@ -202,6 +281,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Reads a string from the input stream.
+     *
+     * @return the string read from the input stream.
+     * @throws SimulationException if there was an error reading from the stream.
+     */
     public String readString() throws SimulationException {
         try {
             return walkWord();
@@ -210,6 +295,12 @@ public class StreamManager {
         }
     }
 
+    /**
+     * Reads from the input stream until it reaches the end-of-line symbol.
+     *
+     * @return the line read from the input stream.
+     * @throws SimulationException if there was an error reading from the stream.
+     */
     public String readLine() throws SimulationException {
         try {
             return walkLine();
