@@ -32,7 +32,7 @@ public class Lexer {
      */
     private static boolean isAlphaNumeric(String text) {
         for (int i = 0; i < text.length(); ++i) {
-            if (!Character.isAlphabetic(text.charAt(i)) || (i == 0 && Character.isDigit(text.charAt(i)))) {
+            if (!isAlphaNumeric(text.charAt(i)) || (i == 0 && Character.isDigit(text.charAt(i)))) {
                 return false;
             }
         }
