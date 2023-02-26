@@ -1,6 +1,5 @@
 package com.ezasm.parsing;
 
-import com.ezasm.util.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.util.RawData;
@@ -15,23 +14,34 @@ import java.util.List;
  */
 public class Lexer {
 
+    /**
+     * Determines if a character is alphanumeric.
+     * @param c the character to inspect.
+     * @return true if the character is alphanumeric or an underscore.
+     */
     public static boolean isAlphaNumeric(char c) {
-        return isNumeric(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_');
+        return Character.isDigit(c) || Character.isAlphabetic(c) || (c == '_');
     }
 
+    /**
+     * Determines if a string is alphanumeric but not starting with a number.
+     * @param text the string to inspect.
+     * @return true if the string is alphanumeric but not starting with a number, false otherwise.
+     */
     private static boolean isAlphaNumeric(String text) {
         for (int i = 0; i < text.length(); ++i) {
-            if (!isAlphaNumeric(text.charAt(i)) || (i == 0 && isNumeric(text.charAt(i)))) {
+            if (!Character.isAlphabetic(text.charAt(i)) || (i == 0 && Character.isDigit(text.charAt(i)))) {
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean isNumeric(char c) {
-        return c >= '0' && c <= '9';
-    }
-
+    /**
+     * Determines if the given string is a valid number.
+     * @param text the string to inspect.
+     * @return true if the given string is a valid number, false otherwise.
+     */
     public static boolean isNumeric(String text) {
         try {
             textToBytes(text);
@@ -41,6 +51,12 @@ public class Lexer {
         return false;
     }
 
+    /**
+     * Converts the given text to the applicable raw data.
+     * @param text the string containing a number to be converted to raw data.
+     * @return the raw data representing the result of the conversion.
+     * @throws ParseException if there is an error converting the given string to a number.
+     */
     public static RawData textToBytes(String text) throws ParseException {
         int base = 10;
         if (isHexadecimal(text)) {
@@ -68,14 +84,31 @@ public class Lexer {
         throw new ParseException(String.format("Unable to parse immediate %s in base %d", text, base));
     }
 
+    /**
+     * Determines if the given string is of a hexadecimal format: starting with "0x" or "-0x" for positive and negative numbers respectively.
+     * @param text the string to inspect.
+     * @return true if the given string is of a hexadecimal format: starting with "0x" or "-0x", false otherwise.
+     */
     private static boolean isHexadecimal(String text) {
         return text.startsWith("0x") || text.startsWith("-0x");
     }
 
+    /**
+     * Determines if the given string is of a binary format: starting with "0b" or "-0b" for positive and negative numbers respectively.
+     * @param text the string to inspect.
+     * @return true if the given string is of a binary format: starting with "0b" or "-0b", false otherwise.
+     */
     private static boolean isBinary(String text) {
         return text.startsWith("0b") || text.startsWith("-0b");
     }
 
+    /**
+     * Converts the given string of the given base into a double.
+     * @param text the string representing the number to parse.
+     * @param base the base of the number contained in the string.
+     * @return the number within the string.
+     * @throws NumberFormatException if the given string is not a valid number.
+     */
     private static double stringToDouble(String text, int base) throws NumberFormatException {
         boolean isNegative = false;
         if (text.startsWith("-")) {
@@ -176,10 +209,22 @@ public class Lexer {
         return isNumeric(token);
     }
 
+    /**
+     * Determines if the given token is a character immediate or not.
+     *
+     * @param token the token String in question.
+     * @return true if the given token is a valid character immediate, false otherwise.
+     */
     public static boolean isCharacterImmediate(String token) {
         return token.startsWith("'") && token.endsWith("'");
     }
 
+    /**
+     * Gets the character represented by the given character immediate. This also accepts the Java escape sequences. 
+     * @param token the character immediate string.
+     * @return the character read.
+     * @throws ParseException if the given token is not a valid character immediate.
+     */
     public static char getCharacterImmediate(String token) throws ParseException {
         if (token.length() == 3) {
             return token.charAt(1);
@@ -213,7 +258,7 @@ public class Lexer {
      */
     public static Line parseLine(String line, int lineNumber) throws ParseException {
         line = StringUtils.substringBefore(line, '#');
-        line = line.replaceAll("[\s\t,]+", " ").trim();
+        line = applyFormatting(line);
 
         if (line.length() == 0)
             return null;
@@ -266,13 +311,13 @@ public class Lexer {
     }
 
     /**
-     * Checks if a given string is a valid line of ezasm code
+     * Checks if a given string is a valid line of EzASM code.
      *
-     * @param line a string with exactly 1 \n at the end
-     * @return true if a valid line of ezasm code, false if not
+     * @param line a string with exactly 1 \n at the end.
+     * @return true if a valid line of EzASM code, false otherwise.
      */
     public static boolean validProgramLine(String line) {
-        line = line.replaceAll("[\s,]+", " ").trim();
+        line = applyFormatting(line);
         if (line.length() == 0)
             return false;
         if (Lexer.isComment(line))
@@ -280,6 +325,15 @@ public class Lexer {
         String[] tokens = line.split(" ");
 
         return tokens.length >= 1; // Not enough tokens
+    }
+
+    /**
+     * Applies the EzASM formatting to the given text. This turns all commas into whitespace, condenses all adjacent whitespace characters into one space, and then trims any leading or trailing whitespace.
+     * @param text the text to apply the formatting to.
+     * @return the formatted text.
+     */
+    public static String applyFormatting(String text) {
+        return text.replaceAll("[\\s,]+", " ").trim();
     }
 
 }

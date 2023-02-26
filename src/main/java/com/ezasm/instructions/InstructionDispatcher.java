@@ -162,8 +162,9 @@ public class InstructionDispatcher {
         if (result instanceof TransformationSequence t) {
             simulator.applyTransformations(t);
         } else {
-            // TODO instruction did not return the proper type? handle better
-            throw new RuntimeException();
+            // TODO instruction did not return the proper type? should never happen, but handle better
+            throw new RuntimeException(String.format("Instruction '%s' is improperly implemented",
+                    dispatch.getInvocationTarget().getName()));
         }
     }
 
