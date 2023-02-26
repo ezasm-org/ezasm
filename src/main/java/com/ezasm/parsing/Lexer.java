@@ -16,6 +16,7 @@ public class Lexer {
 
     /**
      * Determines if a character is alphanumeric.
+     *
      * @param c the character to inspect.
      * @return true if the character is alphanumeric or an underscore.
      */
@@ -25,6 +26,7 @@ public class Lexer {
 
     /**
      * Determines if a string is alphanumeric but not starting with a number.
+     *
      * @param text the string to inspect.
      * @return true if the string is alphanumeric but not starting with a number, false otherwise.
      */
@@ -39,6 +41,7 @@ public class Lexer {
 
     /**
      * Determines if the given string is a valid number.
+     *
      * @param text the string to inspect.
      * @return true if the given string is a valid number, false otherwise.
      */
@@ -53,6 +56,7 @@ public class Lexer {
 
     /**
      * Converts the given text to the applicable raw data.
+     *
      * @param text the string containing a number to be converted to raw data.
      * @return the raw data representing the result of the conversion.
      * @throws ParseException if there is an error converting the given string to a number.
@@ -85,7 +89,9 @@ public class Lexer {
     }
 
     /**
-     * Determines if the given string is of a hexadecimal format: starting with "0x" or "-0x" for positive and negative numbers respectively.
+     * Determines if the given string is of a hexadecimal format: starting with "0x" or "-0x" for positive and negative
+     * numbers respectively.
+     *
      * @param text the string to inspect.
      * @return true if the given string is of a hexadecimal format: starting with "0x" or "-0x", false otherwise.
      */
@@ -94,7 +100,9 @@ public class Lexer {
     }
 
     /**
-     * Determines if the given string is of a binary format: starting with "0b" or "-0b" for positive and negative numbers respectively.
+     * Determines if the given string is of a binary format: starting with "0b" or "-0b" for positive and negative
+     * numbers respectively.
+     *
      * @param text the string to inspect.
      * @return true if the given string is of a binary format: starting with "0b" or "-0b", false otherwise.
      */
@@ -104,6 +112,7 @@ public class Lexer {
 
     /**
      * Converts the given string of the given base into a double.
+     *
      * @param text the string representing the number to parse.
      * @param base the base of the number contained in the string.
      * @return the number within the string.
@@ -220,7 +229,8 @@ public class Lexer {
     }
 
     /**
-     * Gets the character represented by the given character immediate. This also accepts the Java escape sequences. 
+     * Gets the character represented by the given character immediate. This also accepts the Java escape sequences.
+     *
      * @param token the character immediate string.
      * @return the character read.
      * @throws ParseException if the given token is not a valid character immediate.
@@ -328,7 +338,9 @@ public class Lexer {
     }
 
     /**
-     * Applies the EzASM formatting to the given text. This turns all commas into whitespace, condenses all adjacent whitespace characters into one space, and then trims any leading or trailing whitespace.
+     * Applies the EzASM formatting to the given text. This turns all commas into whitespace, condenses all adjacent
+     * whitespace characters into one space, and then trims any leading or trailing whitespace.
+     *
      * @param text the text to apply the formatting to.
      * @return the formatted text.
      */
