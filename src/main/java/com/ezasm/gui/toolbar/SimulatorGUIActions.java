@@ -214,7 +214,12 @@ public class SimulatorGUIActions {
             awaitWorkerTermination();
         }
         Window.resetHighlight();
-        TerminalInstructions.streams().resetInputStream();
+        try {
+            TerminalInstructions.streams().resetInputStream();
+        } catch (SimulationException e) {
+            // TODO handle the case where the file is no longer accessible causing an error
+            throw new RuntimeException("There was an error reading from the given input file");
+        }
         worker = new Thread(SimulatorGUIActions::simulationLoop);
         worker.start();
     }

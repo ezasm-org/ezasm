@@ -52,7 +52,7 @@ public class StreamManager {
     /**
      * Resets the state of the input stream.
      */
-    public void resetInputStream() {
+    public void resetInputStream() throws SimulationException {
         if (inputStream instanceof RandomAccessFileStream f) {
             moveCursor(0);
         } else {
@@ -67,7 +67,7 @@ public class StreamManager {
         try {
             inputStream.skipNBytes(inputStream.available());
             setInputStream(inputStream);
-        } catch (Exception ignored) {
+        } catch (Exception ignored) { // we probably do not need to worry about this case
         }
     }
 
@@ -76,14 +76,14 @@ public class StreamManager {
      *
      * @param nextPosition the new position to seek to.
      */
-    public void moveCursor(long nextPosition) {
+    public void moveCursor(long nextPosition) throws SimulationException {
         if (inputStream instanceof RandomAccessFileStream fileReader) {
             try {
                 fileReader.seek(nextPosition);
                 cursorPosition = nextPosition;
                 setInputStream(inputStream);
             } catch (IOException e) {
-                System.err.println("Unable to seek to new location");
+                throw new SimulationException("Unable to seek to new location");
             }
         }
     }

@@ -4,9 +4,6 @@ import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.transformable.OutputTransformable;
 import com.ezasm.util.RawData;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 /**
  * Represents the series of transformations on a simulation for an instruction to complete its action.
  */
