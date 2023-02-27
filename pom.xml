@@ -15,13 +15,12 @@
         <url>https://github.com/TrevorBrunette/EzASM/</url>
     </organization>
 
-
-
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <exec.mainClass>com.ezasm.Main</exec.mainClass>
     </properties>
 
     <build>
@@ -32,7 +31,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.ezasm.Main</mainClass>
+                            <mainClass>${exec.mainClass}</mainClass>
                         </manifest>
                     </archive>
                     <descriptors>
@@ -71,6 +70,67 @@
                         <goals>
                             <goal>format</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.github.fvarrui</groupId>
+                <artifactId>javapackager</artifactId>
+                <version>1.7.0</version>
+                <executions>
+                    <execution>
+                        <id>bundling-for-windows</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <platform>windows</platform>
+                            <createZipball>true</createZipball>
+                            <bundleJre>true</bundleJre>
+                            <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
+                            <generateInstaller>true</generateInstaller>
+                            <administratorRequired>false</administratorRequired>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundling-for-mac</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <platform>mac</platform>
+                            <createTarball>true</createTarball>
+                            <bundleJre>true</bundleJre>
+                            <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
+                            <generateInstaller>true</generateInstaller>
+                            <administratorRequired>false</administratorRequired>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundling-for-linux</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <platform>linux</platform>
+                            <createTarball>true</createTarball>
+                            <bundleJre>true</bundleJre>
+                            <customizedJre>false</customizedJre>
+                            <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
+                            <generateInstaller>true</generateInstaller>
+                            <runnableJar>${project.build.outputDirectory}/${project.artifactId}-${project.version}-full.jar</runnableJar>
+                            <copyDependencies>false</copyDependencies>
+                            <administratorRequired>false</administratorRequired>
+                            <linuxConfig>
+                                <pngFile>path/to/icon.png</pngFile>
+                                <categories>
+                                    <category>Development</category>
+                                </categories>
+                            </linuxConfig>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
