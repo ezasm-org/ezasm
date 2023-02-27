@@ -338,21 +338,21 @@ public class Lexer {
         boolean inSingleQuotes = false;
         boolean inDoubleQuotes = false;
 
-         for (int i = 0; i < line.length(); i++) {
-             char c = line.charAt(i);
-             if (c == '\'' && !inDoubleQuotes) {
-                 inSingleQuotes = !inSingleQuotes;
-                 currentToken.append(c);
-             } else if (c == '\"' && !inSingleQuotes) {
-                 inDoubleQuotes = !inDoubleQuotes;
-                 currentToken.append(c);
-             } else if (inSingleQuotes || inDoubleQuotes || !(Character.isWhitespace(c) || c == ',')) {
-                 currentToken.append(c);
-             } else if (currentToken.length() > 0) {
-                 tokens.add(currentToken.toString());
-                 currentToken = new StringBuilder();
-             }
-         }
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '\'' && !inDoubleQuotes) {
+                inSingleQuotes = !inSingleQuotes;
+                currentToken.append(c);
+            } else if (c == '\"' && !inSingleQuotes) {
+                inDoubleQuotes = !inDoubleQuotes;
+                currentToken.append(c);
+            } else if (inSingleQuotes || inDoubleQuotes || !(Character.isWhitespace(c) || c == ',')) {
+                currentToken.append(c);
+            } else if (currentToken.length() > 0) {
+                tokens.add(currentToken.toString());
+                currentToken = new StringBuilder();
+            }
+        }
 
         // Add remaining characters to the array
         if (currentToken.length() > 0) {

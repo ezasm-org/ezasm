@@ -161,33 +161,34 @@ class LexerTest {
     @Test
     void tokenizeLine() {
         // test empty string
-        assertArrayEquals(Lexer.tokenizeLine(""), new String[]{});
-        assertArrayEquals(Lexer.tokenizeLine("\t\r\n "), new String[]{});
+        assertArrayEquals(Lexer.tokenizeLine(""), new String[] {});
+        assertArrayEquals(Lexer.tokenizeLine("\t\r\n "), new String[] {});
 
         // test one token
-        assertArrayEquals(Lexer.tokenizeLine("add"), new String[]{"add"});
-        assertArrayEquals(Lexer.tokenizeLine("\t\t \radd \t"), new String[]{"add"});
+        assertArrayEquals(Lexer.tokenizeLine("add"), new String[] { "add" });
+        assertArrayEquals(Lexer.tokenizeLine("\t\t \radd \t"), new String[] { "add" });
 
         // test multiple tokens
-        assertArrayEquals(Lexer.tokenizeLine("add sub mul div"), new String[]{"add", "sub", "mul", "div"});
-        assertArrayEquals(Lexer.tokenizeLine("  add\t\t sub \rmul \n div  "), new String[]{"add", "sub", "mul", "div"});
+        assertArrayEquals(Lexer.tokenizeLine("add sub mul div"), new String[] { "add", "sub", "mul", "div" });
+        assertArrayEquals(Lexer.tokenizeLine("  add\t\t sub \rmul \n div  "),
+                new String[] { "add", "sub", "mul", "div" });
 
         // test single quotes with special characters
-        assertArrayEquals(Lexer.tokenizeLine("''"), new String[]{"''"});
-        assertArrayEquals(Lexer.tokenizeLine("'add'"), new String[]{"'add'"});
-        assertArrayEquals(Lexer.tokenizeLine("' '"), new String[]{"' '"});
-        assertArrayEquals(Lexer.tokenizeLine("','"), new String[]{"','"});
-        assertArrayEquals(Lexer.tokenizeLine(" \t'\t'\r\n "), new String[]{"'\t'"});
-        assertArrayEquals(Lexer.tokenizeLine("'\"\"'"), new String[]{"'\"\"'"});
-        assertArrayEquals(Lexer.tokenizeLine("'\"'\""), new String[]{"'\"'\""});
+        assertArrayEquals(Lexer.tokenizeLine("''"), new String[] { "''" });
+        assertArrayEquals(Lexer.tokenizeLine("'add'"), new String[] { "'add'" });
+        assertArrayEquals(Lexer.tokenizeLine("' '"), new String[] { "' '" });
+        assertArrayEquals(Lexer.tokenizeLine("','"), new String[] { "','" });
+        assertArrayEquals(Lexer.tokenizeLine(" \t'\t'\r\n "), new String[] { "'\t'" });
+        assertArrayEquals(Lexer.tokenizeLine("'\"\"'"), new String[] { "'\"\"'" });
+        assertArrayEquals(Lexer.tokenizeLine("'\"'\""), new String[] { "'\"'\"" });
 
         // test double quotes with special characters
-        assertArrayEquals(Lexer.tokenizeLine("\"\""), new String[]{"\"\""});
-        assertArrayEquals(Lexer.tokenizeLine("\"add\""), new String[]{"\"add\""});
-        assertArrayEquals(Lexer.tokenizeLine("\" \""), new String[]{"\" \""});
-        assertArrayEquals(Lexer.tokenizeLine("\",\""), new String[]{"\",\""});
-        assertArrayEquals(Lexer.tokenizeLine(" \t\"\t\"\r\n "), new String[]{"\"\t\""});
-        assertArrayEquals(Lexer.tokenizeLine("\"''\""), new String[]{"\"''\""});
-        assertArrayEquals(Lexer.tokenizeLine("\"'\"'"), new String[]{"\"'\"'"});
+        assertArrayEquals(Lexer.tokenizeLine("\"\""), new String[] { "\"\"" });
+        assertArrayEquals(Lexer.tokenizeLine("\"add\""), new String[] { "\"add\"" });
+        assertArrayEquals(Lexer.tokenizeLine("\" \""), new String[] { "\" \"" });
+        assertArrayEquals(Lexer.tokenizeLine("\",\""), new String[] { "\",\"" });
+        assertArrayEquals(Lexer.tokenizeLine(" \t\"\t\"\r\n "), new String[] { "\"\t\"" });
+        assertArrayEquals(Lexer.tokenizeLine("\"''\""), new String[] { "\"''\"" });
+        assertArrayEquals(Lexer.tokenizeLine("\"'\"'"), new String[] { "\"'\"'" });
     }
 }
