@@ -42,29 +42,19 @@ public class InstructionDispatcher {
 
     /**
      * Registers instructions from a class. Instructions are registered by scanning the class's declared methods for
-     * those annotated with {@link Instruction}. It enumerates the methods and scans their parameters to deduce the
-     * appropriate operands.
+     * those annotated with {@link Instruction}. It enumerates the methods and registers them according to their names.
      *
      * @param clazz The class to register instructions from.
      */
     public static void registerInstructions(Class<?> clazz) {
-        try {
-            clazz.getDeclaredConstructor(ISimulator.class);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-
-        Arrays.stream(clazz.getDeclaredMethods()).map(c -> {
-            if (c.isAnnotationPresent(Instruction.class)) {
-                return c;
-            } else
-                return null;
-        }).filter(Objects::nonNull).forEach(method -> registerInstruction(clazz, method));
+        Arrays.stream(clazz.getDeclaredMethods()).filter((c) -> c.isAnnotationPresent(Instruction.class))
+                .forEach(method -> registerInstruction(clazz, method));
     }
 
     /**
-     * Registers a single instruction. The method is assumed to be annotated with {@link Instruction} at this point.
-     * This function deduces the operands based on the method's parameters (TODO).
+     * Registers a single instruction. The method is assumed to be annotated with {@link Instruction} at this point. If
+     * an instruction begins with an '_' then the leading '_' is stripped. This allows for Java keywords to be
+     * registered as instructions.
      *
      * @param parent The parent class of the method.
      * @param method The method to register as an instruction.
@@ -74,13 +64,14 @@ public class InstructionDispatcher {
         if (name.startsWith("_")) {
             name = name.substring(1);
         }
+        validateInstruction(method);
         instructions.put(name, new DispatchInstruction(parent, method));
     }
 
     private static void validateInstruction(Method method) {
-        if (!List.class.isAssignableFrom(method.getReturnType())) {
+        if (!TransformationSequence.class.isAssignableFrom(method.getReturnType())) {
             throw new InstructionLoadException("Error loading instruction'" + method.getName()
-                    + "'. Instruction methods must return List<Directive>");
+                    + "'. Instruction methods must return TransformationSequence");
         }
     }
 
@@ -158,14 +149,8 @@ public class InstructionDispatcher {
         // TODO assume loaded for now
         assert object != null;
 
-        Object result = dispatch.invoke(object, line);
-        if (result instanceof TransformationSequence t) {
-            simulator.applyTransformations(t);
-        } else {
-            // TODO instruction did not return the proper type? should never happen, but handle better
-            throw new RuntimeException(String.format("Instruction '%s' is improperly implemented",
-                    dispatch.getInvocationTarget().getName()));
-        }
+        TransformationSequence result = dispatch.invoke(object, line);
+        simulator.applyTransformations(result);
     }
 
 }
