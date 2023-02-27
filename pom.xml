@@ -7,6 +7,15 @@
     <groupId>EzASM</groupId>
     <artifactId>EzASM</artifactId>
     <version>1.0-beta</version>
+    <description>An easier assembly-like programming language for use in education.</description>
+    <inceptionYear>2022</inceptionYear>
+
+    <organization>
+        <name>EzASM</name>
+        <url>https://github.com/TrevorBrunette/EzASM/</url>
+    </organization>
+
+
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
