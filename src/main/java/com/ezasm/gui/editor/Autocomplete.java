@@ -17,8 +17,7 @@ import java.util.regex.*;
 public class Autocomplete implements DocumentListener {
 
     private static enum Mode {
-        INSERT,
-        COMPLETION
+        INSERT, COMPLETION
     };
 
     private RSyntaxTextArea textField;
@@ -38,7 +37,8 @@ public class Autocomplete implements DocumentListener {
     }
 
     @Override
-    public void removeUpdate(DocumentEvent ev) { }
+    public void removeUpdate(DocumentEvent ev) {
+    }
 
     @Override
     public void insertUpdate(DocumentEvent ev) {
@@ -56,7 +56,7 @@ public class Autocomplete implements DocumentListener {
         // Find where the word starts
         int w;
         for (w = pos; w >= 0; w--) {
-            if (!Character.isLetterOrDigit(content.charAt(w)) && content.charAt(w)!= '_') {
+            if (!Character.isLetterOrDigit(content.charAt(w)) && content.charAt(w) != '_') {
                 break;
             }
         }
@@ -65,12 +65,12 @@ public class Autocomplete implements DocumentListener {
         if (pos - w < 2) {
             return;
         } else {
-            //only recheck keywords once we've typed 3 non-space characters
+            // only recheck keywords once we've typed 3 non-space characters
             keywords.clear();
             String s = textField.getText();
             Matcher m = line_finder.matcher(s);
             while (m.find()) {
-                String label = m.group().strip().replace(" ","").replace(":","");
+                String label = m.group().strip().replace(" ", "").replace(":", "");
                 if (!keywords.contains(label)) {
                     keywords.add(label);
                 }
@@ -110,7 +110,6 @@ public class Autocomplete implements DocumentListener {
                 textField.setText(sb.toString());
                 textField.setCaretPosition(pos + 1);
                 mode = Mode.INSERT;
-
 
             } else {
                 textField.replaceSelection("\t");

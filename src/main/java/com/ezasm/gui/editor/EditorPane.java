@@ -56,7 +56,6 @@ public class EditorPane extends JPanel implements IThemeable {
 
         highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
 
-
         textArea.setFocusTraversalKeysEnabled(false);
 
         keywords = new ArrayList<String>();
