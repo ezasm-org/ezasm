@@ -70,7 +70,7 @@ public class InstructionDispatcher {
 
     private static void validateInstruction(Method method) {
         if (!TransformationSequence.class.isAssignableFrom(method.getReturnType())) {
-            throw new InstructionLoadException("Error loading instruction'" + method.getName()
+            throw new InstructionLoadException("Error loading instruction '" + method.getName()
                     + "'. Instruction methods must return TransformationSequence");
         }
     }
