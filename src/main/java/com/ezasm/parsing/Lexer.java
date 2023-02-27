@@ -149,18 +149,6 @@ public class Lexer {
     }
 
     /**
-     * Determines if the line is a comment or not
-     *
-     * @param line the line of text in question.
-     * @return true if the line is a comment, false otherwise.
-     */
-    public static boolean isComment(String line) {
-        if (line.length() < 1)
-            return false;
-        return line.startsWith("#");
-    }
-
-    /**
      * Determines if a token is a label or not.
      *
      * @param token the token of text in question.
@@ -225,7 +213,7 @@ public class Lexer {
      * @return true if the given token is a valid character immediate, false otherwise.
      */
     public static boolean isCharacterImmediate(String token) {
-        return token.startsWith("'") && token.endsWith("'");
+        return token.length() > 1 && token.startsWith("'") && token.endsWith("'");
     }
 
     /**
@@ -272,7 +260,7 @@ public class Lexer {
 
         if (line.length() == 0)
             return null;
-        String[] tokens = line.split(" ");
+        String[] tokens = tokenizeLine(line);
         if (tokens.length == 0) {
             return null;
         }
@@ -327,25 +315,65 @@ public class Lexer {
      * @return true if a valid line of EzASM code, false otherwise.
      */
     public static boolean validProgramLine(String line) {
-        line = applyFormatting(line);
-        if (line.length() == 0)
-            return false;
-        if (Lexer.isComment(line))
-            return false;
-        String[] tokens = line.split(" ");
+        String[] tokens = tokenizeLine(line);
 
-        return tokens.length >= 1; // Not enough tokens
+        return tokens.length > 0;
+    }
+
+    public static String applyFormatting(String text) {
+        return text.trim().replaceAll("[\\s,]+", " ");
     }
 
     /**
-     * Applies the EzASM formatting to the given text. This turns all commas into whitespace, condenses all adjacent
-     * whitespace characters into one space, and then trims any leading or trailing whitespace.
+     * Turns a line of EzASM into an array of strings of its respective tokens.
      *
-     * @param text the text to apply the formatting to.
-     * @return the formatted text.
+     * @param line the line to tokenize.
+     * @return the tokens found.
      */
-    public static String applyFormatting(String text) {
-        return text.replaceAll("[\\s,]+", " ").trim();
+    public static String[] tokenizeLine(String line) {
+        line = StringUtils.substringBefore(line, '#');
+        line = line.trim();
+
+        if (line.length() == 0) {
+            return new String[0];
+        }
+
+        List<String> tokens = new ArrayList<>();
+
+        StringBuilder currentToken = new StringBuilder();
+        boolean inSingleQuotes = false;
+        boolean inDoubleQuotes = false;
+
+        /*
+         * for (int i = 0; i < line.length(); i++) { char c = line.charAt(i); if (Character.isWhitespace(c) &&
+         * !inSingleQuotes && !inDoubleQuotes) { if (currentToken.length() > 0) { tokens.add(currentToken.toString());
+         * currentToken = new StringBuilder(); } } else if (c == '\'' && !inDoubleQuotes) { inSingleQuotes =
+         * !inSingleQuotes; currentToken.append(c); } else if (c == '\"' && !inSingleQuotes) { inDoubleQuotes =
+         * !inDoubleQuotes; currentToken.append(c); } else { currentToken.append(c); } }
+         */
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (Character.isWhitespace(c)) {
+                if (!inDoubleQuotes && c == '\'') {
+                    inSingleQuotes = !inSingleQuotes;
+                } else if (!inSingleQuotes && c == '"') {
+                    inDoubleQuotes = !inDoubleQuotes;
+                } else if (currentToken.length() > 0) {
+                    tokens.add(currentToken.toString());
+                    currentToken = new StringBuilder();
+                }
+            } else {
+                currentToken.append(c);
+            }
+        }
+
+        // Add remaining characters to the array
+        if (currentToken.length() > 0) {
+            tokens.add(currentToken.toString());
+        }
+
+        return tokens.toArray(new String[0]);
     }
 
 }

@@ -9,16 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class LexerTest {
 
     @Test
-    void isComment() {
-        assertTrue(Lexer.isComment("# this is a comment"));
-        assertTrue(Lexer.isComment("# this is a comment\t"));
-        assertTrue(Lexer.isComment("# this is a comment \t\t"));
-        assertTrue(Lexer.isComment("#$s0 this is a comment:"));
-        assertFalse(Lexer.isComment("add $s0 $s1 1 # this is a comment"));
-        assertFalse(Lexer.isComment(""));
-    }
-
-    @Test
     void isLabel() {
         assertTrue(Lexer.isLabel("label:"));
         assertTrue(Lexer.isLabel("_label:"));
@@ -82,6 +72,24 @@ class LexerTest {
         assertFalse(Lexer.isImmediate("0b0121"));
         assertFalse(Lexer.isImmediate("ABC"));
         assertFalse(Lexer.isImmediate(""));
+    }
+
+    @Test
+    void isCharacterImmediate() throws ParseException {
+        assertTrue(Lexer.isCharacterImmediate("'a'"));
+        assertTrue(Lexer.isCharacterImmediate("' '"));
+        assertTrue(Lexer.isCharacterImmediate("'\n'"));
+        assertTrue(Lexer.isCharacterImmediate("'\\n'"));
+        assertTrue(Lexer.isCharacterImmediate("'''"));
+        assertTrue(Lexer.isCharacterImmediate("','"));
+        assertTrue(Lexer.isCharacterImmediate("''"));
+        assertEquals(Lexer.getCharacterImmediate("','"), ',');
+
+        assertFalse(Lexer.isCharacterImmediate("a'"));
+        assertFalse(Lexer.isCharacterImmediate("a'b'"));
+        assertFalse(Lexer.isCharacterImmediate("'a'b"));
+        assertFalse(Lexer.isCharacterImmediate("'a"));
+        assertFalse(Lexer.isCharacterImmediate(""));
     }
 
     @Test
