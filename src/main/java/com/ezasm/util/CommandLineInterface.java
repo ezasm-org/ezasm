@@ -101,8 +101,12 @@ public class CommandLineInterface {
      * Begins the simulation. Starts reading CLI input or reads and executes from the given file.
      */
     public void startSimulation() {
-        if (inputStream != null || outputStream != null)
-            TerminalInstructions.setInputOutput(inputStream, outputStream);
+        if (inputStream != null) {
+            TerminalInstructions.streams().setInputStream(inputStream);
+        }
+        if (outputStream != null) {
+            TerminalInstructions.streams().setOutputStream(outputStream);
+        }
         if (cli) {
             runFromCliInput();
         } else {

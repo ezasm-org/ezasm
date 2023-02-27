@@ -1,11 +1,10 @@
 package com.ezasm.instructions.targets.inputoutput;
 
-import com.ezasm.util.Conversion;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -22,7 +21,7 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @param register the register reference number.
      * @param offset   the index offset.
      */
-    public DereferenceInputOutput(int register, int offset) {
+    public DereferenceInputOutput(String register, int offset) {
         this.register = new RegisterInputOutput(register);
         this.offset = offset;
     }
@@ -54,10 +53,9 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @return the value stored within the address.
      */
     @Override
-    public byte[] get(ISimulator simulator) throws SimulationException {
-        int address = (int) Conversion.bytesToLong(register.get(simulator));
-        byte[] val = simulator.getMemory().read(address + offset);
-        return Arrays.copyOf(val, val.length);
+    public RawData get(ISimulator simulator) throws SimulationException {
+        int address = (int) register.get(simulator).intValue();
+        return simulator.getMemory().read(address + offset).copy();
     }
 
     /**
@@ -67,8 +65,8 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(ISimulator simulator, byte[] value) throws SimulationException {
-        int address = (int) Conversion.bytesToLong(register.get(simulator));
+    public void set(ISimulator simulator, RawData value) throws SimulationException {
+        int address = (int) register.get(simulator).intValue();
         simulator.getMemory().write(address + offset, value);
     }
 

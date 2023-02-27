@@ -1,8 +1,10 @@
 package com.ezasm.gui.toolbar;
 
 import com.ezasm.gui.Window;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
@@ -61,6 +63,7 @@ public class SimulatorGUIActions {
         startButton.setEnabled(isDone);
         stopButton.setEnabled(state == State.RUNNING);
         stepButton.setEnabled(state != State.RUNNING);
+        stepBackButton.setEnabled(state == State.PAUSED || state == State.STOPPED);
         pauseButton.setEnabled(state == State.RUNNING);
         resumeButton.setEnabled(state == State.PAUSED);
         resetButton.setEnabled(state != State.IDLE);
@@ -98,6 +101,27 @@ public class SimulatorGUIActions {
                 System.err.println(e.getMessage());
             }
         }
+    }
+
+    /**
+     * Handles if the user requests that the program runs one individual line of code from the current state.
+     */
+    static void stepBack() {
+        try {
+            if (Window.getInstance().getSimulator().undoLastTransformations()) {
+                // Some inverse transform was executed
+                setState(State.PAUSED);
+                Window.updateHighlight();
+                Window.updateRegisters();
+            } else {
+                // No transform was executed; we are done
+                setState(State.IDLE);
+            }
+        } catch (SimulationException e) {
+            setState(State.STOPPED);
+            System.err.println(e.getMessage());
+        }
+
     }
 
     /**
@@ -190,7 +214,12 @@ public class SimulatorGUIActions {
             awaitWorkerTermination();
         }
         Window.resetHighlight();
-        Window.resetInputStream();
+        try {
+            TerminalInstructions.streams().resetInputStream();
+        } catch (SimulationException e) {
+            // TODO handle the case where the file is no longer accessible causing an error
+            throw new RuntimeException("There was an error reading from the given input file");
+        }
         worker = new Thread(SimulatorGUIActions::simulationLoop);
         worker.start();
     }

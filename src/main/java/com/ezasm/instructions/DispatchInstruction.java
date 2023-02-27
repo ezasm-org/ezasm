@@ -2,6 +2,7 @@ package com.ezasm.instructions;
 
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.TransformationSequence;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -53,9 +54,9 @@ public class DispatchInstruction {
      * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#getParent()}.
      * @param line   the parsed line to interpret.
      */
-    public void invoke(Object parent, Line line) throws SimulationException {
+    public TransformationSequence invoke(Object parent, Line line) throws SimulationException {
         try {
-            this.invocationTarget.invoke(parent, line.getArguments());
+            return (TransformationSequence) this.invocationTarget.invoke(parent, line.getArguments());
         } catch (InvocationTargetException e) {
             throw new SimulationException(e.getTargetException().getMessage());
         } catch (IllegalAccessException | IllegalArgumentException e) {

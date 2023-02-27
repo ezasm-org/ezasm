@@ -11,11 +11,11 @@ import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
+import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,14 +97,14 @@ public class Window {
      */
     public static void setInputStream(File inputFile) {
         try {
-            instance.inputStream = new FileInputStream(inputFile);
+            instance.inputStream = new RandomAccessFileStream(inputFile);
             instance.inputFilePath = inputFile.getPath();
 
         } catch (IOException e) {
             promptWarningDialog("Error Reading File",
                     String.format("There was an error reading from '%s'\nOperation cancelled", inputFile.getName()));
         }
-        TerminalInstructions.setInputStream(instance.inputStream);
+        TerminalInstructions.streams().setInputStream(instance.inputStream);
     }
 
     /**
@@ -121,7 +121,7 @@ public class Window {
             promptWarningDialog("Error Writing File",
                     String.format("There was an error writing to '%s'\nOperation cancelled", outputFile.getName()));
         }
-        TerminalInstructions.setOutputStream(instance.outputStream);
+        TerminalInstructions.streams().setOutputStream(instance.outputStream);
     }
 
     public static String getInputFilePath() {
@@ -239,9 +239,6 @@ public class Window {
             System.out.println("** Program terminated forcefully **");
         }
         editor.resetHighlighter();
-        // The buffer must be cleared at the end of the function;
-        // if it is not, System.out malfunctions
-        TerminalInstructions.clearBuffer();
     }
 
     /**
@@ -330,12 +327,5 @@ public class Window {
             return;
         }
         Window.getInstance().editor.resetHighlighter();
-    }
-
-    /**
-     * Resets the input stream, used primarily to go back to the start of files
-     */
-    public static void resetInputStream() {
-        TerminalInstructions.resetInputStream();
     }
 }
