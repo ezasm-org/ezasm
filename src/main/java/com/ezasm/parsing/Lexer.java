@@ -256,7 +256,6 @@ public class Lexer {
      */
     public static Line parseLine(String line, int lineNumber) throws ParseException {
         line = StringUtils.substringBefore(line, '#');
-        line = applyFormatting(line);
 
         if (line.length() == 0)
             return null;
@@ -316,12 +315,7 @@ public class Lexer {
      */
     public static boolean validProgramLine(String line) {
         String[] tokens = tokenizeLine(line);
-
         return tokens.length > 0;
-    }
-
-    public static String applyFormatting(String text) {
-        return text.trim().replaceAll("[\\s,]+", " ");
     }
 
     /**
@@ -344,29 +338,21 @@ public class Lexer {
         boolean inSingleQuotes = false;
         boolean inDoubleQuotes = false;
 
-        /*
-         * for (int i = 0; i < line.length(); i++) { char c = line.charAt(i); if (Character.isWhitespace(c) &&
-         * !inSingleQuotes && !inDoubleQuotes) { if (currentToken.length() > 0) { tokens.add(currentToken.toString());
-         * currentToken = new StringBuilder(); } } else if (c == '\'' && !inDoubleQuotes) { inSingleQuotes =
-         * !inSingleQuotes; currentToken.append(c); } else if (c == '\"' && !inSingleQuotes) { inDoubleQuotes =
-         * !inDoubleQuotes; currentToken.append(c); } else { currentToken.append(c); } }
-         */
-
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-            if (Character.isWhitespace(c)) {
-                if (!inDoubleQuotes && c == '\'') {
-                    inSingleQuotes = !inSingleQuotes;
-                } else if (!inSingleQuotes && c == '"') {
-                    inDoubleQuotes = !inDoubleQuotes;
-                } else if (currentToken.length() > 0) {
-                    tokens.add(currentToken.toString());
-                    currentToken = new StringBuilder();
-                }
-            } else {
-                currentToken.append(c);
-            }
-        }
+         for (int i = 0; i < line.length(); i++) {
+             char c = line.charAt(i);
+             if (c == '\'' && !inDoubleQuotes) {
+                 inSingleQuotes = !inSingleQuotes;
+                 currentToken.append(c);
+             } else if (c == '\"' && !inSingleQuotes) {
+                 inDoubleQuotes = !inDoubleQuotes;
+                 currentToken.append(c);
+             } else if (inSingleQuotes || inDoubleQuotes || !(Character.isWhitespace(c) || c == ',')) {
+                 currentToken.append(c);
+             } else if (currentToken.length() > 0) {
+                 tokens.add(currentToken.toString());
+                 currentToken = new StringBuilder();
+             }
+         }
 
         // Add remaining characters to the array
         if (currentToken.length() > 0) {
