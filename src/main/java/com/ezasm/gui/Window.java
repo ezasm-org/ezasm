@@ -163,12 +163,13 @@ public class Window {
         toolbar = ToolbarFactory.makeToolbar();
         editor = new EditorPane();
         table = new RegisterTable(simulator.getRegisters());
+        tools = new TabbedPanes();
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, table);
         mainSplit.setResizeWeight(0.8);
         mainSplit.setUI(new BasicSplitPaneUI());
         mainSplit.setBorder(null);
-        toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, new TabbedPanes());
+        toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, tools);
         toolSplit.setResizeWeight(0.75);
         toolSplit.setUI(new BasicSplitPaneUI());
         toolSplit.setBorder(null);

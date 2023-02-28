@@ -18,7 +18,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final JScrollPane scrollPane;
 
     private static final String[] columns = { "Register", "Value" };
-    private static final Dimension MIN_SIZE = new Dimension(200, 2000);
+    private static final Dimension MIN_SIZE = new Dimension(200, 100);
     private static final Dimension MAX_SIZE = new Dimension(350, 2000);
 
     /**
