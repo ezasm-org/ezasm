@@ -110,6 +110,28 @@ public class SimulatorGUIActions {
                 System.err.println(e.getMessage());
             }
         }
+        DiscordActivity.setState("Stepping: line "+getPC());
+    }
+
+    /**
+     * Handles if the user requests that the program runs one individual line of code from the current state.
+     */
+    static void stepBack() {
+        try {
+            if (Window.getInstance().getSimulator().undoLastTransformations()) {
+                // Some inverse transform was executed
+                setState(State.PAUSED);
+                Window.updateHighlight();
+                Window.updateRegisters();
+            } else {
+                // No transform was executed; we are done
+                setState(State.IDLE);
+            }
+        } catch (SimulationException e) {
+            setState(State.STOPPED);
+            System.err.println(e.getMessage());
+        }
+
     }
 
     /**
@@ -145,8 +167,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the running program be temporarily stopped.
      */
     static void pause() {
-        final var pc = getPC();
-        DiscordActivity.setState("Paused: line "+pc);
+        DiscordActivity.setState("Paused: line "+getPC());
         setState(State.PAUSED);
     }
 
