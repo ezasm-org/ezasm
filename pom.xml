@@ -92,7 +92,7 @@
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <winConfig>
-                                <icoFile>path/to/icon.ico</icoFile>
+                                <icoFile>resources/icons/ezasm_log.ico</icoFile>
                                 <generateSetup>true</generateSetup>
                                 <generateMsi>false</generateMsi>
                                 <exeCreationTool>why</exeCreationTool>
@@ -123,7 +123,7 @@
                             <administratorRequired>false</administratorRequired>
                             <generateInstaller>true</generateInstaller>
                             <macConfig>
-                                <icnsFile>path/to/icon.icns</icnsFile>
+                                <icnsFile>resources/icons/ezasm_log.icns</icnsFile>
                                 <macStartup>UNIVERSAL</macStartup>
                             </macConfig>
                         </configuration>
@@ -142,7 +142,7 @@
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <linuxConfig>
-                                <pngFile>path/to/icon.png</pngFile>
+                                <pngFile>resources/icons/ezasm_log.png</pngFile>
                                 <categories>
                                     <category>Development</category>
                                 </categories>

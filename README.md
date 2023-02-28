@@ -62,6 +62,7 @@ Run `mvn clean test`
 - [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - [Apache Maven](https://maven.apache.org/index.html)
 - Java JDKs for [Windows](https://www.oracle.com/java/technologies/downloads/#jdk17-windows), [Mac OSX](https://www.oracle.com/java/technologies/downloads/#jdk17-mac), and [Linux](https://www.oracle.com/java/technologies/downloads/#jdk17-linux) 
+  - I have bundled these files for download as a [.zip for Windows](https://www.dropbox.com/s/s58sovxs7d4wcxn/jdk-17.0.6-all.zip?dl=1) and a [tar.gz for Unix](https://www.dropbox.com/s/z4dh5h2of8yekkc/jdk-17.0.6-all.tar.gz?dl=1) to extract into `resources/jdk/`
   - These are required to build the minified JREs for the respective system types
   - These must be placed into `EzASM/resources/jdk/linux/` `EzASM/resources/jdk/macos/` and `EzASM/resources/jdk/windows/`
   - The pointed to directories must have a `bin` directory at their top level; you may have to mess with the extracted Mac OSX files because of this
