@@ -172,8 +172,6 @@ public class Window {
         app.validate();
         app.pack();
         app.setVisible(true);
-
-        DiscordActivity.runCore();
     }
 
     public void applyConfiguration(Config config) {

@@ -131,7 +131,7 @@ public class SimulatorGUIActions {
             setState(State.STOPPED);
             System.err.println(e.getMessage());
         }
-
+        DiscordActivity.setState("Stepping: line " + getPC());
     }
 
     /**
