@@ -7,7 +7,7 @@
     <groupId>EzASM</groupId>
     <artifactId>EzASM</artifactId>
     <version>1.0-beta</version>
-    <description>An easier assembly-like programming language for use in education.</description>
+    <description>An assembly-like programming language for use in education</description>
     <inceptionYear>2022</inceptionYear>
 
     <organization>
@@ -38,7 +38,7 @@
                         </manifest>
                     </archive>
                     <descriptors>
-                        <descriptor>src/main/assembly-single.xml</descriptor>
+                        <descriptor>src/main/mvn/assembly-single.xml</descriptor>
                     </descriptors>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
