@@ -68,7 +68,7 @@ public class Register {
     public void setBytes(byte[] data) {
         if (number != 0)
             System.arraycopy(data, 0, this.data, 0, this.data.length);
-            Window.passingValue(this.number);
+        Window.passingValue(this.number);
     }
 
     /**

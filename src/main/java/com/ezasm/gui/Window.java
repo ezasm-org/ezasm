@@ -247,16 +247,20 @@ public class Window {
     /**
      * Caller function for removing the highlight
      */
-    public static void removehighlight() {
-        if (instance == null || instance.table == null) {
-            return;
-        }
-        instance.table.addHighlightValue(-1, instance.config);
-    }
-    public static void resethighlight() {
+    public static void resetPassedValue() {
         if (instance == null || instance.table == null) {
             return;
         }
         instance.table.removeHighlightValue();
+    }
+
+    /**
+     * Remove extra values everytime a line is execute
+     */
+    public static void removeExtraValue() {
+        if (instance == null || instance.table == null) {
+            return;
+        }
+        instance.table.removeExtra();
     }
 }

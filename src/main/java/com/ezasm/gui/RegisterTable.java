@@ -18,7 +18,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final JTable table;
     private final Registers registers;
     private final JScrollPane scrollPane;
-    private ArrayList<Long> changedRegisterNums = new ArrayList<Long>();
+    private ArrayList<Integer> changedRegisterNums = new ArrayList<Integer>();
     private Config config;
     private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 2000);
@@ -56,12 +56,9 @@ public class RegisterTable extends JPanel implements IThemeable {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                Long temp = Long.valueOf(row);
-                System.out.println(changedRegisterNums.size());
-                if(changedRegisterNums.contains(temp)){
+                if (changedRegisterNums.size() < 5 && changedRegisterNums.contains(row)) {
                     c.setForeground(theme.red());
-                }
-                else{
+                } else {
                     c.setForeground(theme.foreground());
                 }
                 return c;
@@ -145,12 +142,32 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Tell the table what the changed resgiter when execute the line
      *
      * @param number the index of changed register
+     *
+     * @param config the instance used to get theme
      */
-    public void addHighlightValue(long number, Config config) {
-        this.changedRegisterNums.add(number);
+    public void addHighlightValue(Long number, Config config) {
+        if (!changedRegisterNums.contains(number.intValue())) {
+            this.changedRegisterNums.add(number.intValue());
+        }
         this.config = config;
     }
+
     public void removeHighlightValue() {
         this.changedRegisterNums.clear();
+    }
+
+    public void removeExtra() {
+        if (changedRegisterNums.size() <= 1) {
+            return;
+        }
+        for (int i = 0; i < changedRegisterNums.size(); i++) {
+            if (changedRegisterNums.get(i) == 1) {
+                changedRegisterNums.remove(i);
+                break;
+            } else {
+                changedRegisterNums.remove(i);
+                i--;
+            }
+        }
     }
 }
