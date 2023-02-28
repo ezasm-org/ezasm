@@ -14,6 +14,8 @@ import com.ezasm.simulation.Registers;
 import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
+
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,6 +43,7 @@ public class Window {
     private RegisterTable table;
 
     private JSplitPane mainSplit;
+    private JSplitPane toolSplit;
 
     private String loadedFile;
     private String inputFilePath, outputFilePath;
@@ -161,11 +164,17 @@ public class Window {
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, table);
         mainSplit.setResizeWeight(0.8);
+        mainSplit.setUI(new BasicSplitPaneUI());
+        mainSplit.setBorder(null);
+        toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, new JTextArea());
+        toolSplit.setResizeWeight(0.8);
+        toolSplit.setUI(new BasicSplitPaneUI());
+        mainSplit.setBorder(null);
 
         app.setJMenuBar(menubar);
         panel.setLayout(new BorderLayout());
         panel.add(toolbar, BorderLayout.PAGE_START);
-        panel.add(mainSplit, BorderLayout.CENTER);
+        panel.add(toolSplit, BorderLayout.CENTER);
         // panel.add(editor, BorderLayout.CENTER);
         // panel.add(table, BorderLayout.EAST);
 
