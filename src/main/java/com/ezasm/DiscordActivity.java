@@ -31,8 +31,7 @@ public final class DiscordActivity {
     }
 
     /**
-     * This is an infinite loop... use a separate thread to
-     * run the core.
+     * This is an infinite loop... use a separate thread to run the core.
      */
     public static void runCore() {
         while (true) {
@@ -42,9 +41,8 @@ public final class DiscordActivity {
     }
 
     /**
-     * The "details" field is the first line of text under the title when
-     * looking at the activity on Discord.
-     * 
+     * The "details" field is the first line of text under the title when looking at the activity on Discord.
+     *
      * @param details
      */
     public static void setDetails(String details) {
@@ -53,9 +51,8 @@ public final class DiscordActivity {
     }
 
     /**
-     * The "state" field is the second line of text under the title when
-     * looking at the activity on Discord.
-     * 
+     * The "state" field is the second line of text under the title when looking at the activity on Discord.
+     *
      * @param state
      */
     public static void setState(String state) {

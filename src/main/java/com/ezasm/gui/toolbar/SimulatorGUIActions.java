@@ -79,7 +79,7 @@ public class SimulatorGUIActions {
     }
 
     private static long getPC() {
-        return 1 + (long)Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
+        return 1 + (long) Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
     }
 
     /**
@@ -110,7 +110,7 @@ public class SimulatorGUIActions {
                 System.err.println(e.getMessage());
             }
         }
-        DiscordActivity.setState("Stepping: line "+getPC());
+        DiscordActivity.setState("Stepping: line " + getPC());
     }
 
     /**
@@ -167,7 +167,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the running program be temporarily stopped.
      */
     static void pause() {
-        DiscordActivity.setState("Paused: line "+getPC());
+        DiscordActivity.setState("Paused: line " + getPC());
         setState(State.PAUSED);
     }
 

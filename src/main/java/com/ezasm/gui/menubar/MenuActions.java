@@ -64,7 +64,7 @@ public class MenuActions {
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             if (file != null && file.exists() && file.canRead()) {
-                DiscordActivity.setDetails("In file: "+file.getName());
+                DiscordActivity.setDetails("In file: " + file.getName());
                 try {
                     String content = FileIO.readFile(file);
                     Window.getInstance().setText(content);
