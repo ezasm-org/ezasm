@@ -162,6 +162,20 @@ public class ArithmeticInstructions {
     }
 
     /**
+     * The standard modulus operation.
+     *
+     * @param output the output of the operation.
+     * @param input1 the left-hand side of the modullus operation.
+     * @param input2 the right-hand side of the modulus operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public TransformationSequence mod(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a % b, output, input1, input2);
+    }
+
+    /**
      * The standard not operation. Inverts all bits in the input.
      *
      * @param output the output of the operation.
