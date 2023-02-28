@@ -121,6 +121,20 @@ public class FloatArithmeticInstructions {
     }
 
     /**
+     * The standard modulus operation.
+     *
+     * @param output the output of the operation.
+     * @param input1 the left-hand side of the modullus operation.
+     * @param input2 the right-hand side of the modulus operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public TransformationSequence modf(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return floatArithmetic((a, b) -> a % b, output, input1, input2);
+    }
+
+    /**
      * The standard decrement operation. Subtracts one from the given data.
      *
      * @param output the output of the operation.
