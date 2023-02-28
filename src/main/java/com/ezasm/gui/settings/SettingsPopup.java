@@ -22,17 +22,15 @@ public class SettingsPopup implements IThemeable {
     private static final String THEME = "Theme";
     public static final String SAVE = "Save Changes";
     public static final String RESET = "Reset to Defaults";
-    public static final String TABSIZE = "Tab Size";
 
     private JFrame popup;
     private JSlider speedSlider;
     private JTextField fontInput;
-    private JTextField tabInput;
     private JComboBox themeInput;
     private JPanel grid;
     private JButton resetDefaults;
     private JButton save;
-    private JLabel speedLabel, fontSizeLabel, themeLabel, tabLabel;
+    private JLabel speedLabel, fontSizeLabel, themeLabel;
     private BorderLayout layout;
 
     private Config config;
@@ -93,8 +91,6 @@ public class SettingsPopup implements IThemeable {
 
         fontInput = new JTextField(String.valueOf(config.getFontSize()));
         speedSlider = new JSlider(10, 1000, config.getSimSpeed());
-
-        tabLabel = new JLabel(TABSIZE);
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
