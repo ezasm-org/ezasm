@@ -32,13 +32,13 @@ public class Config {
     public static final String FONT_SIZE = "FONT_SIZE";
     public static final String SIMULATION_SPEED = "SIMULATION_SPEED";
     public static final String THEME = "THEME";
-
+    public static final String TAB_SIZE = "TAB_SIZE";
     // All of EzASM's defaults
     public static final String DEFAULT_FONT_SIZE = "12";
     public static final String DEFAULT_SIMULATION_SPEED = "250";
     public static final String DEFAULT_THEME = "Light";
     public static final String DEFAULT_FONT = "Monospaced"; // unclear if this will be allowed to change
-
+    public static final String DEFAULT_TAB_SIZE = "2";
     // Possible themes
     private static final String[] THEME_ARRAY = { "Light", "Dark", "Purple" };
     public static final Vector<String> THEMES = new Vector<String>(Arrays.asList(THEME_ARRAY));
