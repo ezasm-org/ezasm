@@ -1,6 +1,5 @@
 package com.ezasm.parsing;
 
-import com.ezasm.util.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.util.RawData;
@@ -257,7 +256,6 @@ public class Lexer {
      */
     public static Line parseLine(String line, int lineNumber) throws ParseException {
         line = StringUtils.substringBefore(line, '#');
-        line = line.replaceAll("[\s\t,;]+", " ").trim();
 
         if (line.length() == 0)
             return null;
