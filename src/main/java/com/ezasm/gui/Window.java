@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.DiscordActivity;
 import com.ezasm.gui.editor.EditorPane;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;

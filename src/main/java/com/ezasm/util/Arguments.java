@@ -1,6 +1,7 @@
 package com.ezasm.util;
 
 import com.ezasm.gui.settings.Config;
+import com.ezasm.DiscordActivity;
 import com.ezasm.gui.Window;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.simulation.Memory;
@@ -109,10 +110,10 @@ public class Arguments {
         } else {
             if (!inputpath.equals("") || !outputpath.equals("")) {
                 Window.instantiate(sim, config, inputpath, outputpath);
-                return;
+            } else {
+                Window.instantiate(sim, config);
             }
-
-            Window.instantiate(sim, config);
+            new Thread(DiscordActivity::runCore).run();
         }
 
     }
