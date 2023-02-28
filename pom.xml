@@ -6,7 +6,7 @@
 
     <groupId>EzASM</groupId>
     <artifactId>EzASM</artifactId>
-    <version>1.0-beta</version>
+    <version>1.1-beta</version>
     <description>An assembly-like programming language for use in education</description>
     <inceptionYear>2022</inceptionYear>
 
@@ -29,9 +29,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                    <excludes>
-                        <exclude>src/test/**/*Test*</exclude>
-                    </excludes>
                     <archive>
                         <manifest>
                             <mainClass>${exec.mainClass}</mainClass>
