@@ -40,7 +40,7 @@ public class ArithmeticInstructions {
      * @param input2 the right-hand side of the operation.
      */
     private TransformationSequence arithmetic(BinaryOperator<Long> op, IAbstractInputOutput output,
-                                              IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+            IAbstractInput input1, IAbstractInput input2) throws SimulationException {
 
         long res = op.apply(input1.get(simulator).intValue(), input2.get(simulator).intValue());
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
@@ -55,7 +55,7 @@ public class ArithmeticInstructions {
      * @param input  the input of the operation.
      */
     private TransformationSequence unaryOperation(UnaryOperator<Long> op, IAbstractInputOutput output,
-                                                  IAbstractInput input) throws SimulationException {
+            IAbstractInput input) throws SimulationException {
 
         long res = op.apply(input.get(simulator).intValue());
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
