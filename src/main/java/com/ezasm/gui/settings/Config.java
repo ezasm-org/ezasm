@@ -52,6 +52,7 @@ public class Config {
             props.setProperty(FONT_SIZE, DEFAULT_FONT_SIZE);
             props.setProperty(SIMULATION_SPEED, DEFAULT_SIMULATION_SPEED);
             props.setProperty(THEME, DEFAULT_THEME);
+            props.setProperty(TAB_SIZE,DEFAULT_TAB_SIZE);
             saveChanges();
         }
     }
@@ -66,6 +67,10 @@ public class Config {
 
     public String getTheme() {
         return props.getProperty(THEME);
+    }
+
+    public void setTabSize(String newSize){
+        props.setProperty(TAB_SIZE,newSize);
     }
 
     public void setTheme(String newTheme) {
