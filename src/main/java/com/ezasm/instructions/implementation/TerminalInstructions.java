@@ -82,7 +82,8 @@ public class TerminalInstructions {
         long current = simulator.getMemory().read(address).intValue();
 
         while (current != 0) {
-            streams.write((char)current);
+            streams.write((long)current);
+            streams.write('\n');
             index++;
             current = simulator.getMemory().read(address + index * simulator.getMemory().WORD_SIZE).intValue();
         }
