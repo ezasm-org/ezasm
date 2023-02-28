@@ -87,10 +87,25 @@
                         <configuration>
                             <platform>windows</platform>
                             <createZipball>true</createZipball>
-                            <bundleJre>true</bundleJre>
+                            <bundleJre>true</bundleJre> <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_windows-x64_bin.zip -->
                             <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
+                            <winConfig>
+                                <icoFile>path/to/icon.ico</icoFile>
+                                <generateSetup>true</generateSetup>
+                                <generateMsi>false</generateMsi>
+                                <exeCreationTool>why</exeCreationTool>
+
+                                <companyName>${organization.name}</companyName>
+                                <copyright>${organization.name}</copyright>
+
+                                <setupMode>askTheUser</setupMode>
+                                <disableDirPage>false</disableDirPage>
+                                <disableFinishedPage>false</disableFinishedPage>
+                                <disableWelcomePage>false</disableWelcomePage>
+                                <createDesktopIconTask>true</createDesktopIconTask>
+                            </winConfig>
                         </configuration>
                     </execution>
                     <execution>
@@ -102,10 +117,14 @@
                         <configuration>
                             <platform>mac</platform>
                             <createTarball>true</createTarball>
-                            <bundleJre>true</bundleJre>
+                            <bundleJre>true</bundleJre> <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_macos-x64_bin.tar.gz -->
                             <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
+                            <macConfig>
+                                <icnsFile>path/to/icon.icns</icnsFile>
+                                <macStartup>UNIVERSAL</macStartup>
+                            </macConfig>
                         </configuration>
                     </execution>
                     <execution>
@@ -117,7 +136,7 @@
                         <configuration>
                             <platform>linux</platform>
                             <createTarball>true</createTarball>
-                            <bundleJre>true</bundleJre>
+                            <bundleJre>true</bundleJre> <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_linux-x64_bin.tar.gz -->
                             <customizedJre>false</customizedJre>
                             <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
                             <generateInstaller>true</generateInstaller>
