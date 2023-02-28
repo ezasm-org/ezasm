@@ -11,6 +11,7 @@ import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
+import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
@@ -150,6 +151,11 @@ public class Window {
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setMinimumSize(new Dimension(800, 600));
+        try {
+            app.setIconImage(FileIO.loadImage("resources/icons/ezasm_logo.png"));
+        } catch (IOException e) {
+            System.out.println("Oops");
+        }
         panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();

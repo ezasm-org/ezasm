@@ -5,6 +5,7 @@ import org.apache.commons.lang3.SystemUtils;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
 import java.io.*;
 import java.io.FileReader;
 
@@ -44,6 +45,21 @@ public class FileIO {
             sb.append(line).append(System.lineSeparator());
         });
         return sb.toString();
+    }
+
+    /**
+     * Reads the image from a given file.
+     *
+     * @param path the path to the image file to read from.
+     * @return the image found.
+     * @throws IOException if an error occurred reading from the file.
+     */
+    public static Image loadImage(String path) throws IOException {
+        File file = new File(path);
+        if (!file.exists() || !file.canRead()) {
+            throw new IOException("Could not load specified file");
+        }
+        return new ImageIcon(path).getImage();
     }
 
     /**
