@@ -34,7 +34,10 @@ public class InstructionDispatcher {
 
     static {
         registerInstructions(ArithmeticInstructions.class);
+        registerInstructions(FloatArithmeticInstructions.class);
         registerInstructions(TerminalInstructions.class);
+        registerInstructions(BranchInstructions.class);
+        registerInstructions(ComparisonInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
     }
@@ -63,15 +66,14 @@ public class InstructionDispatcher {
         if (name.startsWith("_")) {
             name = name.substring(1);
         }
+
         validateInstruction(method);
-        instructions.put(name, new DispatchInstruction(parent, method));
 
         InstructionOverload overload = new InstructionOverload(method.getParameterTypes(),
                 new DispatchInstruction(parent, method));
 
         instructions.putIfAbsent(name, new ArrayList<>());
         instructions.get(name).add(overload);
-        instructions.put(new InstructionPrototype(name, method.getParameterTypes()), new DispatchInstruction(parent, method));
     }
 
     private static void validateInstruction(Method method) {

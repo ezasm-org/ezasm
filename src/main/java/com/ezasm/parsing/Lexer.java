@@ -3,6 +3,7 @@ package com.ezasm.parsing;
 import com.ezasm.util.Conversion;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
+import com.ezasm.util.RawData;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -234,19 +235,6 @@ public class Lexer {
             throw new ParseException(String.format("Unable to parse character token %s", token));
         }
         return parsed.charAt(0);
-    }
-
-    /**
-     * Determines if a given token is a valid instruction or not.
-     *
-     * @param token the token String in question.
-     * @return true if the token is a registered instruction, false otherwise.
-     */
-    public static boolean isInstructionName(String token) {
-        for (InstructionPrototype instruction : InstructionDispatcher.getInstructions().keySet()) {
-            if (instruction.name().equals(token)) return true;
-        }
-        return false;
     }
 
     /**
