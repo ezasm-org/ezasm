@@ -40,6 +40,8 @@ public class Window {
     private EditorPane editor;
     private RegisterTable table;
 
+    private JSplitPane mainSplit;
+
     private String loadedFile;
     private String inputFilePath, outputFilePath;
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
@@ -157,11 +159,15 @@ public class Window {
         editor = new EditorPane();
         table = new RegisterTable(simulator.getRegisters());
 
+        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, table);
+        mainSplit.setResizeWeight(0.8);
+
         app.setJMenuBar(menubar);
         panel.setLayout(new BorderLayout());
         panel.add(toolbar, BorderLayout.PAGE_START);
-        panel.add(editor, BorderLayout.CENTER);
-        panel.add(table, BorderLayout.EAST);
+        panel.add(mainSplit, BorderLayout.CENTER);
+        // panel.add(editor, BorderLayout.CENTER);
+        // panel.add(table, BorderLayout.EAST);
 
         ToolbarFactory.setButtonsEnabled(true);
 
@@ -177,6 +183,7 @@ public class Window {
         Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
+        mainSplit.setBackground(theme.background());
         panel.setBackground(theme.background());
         table.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
