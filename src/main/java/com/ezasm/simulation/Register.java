@@ -1,7 +1,7 @@
 package com.ezasm.simulation;
 
 import com.ezasm.gui.Window;
-import com.ezasm.util.Conversio
+import com.ezasm.util.Conversion;
 import java.util.Arrays;
 import com.ezasm.util.RawData;
 
@@ -72,7 +72,7 @@ public class Register {
     }
 
     public void setData(byte[] data) {
-        if (number != 0){
+        if (number != 0) {
             System.arraycopy(data, 0, this.data.data(), 0, this.data.data().length);
             Window.passingValue(this.number);
         }

@@ -3,7 +3,7 @@ package com.ezasm.gui;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.simulation.Registers;
-
+import com.ezasm.gui.settings.Config;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
