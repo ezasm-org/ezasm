@@ -9,23 +9,38 @@ CerulanLumina@users.noreply.github.com
 
 ## Building
 
-Clone this repository somehow, either download the source from GitHub or run `git clone https://github.com/TrevorBrunette/EzASM` from the command line.
+[Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) is required to build EzASM.
+
+Clone this repository, either download the source from GitHub or run `git clone https://github.com/TrevorBrunette/EzASM` from the command line.
 
 ### Building from source through the command line:
 
-Install Apache Maven \
+#### Requirements:
+
+- [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+- [Apache Maven](https://maven.apache.org/index.html)
+
+#### Instructions
+
 Navigate to the EzASM source directory \
 Run `mvn compile assembly:single` will build an executable .jar file in the `target` directory \
 Run that jar file with `java -jar target/*.jar`
 
 ### Building using an IDE (IntelliJ IDEA):
 
+#### Requirements:
+
+- [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+- [IntelliJ Idea](https://www.jetbrains.com/idea/)
+
+#### Instructions:
+
 Open IntelliJ and select open project \
 Navigate to the EzASM source directory and open it \
+A Java 17 SDK has to be set in `File -> Project Structure -> Project -> SDK` if the IDE does not detect it automatically \
+Navigate to and open the `src/main/java/com/ezasm/Main.java` file \
 Wait for the files to be indexed \
-An SDK has to be set if one is not detected automatically (use version 17 at a minimum)
-Navigate to the `src/main/java/com/ezasm/Main.java` file \
-Run that file with the play button
+Run that file with either play button that appears in the line number gutter
 
 ### Testing
 

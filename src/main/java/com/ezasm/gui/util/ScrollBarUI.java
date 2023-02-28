@@ -1,4 +1,6 @@
-package com.ezasm.gui;
+package com.ezasm.gui.util;
+
+import com.ezasm.gui.util.Theme;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;

@@ -1,6 +1,8 @@
-package com.ezasm.gui;
+package com.ezasm.gui.toolbar;
 
-import static com.ezasm.gui.SimulatorGUIActions.*;
+import com.ezasm.gui.util.Theme;
+
+import static com.ezasm.gui.toolbar.SimulatorGUIActions.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -19,6 +21,7 @@ public class ToolbarFactory {
     static final String PAUSE = "  Pause  ";
     static final String RESUME = "  Resume  ";
     static final String STEP = "   Step   ";
+    static final String STEP_BACK = " Step Back ";
     static final String RESET = "  Reset  ";
 
     private static final ToolbarActionListener actionListener = new ToolbarActionListener();
@@ -28,6 +31,7 @@ public class ToolbarFactory {
     static JButton pauseButton;
     static JButton resumeButton;
     static JButton stepButton;
+    static JButton stepBackButton;
     static JButton resetButton;
 
     /**
@@ -44,6 +48,7 @@ public class ToolbarFactory {
         addButton(toolbar, PAUSE);
         addButton(toolbar, RESUME);
         addButton(toolbar, STEP);
+        addButton(toolbar, STEP_BACK);
         addButton(toolbar, RESET);
 
         toolbar.validate();
@@ -63,6 +68,7 @@ public class ToolbarFactory {
         Theme.applyFontThemeBorder(pauseButton, font, theme, buttonBorder);
         Theme.applyFontThemeBorder(resumeButton, font, theme, buttonBorder);
         Theme.applyFontThemeBorder(stepButton, font, theme, buttonBorder);
+        Theme.applyFontThemeBorder(stepBackButton, font, theme, buttonBorder);
         Theme.applyFontThemeBorder(resetButton, font, theme, buttonBorder);
     }
 
@@ -88,6 +94,7 @@ public class ToolbarFactory {
 
         switch (text) {
         case STEP -> stepButton = button;
+        case STEP_BACK -> stepBackButton = button;
         case START -> startButton = button;
         case STOP -> stopButton = button;
         case PAUSE -> pauseButton = button;
@@ -104,6 +111,7 @@ public class ToolbarFactory {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
             case STEP -> step();
+            case STEP_BACK -> stepBack();
             case START -> start();
             case STOP -> stop();
             case PAUSE -> pause();

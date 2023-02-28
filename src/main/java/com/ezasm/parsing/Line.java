@@ -7,7 +7,8 @@ import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
-import com.ezasm.simulation.Registers;
+import com.ezasm.util.RawData;
+
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -58,8 +59,7 @@ public class Line {
             if (Lexer.isImmediate(arguments[i].toLowerCase())) {
                 this.arguments[i] = new ImmediateInput(Lexer.textToBytes(arguments[i].toLowerCase()));
             } else if (Lexer.isCharacterImmediate(arguments[i])) {
-                this.arguments[i] = new ImmediateInput(
-                        Conversion.longToBytes(Lexer.getCharacterImmediate(arguments[i])));
+                this.arguments[i] = new ImmediateInput(new RawData(Lexer.getCharacterImmediate(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
                 // Get the Stored Register Number
                 if (registerNum == 0) {

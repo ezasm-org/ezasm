@@ -26,14 +26,14 @@ jobs:
 
       - run: |
           ref="${GITHUB_REF#refs/heads/}" && echo "::set-output name=branch::${ref////-}"
-          FILE_NAME=$(basename $(find -name '*with-dependencies.jar') | sed "s/-jar-with-dependencies.jar//")
+          FILE_NAME=$(basename $(find -name '*-full.jar'))
           echo "::set-output name=file::$FILE_NAME"
-          mkdir staging && cp target/*with-dependencies.jar "staging/$FILE_NAME.jar"
+          mkdir staging && cp "target/$FILE_NAME" "staging/$FILE_NAME"
         id: res
       - name: Produce Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ezasm-artifacts-${{ steps.res.outputs.branch }}
+          name: artifact-${{ steps.res.outputs.branch }}
           path: staging
   test:
     runs-on: ubuntu-latest

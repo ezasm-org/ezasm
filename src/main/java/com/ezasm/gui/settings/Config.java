@@ -1,4 +1,4 @@
-package com.ezasm.gui;
+package com.ezasm.gui.settings;
 
 import java.io.File;
 import java.io.FileInputStream;
