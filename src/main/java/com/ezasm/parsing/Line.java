@@ -60,10 +60,6 @@ public class Line {
             } else if (Lexer.isCharacterImmediate(arguments[i])) {
                 this.arguments[i] = new ImmediateInput(new RawData(Lexer.getCharacterImmediate(arguments[i])));
             } else if (Lexer.isRegister(arguments[i])) {
-                // Get the Stored Register Number
-                if (registerNum == 0) {
-                    this.registerNum = Registers.getRegisterNumber(arguments[i]);
-                }
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);
             } else if (Lexer.isDereference(arguments[i])) {
                 this.arguments[i] = new DereferenceInputOutput(arguments[i]);
