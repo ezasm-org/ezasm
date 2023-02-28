@@ -1,11 +1,15 @@
 package com.ezasm.simulation;
 
-import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.InvalidProgramCounterException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.Transformation;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.util.RawData;
 
 import java.util.*;
 
@@ -22,6 +26,7 @@ public class Simulator implements ISimulator {
 
     private final List<Line> lines;
     private final Map<String, Integer> labels;
+    private final Deque<TransformationSequence> transforms;
 
     /**
      * Constructs a Simulator with the given word size and memory size specifications.
@@ -34,6 +39,7 @@ public class Simulator implements ISimulator {
         this.registers = new Registers(wordSize);
         this.lines = new ArrayList<>();
         this.labels = new HashMap<>();
+        this.transforms = new ArrayDeque<>();
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
         initialize();
@@ -61,6 +67,7 @@ public class Simulator implements ISimulator {
         resetData();
         lines.clear();
         labels.clear();
+        transforms.clear();
         initialize();
     }
 
@@ -111,8 +118,12 @@ public class Simulator implements ISimulator {
      * @throws InstructionDispatchException if there is an error executing the line.
      */
     public void runLine(Line line) throws SimulationException {
-        if (line != null && !line.isLabel()) {
-            instructionDispatcher.execute(line);
+        if (line != null) {
+            if (line.isLabel()) {
+                applyTransformations(new TransformationSequence());
+            } else {
+                instructionDispatcher.execute(line);
+            }
         }
     }
 
@@ -131,8 +142,30 @@ public class Simulator implements ISimulator {
     public void executeLineFromPC() throws SimulationException {
         int lineNumber = validatePC();
         runLine(lines.get(lineNumber));
-        int currentPC = validatePC();
-        pc.setLong(currentPC + 1);
+        validatePC();
+    }
+
+    @Override
+    public void applyTransformations(TransformationSequence t) throws SimulationException {
+        t.apply();
+        InputOutputTransformable io = new InputOutputTransformable(this, new RegisterInputOutput(Registers.PC));
+        Transformation endOfLine = io.transformation(new RawData(io.get().intValue() + 1));
+        endOfLine.apply();
+        transforms.push(t.concatenate(new TransformationSequence(endOfLine)));
+    }
+
+    /**
+     * Undoes the most recent transformation if it can. Returns whether it executed anything.
+     *
+     * @return true if a reverse transformation was applied, false otherwise
+     * @throws SimulationException if an error occurs in the transformation.
+     */
+    public boolean undoLastTransformations() throws SimulationException {
+        if (transforms.isEmpty()) {
+            return false;
+        }
+        transforms.pop().invert().apply();
+        return true;
     }
 
     /**
@@ -140,6 +173,13 @@ public class Simulator implements ISimulator {
      */
     public void exit() {
         pc.setLong(lines.size() - 1);
+    }
+
+    /**
+     * Causes the program to terminate naturally.
+     */
+    public long endPC() {
+        return lines.size() - 1;
     }
 
     /**

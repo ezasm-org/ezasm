@@ -2,6 +2,7 @@ package com.ezasm.gui.toolbar;
 
 import com.ezasm.DiscordActivity;
 import com.ezasm.gui.Window;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
@@ -67,6 +68,7 @@ public class SimulatorGUIActions {
         startButton.setEnabled(isDone);
         stopButton.setEnabled(state == State.RUNNING);
         stepButton.setEnabled(state != State.RUNNING);
+        stepBackButton.setEnabled(state == State.PAUSED || state == State.STOPPED);
         pauseButton.setEnabled(state == State.RUNNING);
         resumeButton.setEnabled(state == State.PAUSED);
         resetButton.setEnabled(state != State.IDLE);
@@ -108,8 +110,6 @@ public class SimulatorGUIActions {
                 System.err.println(e.getMessage());
             }
         }
-        final var pc = getPC();
-        DiscordActivity.setState("Stepping: line "+pc);
     }
 
     /**
@@ -208,7 +208,12 @@ public class SimulatorGUIActions {
             awaitWorkerTermination();
         }
         Window.resetHighlight();
-        Window.resetInputStream();
+        try {
+            TerminalInstructions.streams().resetInputStream();
+        } catch (SimulationException e) {
+            // TODO handle the case where the file is no longer accessible causing an error
+            throw new RuntimeException("There was an error reading from the given input file");
+        }
         worker = new Thread(SimulatorGUIActions::simulationLoop);
         worker.start();
     }
