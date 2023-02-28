@@ -94,8 +94,6 @@
                             <jdkPath>resources/jdk/windows</jdkPath>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
-                            <runnableJar>${project.build.outputDirectory}/${project.artifactId}-${project.version}-full.jar</runnableJar>
-                            <copyDependencies>false</copyDependencies>
                             <winConfig>
                                 <icoFile>path/to/icon.ico</icoFile>
                                 <generateSetup>true</generateSetup>
@@ -127,8 +125,6 @@
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <generateInstaller>true</generateInstaller>
-                            <runnableJar>${project.build.outputDirectory}/${project.artifactId}-${project.version}-full.jar</runnableJar>
-                            <copyDependencies>false</copyDependencies>
                             <macConfig>
                                 <icnsFile>path/to/icon.icns</icnsFile>
                                 <macStartup>UNIVERSAL</macStartup>
@@ -148,8 +144,6 @@
                             <jdkPath>resources/jdk/linux</jdkPath>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
-                            <runnableJar>${project.build.outputDirectory}/${project.artifactId}-${project.version}-full.jar</runnableJar>
-                            <copyDependencies>false</copyDependencies>
                             <linuxConfig>
                                 <pngFile>path/to/icon.png</pngFile>
                                 <categories>
