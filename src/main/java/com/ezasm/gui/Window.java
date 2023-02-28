@@ -5,6 +5,7 @@ import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.settings.Config;
+import com.ezasm.gui.tabpanes.TabbedPanes;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
@@ -41,6 +42,7 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
+    private TabbedPanes tools;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -166,10 +168,10 @@ public class Window {
         mainSplit.setResizeWeight(0.8);
         mainSplit.setUI(new BasicSplitPaneUI());
         mainSplit.setBorder(null);
-        toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, new JTextArea());
-        toolSplit.setResizeWeight(0.8);
+        toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, new TabbedPanes());
+        toolSplit.setResizeWeight(0.75);
         toolSplit.setUI(new BasicSplitPaneUI());
-        mainSplit.setBorder(null);
+        toolSplit.setBorder(null);
 
         app.setJMenuBar(menubar);
         panel.setLayout(new BorderLayout());
