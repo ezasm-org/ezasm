@@ -2,6 +2,7 @@ package com.ezasm;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.concurrent.locks.LockSupport;
 
 import de.jcm.discordgamesdk.Core;
 import de.jcm.discordgamesdk.CreateParams;
@@ -30,16 +31,13 @@ public final class DiscordActivity {
     }
 
     /**
-     * This should be called by the main thread.
+     * This is an infinite loop... use a separate thread to
+     * run the core.
      */
     public static void runCore() {
         while (true) {
             core.runCallbacks();
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            LockSupport.parkNanos(16_000_000);
         }
     }
 
