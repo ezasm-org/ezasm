@@ -62,9 +62,31 @@ public class TerminalInstructions {
     @Instruction
     public TransformationSequence prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         int address = (int) input1.get(simulator).intValue();
+        int index = 0;
         int maxSize = (int) input2.get(simulator).intValue();
-        String s = simulator.getMemory().readString(address, maxSize);
-        streams.write(s);
+        long current = simulator.getMemory().read(address).intValue();
+
+        while (index < maxSize && current != 0) {
+            streams.write((char)current);
+            index++;
+            current = simulator.getMemory().read(address + index * simulator.getMemory().WORD_SIZE).intValue();
+        }
+
+        return new TransformationSequence();
+    }
+
+    @Instruction
+    public TransformationSequence prints(IAbstractInput input1) throws SimulationException {
+        int address = (int) input1.get(simulator).intValue();
+        int index = 0;
+        long current = simulator.getMemory().read(address).intValue();
+
+        while (current != 0) {
+            streams.write((char)current);
+            index++;
+            current = simulator.getMemory().read(address + index * simulator.getMemory().WORD_SIZE).intValue();
+        }
+
         return new TransformationSequence();
     }
 
