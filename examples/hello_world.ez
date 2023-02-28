@@ -1,0 +1,16 @@
+push 0
+push '\n'
+push '!'
+push 'd'
+push 'l'
+push 'r'
+push 'o'
+push 'W'
+push ' '
+push ','
+push 'o'
+push 'l'
+push 'l'
+push 'e'
+push 'H'
+prints $sp
