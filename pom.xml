@@ -27,8 +27,11 @@
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.5.0</version>
                 <configuration>
+                    <excludes>
+                        <exclude>src/test/**/*Test*</exclude>
+                    </excludes>
                     <archive>
                         <manifest>
                             <mainClass>${exec.mainClass}</mainClass>
@@ -88,17 +91,19 @@
                             <platform>windows</platform>
                             <createZipball>true</createZipball>
                             <bundleJre>true</bundleJre> <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_windows-x64_bin.zip -->
-                            <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
+                            <jdkPath>resources/jdk/windows</jdkPath>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
+                            <runnableJar>${project.build.outputDirectory}/${project.artifactId}-${project.version}-full.jar</runnableJar>
+                            <copyDependencies>false</copyDependencies>
                             <winConfig>
                                 <icoFile>path/to/icon.ico</icoFile>
                                 <generateSetup>true</generateSetup>
                                 <generateMsi>false</generateMsi>
                                 <exeCreationTool>why</exeCreationTool>
 
-                                <companyName>${organization.name}</companyName>
-                                <copyright>${organization.name}</copyright>
+                                <companyName>${project.organization.name}</companyName>
+                                <copyright>${project.organization.name}</copyright>
 
                                 <setupMode>askTheUser</setupMode>
                                 <disableDirPage>false</disableDirPage>
@@ -118,9 +123,12 @@
                             <platform>mac</platform>
                             <createTarball>true</createTarball>
                             <bundleJre>true</bundleJre> <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_macos-x64_bin.tar.gz -->
-                            <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
+                            <jdkPath>resources/jdk/macos</jdkPath>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
+                            <generateInstaller>true</generateInstaller>
+                            <runnableJar>${project.build.outputDirectory}/${project.artifactId}-${project.version}-full.jar</runnableJar>
+                            <copyDependencies>false</copyDependencies>
                             <macConfig>
                                 <icnsFile>path/to/icon.icns</icnsFile>
                                 <macStartup>UNIVERSAL</macStartup>
@@ -137,12 +145,11 @@
                             <platform>linux</platform>
                             <createTarball>true</createTarball>
                             <bundleJre>true</bundleJre> <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_linux-x64_bin.tar.gz -->
-                            <customizedJre>false</customizedJre>
-                            <jreMinVersion>17</jreMinVersion> <!-- Unnecessary if JRE is bundled -->
+                            <jdkPath>resources/jdk/linux</jdkPath>
                             <generateInstaller>true</generateInstaller>
+                            <administratorRequired>false</administratorRequired>
                             <runnableJar>${project.build.outputDirectory}/${project.artifactId}-${project.version}-full.jar</runnableJar>
                             <copyDependencies>false</copyDependencies>
-                            <administratorRequired>false</administratorRequired>
                             <linuxConfig>
                                 <pngFile>path/to/icon.png</pngFile>
                                 <categories>
@@ -166,14 +173,16 @@
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
             <version>5.9.2</version>
+            <scope>provided</scope> <!-- excludes from compiled jar as it is a test dependency -->
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.revelc.code.formatter/formatter-maven-plugin -->
         <dependency>
             <groupId>net.revelc.code.formatter</groupId>
             <artifactId>formatter-maven-plugin</artifactId>
-            <version>2.21.0</version>
+            <version>2.22.0</version>
+            <scope>provided</scope> <!-- excludes from compiled jar as it is a test dependency -->
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>

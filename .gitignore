@@ -5,3 +5,6 @@
 .settings
 .classpath
 .project
+/resources/jdk/linux/
+/resources/jdk/macos/
+/resources/jdk/windows/

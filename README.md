@@ -55,12 +55,30 @@ Run that file with either play button that appears in the line number gutter
 Navigate to the EzASM source directory \
 Run `mvn clean test`
 
-### Building native packaged executables:
+### Building packaged executables:
 
 #### Requirements:
 
 - [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - [Apache Maven](https://maven.apache.org/index.html)
+- Java JDKs for [Windows](https://www.oracle.com/java/technologies/downloads/#jdk17-windows), [Mac OSX](https://www.oracle.com/java/technologies/downloads/#jdk17-mac), and [Linux](https://www.oracle.com/java/technologies/downloads/#jdk17-linux) 
+  - These are required to build the minified JREs for the respective system types
+  - These must be placed into `EzASM/resources/jdk/linux/` `EzASM/resources/jdk/macos/` and `EzASM/resources/jdk/windows/`
+  - The pointed to directories must have a `bin` directory at their top level; you may have to mess with the extracted Mac OSX files because of this
+```
+EzASM
+└───resources
+    └───jdk
+        ├───windows
+        │   ├───bin
+        │   └───...
+        ├───macos
+        │   ├───bin
+        │   └───...
+        └───linux
+            ├───bin
+            └───...
+```
 - Windows* optionally to generate native Windows installation files
 - [InnoSetup](https://jrsoftware.org/isinfo.php)* optionally to generate native Windows installation files
 - Linux* optionally to generate native linux installation files
