@@ -153,7 +153,6 @@ public class RegisterTable extends JPanel implements IThemeable {
         if (!changedRegisterNums.contains(number.intValue())) {
             this.changedRegisterNums.add(number.intValue());
         }
-        System.out.println(changedRegisterNums);
     }
 
     public void removeHighlightValue() {
