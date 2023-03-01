@@ -195,6 +195,7 @@ public class Window {
         Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
+        tools.applyTheme(font, theme);
         mainSplit.setBackground(theme.background());
         panel.setBackground(theme.background());
         table.applyTheme(font, theme);

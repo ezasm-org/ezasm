@@ -1,6 +1,7 @@
 package com.ezasm.gui.tabpanes;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -11,17 +12,39 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.TabbedPaneUI;
 
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
 
 public class TabbedPanes extends JPanel implements IThemeable {
     private JTabbedPane tabbedPane;
+    private Color selectedBG, unselectedBG, foreground;
 
     public TabbedPanes() {
         super(new BorderLayout());
 
         tabbedPane = new JTabbedPane();
+        tabbedPane.setFocusable(false);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int currentTab = tabbedPane.getSelectedIndex();
+                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+                    if (i == currentTab) {
+                        tabbedPane.setBackgroundAt(i, selectedBG);
+                        tabbedPane.setForegroundAt(i, Color.BLACK);
+                    } else {
+                        tabbedPane.setBackgroundAt(i, unselectedBG);
+                        tabbedPane.setForegroundAt(i, foreground);
+                    }
+                }
+            }
+
+        });
         ImageIcon icon = createImageIcon("images/middle.gif");
 
         JComponent panel1 = makeTextPanel("Panel #1");
@@ -37,7 +60,12 @@ public class TabbedPanes extends JPanel implements IThemeable {
     }
 
     public void applyTheme(Font font, Theme theme) {
+        selectedBG = theme.background();
+        unselectedBG = theme.modifyAwayFromBackground(theme.background(), 2);
+        foreground = theme.foreground();
         tabbedPane.setBackground(theme.background());
+        tabbedPane.setForeground(theme.foreground());
+        tabbedPane.setFont(font);
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */
