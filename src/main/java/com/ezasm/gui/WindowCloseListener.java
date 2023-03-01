@@ -14,7 +14,7 @@ public class WindowCloseListener extends WindowAdapter {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        if(!Window.getInstance().getSaved()) {
+        if(!Window.getInstance().getEditor().getFileSaved()) {
             boolean resp = promptYesNoDialog("Exiting...",
                     "Your changes have not been saved.\nWould you like to save them?");
             if(resp){
