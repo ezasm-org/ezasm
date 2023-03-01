@@ -1,7 +1,5 @@
 package com.ezasm.simulation;
 
-import com.ezasm.gui.settings.Config;
-import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
@@ -71,7 +69,6 @@ public class Simulator implements ISimulator {
         labels.clear();
         transforms.clear();
         initialize();
-        Window.getInstance().getRegisterTable().removeHighlightValue();
     }
 
     /**

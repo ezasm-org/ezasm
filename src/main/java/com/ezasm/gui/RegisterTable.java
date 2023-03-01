@@ -20,7 +20,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final JTable table;
     private final JScrollPane scrollPane;
     private final ArrayList<Integer> changedRegisterNumbers;
-    private int reset = 0;
+    private boolean reset = false;
     private Color CellForeground;
     private Color DefaultCellForeground;
     private static final String[] columns = { "Register", "Value" };
@@ -58,7 +58,7 @@ public class RegisterTable extends JPanel implements IThemeable {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                if (changedRegisterNumbers.size() < 5 && changedRegisterNumbers.contains(row)) {
+                if (changedRegisterNumbers.contains(row)) {
                     c.setForeground(CellForeground);
                 } else {
                     c.setForeground(DefaultCellForeground);
@@ -89,7 +89,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      */
     public void update() {
         ChangeCellColor();
-        reset = 1;
+        reset = true;
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -149,9 +149,9 @@ public class RegisterTable extends JPanel implements IThemeable {
      * @param number the index of changed register
      */
     public void addHighlightValue(int number) {
-        if (reset == 1) {
+        if (reset == true) {
             changedRegisterNumbers.clear();
-            reset = 0;
+            reset = false;
         }
         this.changedRegisterNumbers.add(number);
     }

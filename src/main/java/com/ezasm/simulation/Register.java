@@ -2,7 +2,6 @@ package com.ezasm.simulation;
 
 import com.ezasm.gui.Window;
 import com.ezasm.util.Conversion;
-import java.util.Arrays;
 import com.ezasm.util.RawData;
 
 /**

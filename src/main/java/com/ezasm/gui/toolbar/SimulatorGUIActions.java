@@ -190,6 +190,7 @@ public class SimulatorGUIActions {
         Window.getInstance().getSimulator().resetAll();
         Window.getInstance().getRegisterTable().update();
         Window.getInstance().getEditor().resetHighlighter();
+        Window.getInstance().getRegisterTable().removeHighlightValue();
     }
 
     /**
