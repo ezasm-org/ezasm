@@ -1,9 +1,11 @@
 package com.ezasm.gui.toolbar;
 
+import com.ezasm.util.DiscordActivity;
 import com.ezasm.gui.Window;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
@@ -55,6 +57,10 @@ public class SimulatorGUIActions {
     private static void setState(State newState) {
         state = newState;
 
+        if (state == State.STOPPED) {
+            DiscordActivity.setState("Stopped");
+        }
+
         boolean isDone = state == State.IDLE || state == State.STOPPED;
 
         Window.getInstance().getEditor().setEditable(isDone);
@@ -70,6 +76,10 @@ public class SimulatorGUIActions {
 
     private static void handleProgramCompletion() {
         Window.getInstance().handleProgramCompletion();
+    }
+
+    private static long getPC() {
+        return 1 + Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
     }
 
     /**
@@ -100,6 +110,7 @@ public class SimulatorGUIActions {
                 System.err.println(e.getMessage());
             }
         }
+        DiscordActivity.setState("Stepping: line " + getPC());
     }
 
     /**
@@ -120,7 +131,7 @@ public class SimulatorGUIActions {
             setState(State.STOPPED);
             System.err.println(e.getMessage());
         }
-
+        DiscordActivity.setState("Stepping: line " + getPC());
     }
 
     /**
@@ -128,6 +139,7 @@ public class SimulatorGUIActions {
      * interrupts the execution.
      */
     static void start() {
+        DiscordActivity.setState("Running automatically");
         try {
             Window.getInstance().getEditor().setEditable(false);
             Window.getInstance().parseText();
@@ -145,6 +157,7 @@ public class SimulatorGUIActions {
      */
     static void stop() {
         Window.getInstance().getEditor().resetHighlighter();
+        DiscordActivity.setState("Stopped");
         setState(State.STOPPED);
         killWorker();
         awaitWorkerTermination();
@@ -154,6 +167,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the running program be temporarily stopped.
      */
     static void pause() {
+        DiscordActivity.setState("Paused: line " + getPC());
         setState(State.PAUSED);
     }
 
@@ -161,6 +175,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the paused program be resumed.
      */
     static void resume() {
+        DiscordActivity.setState("Running automatically");
         setState(State.RUNNING);
     }
 
@@ -168,6 +183,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the state of the emulator be reset.
      */
     static void reset() {
+        DiscordActivity.setState("Idle");
         killWorker();
         awaitWorkerTermination();
         setState(State.IDLE);
