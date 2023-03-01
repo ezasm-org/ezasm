@@ -21,6 +21,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final Registers registers;
     private final JScrollPane scrollPane;
     private ArrayList<Integer> changedRegisterNums = new ArrayList<Integer>();
+    private int reset = 0;
     private Color CellForeground;
     private Color DefaultCellForeground;
     private static final String[] columns = { "Register", "Value" };
@@ -89,6 +90,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      */
     public void update() {
         ChangeCellColor();
+        reset = 1;
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -143,13 +145,17 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * Tell the table what the changed resgiter when execute the line
+     * Tell the table what the changed resgiter when execute the line, and reset the array when new value comes
      *
      * @param number the index of changed register
      *
      * @param config the instance used to get theme
      */
     public void addHighlightValue(Long number) {
+        if (reset == 1) {
+            changedRegisterNums.clear();
+            reset = 0;
+        }
         if (!changedRegisterNums.contains(number.intValue())) {
             this.changedRegisterNums.add(number.intValue());
         }
@@ -157,23 +163,5 @@ public class RegisterTable extends JPanel implements IThemeable {
 
     public void removeHighlightValue() {
         this.changedRegisterNums.clear();
-    }
-
-    /**
-     * Removing the outdated index of highlight
-     */
-    public void removeOldArrayValue() {
-        if (changedRegisterNums.size() <= 1) {
-            return;
-        }
-        for (int i = 0; i < changedRegisterNums.size(); i++) {
-            if (changedRegisterNums.get(i) == 1) {
-                changedRegisterNums.remove(i);
-                break;
-            } else {
-                changedRegisterNums.remove(i);
-                i--;
-            }
-        }
     }
 }

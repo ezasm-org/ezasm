@@ -349,14 +349,4 @@ public class Window {
         }
         instance.table.removeHighlightValue();
     }
-
-    /**
-     * Remove extra values everytime a line is execute
-     */
-    public static void removeOldValue() {
-        if (instance == null || instance.table == null) {
-            return;
-        }
-        instance.table.removeOldArrayValue();
-    }
 }
