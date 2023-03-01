@@ -15,6 +15,9 @@ import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,6 +43,7 @@ public class Window {
     private EditorPane editor;
     private RegisterTable table;
 
+    private boolean saved;
     private String loadedFile;
     private String inputFilePath, outputFilePath;
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
@@ -148,7 +152,8 @@ public class Window {
         }
 
         app = new JFrame("EzASM Simulator");
-        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        app.addWindowListener(new WindowCloseListener());
         app.setMinimumSize(new Dimension(800, 600));
         panel = new JPanel();
 
@@ -259,6 +264,14 @@ public class Window {
         } else {
             return "";
         }
+    }
+
+    public void setSaved(boolean value){
+        saved = value;
+    }
+
+    public boolean getSaved(){
+        return saved;
     }
 
     /**

@@ -109,12 +109,10 @@ public class Arguments {
         } else {
             if (!inputpath.equals("") || !outputpath.equals("")) {
                 Window.instantiate(sim, config, inputpath, outputpath);
-                return;
+            } else {
+                Window.instantiate(sim, config);
             }
-
-            Window.instantiate(sim, config);
         }
-
     }
 
     /**

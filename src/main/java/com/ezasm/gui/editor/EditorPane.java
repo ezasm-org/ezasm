@@ -1,6 +1,8 @@
 package com.ezasm.gui.editor;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
@@ -39,6 +41,7 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);
         textArea.setCodeFoldingEnabled(false);
+        textArea.getDocument().addDocumentListener(new EditorDocumentListener());
 
         scrollPane = new RTextScrollPane(textArea);
         scrollPane.setLineNumbersEnabled(true);
