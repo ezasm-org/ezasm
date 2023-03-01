@@ -143,6 +143,7 @@
                             <administratorRequired>false</administratorRequired>
                             <linuxConfig>
                                 <pngFile>resources/icons/ezasm_logo.png</pngFile>
+                                <!-- use 256x256 logo -->
                                 <categories>
                                     <category>Development</category>
                                 </categories>
