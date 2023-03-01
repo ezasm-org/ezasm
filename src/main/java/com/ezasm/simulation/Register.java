@@ -68,7 +68,7 @@ public class Register {
     public void setData(RawData data) {
         if (number != 0) {
             System.arraycopy(data.data(), 0, this.data.data(), 0, this.data.data().length);
-            if (Window.getInstance() != null) {
+            if (Window.hasInstance()) {
                 Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
             }
         }
