@@ -112,7 +112,6 @@ public class Arguments {
             } else {
                 Window.instantiate(sim, config);
             }
-            new Thread(DiscordActivity::runCore).run();
         }
 
     }
