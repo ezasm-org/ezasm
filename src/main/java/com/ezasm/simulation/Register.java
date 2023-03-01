@@ -2,7 +2,6 @@ package com.ezasm.simulation;
 
 import com.ezasm.gui.Window;
 import com.ezasm.util.Conversion;
-import java.util.Arrays;
 import com.ezasm.util.RawData;
 
 /**
@@ -68,8 +67,7 @@ public class Register {
      */
     public void setData(RawData data) {
         if (number != 0) {
-            System.arraycopy(data.data(), 0, this.data.data(), 0, this.data.data().length);
-            Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
+            setData(data.data());
         }
     }
 
@@ -78,9 +76,9 @@ public class Register {
      *
      * @param data the new data to write.
      */
-    public void setDataInsideInstruction(RawData data) {
+    public void setDataWithGuiCallback(RawData data) {
         setData(data);
-        if (Window.hasInstance()) {
+        if (Window.hasInstance()) { // GUI callback
             Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
         }
     }
