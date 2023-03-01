@@ -69,7 +69,19 @@ public class Register {
     public void setData(RawData data) {
         if (number != 0) {
             System.arraycopy(data.data(), 0, this.data.data(), 0, this.data.data().length);
-            Window.passingValue(this.number);
+            Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
+        }
+    }
+
+    /**
+     * Writes the data within the given array to the register. Also performs any necessary corresponding GUI updates.
+     *
+     * @param data the new data to write.
+     */
+    public void setDataInsideInstruction(RawData data) {
+        setData(data);
+        if (Window.hasInstance()) {
+            Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
         }
     }
 

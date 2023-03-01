@@ -71,8 +71,7 @@ public class Simulator implements ISimulator {
         labels.clear();
         transforms.clear();
         initialize();
-        Window.resetPassedValue();
-
+        Window.getInstance().getRegisterTable().removeHighlightValue();
     }
 
     /**

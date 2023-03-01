@@ -3,7 +3,7 @@ package com.ezasm.gui;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.simulation.Registers;
-import com.ezasm.gui.settings.Config;
+
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
@@ -18,9 +18,8 @@ import javax.swing.table.TableCellRenderer;
 public class RegisterTable extends JPanel implements IThemeable {
 
     private final JTable table;
-    private final Registers registers;
     private final JScrollPane scrollPane;
-    private ArrayList<Integer> changedRegisterNums = new ArrayList<Integer>();
+    private final ArrayList<Integer> changedRegisterNumbers;
     private int reset = 0;
     private Color CellForeground;
     private Color DefaultCellForeground;
@@ -35,10 +34,10 @@ public class RegisterTable extends JPanel implements IThemeable {
      */
     public RegisterTable(Registers registers) {
         super();
-        this.registers = registers;
-        table = new JTable();
+        this.changedRegisterNumbers = new ArrayList<>();
+        this.table = new JTable();
+        this.scrollPane = new JScrollPane(table);
         table.setModel(new RegistersTableModel(registers));
-        scrollPane = new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(table.getPreferredSize());
@@ -51,7 +50,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * The function to highlight changed registers      
+     * The function to highlight changed registers
      */
     public void ChangeCellColor() {
         TableCellRenderer render = new DefaultTableCellRenderer() {
@@ -59,7 +58,7 @@ public class RegisterTable extends JPanel implements IThemeable {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                if (changedRegisterNums.size() < 5 && changedRegisterNums.contains(row)) {
+                if (changedRegisterNumbers.size() < 5 && changedRegisterNumbers.contains(row)) {
                     c.setForeground(CellForeground);
                 } else {
                     c.setForeground(DefaultCellForeground);
@@ -145,21 +144,19 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * Tell the table what the changed resgiter when execute the line, and reset the array when new value comes
+     * Tell the table which register changed, and reset the array when new value comes
      *
      * @param number the index of changed register
-     *
-     * @param config the instance used to get theme
      */
-    public void addHighlightValue(Long number) {
+    public void addHighlightValue(int number) {
         if (reset == 1) {
-            changedRegisterNums.clear();
+            changedRegisterNumbers.clear();
             reset = 0;
         }
-        this.changedRegisterNums.add(number.intValue());
+        this.changedRegisterNumbers.add(number);
     }
 
     public void removeHighlightValue() {
-        this.changedRegisterNums.clear();
+        this.changedRegisterNumbers.clear();
     }
 }

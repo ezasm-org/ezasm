@@ -4,7 +4,6 @@ import com.ezasm.gui.Window;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
@@ -58,7 +57,7 @@ public class SimulatorGUIActions {
 
         boolean isDone = state == State.IDLE || state == State.STOPPED;
 
-        Window.getInstance().setEditable(isDone);
+        Window.getInstance().getEditor().setEditable(isDone);
         MenubarFactory.setRedirectionEnable(isDone);
         startButton.setEnabled(isDone);
         stopButton.setEnabled(state == State.RUNNING);
@@ -93,9 +92,9 @@ public class SimulatorGUIActions {
             }
         } else {
             try {
-                Window.updateHighlight();
+                Window.getInstance().getEditor().updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
-                Window.updateRegisters();
+                Window.getInstance().getRegisterTable().update();
             } catch (SimulationException e) {
                 setState(State.STOPPED);
                 System.err.println(e.getMessage());
@@ -111,8 +110,8 @@ public class SimulatorGUIActions {
             if (Window.getInstance().getSimulator().undoLastTransformations()) {
                 // Some inverse transform was executed
                 setState(State.PAUSED);
-                Window.updateHighlight();
-                Window.updateRegisters();
+                Window.getInstance().getEditor().updateHighlight();
+                Window.getInstance().getRegisterTable().update();
             } else {
                 // No transform was executed; we are done
                 setState(State.IDLE);
@@ -130,7 +129,7 @@ public class SimulatorGUIActions {
      */
     static void start() {
         try {
-            Window.getInstance().setEditable(false);
+            Window.getInstance().getEditor().setEditable(false);
             Window.getInstance().parseText();
             setState(State.RUNNING);
             System.out.println("** Program starting **");
@@ -145,7 +144,7 @@ public class SimulatorGUIActions {
      * Handles if the user requests that the running program be forcibly stopped.
      */
     static void stop() {
-        Window.resetHighlight();
+        Window.getInstance().getEditor().resetHighlighter();
         setState(State.STOPPED);
         killWorker();
         awaitWorkerTermination();
@@ -173,8 +172,8 @@ public class SimulatorGUIActions {
         awaitWorkerTermination();
         setState(State.IDLE);
         Window.getInstance().getSimulator().resetAll();
-        Window.updateRegisters();
-        Window.resetHighlight();
+        Window.getInstance().getRegisterTable().update();
+        Window.getInstance().getEditor().resetHighlighter();
     }
 
     /**
@@ -185,9 +184,9 @@ public class SimulatorGUIActions {
         while (!Window.getInstance().getSimulator().isDone() && (state == State.RUNNING || state == State.PAUSED)
                 && !Thread.currentThread().isInterrupted()) {
             try {
-                Window.updateHighlight();
+                Window.getInstance().getEditor().updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
-                Window.updateRegisters();
+                Window.getInstance().getRegisterTable().update();
             } catch (SimulationException e) {
                 Window.getInstance().handleParseException(e);
                 break;
@@ -213,7 +212,7 @@ public class SimulatorGUIActions {
             killWorker();
             awaitWorkerTermination();
         }
-        Window.resetHighlight();
+        Window.getInstance().getEditor().resetHighlighter();
         try {
             TerminalInstructions.streams().resetInputStream();
         } catch (SimulationException e) {

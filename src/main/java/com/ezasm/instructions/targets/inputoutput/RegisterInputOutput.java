@@ -51,7 +51,7 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      */
     @Override
     public void set(ISimulator simulator, RawData value) {
-        simulator.getRegisters().getRegister(register).setData(value);
+        simulator.getRegisters().getRegister(register).setDataInsideInstruction(value);
     }
 
     @Override
