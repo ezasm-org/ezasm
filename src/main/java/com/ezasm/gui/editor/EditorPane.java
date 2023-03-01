@@ -11,6 +11,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.ezasm.gui.util.Theme.applyFontAndTheme;
 
@@ -20,10 +21,14 @@ import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
 public class EditorPane extends JPanel implements IThemeable {
+
     private final RSyntaxTextArea textArea;
     private final RTextScrollPane scrollPane;
     private LineHighlighter highlighter;
+    private String openFilePath;
+
     private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
+
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
@@ -49,7 +54,8 @@ public class EditorPane extends JPanel implements IThemeable {
         setLayout(new BorderLayout());
         add(scrollPane);
 
-        highlighter = new LineHighlighter(Window.currentTheme().yellow(), textArea);
+        String theme = Window.getInstance().getConfig().getTheme();
+        highlighter = new LineHighlighter(com.ezasm.gui.util.Theme.getTheme(theme).yellow(), textArea);
     }
 
     /**
@@ -173,6 +179,24 @@ public class EditorPane extends JPanel implements IThemeable {
     }
 
     /**
+     * Gets the path to the file currently open in this editor.
+     *
+     * @return the path to the file currently open in this editor.
+     */
+    public String getOpenFilePath() {
+        return Objects.requireNonNullElse(openFilePath, "");
+    }
+
+    /**
+     * Sets the path to the file currently open in this editor.
+     *
+     * @param openFilePath the new path to the file currently open in this editor.
+     */
+    public void setOpenFilePath(String openFilePath) {
+        this.openFilePath = openFilePath;
+    }
+
+    /**
      * Highlights a given line number and clears old highlight
      *
      * @param line the line to highlight
@@ -191,7 +215,8 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void resetHighlighter() {
         removeHighlights(textArea);
-        highlighter = new LineHighlighter(com.ezasm.gui.Window.currentTheme().yellow(), textArea);
+        String theme = Window.getInstance().getConfig().getTheme();
+        highlighter = new LineHighlighter(com.ezasm.gui.util.Theme.getTheme(theme).yellow(), textArea);
     }
 
     /**

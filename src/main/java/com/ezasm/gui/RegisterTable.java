@@ -7,6 +7,10 @@ import com.ezasm.simulation.Registers;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 /**
  * The GUI display table of the registers. Has a scroll pane embedded.
@@ -14,9 +18,11 @@ import java.awt.*;
 public class RegisterTable extends JPanel implements IThemeable {
 
     private final JTable table;
-    private final Registers registers;
     private final JScrollPane scrollPane;
-
+    private final ArrayList<Integer> changedRegisterNumbers;
+    private boolean reset = false;
+    private Color CellForeground;
+    private Color DefaultCellForeground;
     private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 2000);
     private static final Dimension MAX_SIZE = new Dimension(350, 2000);
@@ -28,11 +34,10 @@ public class RegisterTable extends JPanel implements IThemeable {
      */
     public RegisterTable(Registers registers) {
         super();
-        this.registers = registers;
-        table = new JTable();
+        this.changedRegisterNumbers = new ArrayList<>();
+        this.table = new JTable();
+        this.scrollPane = new JScrollPane(table);
         table.setModel(new RegistersTableModel(registers));
-
-        scrollPane = new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(table.getPreferredSize());
@@ -42,6 +47,26 @@ public class RegisterTable extends JPanel implements IThemeable {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+    }
+
+    /**
+     * The function to highlight changed registers
+     */
+    public void ChangeCellColor() {
+        TableCellRenderer render = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int col) {
+                final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+                if (changedRegisterNumbers.contains(row)) {
+                    c.setForeground(CellForeground);
+                } else {
+                    c.setForeground(DefaultCellForeground);
+                }
+                return c;
+            }
+        };
+        table.getColumnModel().getColumn(0).setCellRenderer(render);
     }
 
     /**
@@ -55,12 +80,16 @@ public class RegisterTable extends JPanel implements IThemeable {
         Theme.applyFontAndTheme(table.getTableHeader(), font, theme);
         table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
+        CellForeground = theme.red();
+        DefaultCellForeground = theme.foreground();
     }
 
     /**
      * Forcibly refreshes the display of the table
      */
     public void update() {
+        ChangeCellColor();
+        reset = true;
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -111,6 +140,23 @@ public class RegisterTable extends JPanel implements IThemeable {
         public String getColumnName(int column) {
             return columns[column];
         }
+
     }
 
+    /**
+     * Tell the table which register changed, and reset the array when new value comes
+     *
+     * @param number the index of changed register
+     */
+    public void addHighlightValue(int number) {
+        if (reset) {
+            changedRegisterNumbers.clear();
+            reset = false;
+        }
+        this.changedRegisterNumbers.add(number);
+    }
+
+    public void removeHighlightValue() {
+        this.changedRegisterNumbers.clear();
+    }
 }
