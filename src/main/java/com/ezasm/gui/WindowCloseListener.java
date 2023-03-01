@@ -8,16 +8,16 @@ import static com.ezasm.gui.util.DialogFactory.promptYesNoDialog;
 
 public class WindowCloseListener extends WindowAdapter {
 
-    public WindowCloseListener(){
+    public WindowCloseListener() {
         super();
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-        if(!Window.getInstance().getEditor().getFileSaved()) {
+        if (!Window.getInstance().getEditor().getFileSaved()) {
             boolean resp = promptYesNoDialog("Exiting...",
                     "Your changes have not been saved.\nWould you like to save them?");
-            if(resp){
+            if (resp) {
                 saveAs();
             }
         }

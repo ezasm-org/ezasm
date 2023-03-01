@@ -200,14 +200,13 @@ public class EditorPane extends JPanel implements IThemeable {
         this.openFilePath = openFilePath;
     }
 
-    public boolean getFileSaved(){
+    public boolean getFileSaved() {
         return this.fileSaved;
     }
-    public void setFileSaved(boolean value){
+
+    public void setFileSaved(boolean value) {
         this.fileSaved = value;
     }
-
-
 
     /**
      * Highlights a given line number and clears old highlight

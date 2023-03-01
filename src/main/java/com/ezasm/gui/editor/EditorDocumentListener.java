@@ -22,7 +22,7 @@ public class EditorDocumentListener implements DocumentListener {
         updateSavedState();
     }
 
-    private void updateSavedState(){
+    private void updateSavedState() {
         Window.getInstance().getEditor().setFileSaved(false);
     }
 }
