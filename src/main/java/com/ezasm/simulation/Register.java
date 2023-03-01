@@ -67,10 +67,7 @@ public class Register {
      */
     public void setData(RawData data) {
         if (number != 0) {
-            System.arraycopy(data.data(), 0, this.data.data(), 0, this.data.data().length);
-            if (Window.hasInstance()) {
-                Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
-            }
+            setData(data.data());
         }
     }
 
@@ -79,9 +76,9 @@ public class Register {
      *
      * @param data the new data to write.
      */
-    public void setDataInsideInstruction(RawData data) {
+    public void setDataWithGuiCallback(RawData data) {
         setData(data);
-        if (Window.hasInstance()) {
+        if (Window.hasInstance()) { // GUI callback
             Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
         }
     }
