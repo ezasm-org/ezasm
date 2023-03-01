@@ -337,7 +337,7 @@ public class Window {
         if (instance == null || instance.table == null) {
             return;
         }
-        instance.table.addHighlightValue(number, instance.config);
+        instance.table.addHighlightValue(number);
     }
 
     /**
@@ -357,6 +357,6 @@ public class Window {
         if (instance == null || instance.table == null) {
             return;
         }
-        instance.table.removeExtra();
+        instance.table.removeOldArrayValue();
     }
 }

@@ -21,7 +21,8 @@ public class RegisterTable extends JPanel implements IThemeable {
     private final Registers registers;
     private final JScrollPane scrollPane;
     private ArrayList<Integer> changedRegisterNums = new ArrayList<Integer>();
-    private Config config;
+    private Color CellForeground;
+    private Color DefaultCellForeground;
     private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 2000);
     private static final Dimension MAX_SIZE = new Dimension(350, 2000);
@@ -51,17 +52,16 @@ public class RegisterTable extends JPanel implements IThemeable {
     /**
      * The function to highlight changed registers      
      */
-    public void ChangeCellColor(Config config) {
-        Theme theme = Theme.getTheme(config.getTheme());
+    public void ChangeCellColor() {
         TableCellRenderer render = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
                 if (changedRegisterNums.size() < 5 && changedRegisterNums.contains(row)) {
-                    c.setForeground(theme.red());
+                    c.setForeground(CellForeground);
                 } else {
-                    c.setForeground(theme.foreground());
+                    c.setForeground(DefaultCellForeground);
                 }
                 return c;
             }
@@ -80,13 +80,15 @@ public class RegisterTable extends JPanel implements IThemeable {
         Theme.applyFontAndTheme(table.getTableHeader(), font, theme);
         table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
+        CellForeground = theme.red();
+        DefaultCellForeground = theme.foreground();
     }
 
     /**
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        ChangeCellColor(config);
+        ChangeCellColor();
         SwingUtilities.invokeLater(table::updateUI);
     }
 
@@ -147,18 +149,20 @@ public class RegisterTable extends JPanel implements IThemeable {
      *
      * @param config the instance used to get theme
      */
-    public void addHighlightValue(Long number, Config config) {
+    public void addHighlightValue(Long number) {
         if (!changedRegisterNums.contains(number.intValue())) {
             this.changedRegisterNums.add(number.intValue());
         }
-        this.config = config;
     }
 
     public void removeHighlightValue() {
         this.changedRegisterNums.clear();
     }
 
-    public void removeExtra() {
+    /**
+     * Removing the old index of highlight and leave space for new one
+     */
+    public void removeOldArrayValue() {
         if (changedRegisterNums.size() <= 1) {
             return;
         }

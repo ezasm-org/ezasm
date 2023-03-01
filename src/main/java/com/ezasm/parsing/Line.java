@@ -116,15 +116,6 @@ public class Line {
         return label;
     }
 
-    /**
-     * Get the Stored Register Number
-     *
-     * @return the Stored Register Number
-     */
-    public int getRegisterNum() {
-        return this.registerNum;
-    }
-
     @Override
     public String toString() {
         return instruction.text();
