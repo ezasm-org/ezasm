@@ -149,7 +149,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      * @param number the index of changed register
      */
     public void addHighlightValue(int number) {
-        if (reset == true) {
+        if (reset) {
             changedRegisterNumbers.clear();
             reset = false;
         }
