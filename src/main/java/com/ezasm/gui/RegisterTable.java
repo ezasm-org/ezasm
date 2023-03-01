@@ -153,6 +153,7 @@ public class RegisterTable extends JPanel implements IThemeable {
         if (!changedRegisterNums.contains(number.intValue())) {
             this.changedRegisterNums.add(number.intValue());
         }
+        System.out.println(changedRegisterNums);
     }
 
     public void removeHighlightValue() {
@@ -160,7 +161,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * Removing the old index of highlight and leave space for new one
+     * Removing the outdated index of highlight
      */
     public void removeOldArrayValue() {
         if (changedRegisterNums.size() <= 1) {

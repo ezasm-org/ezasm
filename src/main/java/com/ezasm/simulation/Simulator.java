@@ -127,7 +127,6 @@ public class Simulator implements ISimulator {
                 applyTransformations(new TransformationSequence());
             } else {
                 instructionDispatcher.execute(line);
-                Window.removeExtraValue();
             }
         }
     }

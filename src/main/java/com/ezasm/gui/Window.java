@@ -353,7 +353,7 @@ public class Window {
     /**
      * Remove extra values everytime a line is execute
      */
-    public static void removeExtraValue() {
+    public static void removeOldValue() {
         if (instance == null || instance.table == null) {
             return;
         }

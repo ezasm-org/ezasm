@@ -67,15 +67,15 @@ public class Register {
      * @param data the new data to write.
      */
     public void setData(RawData data) {
-        if (number != 0)
+        if (number != 0){
             System.arraycopy(data.data(), 0, this.data.data(), 0, this.data.data().length);
+            Window.passingValue(this.number);
+        }
     }
 
     public void setData(byte[] data) {
-        if (number != 0) {
+        if (number != 0)
             System.arraycopy(data, 0, this.data.data(), 0, this.data.data().length);
-            Window.passingValue(this.number);
-        }
     }
 
     /**
