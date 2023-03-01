@@ -154,7 +154,7 @@ public class Window {
         try {
             app.setIconImage(FileIO.loadImage("resources/icons/ezasm_logo.png"));
         } catch (IOException e) {
-            System.out.println("Oops");
+            System.err.println("Could not load icon");
         }
         panel = new JPanel();
 
