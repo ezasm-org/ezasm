@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.console.Console;
 import com.ezasm.gui.util.EzTabbedPaneUI;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
@@ -22,9 +23,8 @@ public class ToolPane extends JPanel implements IThemeable {
         tabbedPane.setFocusable(false);
         ImageIcon icon = createImageIcon("images/middle.gif");
 
-        JComponent panel1 = makeTextPanel("Panel #1");
-        tabbedPane.addTab("Tab 1", icon, panel1, "Does nothing");
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+        tabbedPane.addTab("Console", icon, new Console(), "Input to and output from the program");
+        tabbedPane.setMnemonicAt(0, KeyEvent.VK_C);
 
         JComponent panel2 = makeTextPanel("Panel #2");
         tabbedPane.addTab("Tab 2", icon, panel2, "Does twice as much nothing");
