@@ -4,8 +4,8 @@ import com.ezasm.gui.editor.EditorPane;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
+import com.ezasm.gui.tools.ToolPane;
 import com.ezasm.gui.settings.Config;
-import com.ezasm.gui.tabpanes.TabbedPanes;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
@@ -42,7 +42,7 @@ public class Window {
     private JMenuBar menubar;
     private EditorPane editor;
     private RegisterTable table;
-    private TabbedPanes tools;
+    private ToolPane tools;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -163,7 +163,7 @@ public class Window {
         toolbar = ToolbarFactory.makeToolbar();
         editor = new EditorPane();
         table = new RegisterTable(simulator.getRegisters());
-        tools = new TabbedPanes();
+        tools = new ToolPane();
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, table);
         mainSplit.setResizeWeight(0.8);

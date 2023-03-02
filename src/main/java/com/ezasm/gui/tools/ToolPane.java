@@ -1,4 +1,4 @@
-package com.ezasm.gui.tabpanes;
+package com.ezasm.gui.tools;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -6,14 +6,15 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.util.EzTabbedPaneUI;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
 
-public class TabbedPanes extends JPanel implements IThemeable {
+public class ToolPane extends JPanel implements IThemeable {
 
     private final JTabbedPane tabbedPane;
 
-    public TabbedPanes() {
+    public ToolPane() {
         super(new BorderLayout());
 
         tabbedPane = new JTabbedPane();

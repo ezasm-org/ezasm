@@ -1,4 +1,4 @@
-package com.ezasm.gui.tabpanes;
+package com.ezasm.gui.util;
 
 import com.ezasm.gui.util.Theme;
 
