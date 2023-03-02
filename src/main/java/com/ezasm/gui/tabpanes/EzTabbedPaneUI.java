@@ -21,8 +21,8 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     @Override
-    public void installUI(JComponent jc) {
-        super.installUI(jc);
+    public void installUI(JComponent component) {
+        super.installUI(component);
         selectedBackground = theme.background();
         unselectedBackground = theme.currentLine();
         foreground = theme.foreground();

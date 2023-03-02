@@ -5,6 +5,6 @@ import java.awt.Font;
 
 public interface IThemeable {
 
-    void applyTheme(Font font, Theme theme) throws BadLocationException;
+    void applyTheme(Font font, Theme theme);
 
 }
