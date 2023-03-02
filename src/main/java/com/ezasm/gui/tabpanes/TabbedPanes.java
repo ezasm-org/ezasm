@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -29,22 +30,6 @@ public class TabbedPanes extends JPanel implements IThemeable {
 
         tabbedPane = new JTabbedPane();
         tabbedPane.setFocusable(false);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int currentTab = tabbedPane.getSelectedIndex();
-                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-                    if (i == currentTab) {
-                        tabbedPane.setBackgroundAt(i, selectedBG);
-                        tabbedPane.setForegroundAt(i, Color.BLACK);
-                    } else {
-                        tabbedPane.setBackgroundAt(i, unselectedBG);
-                        tabbedPane.setForegroundAt(i, foreground);
-                    }
-                }
-            }
-
-        });
         ImageIcon icon = createImageIcon("images/middle.gif");
 
         JComponent panel1 = makeTextPanel("Panel #1");
@@ -60,9 +45,8 @@ public class TabbedPanes extends JPanel implements IThemeable {
     }
 
     public void applyTheme(Font font, Theme theme) {
-        selectedBG = theme.background();
-        unselectedBG = theme.modifyAwayFromBackground(theme.background(), 2);
-        foreground = theme.foreground();
+        UIManager.put("TabbedPane.selected", theme.modifyAwayFromBackground(theme.background(), 3));
+        SwingUtilities.updateComponentTreeUI(tabbedPane);
         tabbedPane.setBackground(theme.background());
         tabbedPane.setForeground(theme.foreground());
         tabbedPane.setFont(font);
