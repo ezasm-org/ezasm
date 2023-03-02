@@ -29,6 +29,7 @@ public class TabbedPanes extends JPanel implements IThemeable {
         super(new BorderLayout());
 
         tabbedPane = new JTabbedPane();
+        tabbedPane.setUI(new EzTabbedPaneUI(Theme.getTheme("Light")));
         tabbedPane.setFocusable(false);
         ImageIcon icon = createImageIcon("images/middle.gif");
 
@@ -45,10 +46,10 @@ public class TabbedPanes extends JPanel implements IThemeable {
     }
 
     public void applyTheme(Font font, Theme theme) {
-        UIManager.put("TabbedPane.selected", theme.modifyAwayFromBackground(theme.background(), 3));
-        SwingUtilities.updateComponentTreeUI(tabbedPane);
-        tabbedPane.setBackground(theme.background());
-        tabbedPane.setForeground(theme.foreground());
+        setBackground(theme.currentLine());
+        setForeground(theme.foreground());
+        setFont(font);
+        tabbedPane.setUI(new EzTabbedPaneUI(theme));
         tabbedPane.setFont(font);
     }
 

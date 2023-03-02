@@ -20,7 +20,7 @@ public class ScrollBarUI extends BasicScrollBarUI {
     @Override
     protected void configureScrollBarColors() {
         this.trackColor = theme.currentLine();
-        this.thumbColor = this.trackColor.darker().darker();
+        this.thumbColor = theme.modifyAwayFromBackground(this.trackColor, 2);
         this.thumbDarkShadowColor = this.thumbColor;
     }
 
