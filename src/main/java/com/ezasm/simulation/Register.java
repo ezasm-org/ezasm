@@ -1,5 +1,6 @@
 package com.ezasm.simulation;
 
+import com.ezasm.gui.Window;
 import com.ezasm.util.Conversion;
 import com.ezasm.util.RawData;
 
@@ -65,8 +66,21 @@ public class Register {
      * @param data the new data to write.
      */
     public void setData(RawData data) {
-        if (number != 0)
-            System.arraycopy(data.data(), 0, this.data.data(), 0, this.data.data().length);
+        if (number != 0) {
+            setData(data.data());
+        }
+    }
+
+    /**
+     * Writes the data within the given array to the register. Also performs any necessary corresponding GUI updates.
+     *
+     * @param data the new data to write.
+     */
+    public void setDataWithGuiCallback(RawData data) {
+        setData(data);
+        if (Window.hasInstance()) { // GUI callback
+            Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
+        }
     }
 
     public void setData(byte[] data) {

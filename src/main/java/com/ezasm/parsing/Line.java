@@ -20,6 +20,7 @@ public class Line {
     private final Instruction instruction;
     private final IAbstractTarget[] arguments;
     private final String label;
+    private int registerNum;
 
     /**
      * Creates and validates a line based on the given tokens.
@@ -33,6 +34,7 @@ public class Line {
             this.label = instruction.substring(0, instruction.length() - 1);
             this.instruction = null;
             this.arguments = null;
+            this.registerNum = 0;
             if (arguments != null && arguments.length > 0) {
                 throw new ParseException(String.format("Unexpected token after label: '%s'", arguments[0]));
             }
@@ -45,7 +47,6 @@ public class Line {
                 InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget());
         this.arguments = new IAbstractTarget[arguments.length];
         this.label = null;
-
         if (this.instruction.target().getParameterCount() != arguments.length) {
             throw new ParseException(
                     String.format("Incorrect number of arguments for instruction '%s': expected %d but got %d",

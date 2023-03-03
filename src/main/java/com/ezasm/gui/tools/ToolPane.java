@@ -19,7 +19,7 @@ public class ToolPane extends JPanel implements IThemeable {
         super(new BorderLayout());
 
         tabbedPane = new JTabbedPane();
-        tabbedPane.setUI(new EzTabbedPaneUI(Window.currentTheme()));
+        tabbedPane.setUI(new EzTabbedPaneUI(Window.getInstance().getTheme()));
         tabbedPane.setFocusable(false);
         ImageIcon icon = createImageIcon("images/middle.gif");
 
