@@ -2,12 +2,12 @@ package com.ezasm.gui.console;
 
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
+import com.ezasm.instructions.implementation.TerminalInstructions;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.io.PrintStream;
 
 public class Console extends JPanel implements IThemeable {
@@ -31,6 +31,9 @@ public class Console extends JPanel implements IThemeable {
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
         System.setErr(new PrintStream(outputStream));
+        
+        TerminalInstructions.streams().setInputStream(inputStream);
+        TerminalInstructions.streams().setOutputStream(outputStream);
 
         fixedTextEnd = 0;
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this::keyEventDispatched);
@@ -76,11 +79,13 @@ public class Console extends JPanel implements IThemeable {
                     // Trying to edit text that has already been submitted
                     keyEvent.consume();
                 }
-            } else if (textArea.getCaretPosition() <= fixedTextEnd && c == '\b'
+            }
+            if (textArea.getCaretPosition() <= fixedTextEnd && c == '\b'
                     && textArea.getSelectionStart() == textArea.getSelectionEnd()) {
                 // in case of a backspace on the newline, discard it
                 keyEvent.consume();
-            } else if (c == '\n') {
+            }
+            if (keyEvent.getID() == KeyEvent.KEY_TYPED && c == '\n' && pos >= fixedTextEnd ) {
                 // Legal newline character
                 String toBuffer = getRemainingString();
                 inputStream.addToBuffer(toBuffer);

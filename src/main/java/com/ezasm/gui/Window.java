@@ -41,12 +41,11 @@ public class Window {
     private JToolBar toolbar;
     private JMenuBar menubar;
     private EditorPane editor;
-    private RegisterTable table;
+    private RegisterTable registerTable;
     private ToolPane tools;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
-    private RegisterTable registerTable;
 
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
     private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
@@ -154,10 +153,10 @@ public class Window {
         menubar = MenubarFactory.makeMenuBar();
         toolbar = ToolbarFactory.makeToolbar();
         editor = new EditorPane();
-        table = new RegisterTable(simulator.getRegisters());
+        registerTable = new RegisterTable(simulator.getRegisters());
         tools = new ToolPane();
 
-        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, table);
+        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
         mainSplit.setResizeWeight(0.8);
         mainSplit.setUI(new BasicSplitPaneUI());
         mainSplit.setBorder(null);
