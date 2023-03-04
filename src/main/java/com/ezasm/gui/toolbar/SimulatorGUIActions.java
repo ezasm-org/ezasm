@@ -132,6 +132,7 @@ public class SimulatorGUIActions {
             Window.getInstance().getEditor().setEditable(false);
             Window.getInstance().parseText();
             setState(State.RUNNING);
+            Window.getInstance().getConsole().reset();
             System.out.println("** Program starting **");
             startWorker();
         } catch (ParseException e) {

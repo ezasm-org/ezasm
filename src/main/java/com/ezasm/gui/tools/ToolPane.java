@@ -9,11 +9,19 @@ import com.ezasm.gui.Window;
 import com.ezasm.gui.console.Console;
 import com.ezasm.gui.util.EzTabbedPaneUI;
 import com.ezasm.gui.util.IThemeable;
+import com.ezasm.gui.util.TabCloseButton;
 import com.ezasm.gui.util.Theme;
 
 public class ToolPane extends JPanel implements IThemeable {
 
     private final JTabbedPane tabbedPane;
+    private boolean isClosable = false;
+
+    // DOES NOT WORK YET. DO NOT USE
+    public ToolPane(boolean hasCloseButton) {
+        this();
+        isClosable = hasCloseButton;
+    }
 
     public ToolPane() {
         super(new BorderLayout());
@@ -21,16 +29,7 @@ public class ToolPane extends JPanel implements IThemeable {
         tabbedPane = new JTabbedPane();
         tabbedPane.setUI(new EzTabbedPaneUI(Window.getInstance().getTheme()));
         tabbedPane.setFocusable(false);
-        ImageIcon icon = createImageIcon("images/middle.gif");
 
-        tabbedPane.addTab("Console", icon, new Console(), "Input to and output from the program");
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_C);
-
-        JComponent panel2 = makeTextPanel("Panel #2");
-        tabbedPane.addTab("Tab 2", icon, panel2, "Does twice as much nothing");
-        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
-        // Add the tabbed pane to this panel.
         add(tabbedPane);
     }
 
@@ -83,6 +82,13 @@ public class ToolPane extends JPanel implements IThemeable {
         tabbedPane.addTab(title, icon, component, tip);
         if (mnemonic != -1) {
             tabbedPane.setMnemonicAt(tabbedPane.getTabCount() - 1, mnemonic);
+        }
+        if (isClosable) { // DOES NOT WORK DO NOT USE YET
+            JPanel newTab = new JPanel(new GridLayout());
+            newTab.setOpaque(false);
+            TabCloseButton btn = new TabCloseButton(tabbedPane);
+            newTab.add(btn);
+            tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, newTab);
         }
     }
 
@@ -155,19 +161,4 @@ public class ToolPane extends JPanel implements IThemeable {
     public JComponent[] getTabComponents() {
         return (JComponent[]) tabbedPane.getComponents();
     }
-
-    /** Returns an ImageIcon, or null if the path was invalid. */
-    protected static ImageIcon createImageIcon(String path) {
-        return null;
-    }
-
-    protected JComponent makeTextPanel(String text) {
-        JPanel panel = new JPanel(false);
-        JLabel filler = new JLabel(text);
-        filler.setHorizontalAlignment(JLabel.CENTER);
-        panel.setLayout(new GridLayout(1, 1));
-        panel.add(filler);
-        return panel;
-    }
-
 }

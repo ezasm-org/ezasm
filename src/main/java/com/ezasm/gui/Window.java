@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EditorPane;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
@@ -43,6 +44,7 @@ public class Window {
     private EditorPane editor;
     private RegisterTable registerTable;
     private ToolPane tools;
+    private Console console;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -154,7 +156,10 @@ public class Window {
         toolbar = ToolbarFactory.makeToolbar();
         editor = new EditorPane();
         registerTable = new RegisterTable(simulator.getRegisters());
+        console = new Console();
+
         tools = new ToolPane();
+        tools.addTab(console, null, "Console", "Your Console");
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
         mainSplit.setResizeWeight(0.8);
@@ -212,6 +217,15 @@ public class Window {
      */
     public Theme getTheme() {
         return Theme.getTheme(config.getTheme());
+    }
+
+    /**
+     * Gets this instance's console object.
+     *
+     * @return the instance's console object.
+     */
+    public Console getConsole() {
+        return this.console;
     }
 
     /**
