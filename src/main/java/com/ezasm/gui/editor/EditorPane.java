@@ -5,6 +5,7 @@ import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.util.IThemeable;
+import com.ezasm.gui.util.PatchedRSyntaxTextArea;
 import com.ezasm.simulation.Registers;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -22,7 +23,7 @@ import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
  */
 public class EditorPane extends JPanel implements IThemeable {
 
-    private final RSyntaxTextArea textArea;
+    private final PatchedRSyntaxTextArea textArea;
     private final RTextScrollPane scrollPane;
     private LineHighlighter highlighter;
     private String openFilePath;
@@ -40,7 +41,7 @@ public class EditorPane extends JPanel implements IThemeable {
 
         ((AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance()).putMapping(EZASM_TOKEN_MAKER_NAME,
                 EzTokenMaker.class.getName());
-        textArea = new RSyntaxTextArea();
+        textArea = new PatchedRSyntaxTextArea();
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);
         textArea.setCodeFoldingEnabled(false);
@@ -175,6 +176,7 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void setText(String content) {
         textArea.setText(content);
+        textArea.setCaretPosition(0);
     }
 
     /**
@@ -197,8 +199,6 @@ public class EditorPane extends JPanel implements IThemeable {
 
     /**
      * Highlights a given line number and clears old highlight
-     *
-     * @param line the line to highlight
      */
     public void updateHighlight() {
         removeHighlights(textArea);

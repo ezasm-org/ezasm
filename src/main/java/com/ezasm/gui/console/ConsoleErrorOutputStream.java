@@ -3,17 +3,17 @@ package com.ezasm.gui.console;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class ConsoleOutputStream extends OutputStream {
+public class ConsoleErrorOutputStream extends OutputStream {
 
     private final Console console;
 
-    public ConsoleOutputStream(Console console) {
+    public ConsoleErrorOutputStream(Console console) {
         this.console = console;
     }
 
     @Override
     public void write(int b) throws IOException {
-        console.writeTextFromSystemOut(Character.toString(b));
+        console.writeTextFromSystemError(Character.toString(b));
     }
 
     @Override
@@ -28,6 +28,6 @@ public class ConsoleOutputStream extends OutputStream {
             byte data = b[off + i];
             toWrite.append(Character.toString(data));
         }
-        console.writeTextFromSystemOut(toWrite.toString());
+        console.writeTextFromSystemError(toWrite.toString());
     }
 }

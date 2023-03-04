@@ -1,12 +1,18 @@
-package com.ezasm.gui.console;
+package com.ezasm.gui.util;
 
-import javax.swing.*;
-import java.io.OutputStream;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
 import java.io.PrintStream;
 
-public class ConsoleTextArea extends JTextPane {
+/**
+ * Patches a bug in the Java implementation of pasting into JTextArea leading to errors printed to System.err.
+ */
+public class PatchedRSyntaxTextArea extends RSyntaxTextArea {
 
-    public ConsoleTextArea() {
+    /**
+     * Constructs the base RSyntaxTextArea.
+     */
+    public PatchedRSyntaxTextArea() {
         super();
     }
 
@@ -22,11 +28,5 @@ public class ConsoleTextArea extends JTextPane {
         super.paste();
 
         System.setErr(oldErrorStream);
-    }
-
-    private static class NullOutputStream extends OutputStream {
-        @Override
-        public void write(int b) { // intentionally left blank
-        }
     }
 }
