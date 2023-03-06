@@ -6,6 +6,8 @@ import java.io.PrintStream;
 
 public class ConsoleTextArea extends JTextPane {
 
+    private static final PrintStream NULL_PRINT_STREAM = new PrintStream(new NullOutputStream());
+
     public ConsoleTextArea() {
         super();
     }
@@ -17,7 +19,7 @@ public class ConsoleTextArea extends JTextPane {
     @Override
     public void paste() {
         PrintStream oldErrorStream = System.err;
-        System.setErr(new PrintStream(new NullOutputStream()));
+        System.setErr(NULL_PRINT_STREAM);
 
         super.paste();
 

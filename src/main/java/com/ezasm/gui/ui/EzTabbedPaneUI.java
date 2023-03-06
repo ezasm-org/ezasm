@@ -1,4 +1,4 @@
-package com.ezasm.gui.util;
+package com.ezasm.gui.ui;
 
 import com.ezasm.gui.util.Theme;
 

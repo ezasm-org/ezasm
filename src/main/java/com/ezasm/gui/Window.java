@@ -3,7 +3,7 @@ package com.ezasm.gui;
 import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EditorPane;
 import com.ezasm.gui.menubar.MenubarFactory;
-import com.ezasm.gui.toolbar.SimulatorGUIActions;
+import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.tools.ToolPane;
 import com.ezasm.gui.settings.Config;
@@ -19,11 +19,7 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
@@ -92,8 +88,8 @@ public class Window {
     public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
         if (instance == null) {
             new Window(simulator, config);
-            instance.setInputStream(new File(inputFilePath));
-            instance.setOutputStream(new File(outputFilePath));
+            instance.setFileInputStream(new File(inputFilePath));
+            instance.setFileStream(new File(outputFilePath));
         }
     }
 
@@ -102,7 +98,7 @@ public class Window {
      *
      * @param inputFile the desired file to use for the InputStream.
      */
-    public void setInputStream(File inputFile) {
+    public void setFileInputStream(File inputFile) {
         try {
             inputStream = new RandomAccessFileStream(inputFile);
         } catch (IOException e) {
@@ -117,7 +113,7 @@ public class Window {
      *
      * @param outputFile the desired file to use for the InputStream.
      */
-    public void setOutputStream(File outputFile) {
+    public void setFileStream(File outputFile) {
         try {
             outputFile.createNewFile();
             outputStream = new FileOutputStream(outputFile);
@@ -125,6 +121,26 @@ public class Window {
             promptWarningDialog("Error Writing File",
                     String.format("There was an error writing to '%s'\nOperation cancelled", outputFile.getName()));
         }
+        TerminalInstructions.streams().setOutputStream(outputStream);
+    }
+
+    /**
+     * Sets the input stream for program output to the given input stream.
+     *
+     * @param inputStream the output stream to read from.
+     */
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+        TerminalInstructions.streams().setInputStream(inputStream);
+    }
+
+    /**
+     * Sets the output stream for program output to the given output stream.
+     *
+     * @param outputStream the output stream to write to.
+     */
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
         TerminalInstructions.streams().setOutputStream(outputStream);
     }
 
@@ -156,7 +172,14 @@ public class Window {
         toolbar = ToolbarFactory.makeToolbar();
         editor = new EditorPane();
         registerTable = new RegisterTable(simulator.getRegisters());
+        
         console = new Console();
+        inputStream = console.getInputStream();
+        outputStream = console.getOutputStream();
+        // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
+        System.setIn(inputStream);
+        System.setOut(new PrintStream(outputStream));
+        System.setErr(new PrintStream(console.getErrorStream()));
 
         tools = new ToolPane();
         tools.addTab(console, null, "Console", "Your Console");
@@ -174,8 +197,6 @@ public class Window {
         panel.setLayout(new BorderLayout());
         panel.add(toolbar, BorderLayout.PAGE_START);
         panel.add(toolSplit, BorderLayout.CENTER);
-        // panel.add(editor, BorderLayout.CENTER);
-        // panel.add(table, BorderLayout.EAST);
 
         ToolbarFactory.setButtonsEnabled(true);
 
@@ -188,6 +209,7 @@ public class Window {
     }
 
     public void applyConfiguration(Config config) {
+        this.config = config;
         Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
@@ -197,8 +219,7 @@ public class Window {
         registerTable.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
-        SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
-        this.config = config;
+        SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
     /**

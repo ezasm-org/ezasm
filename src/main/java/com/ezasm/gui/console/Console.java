@@ -3,13 +3,11 @@ package com.ezasm.gui.console;
 import com.ezasm.gui.Window;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
-import com.ezasm.instructions.implementation.TerminalInstructions;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.PrintStream;
 
 public class Console extends JPanel implements IThemeable {
 
@@ -30,13 +28,6 @@ public class Console extends JPanel implements IThemeable {
         inputStream = new ConsoleInputStream();
         outputStream = new ConsoleOutputStream(this);
         errorStream = new ConsoleErrorOutputStream(this);
-
-        System.setIn(inputStream);
-        System.setOut(new PrintStream(outputStream));
-        System.setErr(new PrintStream(errorStream));
-
-        TerminalInstructions.streams().setInputStream(inputStream);
-        TerminalInstructions.streams().setOutputStream(outputStream);
 
         fixedTextEnd = 0;
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this::keyEventDispatched);
@@ -81,24 +72,23 @@ public class Console extends JPanel implements IThemeable {
                     // Trying to edit text that has already been submitted
                     keyEvent.consume();
                 }
-            }
-            if (textArea.getCaretPosition() <= fixedTextEnd && c == '\b'
+            } else if (textArea.getCaretPosition() <= fixedTextEnd && c == '\b'
                     && textArea.getSelectionStart() == textArea.getSelectionEnd()) {
                 // in case of a backspace on the newline, discard it
                 keyEvent.consume();
-            }
-
-            if (keyEvent.getID() == KeyEvent.KEY_TYPED && c == '\n' && pos >= fixedTextEnd) {
+            } else if (keyEvent.getID() == KeyEvent.KEY_TYPED && c == '\n' && pos >= fixedTextEnd) {
                 // Legal newline character
                 String toBuffer = getRemainingString();
                 inputStream.addToBuffer(toBuffer);
                 fixedTextEnd += toBuffer.length();
+            } else {
+                textArea.setCharacterAttributes(getForegroundAttributeSet(), true);
             }
         }
         return false;
     }
 
-    private static AttributeSet getDefaultAttributeSet() {
+    private static AttributeSet getForegroundAttributeSet() {
         StyleContext style = StyleContext.getDefaultStyleContext();
         return style.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground,
                 Window.getInstance().getTheme().foreground());
@@ -114,24 +104,15 @@ public class Console extends JPanel implements IThemeable {
             textArea.setCaretPosition(textArea.getText().length());
         } catch (BadLocationException ignored) {
         }
-        try {
-            // Reset the attribute to what it was previously
-            // TODO make this work
-            textArea.getDocument().insertString(textArea.getText().length(), " ", getDefaultAttributeSet());
-            textArea.getDocument().remove(textArea.getText().length() - 1, 1);
-            textArea.setForeground(Window.getInstance().getTheme().foreground());
-        } catch (BadLocationException ignored) {
-        }
     }
 
     void writeTextFromSystemOut(String text) {
-        // TODO write in a different color from user input
-        writeTextWithColor(text, Color.GRAY);
+        // TODO maybe use a different color for user input and console
+        writeTextWithColor(text, Window.getInstance().getTheme().comment());
     }
 
     void writeTextFromSystemError(String text) {
-        // TODO write in theme red
-        writeTextWithColor(text, Color.RED);
+        writeTextWithColor(text, Window.getInstance().getTheme().red());
     }
 
     public ConsoleInputStream getInputStream() {

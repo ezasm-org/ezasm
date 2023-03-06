@@ -1,13 +1,11 @@
 package com.ezasm.gui.tools;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 
 import com.ezasm.gui.Window;
-import com.ezasm.gui.console.Console;
-import com.ezasm.gui.util.EzTabbedPaneUI;
+import com.ezasm.gui.ui.EzTabbedPaneUI;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.TabCloseButton;
 import com.ezasm.gui.util.Theme;

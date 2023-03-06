@@ -1,5 +1,7 @@
 package com.ezasm.gui.util;
 
+import com.ezasm.gui.ui.EzScrollBarUI;
+
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
@@ -104,7 +106,7 @@ public record Theme(Color background, Color foreground, Color currentLine, Color
 
     public void applyThemeScrollbar(JScrollBar scrollbar) {
         applyTheme(scrollbar);
-        scrollbar.setUI(new ScrollBarUI(this));
+        scrollbar.setUI(new EzScrollBarUI(this));
     }
 
     public static void applyFontAndTheme(JComponent component, Font font, Theme theme) {

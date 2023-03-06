@@ -4,7 +4,6 @@ import com.ezasm.gui.Window;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
 import java.util.concurrent.locks.LockSupport;
@@ -14,7 +13,7 @@ import static com.ezasm.gui.toolbar.ToolbarFactory.*;
 /**
  * Possible actions through the GUI which need to be handled.
  */
-public class SimulatorGUIActions {
+public class SimulatorGuiActions {
 
     /**
      * An enumeration of all possible states of this class. IDLE: has not yet run or was just reset RUNNING: currently
@@ -136,7 +135,7 @@ public class SimulatorGUIActions {
             System.out.println("** Program starting **");
             startWorker();
         } catch (ParseException e) {
-            setState(State.STOPPED);
+            setState(State.IDLE);
             Window.getInstance().handleParseException(e);
         }
     }
@@ -210,10 +209,8 @@ public class SimulatorGUIActions {
      * Starts a new worker thread on the current state of the program.
      */
     private static void startWorker() {
-        if (worker != null) {
-            killWorker();
-            awaitWorkerTermination();
-        }
+        killWorker();
+        awaitWorkerTermination();
         Window.getInstance().getEditor().resetHighlighter();
         try {
             TerminalInstructions.streams().resetInputStream();
@@ -221,7 +218,7 @@ public class SimulatorGUIActions {
             // TODO handle the case where the file is no longer accessible causing an error
             throw new RuntimeException("There was an error reading from the given input file");
         }
-        worker = new Thread(SimulatorGUIActions::simulationLoop);
+        worker = new Thread(SimulatorGuiActions::simulationLoop);
         worker.start();
     }
 
@@ -229,16 +226,20 @@ public class SimulatorGUIActions {
      * Terminates the currently executing worker.
      */
     private static void killWorker() {
-        worker.interrupt();
+        if (worker != null) {
+            worker.interrupt();
+        }
     }
 
     /**
      * Waits for the currently executing worker to terminate.
      */
     private static void awaitWorkerTermination() {
-        try {
-            worker.join(LOOP_BUSY_WAIT_MS);
-        } catch (InterruptedException ignored) {
+        if (worker != null) {
+            try {
+                worker.join(LOOP_BUSY_WAIT_MS);
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 

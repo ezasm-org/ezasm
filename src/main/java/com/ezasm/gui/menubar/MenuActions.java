@@ -86,7 +86,7 @@ public class MenuActions {
             File file = fileChooser.getSelectedFile();
             if (file != null) {
                 if (file.exists() && file.canRead()) {
-                    Window.getInstance().setInputStream(file);
+                    Window.getInstance().setFileInputStream(file);
                 } else {
                     promptWarningDialog("Error Reading File",
                             String.format("There was an error reading from '%s'\nOperation cancelled", file.getName()));
@@ -107,7 +107,7 @@ public class MenuActions {
             if (file != null) {
                 boolean overwrite = promptOverwriteDialog(file);
                 if (overwrite) {
-                    Window.getInstance().setOutputStream(file);
+                    Window.getInstance().setFileStream(file);
                 }
             }
         }

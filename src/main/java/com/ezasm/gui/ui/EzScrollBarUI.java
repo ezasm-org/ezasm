@@ -1,4 +1,4 @@
-package com.ezasm.gui.util;
+package com.ezasm.gui.ui;
 
 import com.ezasm.gui.util.Theme;
 
@@ -9,11 +9,11 @@ import java.awt.*;
 /**
  * ScrollBarUI to apply to scrollbars in this application's GUI.
  */
-public class ScrollBarUI extends BasicScrollBarUI {
+public class EzScrollBarUI extends BasicScrollBarUI {
 
     private final Theme theme;
 
-    public ScrollBarUI(Theme theme) {
+    public EzScrollBarUI(Theme theme) {
         this.theme = theme;
     }
 

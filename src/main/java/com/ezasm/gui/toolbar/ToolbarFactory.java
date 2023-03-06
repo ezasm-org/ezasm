@@ -2,7 +2,7 @@ package com.ezasm.gui.toolbar;
 
 import com.ezasm.gui.util.Theme;
 
-import static com.ezasm.gui.toolbar.SimulatorGUIActions.*;
+import static com.ezasm.gui.toolbar.SimulatorGuiActions.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
