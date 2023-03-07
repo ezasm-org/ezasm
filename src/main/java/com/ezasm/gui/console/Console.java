@@ -38,12 +38,7 @@ public class Console extends JPanel implements IThemeable {
 
     @Override
     public void applyTheme(Font font, Theme theme) {
-        textArea.setForeground(theme.foreground());
-        textArea.setBackground(theme.background());
-        textArea.setSelectionColor(theme.selection());
-        textArea.setSelectedTextColor(theme.foreground());
-        textArea.setCaretColor(theme.foreground());
-        textArea.setFont(font);
+        textArea.applyTheme(font, theme);
 
         theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         theme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());

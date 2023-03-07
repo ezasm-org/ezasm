@@ -3,27 +3,17 @@ package com.ezasm.gui.tools;
 import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.ui.EzTabbedPaneUI;
 import com.ezasm.gui.util.IThemeable;
-import com.ezasm.gui.util.TabCloseButton;
 import com.ezasm.gui.util.Theme;
 
-public class ToolPane extends JPanel implements IThemeable {
+public class TabbedPane extends JPanel implements IThemeable {
 
-    private final JTabbedPane tabbedPane;
-    private boolean isClosable = false;
-    private ClosableTabBuilder closeBuilder = new ClosableTabBuilder();
+    protected final JTabbedPane tabbedPane;
 
-    // DOES NOT WORK YET. DO NOT USE
-    public ToolPane(boolean hasCloseButton) {
-        this();
-        isClosable = hasCloseButton;
-    }
-
-    public ToolPane() {
+    public TabbedPane() {
         super(new BorderLayout());
 
         tabbedPane = new JTabbedPane();
@@ -46,15 +36,6 @@ public class ToolPane extends JPanel implements IThemeable {
         setFont(font);
         tabbedPane.setUI(new EzTabbedPaneUI(theme));
         tabbedPane.setFont(font);
-
-        closeBuilder = closeBuilder.setFont(font).setTheme(theme);
-
-        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-            Component component = tabbedPane.getTabComponentAt(i);
-            if (component instanceof IThemeable themeable) {
-                themeable.applyTheme(font, theme);
-            }
-        }
 
         for (Component component : tabbedPane.getComponents()) {
             if (component instanceof IThemeable themeable) {
@@ -91,10 +72,6 @@ public class ToolPane extends JPanel implements IThemeable {
         tabbedPane.addTab(title, icon, component, tip);
         if (mnemonic != -1) {
             tabbedPane.setMnemonicAt(tabbedPane.getTabCount() - 1, mnemonic);
-        }
-        if (isClosable) { // DOES NOT WORK DO NOT USE YET
-            closeBuilder = closeBuilder.setParent(tabbedPane).setTabName(title);
-            tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, closeBuilder.build());
         }
     }
 

@@ -1,4 +1,7 @@
-package com.ezasm.gui.util;
+package com.ezasm.gui.tools;
+
+import com.ezasm.gui.util.IThemeable;
+import com.ezasm.gui.util.Theme;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

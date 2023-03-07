@@ -6,12 +6,12 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 
-import com.ezasm.gui.util.TabCloseButton;
 import com.ezasm.gui.util.Theme;
 
 public class ClosableTabBuilder {
+
     private Font font = new Font("mono", Font.PLAIN, 12);
-    private Theme theme = Theme.getTheme("Dark");
+    private Theme theme = Theme.getTheme("Light");
     private String name = ""; // empty by default
     private JTabbedPane parent = new JTabbedPane();
 
