@@ -21,10 +21,13 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 public class TabCloseButton extends JButton implements IThemeable, ActionListener {
     private JTabbedPane parent;
+    private String name;
     private static int SIZE = 17;
+    private Theme theme;
 
-    public TabCloseButton(JTabbedPane parent) {
+    public TabCloseButton(JTabbedPane parent, String tabTitle) {
         this.parent = parent;
+        this.name = tabTitle;
         setPreferredSize(new Dimension(SIZE, SIZE));
         setToolTipText("Close this tab");
 
@@ -32,6 +35,7 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
         setFocusable(false);
         setBorder(BorderFactory.createEtchedBorder());
         setBorderPainted(false);
+        setOpaque(false);
         addActionListener(this);
         addMouseListener(buttonMouseListener);
         setRolloverEnabled(true);
@@ -39,12 +43,11 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
 
     @Override
     public void applyTheme(Font font, Theme theme) {
-
+        this.theme = theme;
     }
 
     public void actionPerformed(ActionEvent e) {
-        System.out.println("click!");
-        int i = parent.indexOfTabComponent(TabCloseButton.this.getParent());
+        int i = parent.indexOfTab(name);
         if (i != -1) {
             parent.remove(i);
         }
@@ -58,9 +61,9 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
             g2.translate(1, 1);
         }
         g2.setStroke(new BasicStroke(2));
-        g2.setColor(Color.BLACK);
+        g2.setColor(theme.foreground());
         if (getModel().isRollover()) {
-            g2.setColor(Color.MAGENTA);
+            g2.setColor(theme.yellow());
         }
         int delta = 6;
         g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);

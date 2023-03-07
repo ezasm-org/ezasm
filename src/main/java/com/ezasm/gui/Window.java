@@ -172,7 +172,7 @@ public class Window {
         toolbar = ToolbarFactory.makeToolbar();
         editor = new EditorPane();
         registerTable = new RegisterTable(simulator.getRegisters());
-        
+
         console = new Console();
         inputStream = console.getInputStream();
         outputStream = console.getOutputStream();

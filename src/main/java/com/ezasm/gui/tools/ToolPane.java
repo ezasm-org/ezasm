@@ -15,6 +15,7 @@ public class ToolPane extends JPanel implements IThemeable {
 
     private final JTabbedPane tabbedPane;
     private boolean isClosable = false;
+    private ClosableTabBuilder closeBuilder = new ClosableTabBuilder();
 
     // DOES NOT WORK YET. DO NOT USE
     public ToolPane(boolean hasCloseButton) {
@@ -45,6 +46,19 @@ public class ToolPane extends JPanel implements IThemeable {
         setFont(font);
         tabbedPane.setUI(new EzTabbedPaneUI(theme));
         tabbedPane.setFont(font);
+
+        closeBuilder = closeBuilder.setFont(font).setTheme(theme);
+
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            Component component = tabbedPane.getTabComponentAt(i);
+            if (component instanceof IThemeable themeable) {
+                themeable.applyTheme(font, theme);
+            } else {
+                component.setBackground(theme.background());
+                component.setForeground(theme.foreground());
+                component.setFont(font);
+            }
+        }
 
         for (Component component : tabbedPane.getComponents()) {
             if (component instanceof IThemeable themeable) {
@@ -83,13 +97,8 @@ public class ToolPane extends JPanel implements IThemeable {
             tabbedPane.setMnemonicAt(tabbedPane.getTabCount() - 1, mnemonic);
         }
         if (isClosable) { // DOES NOT WORK DO NOT USE YET
-            JPanel newTab = new JPanel(new BorderLayout());
-            newTab.setOpaque(false);
-            JLabel label = new JLabel(title);
-            newTab.add(label, BorderLayout.WEST);
-            TabCloseButton btn = new TabCloseButton(tabbedPane);
-            newTab.add(btn, BorderLayout.EAST);
-            tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, newTab);
+            closeBuilder = closeBuilder.setParent(tabbedPane).setTabName(title);
+            tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, closeBuilder.build());
         }
     }
 
