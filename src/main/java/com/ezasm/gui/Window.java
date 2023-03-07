@@ -174,8 +174,8 @@ public class Window {
         registerTable = new RegisterTable(simulator.getRegisters());
 
         console = new Console();
-        inputStream = console.getInputStream();
-        outputStream = console.getOutputStream();
+        setInputStream(console.getInputStream());
+        setOutputStream(console.getOutputStream());
         // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
