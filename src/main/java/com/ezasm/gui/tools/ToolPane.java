@@ -53,10 +53,6 @@ public class ToolPane extends JPanel implements IThemeable {
             Component component = tabbedPane.getTabComponentAt(i);
             if (component instanceof IThemeable themeable) {
                 themeable.applyTheme(font, theme);
-            } else {
-                component.setBackground(theme.background());
-                component.setForeground(theme.foreground());
-                component.setFont(font);
             }
         }
 
