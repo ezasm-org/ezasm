@@ -3,12 +3,17 @@ package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
-import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.Registers;
+import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.util.Conversion;
-import com.ezasm.simulation.Memory;
+import com.ezasm.simulation.transform.Transformation;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.HeapPointerTransformation;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.simulation.transform.transformable.MemoryTransformable;
+import com.ezasm.util.RawData;
 
 /**
  * An implementation of memory manipulation instructions for the simulation.
@@ -33,10 +38,13 @@ public class MemoryInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void push(IAbstractInput input) throws SimulationException {
-        long sp = simulator.getRegisters().getRegister(Registers.SP).getLong() - simulator.getMemory().WORD_SIZE;
-        simulator.getRegisters().getRegister(Registers.SP).setLong(sp);
-        simulator.getMemory().write((int) sp, input.get(simulator));
+    public TransformationSequence push(IAbstractInput input) throws SimulationException {
+        RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
+        Transformation t1 = new Transformation(new InputOutputTransformable(simulator, sp), sp.get(simulator),
+                new RawData(sp.get(simulator).intValue() - simulator.getMemory().WORD_SIZE));
+        MemoryTransformable m = new MemoryTransformable(simulator, t1.to().intValue());
+        Transformation t2 = m.transformation(input.get(simulator));
+        return new TransformationSequence(t1, t2);
     }
 
     /**
@@ -46,36 +54,43 @@ public class MemoryInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void pop(IAbstractOutput output) throws SimulationException {
-        long sp = simulator.getRegisters().getRegister(Registers.SP).getLong();
-        output.set(simulator, simulator.getMemory().read((int) sp, simulator.getMemory().WORD_SIZE));
-        simulator.getRegisters().getRegister(Registers.SP).setLong(sp + simulator.getMemory().WORD_SIZE);
+    public TransformationSequence pop(IAbstractInputOutput output) throws SimulationException {
+        RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        Transformation t1 = io.transformation(simulator.getMemory().read((int) sp.get(simulator).intValue()));
+        Transformation t2 = (new InputOutputTransformable(simulator, sp)
+                .transformation(new RawData(sp.get(simulator).intValue() + simulator.getMemory().WORD_SIZE)));
+        return new TransformationSequence(t1, t2);
     }
 
     @Instruction
-    public void load(IAbstractOutput output, IAbstractInput input) throws SimulationException {
-        Memory m = this.simulator.getMemory();
-        byte[] word = m.read((int) Conversion.bytesToLong(input.get(simulator)), m.WORD_SIZE);
-        output.set(this.simulator, word);
+    public TransformationSequence load(IAbstractInputOutput output, DereferenceInputOutput input)
+            throws SimulationException {
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
     @Instruction
-    public void store(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        Memory m = this.simulator.getMemory();
-        m.write((int) Conversion.bytesToLong(input2.get(simulator)), input1.get(simulator));
+    public TransformationSequence store(IAbstractInput input, DereferenceInputOutput output)
+            throws SimulationException {
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
     @Instruction
-
-    public void alloc(IAbstractOutput output, IAbstractInput input) throws SimulationException {
-        Memory m = this.simulator.getMemory();
-        int bytesWritten = m.unsafeAllocate((int) Conversion.bytesToLong(input.get(simulator)));
-        output.set(this.simulator, Conversion.longToBytes(bytesWritten));
+    public TransformationSequence alloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        HeapPointerTransformation h = new HeapPointerTransformation(simulator);
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        Transformation t1 = new Transformation(h, h.get(),
+                new RawData(h.get().intValue() + input.get(simulator).intValue()));
+        Transformation t2 = io.transformation(t1.from());
+        return new TransformationSequence(t1, t2);
     }
 
     @Instruction
-    public void move(IAbstractOutput output, IAbstractInput input) throws SimulationException {
-        output.set(simulator, input.get(simulator));
+    public TransformationSequence move(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
 }

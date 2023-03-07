@@ -1,8 +1,8 @@
 package com.ezasm.simulation;
 
+import com.ezasm.gui.Window;
 import com.ezasm.util.Conversion;
-
-import java.util.Arrays;
+import com.ezasm.util.RawData;
 
 /**
  * The representation of an individual register within the system's registers. Stores the register's own reference
@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class Register {
 
     private final long number;
-    private final byte[] data;
+    private final RawData data;
 
     /**
      * Constructs a register given a reference number and the system word size.
@@ -21,7 +21,7 @@ public class Register {
      */
     public Register(long number, int wordSize) {
         this.number = number;
-        this.data = new byte[wordSize];
+        this.data = RawData.emptyBytes(wordSize);
     }
 
     /**
@@ -38,8 +38,8 @@ public class Register {
      *
      * @return a copy of the bytes stored in the register.
      */
-    public byte[] getBytes() {
-        return Arrays.copyOf(data, data.length);
+    public RawData getData() {
+        return data.copy();
     }
 
     /**
@@ -48,7 +48,7 @@ public class Register {
      * @return the long interpretation of the data stored within the register.
      */
     public long getLong() {
-        return Conversion.bytesToLong(data);
+        return data.intValue();
     }
 
     /**
@@ -57,7 +57,7 @@ public class Register {
      * @return the double interpretation of the data stored within the register.
      */
     public double getDouble() {
-        return Conversion.bytesToDouble(data);
+        return data.floatValue();
     }
 
     /**
@@ -65,9 +65,27 @@ public class Register {
      *
      * @param data the new data to write.
      */
-    public void setBytes(byte[] data) {
+    public void setData(RawData data) {
+        if (number != 0) {
+            setData(data.data());
+        }
+    }
+
+    /**
+     * Writes the data within the given array to the register. Also performs any necessary corresponding GUI updates.
+     *
+     * @param data the new data to write.
+     */
+    public void setDataWithGuiCallback(RawData data) {
+        setData(data);
+        if (Window.hasInstance()) { // GUI callback
+            Window.getInstance().getRegisterTable().addHighlightValue((int) this.number);
+        }
+    }
+
+    public void setData(byte[] data) {
         if (number != 0)
-            System.arraycopy(data, 0, this.data, 0, this.data.length);
+            System.arraycopy(data, 0, this.data.data(), 0, this.data.data().length);
     }
 
     /**
@@ -76,8 +94,9 @@ public class Register {
      * @param data the long to write.
      */
     public void setLong(long data) {
-        if (number != 0)
-            setBytes(Conversion.longToBytes(data));
+        if (number != 0) {
+            setData(Conversion.longToBytes(data));
+        }
     }
 
     /**
@@ -86,8 +105,9 @@ public class Register {
      * @param data the double to write.
      */
     public void setDouble(double data) {
-        if (number != 0)
-            setBytes(Conversion.doubleToBytes(data));
+        if (number != 0) {
+            setData(Conversion.doubleToBytes(data));
+        }
     }
 
     /**

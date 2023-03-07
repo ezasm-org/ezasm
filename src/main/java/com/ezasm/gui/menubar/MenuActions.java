@@ -28,7 +28,8 @@ public class MenuActions {
             boolean overwrite = promptOverwriteDialog(file);
             if (overwrite) {
                 try {
-                    FileIO.writeFile(file, Window.getInstance().getText());
+                    FileIO.writeFile(file, Window.getInstance().getEditor().getText());
+                    Window.getInstance().getEditor().setOpenFilePath(file.getPath());
                 } catch (IOException e) {
                     promptWarningDialog("Error Saving File",
                             String.format("There was an error saving to '%s'", file.getName()));
@@ -41,12 +42,12 @@ public class MenuActions {
      * Runs the action event for save.
      */
     static void save() {
-        File fileToUpdate = new File(Window.getInstance().getLoadedFile());
+        File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
         if (!fileToUpdate.exists()) {
             saveAs();
         } else {
             try {
-                FileIO.writeFile(fileToUpdate, Window.getInstance().getText());
+                FileIO.writeFile(fileToUpdate, Window.getInstance().getEditor().getText());
             } catch (IOException e) {
                 promptWarningDialog("Error Saving File",
                         String.format("There was an error saving to '%s'", fileToUpdate.getName()));
@@ -65,8 +66,8 @@ public class MenuActions {
             if (file != null && file.exists() && file.canRead()) {
                 try {
                     String content = FileIO.readFile(file);
-                    Window.getInstance().setText(content);
-                    Window.getInstance().setLoadedFile(file.getPath());
+                    Window.getInstance().getEditor().setText(content);
+                    Window.getInstance().getEditor().setOpenFilePath(file.getPath());
                 } catch (IOException ex) {
                     promptWarningDialog("Error Loading File",
                             String.format("There was an error loading '%s'", file.getName()));
@@ -85,7 +86,7 @@ public class MenuActions {
             File file = fileChooser.getSelectedFile();
             if (file != null) {
                 if (file.exists() && file.canRead()) {
-                    Window.setInputStream(file);
+                    Window.getInstance().setInputStream(file);
                 } else {
                     promptWarningDialog("Error Reading File",
                             String.format("There was an error reading from '%s'\nOperation cancelled", file.getName()));
@@ -106,7 +107,7 @@ public class MenuActions {
             if (file != null) {
                 boolean overwrite = promptOverwriteDialog(file);
                 if (overwrite) {
-                    Window.setOutputStream(file);
+                    Window.getInstance().setOutputStream(file);
                 }
             }
         }

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>EzASM</groupId>
     <artifactId>EzASM</artifactId>
-    <version>1.0-beta</version>
-    <description>An easier assembly-like programming language for use in education.</description>
+    <version>1.1-beta</version>
+    <description>An assembly-like programming language for use in education</description>
     <inceptionYear>2022</inceptionYear>
 
     <organization>
@@ -15,28 +16,30 @@
         <url>https://github.com/TrevorBrunette/EzASM/</url>
     </organization>
 
-
-
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <exec.mainClass>com.ezasm.Main</exec.mainClass>
     </properties>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.5.0</version>
                 <configuration>
+                    <excludes>
+                        <exclude>src/test/**/*Test*</exclude>
+                    </excludes>
                     <archive>
                         <manifest>
-                            <mainClass>com.ezasm.Main</mainClass>
+                            <mainClass>${exec.mainClass}</mainClass>
                         </manifest>
                     </archive>
                     <descriptors>
-                        <descriptor>src/main/assembly-single.xml</descriptor>
+                        <descriptor>src/main/mvn/assembly-single.xml</descriptor>
                     </descriptors>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
@@ -74,6 +77,85 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>io.github.fvarrui</groupId>
+                <artifactId>javapackager</artifactId>
+                <version>1.7.0</version>
+                <executions>
+                    <execution>
+                        <id>bundling-for-windows</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <platform>windows</platform>
+                            <createZipball>true</createZipball>
+                            <bundleJre>true</bundleJre>
+                            <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_windows-x64_bin.zip -->
+                            <jdkPath>resources/jdk/windows</jdkPath>
+                            <generateInstaller>true</generateInstaller>
+                            <administratorRequired>false</administratorRequired>
+                            <winConfig>
+                                <icoFile>resources/icons/ezasm_logo.ico</icoFile>
+                                <generateSetup>true</generateSetup>
+                                <generateMsi>false</generateMsi>
+                                <exeCreationTool>why</exeCreationTool>
+                                <companyName>${project.organization.name}</companyName>
+                                <copyright>${project.organization.name}</copyright>
+                                <setupMode>askTheUser</setupMode>
+                                <disableDirPage>false</disableDirPage>
+                                <disableFinishedPage>false</disableFinishedPage>
+                                <disableWelcomePage>false</disableWelcomePage>
+                                <createDesktopIconTask>true</createDesktopIconTask>
+                            </winConfig>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundling-for-mac</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <platform>mac</platform>
+                            <createTarball>true</createTarball>
+                            <bundleJre>true</bundleJre>
+                            <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_macos-x64_bin.tar.gz -->
+                            <jdkPath>resources/jdk/macos</jdkPath>
+                            <generateInstaller>true</generateInstaller>
+                            <administratorRequired>false</administratorRequired>
+                            <generateInstaller>true</generateInstaller>
+                            <macConfig>
+                                <icnsFile>resources/icons/ezasm_logo.icns</icnsFile>
+                                <macStartup>UNIVERSAL</macStartup>
+                            </macConfig>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundling-for-linux</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <platform>linux</platform>
+                            <createTarball>true</createTarball>
+                            <bundleJre>true</bundleJre>
+                            <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_linux-x64_bin.tar.gz -->
+                            <jdkPath>resources/jdk/linux</jdkPath>
+                            <generateInstaller>true</generateInstaller>
+                            <administratorRequired>false</administratorRequired>
+                            <linuxConfig>
+                                <pngFile>resources/icons/ezasm_logo.png</pngFile> <!-- TODO use 256x256 logo -->
+                                <categories>
+                                    <category>Development</category>
+                                </categories>
+                            </linuxConfig>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -87,14 +169,9 @@
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
             <version>5.9.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/net.revelc.code.formatter/formatter-maven-plugin -->
-        <dependency>
-            <groupId>net.revelc.code.formatter</groupId>
-            <artifactId>formatter-maven-plugin</artifactId>
-            <version>2.21.0</version>
+            <scope>provided</scope> <!-- excludes from compiled jar as it is a test dependency -->
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>

@@ -1,7 +1,13 @@
 .idea/
-/target/
 *.iml
+
+target/
 
 .settings
 .classpath
 .project
+.vscode
+
+resources/jdk/linux/
+resources/jdk/macos/
+resources/jdk/windows/
