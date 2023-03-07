@@ -3,6 +3,7 @@ package com.ezasm.gui.tools;
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.ui.EzTabbedPaneUI;
@@ -82,10 +83,12 @@ public class ToolPane extends JPanel implements IThemeable {
             tabbedPane.setMnemonicAt(tabbedPane.getTabCount() - 1, mnemonic);
         }
         if (isClosable) { // DOES NOT WORK DO NOT USE YET
-            JPanel newTab = new JPanel(new GridLayout());
+            JPanel newTab = new JPanel(new BorderLayout());
             newTab.setOpaque(false);
+            JLabel label = new JLabel(title);
+            newTab.add(label, BorderLayout.WEST);
             TabCloseButton btn = new TabCloseButton(tabbedPane);
-            newTab.add(btn);
+            newTab.add(btn, BorderLayout.EAST);
             tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, newTab);
         }
     }

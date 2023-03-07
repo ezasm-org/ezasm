@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,11 +19,12 @@ import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-public class TabCloseButton extends JButton implements IThemeable {
+public class TabCloseButton extends JButton implements IThemeable, ActionListener {
     private JTabbedPane parent;
     private static int SIZE = 17;
 
     public TabCloseButton(JTabbedPane parent) {
+        this.parent = parent;
         setPreferredSize(new Dimension(SIZE, SIZE));
         setToolTipText("Close this tab");
 
@@ -30,6 +32,7 @@ public class TabCloseButton extends JButton implements IThemeable {
         setFocusable(false);
         setBorder(BorderFactory.createEtchedBorder());
         setBorderPainted(false);
+        addActionListener(this);
         addMouseListener(buttonMouseListener);
         setRolloverEnabled(true);
     }
@@ -40,7 +43,8 @@ public class TabCloseButton extends JButton implements IThemeable {
     }
 
     public void actionPerformed(ActionEvent e) {
-        int i = parent.indexOfTabComponent(TabCloseButton.this);
+        System.out.println("click!");
+        int i = parent.indexOfTabComponent(TabCloseButton.this.getParent());
         if (i != -1) {
             parent.remove(i);
         }
