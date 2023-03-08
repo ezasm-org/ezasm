@@ -8,6 +8,6 @@ target/
 .project
 .vscode
 
-resources/jdk/linux/
-resources/jdk/macos/
-resources/jdk/windows/
+jdk/linux/
+jdk/macos/
+jdk/windows/

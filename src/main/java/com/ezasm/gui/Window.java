@@ -144,7 +144,7 @@ public class Window {
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setMinimumSize(new Dimension(800, 600));
         try {
-            app.setIconImage(FileIO.loadImage("resources/icons/ezasm_logo.png"));
+            app.setIconImage(FileIO.loadImage("icons/logo/ezasm_logo.png"));
         } catch (IOException e) {
             System.err.println("Could not load icon");
         }

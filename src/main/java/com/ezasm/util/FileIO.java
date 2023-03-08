@@ -1,5 +1,6 @@
 package com.ezasm.util;
 
+import com.ezasm.Main;
 import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.*;
 import java.io.FileReader;
+import java.util.Objects;
 
 /**
  * A utility class to provide file I/O functionality.
@@ -55,11 +57,11 @@ public class FileIO {
      * @throws IOException if an error occurred reading from the file.
      */
     public static Image loadImage(String path) throws IOException {
-        File file = new File(path);
-        if (!file.exists() || !file.canRead()) {
-            throw new IOException("Could not load specified file");
+        try {
+            return new ImageIcon(Objects.requireNonNull(FileIO.class.getClassLoader().getResource(path))).getImage();
+        } catch (NullPointerException e) {
+            throw new IOException(String.format("Unable to load image from %s", path));
         }
-        return new ImageIcon(path).getImage();
     }
 
     /**

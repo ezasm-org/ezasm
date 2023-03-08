@@ -36,7 +36,7 @@
                         </manifest>
                     </archive>
                     <descriptors>
-                        <descriptor>src/main/mvn/assembly-single.xml</descriptor>
+                        <descriptor>${project.basedir}/src/mvn/assembly-single.xml</descriptor>
                     </descriptors>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
@@ -64,7 +64,7 @@
                 <artifactId>formatter-maven-plugin</artifactId>
                 <version>2.21.0</version>
                 <configuration>
-                    <configFile>${project.basedir}/java-format.xml</configFile>
+                    <configFile>${project.basedir}/src/mvn/java-format.xml</configFile>
                 </configuration>
                 <executions>
                     <execution>
@@ -90,11 +90,11 @@
                             <createZipball>true</createZipball>
                             <bundleJre>true</bundleJre>
                             <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_windows-x64_bin.zip -->
-                            <jdkPath>resources/jdk/windows</jdkPath>
+                            <jdkPath>jdk/windows</jdkPath>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <winConfig>
-                                <icoFile>resources/icons/ezasm_logo.ico</icoFile>
+                                <icoFile>${project.basedir}/src/main/resources/icons/logo/ezasm_logo.ico</icoFile>
                                 <generateSetup>true</generateSetup>
                                 <generateMsi>false</generateMsi>
                                 <exeCreationTool>why</exeCreationTool>
@@ -119,12 +119,12 @@
                             <createTarball>true</createTarball>
                             <bundleJre>true</bundleJre>
                             <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_macos-x64_bin.tar.gz -->
-                            <jdkPath>resources/jdk/macos</jdkPath>
+                            <jdkPath>jdk/macos</jdkPath>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <generateInstaller>true</generateInstaller>
                             <macConfig>
-                                <icnsFile>resources/icons/ezasm_logo.icns</icnsFile>
+                                <icnsFile>${project.basedir}/src/main/resources/icons/logo/ezasm_logo.icns</icnsFile>
                                 <macStartup>UNIVERSAL</macStartup>
                             </macConfig>
                         </configuration>
@@ -140,11 +140,11 @@
                             <createTarball>true</createTarball>
                             <bundleJre>true</bundleJre>
                             <!-- source from https://download.oracle.com/java/17/archive/jdk-17.0.6_linux-x64_bin.tar.gz -->
-                            <jdkPath>resources/jdk/linux</jdkPath>
+                            <jdkPath>jdk/linux</jdkPath>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <linuxConfig>
-                                <pngFile>resources/icons/ezasm_logo.png</pngFile> <!-- TODO use 256x256 logo -->
+                                <pngFile>${project.basedir}/src/main/resources/icons/logo/ezasm_logo.png</pngFile>
                                 <categories>
                                     <category>Development</category>
                                 </categories>
@@ -168,8 +168,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.9.2</version>
-            <scope>provided</scope>
-            <!-- excludes from compiled jar as it is a test dependency -->
+            <scope>provided</scope> <!-- excludes from compiled jar as it is a test dependency -->
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
