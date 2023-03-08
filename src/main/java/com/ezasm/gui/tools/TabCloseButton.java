@@ -44,11 +44,21 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
         setRolloverEnabled(true);
     }
 
+    /**
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font  the font to apply.
+     * @param theme the theme to apply.
+     */
     @Override
     public void applyTheme(Font font, Theme theme) {
         this.theme = theme;
     }
 
+    /**
+     * CLose the tab.
+     */
     public void actionPerformed(ActionEvent e) {
         int i = parent.indexOfTab(name);
         if (i != -1) {
@@ -56,6 +66,11 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
         }
     }
 
+    /**
+     * Paints the component
+     *
+     * @param g    The graphics provided by the system
+     */
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
@@ -74,6 +89,9 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
         g2.dispose();
     }
 
+    /**
+     * Listener to paint the button different when hovered
+     */
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
         public void mouseEntered(MouseEvent e) {
             Component component = e.getComponent();

@@ -6,6 +6,9 @@ import com.ezasm.gui.util.Theme;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * <code>TabbedPane</code> extension for closable tabs
+ */
 public class ClosableTabbedPane extends TabbedPane {
 
     private final ClosableTabBuilder closeableTabBuilder;
@@ -15,6 +18,13 @@ public class ClosableTabbedPane extends TabbedPane {
         closeableTabBuilder = new ClosableTabBuilder();
     }
 
+    /**
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font  the font to apply.
+     * @param theme the theme to apply.
+     */
     @Override
     public void applyTheme(Font font, Theme theme) {
         super.applyTheme(font, theme);
@@ -28,6 +38,14 @@ public class ClosableTabbedPane extends TabbedPane {
         }
     }
 
+    /**
+     * Adds a tab to display the specified component with no mnemonic.
+     *
+     * @param component the component to be displayed when the tab is selected.
+     * @param icon      the icon to be displayed next to the text.
+     * @param title     the title of the tab.
+     * @param tip       the tooltip displayed when the tab is hovered on.
+     */
     @Override
     public void addTab(JComponent component, Icon icon, String title, String tip) {
         super.addTab(component, icon, title, tip);
