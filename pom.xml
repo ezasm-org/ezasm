@@ -94,7 +94,7 @@
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <winConfig>
-                                <icoFile>${project.basedir}/src/main/resources/icons/logo/ezasm_logo.ico</icoFile>
+                                <icoFile>${project.basedir}/src/main/resources/icons/logo/EzASM.ico</icoFile>
                                 <generateSetup>true</generateSetup>
                                 <generateMsi>false</generateMsi>
                                 <exeCreationTool>why</exeCreationTool>
@@ -124,7 +124,7 @@
                             <administratorRequired>false</administratorRequired>
                             <generateInstaller>true</generateInstaller>
                             <macConfig>
-                                <icnsFile>${project.basedir}/src/main/resources/icons/logo/ezasm_logo.icns</icnsFile>
+                                <icnsFile>${project.basedir}/src/main/resources/icons/logo/EzASM.icns</icnsFile>
                                 <macStartup>UNIVERSAL</macStartup>
                             </macConfig>
                         </configuration>
@@ -144,7 +144,7 @@
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>false</administratorRequired>
                             <linuxConfig>
-                                <pngFile>${project.basedir}/src/main/resources/icons/logo/ezasm_logo.png</pngFile>
+                                <pngFile>${project.basedir}/src/main/resources/icons/logo/EzASM.png</pngFile>
                                 <categories>
                                     <category>Development</category>
                                 </categories>
