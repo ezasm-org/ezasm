@@ -10,8 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * <code>IThemeable</code> used to display a closable tab in a 
- * <code>TabbedPane</code>
+ * <code>IThemeable</code> used to display a closable tab in a <code>TabbedPane</code>
  */
 public class ClosableTabPanel extends JPanel implements IThemeable {
 

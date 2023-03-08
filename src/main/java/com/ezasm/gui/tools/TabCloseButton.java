@@ -69,7 +69,7 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
     /**
      * Paints the component
      *
-     * @param g    The graphics provided by the system
+     * @param g The graphics provided by the system
      */
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
