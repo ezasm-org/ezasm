@@ -125,6 +125,7 @@
                             <generateInstaller>true</generateInstaller>
                             <macConfig>
                                 <icnsFile>${project.basedir}/src/main/resources/icons/logo/EzASM.icns</icnsFile>
+                                <codesignApp>false</codesignApp>
                                 <macStartup>UNIVERSAL</macStartup>
                             </macConfig>
                         </configuration>
