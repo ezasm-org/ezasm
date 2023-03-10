@@ -62,11 +62,11 @@ Run `mvn clean test`
 - [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - [Apache Maven](https://maven.apache.org/index.html)
 
-- Windows* optionally to generate native Windows installation files
-- [InnoSetup](https://github.com/fvarrui/JavaPackager/blob/master/docs/windows-tools-guide.md)* optionally to generate native Windows installation files
-- Linux* optionally to generate native linux installation files
-- [appstreamcli](https://man.archlinux.org/man/appstreamcli.1.en) and [FUSE](https://wiki.archlinux.org/title/FUSE)* optionally for AppImage support
-- Mac OSX* optionally to generate native Mac OSX installation files
+- *Windows optionally to generate native Windows installation files
+- *[InnoSetup](https://github.com/fvarrui/JavaPackager/blob/master/docs/windows-tools-guide.md) optionally to generate native Windows installation files
+- *Linux optionally to generate native linux installation files
+- *[appstreamcli](https://man.archlinux.org/man/appstreamcli.1.en) and [FUSE](https://wiki.archlinux.org/title/FUSE) optionally for AppImage support
+- *Mac OSX optionally to generate native Mac OSX installation files
 
 #### Instructions
 
