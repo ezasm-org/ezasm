@@ -1,11 +1,6 @@
-# EzASM - A Simpler Assembly Language
+# EzASM
 
-## Authors 
-Trevor Brunette\
-trevorbrunette@gmail.com
-
-Kate Vandermolen\
-CerulanLumina@users.noreply.github.com
+### An assembly-like programming language for use in education
 
 ## Building
 
