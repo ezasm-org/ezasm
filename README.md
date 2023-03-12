@@ -2,6 +2,8 @@
 
 ### An assembly-like programming language for use in education
 
+Releases can be found at the [EzASM releases repository](https://github.com/ezasm-org/EzASM-releases). 
+
 ## Building
 
 [Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) is required to build EzASM.
@@ -49,8 +51,8 @@ The goal of this project is to create a small-instruction-set programming langua
 
 The user is able to either run a file containing instructions (a program) or enter instructions line by line. The results of these instructions would be resultant on the GUI would list the state of all of the registers, the past/current/upcoming instructions, and the program memory.
 
-### A complete list of the instruction set can be found [here](https://github.com/TrevorBrunette/EzASM/wiki/Instruction-Set)
-### A guide to the syntax of the language can be found [here](https://github.com/TrevorBrunette/EzASM/wiki/Syntax)
-### Implementation and structure details can be found [here](https://github.com/TrevorBrunette/EzASM/wiki/Structure)
+### A complete list of the instruction set can be found [here](https://github.com/ezasm-org/EzASM/wiki/Instruction-Set)
+### A guide to the syntax of the language can be found [here](https://github.com/ezasm-org/EzASM/wiki/Syntax)
+### Implementation and structure details can be found [here](https://github.com/ezasm-org/EzASM/wiki/Structure)
 
 
