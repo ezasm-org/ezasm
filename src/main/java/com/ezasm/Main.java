@@ -15,7 +15,6 @@ public class Main {
      * @param args the program arguments.
      */
     public static void main(String[] args) {
-        System.out.println(Properties.VERSION);
         handleArgs(args);
     }
 
