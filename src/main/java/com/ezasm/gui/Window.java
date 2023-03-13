@@ -1,13 +1,13 @@
 package com.ezasm.gui;
 
 import com.ezasm.gui.console.Console;
-import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
-import com.ezasm.gui.tools.TabbedPane;
+import com.ezasm.gui.tabbedpane.FixedTabbedPane;
 import com.ezasm.gui.settings.Config;
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
@@ -37,9 +37,9 @@ public class Window {
     private JPanel panel;
     private JToolBar toolbar;
     private JMenuBar menubar;
-    private EditorPane editor;
+    private EzEditorPane editor;
     private RegisterTable registerTable;
-    private TabbedPane tools;
+    private FixedTabbedPane tools;
     private Console console;
 
     private JSplitPane mainSplit;
@@ -170,7 +170,7 @@ public class Window {
 
         menubar = MenubarFactory.makeMenuBar();
         toolbar = ToolbarFactory.makeToolbar();
-        editor = new EditorPane();
+        editor = new EzEditorPane();
         registerTable = new RegisterTable(simulator.getRegisters());
 
         console = new Console();
@@ -181,7 +181,7 @@ public class Window {
         System.setOut(new PrintStream(outputStream));
         System.setErr(new PrintStream(console.getErrorStream()));
 
-        tools = new TabbedPane();
+        tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
@@ -210,15 +210,15 @@ public class Window {
 
     public void applyConfiguration(Config config) {
         this.config = config;
-        Theme theme = Theme.getTheme(config.getTheme());
+        EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
-        tools.applyTheme(font, theme);
-        mainSplit.setBackground(theme.background());
-        panel.setBackground(theme.background());
-        registerTable.applyTheme(font, theme);
-        ToolbarFactory.applyTheme(font, theme, toolbar);
-        editor.applyTheme(font, theme);
+        tools.applyTheme(font, editorTheme);
+        mainSplit.setBackground(editorTheme.background());
+        panel.setBackground(editorTheme.background());
+        registerTable.applyTheme(font, editorTheme);
+        ToolbarFactory.applyTheme(font, editorTheme, toolbar);
+        editor.applyTheme(font, editorTheme);
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
@@ -236,8 +236,8 @@ public class Window {
      *
      * @return the theme stored in the instance configuration.
      */
-    public Theme getTheme() {
-        return Theme.getTheme(config.getTheme());
+    public EditorTheme getTheme() {
+        return EditorTheme.getTheme(config.getTheme());
     }
 
     /**
@@ -254,7 +254,7 @@ public class Window {
      *
      * @return the instance's editor pane.
      */
-    public EditorPane getEditor() {
+    public EzEditorPane getEditor() {
         return editor;
     }
 

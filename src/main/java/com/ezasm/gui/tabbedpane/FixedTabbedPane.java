@@ -1,4 +1,4 @@
-package com.ezasm.gui.tools;
+package com.ezasm.gui.tabbedpane;
 
 import java.awt.*;
 
@@ -7,13 +7,20 @@ import javax.swing.*;
 import com.ezasm.gui.Window;
 import com.ezasm.gui.ui.EzTabbedPaneUI;
 import com.ezasm.gui.util.IThemeable;
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 
-public class TabbedPane extends JPanel implements IThemeable {
+/**
+ * Represents a tabbed pane on which the tabs are not closable by default. This class is to be extended by a class which
+ * implements closable tabs.
+ */
+public class FixedTabbedPane extends JPanel implements IThemeable {
 
     protected final JTabbedPane tabbedPane;
 
-    public TabbedPane() {
+    /**
+     * Constructs an empty tabbed pane.
+     */
+    public FixedTabbedPane() {
         super(new BorderLayout());
 
         tabbedPane = new JTabbedPane();
@@ -27,22 +34,22 @@ public class TabbedPane extends JPanel implements IThemeable {
      * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
      * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
      *
-     * @param font  the font to apply.
-     * @param theme the theme to apply.
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
      */
-    public void applyTheme(Font font, Theme theme) {
-        setBackground(theme.currentLine());
-        setForeground(theme.foreground());
+    public void applyTheme(Font font, EditorTheme editorTheme) {
+        setBackground(editorTheme.currentLine());
+        setForeground(editorTheme.foreground());
         setFont(font);
-        tabbedPane.setUI(new EzTabbedPaneUI(theme));
+        tabbedPane.setUI(new EzTabbedPaneUI(editorTheme));
         tabbedPane.setFont(font);
 
         for (Component component : tabbedPane.getComponents()) {
             if (component instanceof IThemeable themeable) {
-                themeable.applyTheme(font, theme);
+                themeable.applyTheme(font, editorTheme);
             } else {
-                component.setBackground(theme.background());
-                component.setForeground(theme.foreground());
+                component.setBackground(editorTheme.background());
+                component.setForeground(editorTheme.foreground());
                 component.setFont(font);
             }
         }

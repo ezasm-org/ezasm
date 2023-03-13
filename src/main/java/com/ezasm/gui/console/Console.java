@@ -2,13 +2,17 @@ package com.ezasm.gui.console;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.util.IThemeable;
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Represents a console in which a user can type input into and read output from. The input is only confirmed when the
+ * user presses enter.
+ */
 public class Console extends JPanel implements IThemeable {
 
     private final ConsoleTextArea textArea;
@@ -20,6 +24,9 @@ public class Console extends JPanel implements IThemeable {
 
     private int fixedTextEnd;
 
+    /**
+     * Creates a user interface console.
+     */
     public Console() {
         super();
         textArea = new ConsoleTextArea();
@@ -36,20 +43,35 @@ public class Console extends JPanel implements IThemeable {
         add(scrollPane);
     }
 
+    /**
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
+     */
     @Override
-    public void applyTheme(Font font, Theme theme) {
-        textArea.applyTheme(font, theme);
+    public void applyTheme(Font font, EditorTheme editorTheme) {
+        textArea.applyTheme(font, editorTheme);
 
-        theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
-        theme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
+        editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
+        editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
     }
 
+    /**
+     * Resets the content in the console and its streams.
+     */
     public void reset() {
         textArea.setText("");
         inputStream.resetBuffer();
         fixedTextEnd = 0;
     }
 
+    /**
+     * Gets the string remaining after the fixed text.
+     *
+     * @return Gets the string remaining after the fixed text.
+     */
     private String getRemainingString() {
         try {
             return textArea.getText(fixedTextEnd, textArea.getText().length() - fixedTextEnd);
@@ -58,6 +80,12 @@ public class Console extends JPanel implements IThemeable {
         return "";
     }
 
+    /**
+     * Handles the key-even dispatched event. Ensures that a user cannot overwrite or add to printed text.
+     *
+     * @param keyEvent the event corresponding to the key pressed/typed/released.
+     * @return true if no further processing should be done on the key event.
+     */
     private boolean keyEventDispatched(KeyEvent keyEvent) {
         if (KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() == textArea) {
             char c = keyEvent.getKeyChar();
@@ -83,12 +111,23 @@ public class Console extends JPanel implements IThemeable {
         return false;
     }
 
+    /**
+     * Gets the attribute set corresponding to the theme's foreground.
+     *
+     * @return the attribute set corresponding to the theme's foreground.
+     */
     private static AttributeSet getForegroundAttributeSet() {
         StyleContext style = StyleContext.getDefaultStyleContext();
         return style.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground,
                 Window.getInstance().getTheme().foreground());
     }
 
+    /**
+     * Writes text to the console with a given color.
+     *
+     * @param text  the text to write.
+     * @param color the color of the text.
+     */
     private void writeTextWithColor(String text, Color color) {
         StyleContext style = StyleContext.getDefaultStyleContext();
         AttributeSet attributeSet = style.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, color);
@@ -101,23 +140,48 @@ public class Console extends JPanel implements IThemeable {
         }
     }
 
+    /**
+     * Writes text as if it were going to System.out.
+     *
+     * @param text the text to write.
+     */
     void writeTextFromSystemOut(String text) {
         // TODO maybe use a different color for user input and console
         writeTextWithColor(text, Window.getInstance().getTheme().comment());
     }
 
+    /**
+     * Writes text as if it were going to System.err.
+     *
+     * @param text the text to write.
+     */
     void writeTextFromSystemError(String text) {
         writeTextWithColor(text, Window.getInstance().getTheme().red());
     }
 
+    /**
+     * Gets the input stream representing input to the console.
+     *
+     * @return the input stream representing input to the console.
+     */
     public ConsoleInputStream getInputStream() {
         return inputStream;
     }
 
+    /**
+     * Gets the output stream representing output to the console.
+     *
+     * @return the output stream representing output to the console.
+     */
     public ConsoleOutputStream getOutputStream() {
         return outputStream;
     }
 
+    /**
+     * Gets the error output stream representing error output to the console.
+     *
+     * @return the error output stream representing error output to the console.
+     */
     public ConsoleErrorOutputStream getErrorStream() {
         return errorStream;
     }

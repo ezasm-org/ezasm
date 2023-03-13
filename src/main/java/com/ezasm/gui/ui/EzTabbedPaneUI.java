@@ -1,6 +1,6 @@
 package com.ezasm.gui.ui;
 
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 
 import java.awt.*;
 import javax.swing.*;
@@ -10,22 +10,22 @@ import javax.swing.text.View;
 
 public class EzTabbedPaneUI extends BasicTabbedPaneUI {
 
-    private final Theme theme;
+    private final EditorTheme editorTheme;
     private Color foreground;
     private Color unselectedBackground;
     private Color selectedBackground;
 
-    public EzTabbedPaneUI(Theme theme) {
+    public EzTabbedPaneUI(EditorTheme editorTheme) {
         super();
-        this.theme = theme;
+        this.editorTheme = editorTheme;
     }
 
     @Override
     public void installUI(JComponent component) {
         super.installUI(component);
-        selectedBackground = theme.background();
-        unselectedBackground = theme.currentLine();
-        foreground = theme.foreground();
+        selectedBackground = editorTheme.background();
+        unselectedBackground = editorTheme.currentLine();
+        foreground = editorTheme.foreground();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
                 if (isSelected) {
                     graphics2D.setColor(foreground);
                 } else {
-                    graphics2D.setColor(theme.modifyAwayFromBackground(unselectedBackground, 3));
+                    graphics2D.setColor(editorTheme.modifyAwayFromBackground(unselectedBackground, 3));
                 }
                 BasicGraphicsUtils.drawStringUnderlineCharAt(tabPane, graphics2D, title, mnemIndex, textRect.x,
                         textRect.y + metrics.getAscent());

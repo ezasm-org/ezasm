@@ -9,6 +9,8 @@ import java.io.PrintStream;
  */
 public class PatchedRSyntaxTextArea extends RSyntaxTextArea {
 
+    private static final PrintStream NULL_PRINT_STREAM = new PrintStream(new NullOutputStream());
+
     /**
      * Constructs the base RSyntaxTextArea.
      */
@@ -23,7 +25,7 @@ public class PatchedRSyntaxTextArea extends RSyntaxTextArea {
     @Override
     public void paste() {
         PrintStream oldErrorStream = System.err;
-        System.setErr(new PrintStream(new NullOutputStream()));
+        System.setErr(NULL_PRINT_STREAM);
 
         super.paste();
 

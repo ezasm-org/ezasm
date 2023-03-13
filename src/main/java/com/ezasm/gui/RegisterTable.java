@@ -1,7 +1,7 @@
 package com.ezasm.gui;
 
 import com.ezasm.gui.util.IThemeable;
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
@@ -72,16 +72,16 @@ public class RegisterTable extends JPanel implements IThemeable {
     /**
      * Applies the proper theming to the editor area
      */
-    public void applyTheme(Font font, Theme theme) {
-        scrollPane.setBackground(theme.background());
-        theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
-        Theme.applyFontAndTheme(this, font, theme);
-        Theme.applyFontAndTheme(table, font, theme);
-        Theme.applyFontAndTheme(table.getTableHeader(), font, theme);
+    public void applyTheme(Font font, EditorTheme editorTheme) {
+        scrollPane.setBackground(editorTheme.background());
+        editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
+        EditorTheme.applyFontAndTheme(this, font, editorTheme);
+        EditorTheme.applyFontAndTheme(table, font, editorTheme);
+        EditorTheme.applyFontAndTheme(table.getTableHeader(), font, editorTheme);
         table.setRowHeight(font.getSize() + 3);
         table.getTableHeader().setOpaque(false);
-        CellForeground = theme.red();
-        DefaultCellForeground = theme.foreground();
+        CellForeground = editorTheme.red();
+        DefaultCellForeground = editorTheme.foreground();
     }
 
     /**
