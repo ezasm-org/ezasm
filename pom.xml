@@ -9,14 +9,20 @@
     <artifactId>EzASM</artifactId>
     <version>1.1-beta</version>
     <description>An assembly-like programming language for use in education</description>
+    <url>https://github.com/ezasm-org/EzASM/</url>
     <inceptionYear>2022</inceptionYear>
 
     <organization>
-        <name>EzASM</name>
-        <url>https://github.com/TrevorBrunette/EzASM/</url>
+        <name>${project.artifactId}</name>
+        <url>${project.url}</url>
     </organization>
 
     <properties>
+        <name>${project.artifactId}</name>
+        <version>${project.version}</version>
+        <description>${project.description}</description>
+        <url>${project.url}</url>
+
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -71,6 +77,22 @@
                         <goals>
                             <goal>format</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.build.outputDirectory}/pom.properties</outputFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
