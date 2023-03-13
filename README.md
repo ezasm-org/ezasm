@@ -1,11 +1,8 @@
-# EzASM - A Simpler Assembly Language
+# EzASM
 
-## Authors
-Trevor Brunette\
-trevorbrunette@gmail.com
+### An assembly-like programming language for use in education
 
-Kate Vandermolen\
-CerulanLumina@users.noreply.github.com
+Releases can be found at the [EzASM releases repository](https://github.com/ezasm-org/EzASM-releases). 
 
 ## Introduction
 
@@ -85,7 +82,7 @@ being on the required operating system and having the necessary optional depende
 - `EzASM_VERSION.rpm`* an installation file for distributions with the Red Hat package manager (Fedora, Red Hat, etc.)
 
 
-### A complete list of the instruction set can be found [here](https://github.com/TrevorBrunette/EzASM/wiki/Instruction-Set)
-### A guide to the syntax of the language can be found [here](https://github.com/TrevorBrunette/EzASM/wiki/Syntax)
-### Implementation and structure details can be found [here](https://github.com/TrevorBrunette/EzASM/wiki/Structure)
+### A complete list of the instruction set can be found [here](https://github.com/ezasm-org/EzASM/wiki/Instruction-Set)
+### A guide to the syntax of the language can be found [here](https://github.com/ezasm-org/EzASM/wiki/Syntax)
+### Implementation and structure details can be found [here](https://github.com/ezasm-org/EzASM/wiki/Structure)
 
