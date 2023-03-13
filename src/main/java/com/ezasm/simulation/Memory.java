@@ -62,7 +62,7 @@ public class Memory {
     public Memory(int wordSize, int memorySize) {
         this.WORD_SIZE = wordSize;
         this.OFFSET_BYTES = WORD_SIZE * (DEFAULT_OFFSET + STRING_OFFSET);
-        this.MEMORY_SIZE = OFFSET_BYTES + DEFAULT_MEMORY_WORDS * WORD_SIZE;
+        this.MEMORY_SIZE = OFFSET_BYTES + memorySize * WORD_SIZE;
         this.memory = new byte[this.MEMORY_SIZE];
         this.alloc = OFFSET_BYTES;
         this.stringAlloc = STRING_OFFSET * WORD_SIZE;

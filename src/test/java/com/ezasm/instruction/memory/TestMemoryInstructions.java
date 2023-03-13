@@ -1,6 +1,7 @@
 package com.ezasm.instruction.memory;
 
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
+import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.Conversion;
@@ -27,7 +28,7 @@ public class TestMemoryInstructions {
         long bytesBefore = sim.getRegisters().getRegister("t0").getLong();
         memoryInstructions.alloc(register, immediateTwo).apply();
         long bytesAfter = sim.getRegisters().getRegister("t0").getLong();
-        assertEquals(bytesBefore + 65536, bytesAfter);
+        assertEquals(bytesBefore + sim.getMemory().initialHeapPointer(), bytesAfter);
 
         memoryInstructions.alloc(register, immediateTwo).apply();
         long bytesAfterSecondCall = sim.getRegisters().getRegister("t0").getLong();
