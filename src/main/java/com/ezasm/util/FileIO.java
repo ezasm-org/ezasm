@@ -36,7 +36,7 @@ public class FileIO {
      */
     public static String readFile(File file) throws IOException {
         if (!file.exists() || !file.canRead()) {
-            throw new IOException("Could not load specified file");
+            throw new IOException(String.format("Could not load specified file %s", file.getName()));
         }
         BufferedReader reader = new BufferedReader(new FileReader(file));
         StringBuilder sb = new StringBuilder();

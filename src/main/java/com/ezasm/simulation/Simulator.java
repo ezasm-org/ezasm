@@ -4,12 +4,15 @@ import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.parsing.Line;
+import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.InvalidProgramCounterException;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.RawData;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -17,16 +20,20 @@ import java.util.*;
  * An implementation of a simulator which manages the memory, registers, and lines of code in an instance of the EzASM
  * runtime. Provides capabilities to run lines of code and access to the internal representation.
  */
-public class Simulator implements ISimulator {
+public class Simulator {
 
     private final Memory memory;
     private final Registers registers;
     private final InstructionDispatcher instructionDispatcher;
     private final Register pc;
 
-    private final List<Line> lines;
-    private final Map<String, Integer> labels;
+    private final Map<String, List<Line>> linesByFileMap;
+    private final Map<String, Pair<String, Long>> labels;
     private final Deque<TransformationSequence> transforms;
+    private final Deque<String> fileCallstack;
+
+    private static final String SIMULATOR_FILE_NAME = "/";
+    private String currentFile;
 
     /**
      * Constructs a Simulator with the given word size and memory size specifications.
@@ -37,9 +44,11 @@ public class Simulator implements ISimulator {
     public Simulator(int wordSize, int memorySize) {
         this.memory = new Memory(wordSize, memorySize);
         this.registers = new Registers(wordSize);
-        this.lines = new ArrayList<>();
+        this.linesByFileMap = new HashMap<>();
         this.labels = new HashMap<>();
         this.transforms = new ArrayDeque<>();
+        this.fileCallstack = new ArrayDeque<>();
+        this.currentFile = SIMULATOR_FILE_NAME;
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
         initialize();
@@ -65,10 +74,12 @@ public class Simulator implements ISimulator {
      */
     public void resetAll() {
         resetData();
-        lines.clear();
+        linesByFileMap.clear();
         labels.clear();
         transforms.clear();
+        fileCallstack.clear();
         initialize();
+        currentFile = SIMULATOR_FILE_NAME;
     }
 
     /**
@@ -77,7 +88,7 @@ public class Simulator implements ISimulator {
      * @return true if the program has run off of the end of the code as in program completion, false otherwise.
      */
     public boolean isDone() {
-        return pc.getLong() == lines.size();
+        return linesByFileMap.isEmpty() || pc.getLong() == linesByFileMap.get(currentFile).size();
     }
 
     /**
@@ -87,7 +98,7 @@ public class Simulator implements ISimulator {
      */
     public boolean isError() {
         long line = pc.getLong();
-        return line > lines.size() || line < 0;
+        return !linesByFileMap.isEmpty() && (line > linesByFileMap.get(currentFile).size() || line < 0);
     }
 
     /**
@@ -95,16 +106,29 @@ public class Simulator implements ISimulator {
      *
      * @param line the line to add to the program.
      */
-    public void addLine(Line line) {
+    public void addLine(Line line) throws ParseException {
+        addLine(line, currentFile);
+    }
+
+    /**
+     * Adds the given line to the program.
+     *
+     * @param line the line to add to the program.
+     * @param file the file in which this line originated.
+     */
+    private void addLine(Line line, String file) throws ParseException {
+        linesByFileMap.computeIfAbsent(file, k -> new ArrayList<>());
         if (line.isLabel()) {
-            labels.put(line.getLabel(), lines.size());
+            if (labels.containsKey(line.getLabel())) {
+                throw new ParseException(String.format("Label %s already declared", line.getLabel()));
+            }
+            labels.put(line.getLabel(), new ImmutablePair<>(file, (long) linesByFileMap.get(file).size()));
         }
-        lines.add(line);
+        linesByFileMap.get(file).add(line);
         try {
             memory.addStringImmediates(line.getStringImmediates());
         } catch (SimulationException e) {
-            // TODO handle
-            throw new RuntimeException(e.getMessage());
+            throw new ParseException(e.getMessage());
         }
     }
 
@@ -113,8 +137,23 @@ public class Simulator implements ISimulator {
      *
      * @param content the collection of Lines to add to the program.
      */
-    public void addLines(Collection<Line> content) {
-        content.forEach(this::addLine);
+    public void addLines(Collection<Line> content, String file) throws ParseException {
+        if (linesByFileMap.containsKey(file)) {
+            return;
+        }
+
+        for (Line line : content) {
+            addLine(line, file);
+        }
+    }
+
+    /**
+     * Parses the given text as a multi-line String. Then adds those lines to the program.
+     *
+     * @param content the collection of Lines to add to the program.
+     */
+    public void addLines(List<Line> content) throws ParseException {
+        addLines(content, currentFile);
     }
 
     /**
@@ -133,7 +172,6 @@ public class Simulator implements ISimulator {
         }
     }
 
-    @Override
     public void executeProgramFromPC() throws SimulationException {
         while (!isDone() && !isError()) {
             executeLineFromPC();
@@ -147,11 +185,10 @@ public class Simulator implements ISimulator {
      */
     public void executeLineFromPC() throws SimulationException {
         int lineNumber = validatePC();
-        runLine(lines.get(lineNumber));
+        runLine(linesByFileMap.get(currentFile).get(lineNumber));
         validatePC();
     }
 
-    @Override
     public void applyTransformations(TransformationSequence t) throws SimulationException {
         t.apply();
         InputOutputTransformable io = new InputOutputTransformable(this, new RegisterInputOutput(Registers.PC));
@@ -177,15 +214,8 @@ public class Simulator implements ISimulator {
     /**
      * Causes the program to terminate naturally.
      */
-    public void exit() {
-        pc.setLong(lines.size() - 1);
-    }
-
-    /**
-     * Causes the program to terminate naturally.
-     */
     public long endPC() {
-        return lines.size() - 1;
+        return linesByFileMap.get(currentFile).size() - 1;
     }
 
     /**
@@ -200,12 +230,30 @@ public class Simulator implements ISimulator {
         return (int) pc.getLong();
     }
 
+    public void pushFileSwitch(String file) {
+        fileCallstack.push(currentFile);
+        currentFile = file;
+    }
+
+    public String popFileSwitch() {
+        currentFile = fileCallstack.pop();
+        return currentFile;
+    }
+
+    public String peekFileSwitch() {
+        return fileCallstack.peek();
+    }
+
+    public String getFile() {
+        return currentFile;
+    }
+
     /**
      * Get the labels mapping for the simulator
      *
      * @return the label mapping.
      */
-    public Map<String, Integer> getLabels() {
+    public Map<String, Pair<String, Long>> getLabels() {
         return labels;
     }
 

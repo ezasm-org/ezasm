@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.input;
 
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RawData;
 
@@ -24,12 +24,21 @@ public class LabelReferenceInput implements IAbstractInput {
      * @return the constant value.
      */
     @Override
-    public RawData get(ISimulator simulator) throws SimulationException {
+    public RawData get(Simulator simulator) throws SimulationException {
         try {
-            return new RawData(simulator.getLabels().get(label));
+            return new RawData(simulator.getLabels().get(label).getRight());
         } catch (NullPointerException e) {
             throw new SimulationException(String.format("Label '%s' does not exist", label));
         }
+    }
+
+    /**
+     * Gets the label string referred to by this input.
+     *
+     * @return the label string referred to by this input.
+     */
+    public String getLabel() {
+        return label;
     }
 
     @Override

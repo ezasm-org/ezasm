@@ -1,42 +1,49 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
-import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.input.StringInput;
-import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
-import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.Registers;
+import com.ezasm.parsing.Lexer;
+import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.TransformationSequence;
-import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.util.FileIO;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Represents instructions that involve importing code from other files.
  */
 public class ImportInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
      * Some instructions require access to the Simulator directly, so that is provided.
      *
      * @param simulator the provided Simulator.
      */
-    public ImportInstructions(ISimulator simulator) {
+    public ImportInstructions(Simulator simulator) {
         this.simulator = simulator;
     }
 
-
     /**
-     * The standard jump operation: sets the PC to the given line number.
+     * Imports code from the file at the given relative path. Undoing and redoing an import would be difficult and
+     * unnecessary, so the transformation sequence for this operation is empty.
      *
-     * @param input the line to jump to.
-     * @throws SimulationException if there is an error in accessing the simulation.
+     * @param input the relative path to another source code file.
+     * @throws SimulationException if there is an error reading or importing the file.
      */
     @Instruction
     public TransformationSequence _import(StringInput input) throws SimulationException {
-        InputOutputTransformable pc = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.PC));
-        return new TransformationSequence(pc.transformation(input.get(simulator)));
+        try {
+            String content = FileIO.readFile(new File(input.getString()));
+            simulator.addLines(Lexer.parseLines(content), input.getString());
+        } catch (IOException | ParseException e) {
+            throw new SimulationException(String.format("Error importing %s: %s", input.getString(), e.getMessage()));
+        }
+        return new TransformationSequence();
     }
 
 }

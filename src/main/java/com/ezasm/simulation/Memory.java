@@ -246,7 +246,7 @@ public class Memory {
                     throw new SimulationException("Attempted to write more string immediate bytes then possible");
                 }
                 for (int i = 0; i < string.length(); ++i) {
-                    unsafeWrite(stringAlloc + i * WORD_SIZE , new RawData(string.charAt(i)));
+                    unsafeWrite(stringAlloc + i * WORD_SIZE, new RawData(string.charAt(i)));
                 }
                 unsafeWrite(stringAlloc + string.length() * WORD_SIZE, RawData.emptyBytes(WORD_SIZE));
 
@@ -258,12 +258,13 @@ public class Memory {
 
     /**
      * Gets the address of a string immediate.
+     *
      * @param string the string immediate to get the address of.
      * @return the address of the string immediate wrapped as a RawData.
      * @throws SimulationException if the given immediate does not exist.
      */
     public RawData getStringImmediateAddress(String string) throws SimulationException {
-        if(!stringAddressMap.containsKey(string)) {
+        if (!stringAddressMap.containsKey(string)) {
             throw new SimulationException(String.format("String '%s' not found in memory", string));
         }
         return stringAddressMap.get(string);

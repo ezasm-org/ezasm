@@ -1,6 +1,6 @@
 package com.ezasm.simulation.transform.transformable;
 
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RawData;
 
@@ -17,7 +17,7 @@ public class MemoryTransformable extends AbstractTransformableInput {
      * @param simulator the simulator we are acting on.
      * @param address   the address of memory at which the word resides.
      */
-    public MemoryTransformable(ISimulator simulator, long address) {
+    public MemoryTransformable(Simulator simulator, long address) {
         super(simulator);
         this.address = address;
     }

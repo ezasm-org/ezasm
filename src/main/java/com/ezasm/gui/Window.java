@@ -8,9 +8,10 @@ import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
@@ -31,7 +32,7 @@ import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 public class Window {
 
     private static Window instance;
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     private Config config;
     private JFrame app;
@@ -44,7 +45,7 @@ public class Window {
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
     private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
 
-    protected Window(ISimulator simulator, Config config) {
+    protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
         this.config = config;
@@ -67,7 +68,7 @@ public class Window {
      * @param simulator the simulator to use.
      * @param config    the program configuration.
      */
-    public static void instantiate(ISimulator simulator, Config config) {
+    public static void instantiate(Simulator simulator, Config config) {
         if (instance == null)
             new Window(simulator, config);
     }
@@ -81,7 +82,7 @@ public class Window {
      * @param inputFilePath  the desired file to use for the InputStream.
      * @param outputFilePath the desired file to use for the OutputStream.
      */
-    public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
+    public static void instantiate(Simulator simulator, Config config, String inputFilePath, String outputFilePath) {
         if (instance == null) {
             new Window(simulator, config);
             instance.setInputStream(new File(inputFilePath));
@@ -209,7 +210,7 @@ public class Window {
      *
      * @return the current simulator in use.
      */
-    public ISimulator getSimulator() {
+    public Simulator getSimulator() {
         return simulator;
     }
 

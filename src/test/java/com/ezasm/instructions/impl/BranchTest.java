@@ -31,7 +31,7 @@ public class BranchTest {
         try {
             simulator.addLines(prgm);
             simulator.executeProgramFromPC();
-        } catch (SimulationException e) {
+        } catch (ParseException | SimulationException e) {
             fail(e);
         }
 

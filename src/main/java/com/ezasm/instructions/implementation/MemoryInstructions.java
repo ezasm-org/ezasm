@@ -1,4 +1,3 @@
-
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
@@ -10,7 +9,7 @@ import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
-import com.ezasm.simulation.transform.transformable.HeapPointerTransformation;
+import com.ezasm.simulation.transform.transformable.HeapPointerTransformable;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.simulation.transform.transformable.MemoryTransformable;
 import com.ezasm.util.RawData;
@@ -20,14 +19,14 @@ import com.ezasm.util.RawData;
  */
 public class MemoryInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
      * Some instructions require access to the Simulator directly, so that is provided.
      *
      * @param simulator the provided Simulator.
      */
-    public MemoryInstructions(ISimulator simulator) {
+    public MemoryInstructions(Simulator simulator) {
         this.simulator = simulator;
     }
 
@@ -79,7 +78,7 @@ public class MemoryInstructions {
 
     @Instruction
     public TransformationSequence alloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
-        HeapPointerTransformation h = new HeapPointerTransformation(simulator);
+        HeapPointerTransformable h = new HeapPointerTransformable(simulator);
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
         Transformation t1 = new Transformation(h, h.get(),
                 new RawData(h.get().intValue() + input.get(simulator).intValue()));

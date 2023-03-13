@@ -4,7 +4,7 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -22,7 +22,7 @@ import java.util.Scanner;
  */
 public class CommandLineInterface {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
     private final boolean cli;
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
@@ -33,7 +33,7 @@ public class CommandLineInterface {
      *
      * @param simulator the given Simulator.
      */
-    public CommandLineInterface(ISimulator simulator) {
+    public CommandLineInterface(Simulator simulator) {
         this.simulator = simulator;
         this.cli = true;
     }
@@ -44,7 +44,7 @@ public class CommandLineInterface {
      * @param simulator the given Simulator.
      * @param file      the file to read code from.
      */
-    public CommandLineInterface(ISimulator simulator, String file) {
+    public CommandLineInterface(Simulator simulator, String file) {
         this.simulator = simulator;
         this.cli = false;
         try {
@@ -63,7 +63,7 @@ public class CommandLineInterface {
      * @param inputFilePath  the file to read the input from.
      * @param outputFilePath the file to write the output to.
      */
-    public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
+    public CommandLineInterface(Simulator simulator, String file, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
         try {

@@ -2,11 +2,13 @@ package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
+import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.FileTransformable;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.RawData;
 
@@ -15,7 +17,7 @@ import com.ezasm.util.RawData;
  */
 public class FunctionInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
     private final MemoryInstructions memoryInstructions;
 
     /**
@@ -23,7 +25,7 @@ public class FunctionInstructions {
      *
      * @param simulator the provided Simulator.
      */
-    public FunctionInstructions(ISimulator simulator) {
+    public FunctionInstructions(Simulator simulator) {
         this.simulator = simulator;
         this.memoryInstructions = new MemoryInstructions(simulator);
     }
@@ -67,6 +69,12 @@ public class FunctionInstructions {
         t = t.concatenate(memoryInstructions.push(ra));
         t = t.concatenate(new TransformationSequence(raio.transformation(pc.getData())));
         t = t.concatenate(jump(input));
+        if (input instanceof LabelReferenceInput l) {
+            String nextFile = simulator.getLabels().get(l.getLabel()).getLeft();
+            FileTransformable fileTransformable = new FileTransformable(simulator, nextFile);
+            simulator.getLabels().get(l.getLabel());
+            t = t.concatenate(new TransformationSequence(fileTransformable.transformation(new RawData(0))));
+        }
         return t;
     }
 
@@ -92,6 +100,8 @@ public class FunctionInstructions {
         TransformationSequence t = new TransformationSequence();
         t = t.concatenate(jump(new RegisterInputOutput(Registers.RA)));
         t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.RA)));
+        FileTransformable fileTransformable = new FileTransformable(simulator, simulator.peekFileSwitch());
+        t = t.concatenate(new TransformationSequence(fileTransformable.transformation(new RawData(1))));
         return t;
     }
 
