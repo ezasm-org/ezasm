@@ -53,12 +53,12 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      * @param line_number which program line to highlight
      */
     public void highlight(JTextComponent textComp, int line_number) {
-//        try {
-//            textComp.getHighlighter().addHighlight(startLineNums.get(line_number), endLineNums.get(line_number), this);
-//            textComp.repaint();
-//        } catch (BadLocationException e) {
-//            e.printStackTrace();
-//        }
+        // try {
+        // textComp.getHighlighter().addHighlight(startLineNums.get(line_number), endLineNums.get(line_number), this);
+        // textComp.repaint();
+        // } catch (BadLocationException e) {
+        // e.printStackTrace();
+        // }
 
     }
 
