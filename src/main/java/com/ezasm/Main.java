@@ -1,7 +1,5 @@
 package com.ezasm;
 
-import com.ezasm.util.Properties;
-
 import static com.ezasm.util.Arguments.handleArgs;
 
 /**
