@@ -1,15 +1,17 @@
 package com.ezasm.parsing;
 
-import com.ezasm.util.Conversion;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.input.LabelReferenceInput;
+import com.ezasm.instructions.targets.input.StringInput;
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.util.RawData;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -20,7 +22,7 @@ public class Line {
     private final Instruction instruction;
     private final IAbstractTarget[] arguments;
     private final String label;
-    private int registerNum;
+    private final List<String> stringImmediates;
 
     /**
      * Creates and validates a line based on the given tokens.
@@ -34,7 +36,7 @@ public class Line {
             this.label = instruction.substring(0, instruction.length() - 1);
             this.instruction = null;
             this.arguments = null;
-            this.registerNum = 0;
+            this.stringImmediates = null;
             if (arguments != null && arguments.length > 0) {
                 throw new ParseException(String.format("Unexpected token after label: '%s'", arguments[0]));
             }
@@ -46,6 +48,7 @@ public class Line {
         this.instruction = new Instruction(instruction,
                 InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget());
         this.arguments = new IAbstractTarget[arguments.length];
+        this.stringImmediates = new ArrayList<>();
         this.label = null;
         if (this.instruction.target().getParameterCount() != arguments.length) {
             throw new ParseException(
@@ -55,15 +58,19 @@ public class Line {
 
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
-            if (Lexer.isImmediate(arguments[i].toLowerCase())) {
+            if (Lexer.looksLikeImmediate(arguments[i].toLowerCase())) {
                 this.arguments[i] = new ImmediateInput(Lexer.textToBytes(arguments[i].toLowerCase()));
-            } else if (Lexer.isCharacterImmediate(arguments[i])) {
+            } else if (Lexer.looksLikeCharacterImmediate(arguments[i])) {
                 this.arguments[i] = new ImmediateInput(new RawData(Lexer.getCharacterImmediate(arguments[i])));
+            } else if (Lexer.looksLikeStringImmediate(arguments[i])) {
+                String input = Lexer.getStringImmediate(arguments[i]);
+                this.arguments[i] = new StringInput(input);
+                this.stringImmediates.add(input);
             } else if (Lexer.isRegister(arguments[i])) {
                 this.arguments[i] = new RegisterInputOutput(arguments[i]);
-            } else if (Lexer.isDereference(arguments[i])) {
+            } else if (Lexer.looksLikeDereference(arguments[i])) {
                 this.arguments[i] = new DereferenceInputOutput(arguments[i]);
-            } else if (Lexer.isLabelReference(arguments[i])) {
+            } else if (Lexer.looksLikeLabelReference(arguments[i])) {
                 this.arguments[i] = new LabelReferenceInput(arguments[i]);
             } else {
                 // The argument did not match any of the given types
@@ -114,6 +121,15 @@ public class Line {
      */
     public String getLabel() {
         return label;
+    }
+
+    /**
+     * Gets the list of string immediates inside this line.
+     *
+     * @return the list of string immediates inside this line.
+     */
+    public List<String> getStringImmediates() {
+        return Objects.requireNonNullElse(stringImmediates, new ArrayList<>());
     }
 
     @Override

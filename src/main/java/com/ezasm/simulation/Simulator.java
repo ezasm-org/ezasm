@@ -100,6 +100,12 @@ public class Simulator implements ISimulator {
             labels.put(line.getLabel(), lines.size());
         }
         lines.add(line);
+        try {
+            memory.addStringImmediates(line.getStringImmediates());
+        } catch (SimulationException e) {
+            // TODO handle
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
