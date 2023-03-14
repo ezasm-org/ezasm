@@ -1,5 +1,6 @@
 package com.ezasm.parsing;
 
+import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.util.RawData;
@@ -229,7 +230,12 @@ public class Lexer {
         } else if (token.length() < 3) {
             throw new ParseException(String.format("Improperly formatted character token %s", token));
         }
-        String parsed = token.substring(1, token.length() - 1).translateEscapes();
+        String parsed = "";
+        try {
+            parsed = token.substring(1, token.length() - 1).translateEscapes();
+        } catch (IllegalArgumentException e) {
+            throw new ParseException(String.format("Unable to parse character token %s", token));
+        }
         if (parsed.length() != 1) {
             throw new ParseException(String.format("Unable to parse character token %s", token));
         }
