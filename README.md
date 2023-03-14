@@ -15,7 +15,7 @@ The user is able to either run a file containing instructions (a program) or ent
 
 [Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) is required to build EzASM.
 
-Clone this repository, either download the source from GitHub or run `git clone https://github.com/TrevorBrunette/EzASM` from the command line.
+Clone this repository, either download the source from GitHub or run `git clone https://github.com/ezasm-org/EzASM.git` from the command line.
 
 ### Building from source through the command line:
 
@@ -27,7 +27,7 @@ Clone this repository, either download the source from GitHub or run `git clone 
 #### Instructions
 
 Navigate to the EzASM source directory \
-Run `mvn compile assembly:single` will build an executable .jar file in the `target` directory \
+Run `mvn clean compile assembly:single` will build an executable .jar file in the `target` directory \
 Run that jar file with `java -jar target/*full.jar`
 
 ### Building using an IDE (IntelliJ IDEA):

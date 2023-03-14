@@ -7,7 +7,3 @@ target/
 .classpath
 .project
 .vscode
-
-jdk/linux/
-jdk/macos/
-jdk/windows/
