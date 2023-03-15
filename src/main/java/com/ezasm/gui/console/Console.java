@@ -1,17 +1,13 @@
 package com.ezasm.gui.console;
 
-import com.ezasm.gui.Window;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
-import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
- * Represents a console in which a user can type input into and read output from. The input is only confirmed when the
- * user presses enter.
+ * Represents a console in which a user can type input into and read output from.
  */
 public class Console extends JPanel implements IThemeable {
 
@@ -22,22 +18,23 @@ public class Console extends JPanel implements IThemeable {
     private final ConsoleOutputStream outputStream;
     private final ConsoleErrorOutputStream errorStream;
 
-    private int fixedTextEnd;
+    private Color outputStreamColor;
+    private Color errorStreamColor;
 
     /**
      * Creates a user interface console.
      */
     public Console() {
         super();
-        textArea = new ConsoleTextArea();
+        textArea = new ConsoleTextArea(this);
         scrollPane = new JScrollPane(textArea);
 
         inputStream = new ConsoleInputStream();
         outputStream = new ConsoleOutputStream(this);
         errorStream = new ConsoleErrorOutputStream(this);
 
-        fixedTextEnd = 0;
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this::keyEventDispatched);
+        outputStreamColor = Color.GRAY;
+        errorStreamColor = Color.RED;
 
         setLayout(new BorderLayout());
         add(scrollPane);
@@ -54,6 +51,9 @@ public class Console extends JPanel implements IThemeable {
     public void applyTheme(Font font, EditorTheme editorTheme) {
         textArea.applyTheme(font, editorTheme);
 
+        outputStreamColor = editorTheme.comment();
+        errorStreamColor = editorTheme.red();
+
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
     }
@@ -62,82 +62,8 @@ public class Console extends JPanel implements IThemeable {
      * Resets the content in the console and its streams.
      */
     public void reset() {
-        textArea.setText("");
         inputStream.resetBuffer();
-        fixedTextEnd = 0;
-    }
-
-    /**
-     * Gets the string remaining after the fixed text.
-     *
-     * @return Gets the string remaining after the fixed text.
-     */
-    private String getRemainingString() {
-        try {
-            return textArea.getText(fixedTextEnd, textArea.getText().length() - fixedTextEnd);
-        } catch (BadLocationException ignored) {
-        }
-        return "";
-    }
-
-    /**
-     * Handles the key-even dispatched event. Ensures that a user cannot overwrite or add to printed text.
-     *
-     * @param keyEvent the event corresponding to the key pressed/typed/released.
-     * @return true if no further processing should be done on the key event.
-     */
-    private boolean keyEventDispatched(KeyEvent keyEvent) {
-        if (KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() == textArea) {
-            char c = keyEvent.getKeyChar();
-            int pos = Math.min(textArea.getCaretPosition(), textArea.getSelectionStart());
-            if (pos < fixedTextEnd) {
-                if (isRealCharacter(c)) {
-                    // Trying to edit text that has already been submitted
-                    keyEvent.consume();
-                }
-            } else if (textArea.getCaretPosition() <= fixedTextEnd && c == '\b'
-                    && textArea.getSelectionStart() == textArea.getSelectionEnd()) {
-                // in case of a backspace on the newline, discard it
-                keyEvent.consume();
-            } else if (keyEvent.getID() == KeyEvent.KEY_TYPED && c == '\n' && pos >= fixedTextEnd) {
-                // Legal newline character
-                String toBuffer = getRemainingString();
-                inputStream.addToBuffer(toBuffer);
-                fixedTextEnd += toBuffer.length();
-            } else {
-                textArea.setCharacterAttributes(getForegroundAttributeSet(), true);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Gets the attribute set corresponding to the theme's foreground.
-     *
-     * @return the attribute set corresponding to the theme's foreground.
-     */
-    private static AttributeSet getForegroundAttributeSet() {
-        StyleContext style = StyleContext.getDefaultStyleContext();
-        return style.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground,
-                Window.getInstance().getTheme().foreground());
-    }
-
-    /**
-     * Writes text to the console with a given color.
-     *
-     * @param text  the text to write.
-     * @param color the color of the text.
-     */
-    private void writeTextWithColor(String text, Color color) {
-        StyleContext style = StyleContext.getDefaultStyleContext();
-        AttributeSet attributeSet = style.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, color);
-
-        try {
-            textArea.getDocument().insertString(fixedTextEnd, text, attributeSet);
-            fixedTextEnd += text.length();
-            textArea.setCaretPosition(textArea.getText().length());
-        } catch (BadLocationException ignored) {
-        }
+        textArea.reset();
     }
 
     /**
@@ -145,9 +71,9 @@ public class Console extends JPanel implements IThemeable {
      *
      * @param text the text to write.
      */
-    void writeTextFromSystemOut(String text) {
-        // TODO maybe use a different color for user input and console
-        writeTextWithColor(text, Window.getInstance().getTheme().comment());
+    public void writeTextFromOutputStream(String text) {
+        // TODO maybe use a different color for user input and console output than current
+        textArea.writeTextWithColor(text, outputStreamColor);
     }
 
     /**
@@ -155,8 +81,17 @@ public class Console extends JPanel implements IThemeable {
      *
      * @param text the text to write.
      */
-    void writeTextFromSystemError(String text) {
-        writeTextWithColor(text, Window.getInstance().getTheme().red());
+    public void writeTextFromErrorStream(String text) {
+        textArea.writeTextWithColor(text, errorStreamColor);
+    }
+
+    /**
+     * Puts the given text into the input stream buffer.
+     *
+     * @param text the text to add to the input stream buffer.
+     */
+    public void writeTextToInputStream(String text) {
+        inputStream.addToBuffer(text);
     }
 
     /**
@@ -184,9 +119,5 @@ public class Console extends JPanel implements IThemeable {
      */
     public ConsoleErrorOutputStream getErrorStream() {
         return errorStream;
-    }
-
-    private static boolean isRealCharacter(char c) {
-        return (c >= 0x04 && c <= 0x7F) || Character.isWhitespace(c);
     }
 }

@@ -28,7 +28,7 @@ public class ConsoleOutputStream extends OutputStream {
      */
     @Override
     public void write(int b) throws IOException {
-        console.writeTextFromSystemOut(Character.toString(b));
+        console.writeTextFromOutputStream(Character.toString(b));
     }
 
     /**
@@ -58,6 +58,6 @@ public class ConsoleOutputStream extends OutputStream {
             byte data = b[off + i];
             toWrite.append(Character.toString(data));
         }
-        console.writeTextFromSystemOut(toWrite.toString());
+        console.writeTextFromOutputStream(toWrite.toString());
     }
 }
