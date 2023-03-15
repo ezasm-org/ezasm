@@ -20,7 +20,6 @@ public class AboutPopup implements IThemeable {
     private static JLabel versionLabel;
     private static JLabel urlLabel;
 
-
     private JFrame popup;
 
     protected AboutPopup() {
