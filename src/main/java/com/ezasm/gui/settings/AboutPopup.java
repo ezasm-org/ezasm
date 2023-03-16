@@ -19,11 +19,15 @@ public class AboutPopup implements IThemeable {
     private static JLabel nameLabel;
     private static JLabel versionLabel;
     private static JLabel urlLabel;
+    private static JPanel grid;
+
+    private Config config;
 
     private JFrame popup;
 
     protected AboutPopup() {
         instance = this;
+        config = new Config();
         initialize();
     }
 
@@ -33,6 +37,7 @@ public class AboutPopup implements IThemeable {
     }
 
     public void applyTheme(Font font, Theme theme) {
+        Theme.applyFontAndTheme(grid, font, theme);
         Theme.applyFontAndTheme(nameLabel, font, theme);
         Theme.applyFontAndTheme(versionLabel, font, theme);
         Theme.applyFontAndTheme(urlLabel, font, theme);
@@ -43,7 +48,7 @@ public class AboutPopup implements IThemeable {
         popup = new JFrame(NAME);
         popup.setLayout(layout);
         popup.setMinimumSize(new Dimension(200, 100));
-        popup.setResizable(false);
+        popup.setResizable(true);
         popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         nameLabel = new JLabel(NAME);
@@ -52,7 +57,7 @@ public class AboutPopup implements IThemeable {
 
         GridLayout gridLayout = new GridLayout(0, 1);
         gridLayout.setVgap(10);
-        JPanel grid = new JPanel(gridLayout);
+        grid = new JPanel(gridLayout);
         Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
         grid.setBorder(padding);
         grid.add(nameLabel);
@@ -64,6 +69,10 @@ public class AboutPopup implements IThemeable {
         popup.validate();
         popup.pack();
         popup.setVisible(true);
+        // This is kind of a hack tbh. Needs something better.
+        // Needs a better way to get the config honestly. Same thing happens in the settings popup
+        this.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize()),
+                Theme.getTheme(config.getTheme()));
     }
 
 }
