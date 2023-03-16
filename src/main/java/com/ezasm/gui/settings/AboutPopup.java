@@ -16,7 +16,7 @@ import java.time.Year;
 /**
  * A popup factory to display a GUI element with basic information about the program.
  */
-public class AboutPopupFactory {
+public class AboutPopup {
 
     private static JFrame popup;
 

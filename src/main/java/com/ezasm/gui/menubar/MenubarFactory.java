@@ -1,6 +1,6 @@
 package com.ezasm.gui.menubar;
 
-import com.ezasm.gui.settings.AboutPopupFactory;
+import com.ezasm.gui.settings.AboutPopup;
 import com.ezasm.gui.settings.SettingsPopup;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 
@@ -107,7 +107,7 @@ public class MenubarFactory {
 
             // Settings
             case CONFIG -> SettingsPopup.instantiate();
-            case ABOUT -> AboutPopupFactory.openPopup();
+            case ABOUT -> AboutPopup.openPopup();
 
             // IO Direction
             case INPUT_FILE -> selectInputFile();

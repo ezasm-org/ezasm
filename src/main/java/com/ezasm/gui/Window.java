@@ -2,7 +2,6 @@ package com.ezasm.gui;
 
 import com.ezasm.gui.editor.EditorPane;
 import com.ezasm.gui.menubar.MenubarFactory;
-import com.ezasm.gui.settings.AboutPopupFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.settings.Config;
