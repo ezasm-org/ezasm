@@ -2,6 +2,7 @@ package com.ezasm.gui;
 
 import com.ezasm.gui.editor.EditorPane;
 import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.settings.AboutPopupFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.settings.Config;
@@ -172,6 +173,7 @@ public class Window {
     }
 
     public void applyConfiguration(Config config) {
+        this.config = config;
         Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
@@ -180,7 +182,6 @@ public class Window {
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
         SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
-        this.config = config;
     }
 
     /**

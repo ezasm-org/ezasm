@@ -1,59 +1,51 @@
 package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
-import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.util.Properties;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.Year;
 
 /**
- * A singleton popup to display basic information about the program.
+ * A popup factory to display a GUI element with basic information about the program.
  */
-public class AboutPopup implements IThemeable {
+public class AboutPopupFactory {
 
-    private static AboutPopup instance;
+    private static JFrame popup;
 
-    private final Config config;
-
-    private final JFrame popup;
-    private JEditorPane textPane;
-
-    protected AboutPopup() {
-        instance = this;
-        popup = new JFrame("About");
-        config = Window.getInstance().getConfig();
-        initialize();
-    }
-
+    /**
+     * Opens an About popup if one is not already open.
+     */
     public static void openPopup() {
-        if (instance == null) {
-            new AboutPopup();
-        } else if (!instance.popup.isVisible()) {
-            instance.popup.setVisible(true);
+        if (popup == null) {
+            popup = new JFrame("About");
+            initialize();
         }
     }
 
-    public void applyTheme(Font font, Theme theme) {
-        Theme.applyFontAndTheme(textPane, font, theme);
-    }
-
-    private void initialize() {
+    /**
+     * Sets up the content of the popup
+     */
+    private static void initialize() {
         BorderLayout layout = new BorderLayout();
         popup.setLayout(layout);
-        popup.setMinimumSize(new Dimension(200, 100));
+        popup.setMinimumSize(new Dimension(200, 200));
         popup.setResizable(true);
-        popup.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
-        Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-        String foregroundColor = Integer.toHexString(Theme.getTheme(config.getTheme()).foreground().getRGB());
-        String linkColor = Integer.toHexString(Theme.getTheme(config.getTheme()).cyan().getRGB());
+        popup.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                popup.setVisible(false);
+                popup.dispose();
+                popup = null;
+            }
+        });
 
         // An interesting way to display this information, but it is a way to get configurable text and clickable links.
         // Uses HTML and registering a hyperlink listener for on-click events to display information and links.
@@ -65,29 +57,36 @@ public class AboutPopup implements IThemeable {
                     <p>User manual:
                         <a href="https://github.com/ezasm-org/EzASM/wiki">https://github.com/ezasm-org/EzASM/wiki</a>
                     </p>
-                    <p>README and Source code:
+                    <p>Source code and README:
                         <a href="https://github.com/ezasm-org/EzASM">https://github.com/ezasm-org/EzASM</a>
                     </p>
-                    <p>Source code and JAR license:
+                    <p>License for source code and JAR:
                         <a href="https://github.com/ezasm-org/EzASM/blob/main/LICENSE">MIT License</a>
                     </p>
-                    <p>Binary executable (.exe, .zip, etc.) license:
+                    <p>License for binary executables (.exe, .zip, etc.):
                         <a href="https://github.com/ezasm-org/EzASM-releases/blob/main/LICENSE">GPLv3 License</a>
                     </p>
                     <p>Copyright (c) 2022-%s Trevor Brunette</p>
                 </html>
                 """, Properties.NAME, Properties.DESCRIPTION, Properties.VERSION, Year.now().getValue());
-        textPane = new JEditorPane();
+
+        Config config = Window.getInstance().getConfig();
+        JEditorPane textPane = new JEditorPane();
 
         HTMLEditorKit kit = new HTMLEditorKit();
         textPane.setEditorKit(kit);
         StyleSheet style = kit.getStyleSheet();
         // Set the internal CSS for the editor pane
-        style.addRule(String.format("p {color:#%s; font-size:%dpx;}", foregroundColor, config.getFontSize()));
-        style.addRule(String.format("a {color:#%s; font-size:%dpx;}", linkColor, config.getFontSize()));
+        Theme theme = Theme.getTheme(config.getTheme());
+        style.addRule(String.format("p {color:#%s;}", colorCodeHex(theme.foreground())));
+        style.addRule(String.format("a {color:#%s;}", colorCodeHex(theme.cyan())));
+        style.addRule(String.format("html {background-color: #%s;}", colorCodeHex(theme.background())));
+        style.setBaseFontSize(config.getFontSize());
+
+        textPane.setBackground(theme.background());
 
         textPane.setText(text);
-        textPane.setBorder(padding);
+        textPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         textPane.setOpaque(true);
         textPane.setEditable(false);
 
@@ -108,10 +107,10 @@ public class AboutPopup implements IThemeable {
         popup.validate();
         popup.pack();
         popup.setVisible(true);
+    }
 
-        // This is kind of a hack tbh. Needs something better.
-        // Needs a better way to get the config honestly. Same thing happens in the settings popup.
-        applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize()), Theme.getTheme(config.getTheme()));
+    private static String colorCodeHex(Color color) {
+        return String.format("%06x", color.getRGB() & 0xFFFFFF);
     }
 
 }
