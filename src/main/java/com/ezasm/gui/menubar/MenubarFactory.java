@@ -107,7 +107,7 @@ public class MenubarFactory {
 
             // Settings
             case CONFIG -> SettingsPopup.instantiate();
-            case ABOUT -> AboutPopup.instantiate();
+            case ABOUT -> AboutPopup.openPopup();
 
             // IO Direction
             case INPUT_FILE -> selectInputFile();

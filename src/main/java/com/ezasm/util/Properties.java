@@ -34,14 +34,23 @@ public class Properties {
 
     static {
         PROPERTIES = new java.util.Properties();
+        boolean error = false;
         try {
             PROPERTIES.load(Properties.class.getClassLoader().getResourceAsStream(PROPERTIES_LOCATION));
         } catch (IOException ignored) {
+            error = true;
         }
-        NAME = PROPERTIES.getProperty("name");
-        VERSION = PROPERTIES.getProperty("version");
-        DESCRIPTION = PROPERTIES.getProperty("description");
-        URL = PROPERTIES.getProperty("url");
+        if (error) {
+            NAME = "name error";
+            VERSION = "version error";
+            DESCRIPTION = "description error";
+            URL = "url error";
+        } else {
+            NAME = PROPERTIES.getProperty("name");
+            VERSION = PROPERTIES.getProperty("version");
+            DESCRIPTION = PROPERTIES.getProperty("description");
+            URL = PROPERTIES.getProperty("url");
+        }
     }
 
 }
