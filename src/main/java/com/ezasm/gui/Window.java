@@ -19,6 +19,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -171,6 +172,33 @@ public class Window {
         app.validate();
         app.pack();
         app.setVisible(true);
+
+        KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+        KeyStroke saveAsKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S,
+                KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+        KeyStroke openKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
+        KeyStroke loadInputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_I,
+                KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+        KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
+                KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+
+        InputMap inputMap = app.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = app.getRootPane().getActionMap();
+
+        inputMap.put(saveKeyStroke, "saveAction");
+        actionMap.put("saveAction", saveAction);
+
+        inputMap.put(saveAsKeyStroke, "saveAsAction");
+        actionMap.put("saveAsAction", saveAsAction);
+
+        inputMap.put(openKeyStroke, "openAction");
+        actionMap.put("openAction", openAction);
+
+        inputMap.put(loadInputKeyStroke, "loadInputAction");
+        actionMap.put("loadInputKeyStroke", loadInputAction);
+
+        inputMap.put(loadOutputKeyStroke, "loadOutputAction");
+        actionMap.put("loadOutputKeyStroke", loadOutputAction);
     }
 
     public void applyConfiguration(Config config) {
