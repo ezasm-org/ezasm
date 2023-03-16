@@ -1,6 +1,7 @@
 package com.ezasm.gui;
 
 import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
@@ -220,9 +221,10 @@ public class Window {
      * @throws ParseException if there are any errors lexing the given text.
      */
     public void parseText() throws ParseException {
+        MenuActions.save();
         simulator.resetAll();
         registerTable.update();
-        simulator.addLines(Lexer.parseLines(editor.getText()));
+        simulator.addLines(new File(editor.getOpenFilePath()));
         instance.editor.resetHighlighter();
     }
 

@@ -38,9 +38,8 @@ public class ImportInstructions {
     @Instruction
     public TransformationSequence _import(StringInput input) throws SimulationException {
         try {
-            String content = FileIO.readFile(new File(input.getString()));
-            simulator.addLines(Lexer.parseLines(content), input.getString());
-        } catch (IOException | ParseException e) {
+            simulator.addLinesByFile(input.getString());
+        } catch (ParseException e) {
             throw new SimulationException(String.format("Error importing %s: %s", input.getString(), e.getMessage()));
         }
         return new TransformationSequence();

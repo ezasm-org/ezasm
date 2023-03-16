@@ -3,6 +3,7 @@ package com.ezasm.simulation;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.InvalidProgramCounterException;
@@ -10,10 +11,13 @@ import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.util.FileIO;
 import com.ezasm.util.RawData;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -32,7 +36,8 @@ public class Simulator {
     private final Deque<TransformationSequence> transforms;
     private final Deque<String> fileCallstack;
 
-    private static final String SIMULATOR_FILE_NAME = "/";
+    private String executionDirectory;
+    private static String mainFile = "/";
     private String currentFile;
 
     /**
@@ -48,7 +53,7 @@ public class Simulator {
         this.labels = new HashMap<>();
         this.transforms = new ArrayDeque<>();
         this.fileCallstack = new ArrayDeque<>();
-        this.currentFile = SIMULATOR_FILE_NAME;
+        this.currentFile = mainFile;
         pc = registers.getRegister(Registers.PC);
         instructionDispatcher = new InstructionDispatcher(this);
         initialize();
@@ -79,7 +84,7 @@ public class Simulator {
         transforms.clear();
         fileCallstack.clear();
         initialize();
-        currentFile = SIMULATOR_FILE_NAME;
+        currentFile = mainFile;
     }
 
     /**
@@ -135,25 +140,34 @@ public class Simulator {
     /**
      * Parses the given text as a multi-line String. Then adds those lines to the program.
      *
-     * @param content the collection of Lines to add to the program.
+     * @param file the relative path from the main file to the file to read lines from.
      */
-    public void addLines(Collection<Line> content, String file) throws ParseException {
-        if (linesByFileMap.containsKey(file)) {
-            return;
-        }
-
-        for (Line line : content) {
-            addLine(line, file);
+    public void addLinesByFile(String file) throws ParseException {
+        try {
+            String absoluteFilePath = String.format("%s%s%s", executionDirectory, File.separator, file);
+            if (linesByFileMap.containsKey(absoluteFilePath)) {
+                return;
+            }
+            String contentText = FileIO.readFile(new File(absoluteFilePath));
+            List<Line> content = Lexer.parseLines(contentText);
+            for (Line line : content) {
+                addLine(line, absoluteFilePath);
+            }
+        } catch (IOException e) {
+            throw new ParseException(e.getMessage());
         }
     }
 
     /**
      * Parses the given text as a multi-line String. Then adds those lines to the program.
      *
-     * @param content the collection of Lines to add to the program.
+     * @param file the main program file.
      */
-    public void addLines(List<Line> content) throws ParseException {
-        addLines(content, currentFile);
+    public void addLines(File file) throws ParseException {
+        file = file.getAbsoluteFile();
+        currentFile = mainFile = file.getAbsolutePath();
+        executionDirectory = file.getParent();
+        addLinesByFile(file.getName());
     }
 
     /**

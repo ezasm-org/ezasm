@@ -1,5 +1,6 @@
 package com.ezasm.util;
 
+import com.ezasm.gui.Window;
 import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
@@ -88,7 +89,13 @@ public class FileIO {
     public static JFileChooser createFileChooser(String windowTitle, int acceptedFileTypeMask) {
         JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
         fileChooser.setDialogTitle(windowTitle);
-        fileChooser.setCurrentDirectory(getHomeDirectoryFile());
+        String currentFilePath = Window.getInstance().getEditor().getOpenFilePath();
+        File currentDir = new File(currentFilePath).getParentFile();
+        if (currentDir != null && currentDir.exists() && currentDir.isDirectory()) {
+            fileChooser.setCurrentDirectory(currentDir);
+        } else {
+            fileChooser.setCurrentDirectory(getHomeDirectoryFile());
+        }
 
         // This if statement chain should be ordered from the least significant extension type to most significant
         if ((acceptedFileTypeMask & TEXT_FILE_MASK) != 0) {

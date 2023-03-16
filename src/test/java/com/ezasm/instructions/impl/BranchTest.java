@@ -18,20 +18,18 @@ public class BranchTest {
 
     @Test
     void iteration() {
-        ArrayList<Line> prgm = new ArrayList<>();
         try {
-            prgm.add(new Line("test:", new String[] {}));
-            prgm.add(new Line("add", new String[] { "$t0", "$t0", "1" }));
-            prgm.add(new Line("blt", new String[] { "$t0", "10", "test" }));
+            simulator.addLine(new Line("test:", new String[] {}));
+            simulator.addLine(new Line("add", new String[] { "$t0", "$t0", "1" }));
+            simulator.addLine(new Line("blt", new String[] { "$t0", "10", "test" }));
         } catch (ParseException e) {
             fail(e);
         }
 
         simulator.getRegisters().getRegister("$pc").setLong(0);
         try {
-            simulator.addLines(prgm);
             simulator.executeProgramFromPC();
-        } catch (ParseException | SimulationException e) {
+        } catch (SimulationException e) {
             fail(e);
         }
 
