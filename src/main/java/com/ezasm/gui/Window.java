@@ -1,6 +1,7 @@
 package com.ezasm.gui;
 
 import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
@@ -17,6 +18,7 @@ import com.ezasm.util.RandomAccessFileStream;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -254,4 +256,40 @@ public class Window {
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
     }
+
+    Action saveAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MenuActions.save();
+        }
+    };
+
+    Action saveAsAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MenuActions.saveAs();
+        }
+    };
+
+    Action openAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MenuActions.load();
+        }
+    };
+
+    Action loadInputAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MenuActions.selectInputFile();
+        }
+    };
+
+    Action loadOutputAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MenuActions.selectOutputFile();
+        }
+    };
+
 }
