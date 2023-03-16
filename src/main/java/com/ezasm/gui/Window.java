@@ -172,6 +172,7 @@ public class Window {
     }
 
     public void applyConfiguration(Config config) {
+        this.config = config;
         Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
@@ -180,7 +181,6 @@ public class Window {
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
         SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
-        this.config = config;
     }
 
     /**
