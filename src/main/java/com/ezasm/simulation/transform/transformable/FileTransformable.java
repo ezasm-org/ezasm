@@ -6,7 +6,7 @@ import com.ezasm.util.RawData;
 
 public class FileTransformable extends AbstractTransformableInput {
 
-    private final String to;
+    private String to;
     boolean fromToTo;
 
     public FileTransformable(Simulator simulator, String to) {
@@ -22,7 +22,7 @@ public class FileTransformable extends AbstractTransformableInput {
             simulator.pushFileSwitch(to);
             fromToTo = false;
         } else { // switch to the "from" file
-            simulator.popFileSwitch();
+            to = simulator.popFileSwitch();
             fromToTo = true;
         }
     }
@@ -30,9 +30,9 @@ public class FileTransformable extends AbstractTransformableInput {
     @Override
     public RawData get() throws SimulationException {
         if (fromToTo) {
-            return new RawData(1);
-        } else {
             return new RawData(0);
+        } else {
+            return new RawData(1);
         }
     }
 }
