@@ -8,11 +8,10 @@ import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
-import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
-import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
@@ -144,6 +143,11 @@ public class Window {
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setMinimumSize(new Dimension(800, 600));
+        try {
+            app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
+        } catch (IOException e) {
+            System.err.println("Could not load icon");
+        }
         panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();
@@ -168,6 +172,7 @@ public class Window {
     }
 
     public void applyConfiguration(Config config) {
+        this.config = config;
         Theme theme = Theme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
@@ -176,7 +181,6 @@ public class Window {
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
         SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
-        this.config = config;
     }
 
     /**

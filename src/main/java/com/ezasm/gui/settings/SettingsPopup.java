@@ -52,10 +52,6 @@ public class SettingsPopup implements IThemeable {
             new SettingsPopup();
     }
 
-    public static boolean hasInstance() {
-        return instance != null;
-    }
-
     public void applyTheme(Font font, Theme theme) {
         Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, theme.foreground());
         Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, theme.foreground());
@@ -151,6 +147,5 @@ public class SettingsPopup implements IThemeable {
                 instance.themeInput.setSelectedIndex(0);
             }
         }
-
     }
 }
