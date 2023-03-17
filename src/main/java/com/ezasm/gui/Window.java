@@ -19,12 +19,14 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.function.Consumer;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
@@ -187,23 +189,28 @@ public class Window {
         inputMap = app.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         actionMap = app.getRootPane().getActionMap();
 
-        registerKeystroke("saveAction", saveKeyStroke, MenuActions.saveAction);
-        registerKeystroke("saveAsAction", saveAsKeyStroke, MenuActions.saveAsAction);
-        registerKeystroke("openAction", openKeyStroke, MenuActions.openAction);
-        registerKeystroke("loadInputAction", loadInputKeyStroke, MenuActions.loadInputAction);
-        registerKeystroke("loadOutputAction", loadOutputKeyStroke, MenuActions.loadOutputAction);
+        registerKeystroke("saveAction", saveKeyStroke, MenuActions::save);
+        registerKeystroke("saveAsAction", saveAsKeyStroke, MenuActions::saveAs);
+        registerKeystroke("openAction", openKeyStroke, MenuActions::load);
+        registerKeystroke("loadInputAction", loadInputKeyStroke, MenuActions::selectInputFile);
+        registerKeystroke("loadOutputAction", loadOutputKeyStroke, MenuActions::selectOutputFile);
     }
 
     /**
      * Registers a hotkey and the associated action
      *
      * @param actionName name of action (internal only)
-     * @param pnemonic   the KeyStroke in question
-     * @param action     the Action in question (usually located in MenuActions)
+     * @param mnemonic   the KeyStroke in question
+     * @param action     the action to perform
      */
-    private void registerKeystroke(String actionName, KeyStroke pnemonic, Action action) {
-        inputMap.put(pnemonic, actionName);
-        actionMap.put(actionName, action);
+    private void registerKeystroke(String actionName, KeyStroke mnemonic, Runnable action) {
+        inputMap.put(mnemonic, actionName);
+        actionMap.put(actionName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                action.run();
+            }
+        });
     }
 
     public void applyConfiguration(Config config) {

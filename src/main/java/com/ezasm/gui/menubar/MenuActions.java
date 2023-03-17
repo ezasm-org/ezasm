@@ -115,40 +115,4 @@ public class MenuActions {
         }
     }
 
-    // All the actions used to do these things
-    public static Action saveAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            save();
-        }
-    };
-
-    public static Action saveAsAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            saveAs();
-        }
-    };
-
-    public static Action openAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            load();
-        }
-    };
-
-    public static Action loadInputAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            selectInputFile();
-        }
-    };
-
-    public static Action loadOutputAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            selectOutputFile();
-        }
-    };
-
 }
