@@ -21,6 +21,9 @@ public class Arguments {
         Config config = new Config();
         Options options = new Options();
 
+        Option verionOption = new Option("v", "version", false, "States the program version and then exits");
+        options.addOption(verionOption);
+
         Option windowlessOption = new Option("w", "windowless", false,
                 "Starts the program in windowless mode \n(default: disabled)");
         options.addOption(windowlessOption);
@@ -54,6 +57,11 @@ public class Arguments {
             commandLine = parser.parse(options, args);
         } catch (org.apache.commons.cli.ParseException e) {
             errorArgs(e.getMessage());
+        }
+
+        if (commandLine.hasOption(verionOption)) {
+            System.out.printf("%s %s\n", Properties.NAME, Properties.VERSION);
+            System.exit(0);
         }
 
         int memorySize = 0;

@@ -2,7 +2,7 @@ package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.util.IThemeable;
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -56,22 +56,22 @@ public class SettingsPopup implements IThemeable {
         return instance != null;
     }
 
-    public void applyTheme(Font font, Theme theme) {
-        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, theme.foreground());
-        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, theme.foreground());
-        grid.setBackground(theme.background());
-        fontInput.setCaretColor(theme.foreground());
+    public void applyTheme(Font font, EditorTheme editorTheme) {
+        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, editorTheme.foreground());
+        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, editorTheme.foreground());
+        grid.setBackground(editorTheme.background());
+        fontInput.setCaretColor(editorTheme.foreground());
         themeLabel.setOpaque(true);
         fontSizeLabel.setOpaque(true);
         speedLabel.setOpaque(true);
-        Theme.applyFontAndTheme(speedSlider, font, theme);
-        Theme.applyFontAndTheme(themeInput, font, theme);
-        Theme.applyFontThemeBorder(fontInput, font, theme, border);
-        Theme.applyFontThemeBorder(save, font, theme, buttonBorder);
-        Theme.applyFontThemeBorder(resetDefaults, font, theme, buttonBorder);
-        Theme.applyFontAndTheme(speedLabel, font, theme);
-        Theme.applyFontAndTheme(fontSizeLabel, font, theme);
-        Theme.applyFontAndTheme(themeLabel, font, theme);
+        EditorTheme.applyFontAndTheme(speedSlider, font, editorTheme);
+        EditorTheme.applyFontAndTheme(themeInput, font, editorTheme);
+        EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
+        EditorTheme.applyFontThemeBorder(save, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(resetDefaults, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontAndTheme(speedLabel, font, editorTheme);
+        EditorTheme.applyFontAndTheme(fontSizeLabel, font, editorTheme);
+        EditorTheme.applyFontAndTheme(themeLabel, font, editorTheme);
     }
 
     private void initialize() {
@@ -117,7 +117,7 @@ public class SettingsPopup implements IThemeable {
         popup.pack();
         popup.setVisible(true);
         this.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize()),
-                Theme.getTheme(config.getTheme()));
+                EditorTheme.getTheme(config.getTheme()));
     }
 
     private static class ButtonActionListener implements ActionListener {
@@ -141,7 +141,7 @@ public class SettingsPopup implements IThemeable {
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
                 instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
-                        Theme.getTheme(instance.config.getTheme()));
+                        EditorTheme.getTheme(instance.config.getTheme()));
                 Window.getInstance().applyConfiguration(instance.config);
             }
             if (action.startsWith("Reset")) {
@@ -151,6 +151,5 @@ public class SettingsPopup implements IThemeable {
                 instance.themeInput.setSelectedIndex(0);
             }
         }
-
     }
 }

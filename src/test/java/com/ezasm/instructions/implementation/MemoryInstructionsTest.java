@@ -1,10 +1,8 @@
-package com.ezasm.instruction.memory;
+package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.util.Conversion;
-import com.ezasm.instructions.implementation.MemoryInstructions;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
@@ -15,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestMemoryInstructions {
+public class MemoryInstructionsTest {
 
     @Test
     public void TestAllocInstruction() throws SimulationException {

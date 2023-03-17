@@ -1,5 +1,7 @@
 package com.ezasm.gui.util;
 
+import com.ezasm.gui.ui.EzScrollBarUI;
+
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
@@ -11,11 +13,11 @@ import java.awt.Font;
 /**
  * Represents a theme for components and text in the application.
  */
-public record Theme(Color background, Color foreground, Color currentLine, Color selection, Color comment, Color cyan,
-        Color green, Color orange, Color pink, Color purple, Color red, Color yellow, boolean isLight) {
+public record EditorTheme(Color background, Color foreground, Color currentLine, Color selection, Color comment,
+        Color cyan, Color green, Color orange, Color pink, Color purple, Color red, Color yellow, boolean isLight) {
 
     // based on https://github.com/dracula/dracula-theme
-    public static Theme Dracula = new Theme(new Color(0x282a36), // background
+    public static EditorTheme Dracula = new EditorTheme(new Color(0x282a36), // background
             new Color(0xf8f8f2), // foreground
             new Color(0x44475a), // currentLine
             new Color(0x44475a), // selection
@@ -30,7 +32,7 @@ public record Theme(Color background, Color foreground, Color currentLine, Color
             false); // is a light theme
 
     // based on https://github.com/endormi/vscode-2077-theme
-    public static Theme Purple = new Theme(new Color(0x030d22), // background
+    public static EditorTheme Purple = new EditorTheme(new Color(0x030d22), // background
             new Color(0xfdfeff), // foreground
             new Color(0x310072), // currentLine
             new Color(0x35008b), // selection
@@ -45,7 +47,7 @@ public record Theme(Color background, Color foreground, Color currentLine, Color
             false); // is a light theme
 
     // based on https://github.com/atom/one-light-syntax
-    public static Theme Light = new Theme(new Color(0xebf8ff), // background
+    public static EditorTheme Light = new EditorTheme(new Color(0xebf8ff), // background
             new Color(0x161b1d), // foreground
             new Color(0xc1e4f6), // currentLine
             new Color(0x7ea2b4), // selection
@@ -65,12 +67,12 @@ public record Theme(Color background, Color foreground, Color currentLine, Color
      * @param s the theme in plain text
      * @return the theme object
      */
-    public static Theme getTheme(String s) {
+    public static EditorTheme getTheme(String s) {
         return switch (s) {
-        case "Dark" -> Theme.Dracula;
-        case "Purple" -> Theme.Purple;
-        case "Light" -> Theme.Light;
-        default -> Theme.Light;
+        case "Dark" -> EditorTheme.Dracula;
+        case "Purple" -> EditorTheme.Purple;
+        case "Light" -> EditorTheme.Light;
+        default -> EditorTheme.Light;
         };
     }
 
@@ -104,16 +106,16 @@ public record Theme(Color background, Color foreground, Color currentLine, Color
 
     public void applyThemeScrollbar(JScrollBar scrollbar) {
         applyTheme(scrollbar);
-        scrollbar.setUI(new ScrollBarUI(this));
+        scrollbar.setUI(new EzScrollBarUI(this));
     }
 
-    public static void applyFontAndTheme(JComponent component, Font font, Theme theme) {
-        theme.applyTheme(component);
+    public static void applyFontAndTheme(JComponent component, Font font, EditorTheme editorTheme) {
+        editorTheme.applyTheme(component);
         component.setFont(font);
     }
 
-    public static void applyFontThemeBorder(JComponent component, Font font, Theme theme, Border border) {
-        theme.applyTheme(component);
+    public static void applyFontThemeBorder(JComponent component, Font font, EditorTheme editorTheme, Border border) {
+        editorTheme.applyTheme(component);
         component.setBorder(border);
         component.setFont(font);
     }

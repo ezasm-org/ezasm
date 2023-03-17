@@ -1,8 +1,8 @@
 package com.ezasm.gui.toolbar;
 
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 
-import static com.ezasm.gui.toolbar.SimulatorGUIActions.*;
+import static com.ezasm.gui.toolbar.SimulatorGuiActions.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -59,17 +59,17 @@ public class ToolbarFactory {
     /**
      * Applies the proper theming to the toolbar
      */
-    public static void applyTheme(Font font, Theme theme, JToolBar toolbar) {
-        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, theme.foreground());
-        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, theme.foreground());
-        Theme.applyFontThemeBorder(toolbar, font, theme, border);
-        Theme.applyFontThemeBorder(startButton, font, theme, buttonBorder);
-        Theme.applyFontThemeBorder(stopButton, font, theme, buttonBorder);
-        Theme.applyFontThemeBorder(pauseButton, font, theme, buttonBorder);
-        Theme.applyFontThemeBorder(resumeButton, font, theme, buttonBorder);
-        Theme.applyFontThemeBorder(stepButton, font, theme, buttonBorder);
-        Theme.applyFontThemeBorder(stepBackButton, font, theme, buttonBorder);
-        Theme.applyFontThemeBorder(resetButton, font, theme, buttonBorder);
+    public static void applyTheme(Font font, EditorTheme editorTheme, JToolBar toolbar) {
+        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, editorTheme.foreground());
+        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, editorTheme.foreground());
+        EditorTheme.applyFontThemeBorder(toolbar, font, editorTheme, border);
+        EditorTheme.applyFontThemeBorder(startButton, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(stopButton, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(pauseButton, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(resumeButton, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(stepButton, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(stepBackButton, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(resetButton, font, editorTheme, buttonBorder);
     }
 
     /**

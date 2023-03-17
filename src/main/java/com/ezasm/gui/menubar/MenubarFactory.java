@@ -1,5 +1,6 @@
 package com.ezasm.gui.menubar;
 
+import com.ezasm.gui.settings.AboutPopup;
 import com.ezasm.gui.settings.SettingsPopup;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 
@@ -20,6 +21,7 @@ public class MenubarFactory {
     private static final String SAVE_AS = "Save as...";
     private static final String EXIT = "Exit";
     private static final String CONFIG = "Config";
+    private static final String ABOUT = "About";
     private static final String INPUT_FILE = "Choose Input File";
     private static final String OUTPUT_FILE = "Choose Output File";
     private static final String RESET_INPUT_REDIRECT = "Reset Input Redirect";
@@ -61,6 +63,7 @@ public class MenubarFactory {
         menu.getAccessibleContext().setAccessibleDescription("Popups related to settings");
         menubar.add(menu);
         addMenuItem(menu, CONFIG);
+        addMenuItem(menu, ABOUT);
 
         /*
          * IO
@@ -104,15 +107,16 @@ public class MenubarFactory {
 
             // Settings
             case CONFIG -> SettingsPopup.instantiate();
+            case ABOUT -> AboutPopup.openPopup();
 
             // IO Direction
             case INPUT_FILE -> selectInputFile();
             case OUTPUT_FILE -> selectOutputFile();
             case RESET_INPUT_REDIRECT -> {
-                TerminalInstructions.streams().setInputStream(TerminalInstructions.DEFAULT_INPUT_STREAM);
+                TerminalInstructions.streams().setInputStream(System.in);
             }
             case RESET_OUTPUT_REDIRECT -> {
-                TerminalInstructions.streams().setOutputStream(TerminalInstructions.DEFAULT_OUTPUT_STREAM);
+                TerminalInstructions.streams().setOutputStream(System.out);
             }
 
             // Unimplemented
