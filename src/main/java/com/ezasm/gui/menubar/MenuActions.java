@@ -4,6 +4,8 @@ import com.ezasm.gui.Window;
 import com.ezasm.util.FileIO;
 
 import javax.swing.*;
+
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,7 +21,7 @@ public class MenuActions {
     /**
      * Runs the action event for save as.
      */
-    static void saveAs() {
+    public static void saveAs() {
         JFileChooser fileChooser = createFileChooser("Save", TEXT_FILE_MASK | EZ_FILE_MASK);
         fileChooser.setSelectedFile(new File("code.ez"));
         int fileChooserOption = fileChooser.showSaveDialog(null);
@@ -41,7 +43,7 @@ public class MenuActions {
     /**
      * Runs the action event for save.
      */
-    static void save() {
+    public static void save() {
         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
         if (!fileToUpdate.exists()) {
             saveAs();
@@ -58,7 +60,7 @@ public class MenuActions {
     /**
      * Runs the action event for load.
      */
-    static void load() {
+    public static void load() {
         JFileChooser fileChooser = createFileChooser("Open File", TEXT_FILE_MASK | EZ_FILE_MASK);
         int fileChooserOption = fileChooser.showOpenDialog(null);
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
@@ -79,7 +81,7 @@ public class MenuActions {
     /**
      * Runs the action event for selecting an input file.
      */
-    static void selectInputFile() {
+    public static void selectInputFile() {
         JFileChooser fileChooser = createFileChooser("Choose an Input File", TEXT_FILE_MASK);
         int fileChooserOption = fileChooser.showOpenDialog(null);
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
@@ -98,7 +100,7 @@ public class MenuActions {
     /**
      * Runs the action event for selecting an input file.
      */
-    static void selectOutputFile() {
+    public static void selectOutputFile() {
         JFileChooser fileChooser = createFileChooser("Choose an Output File", TEXT_FILE_MASK);
         fileChooser.setSelectedFile(new File("output.txt"));
         int fileChooserOption = fileChooser.showSaveDialog(null);
