@@ -37,7 +37,7 @@ public class Simulator {
     private final Deque<String> fileCallstack;
 
     private String executionDirectory;
-    private static String mainFile = "/";
+    private String mainFile;
     private String currentFile;
 
     /**
@@ -53,9 +53,10 @@ public class Simulator {
         this.labels = new HashMap<>();
         this.transforms = new ArrayDeque<>();
         this.fileCallstack = new ArrayDeque<>();
+        this.mainFile = "/";
         this.currentFile = mainFile;
-        pc = registers.getRegister(Registers.PC);
-        instructionDispatcher = new InstructionDispatcher(this);
+        this.instructionDispatcher = new InstructionDispatcher(this);
+        this.pc = registers.getRegister(Registers.PC);
         initialize();
     }
 
@@ -186,6 +187,11 @@ public class Simulator {
         }
     }
 
+    /**
+     * Runs the program continuously until completion or error.
+     *
+     * @throws SimulationException if there is an error executing the program.
+     */
     public void executeProgramFromPC() throws SimulationException {
         while (!isDone() && !isError()) {
             executeLineFromPC();
@@ -203,6 +209,13 @@ public class Simulator {
         validatePC();
     }
 
+    /**
+     * Applies the given transformation sequence to the simulation.
+     *
+     * @param t the transformation sequence to apply.
+     *
+     * @throws SimulationException if there is an error in applying the transformation.
+     */
     public void applyTransformations(TransformationSequence t) throws SimulationException {
         t.apply();
         InputOutputTransformable io = new InputOutputTransformable(this, new RegisterInputOutput(Registers.PC));
@@ -226,7 +239,9 @@ public class Simulator {
     }
 
     /**
-     * Causes the program to terminate naturally.
+     * Gets the last valid program counter.
+     *
+     * @return the last valid program counter.
      */
     public long endPC() {
         return linesByFileMap.get(currentFile).size() - 1;
@@ -244,22 +259,51 @@ public class Simulator {
         return (int) pc.getLong();
     }
 
+    /**
+     * Adds a new file as the top element of the file switch stack.
+     *
+     * @param file the new top element of the file switch stack.
+     */
     public void pushFileSwitch(String file) {
         fileCallstack.push(currentFile);
         currentFile = file;
     }
 
+    /**
+     * Gets and removes the top element of the file switch stack.
+     *
+     * @return the top element of the file switch stack.
+     */
     public String popFileSwitch() {
         currentFile = fileCallstack.pop();
         return currentFile;
     }
 
+    /**
+     * Gets the top element of the file switch stack.
+     *
+     * @return the top element of the file switch stack.
+     */
     public String peekFileSwitch() {
         return fileCallstack.peek();
     }
 
-    public String getFile() {
+    /**
+     * Gets the program's currently executing file.
+     *
+     * @return the program's currently executing file file if it exists, "/" otherwise.
+     */
+    public String getCurrentFile() {
         return currentFile;
+    }
+
+    /**
+     * Gets the program's main file.
+     *
+     * @return the program's main file if it exists, "/" otherwise.
+     */
+    public String getMainFile() {
+        return mainFile;
     }
 
     /**

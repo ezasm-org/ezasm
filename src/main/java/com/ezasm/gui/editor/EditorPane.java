@@ -203,10 +203,7 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void updateHighlight() {
         removeHighlights(textArea);
-        int pc = (int) Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
-        if (pc >= 0) {
-            highlighter.highlight(textArea, pc);
-        }
+        highlighter.highlight(textArea, Window.getInstance().getSimulator());
     }
 
     /**

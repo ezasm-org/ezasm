@@ -1,6 +1,8 @@
 package com.ezasm.gui.editor;
 
 import com.ezasm.parsing.Lexer;
+import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.Simulator;
 
 import javax.swing.text.*;
 import java.awt.*;
@@ -52,14 +54,19 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      * @param textComp    the text component to highlight
      * @param line_number which program line to highlight
      */
-    public void highlight(JTextComponent textComp, int line_number) {
-        // try {
-        // textComp.getHighlighter().addHighlight(startLineNums.get(line_number), endLineNums.get(line_number), this);
-        // textComp.repaint();
-        // } catch (BadLocationException e) {
-        // e.printStackTrace();
-        // }
-
+    public void highlight(JTextComponent textComp, Simulator simulator) {
+        int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
+        if (simulator.getCurrentFile().equals(simulator.getMainFile())) {
+            try {
+                textComp.getHighlighter().addHighlight(startLineNums.get(lineNumber), endLineNums.get(lineNumber),
+                        this);
+                textComp.repaint();
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // TODO line highlighting for other files
+        }
     }
 
     /**
