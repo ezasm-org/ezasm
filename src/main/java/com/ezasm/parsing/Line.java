@@ -1,7 +1,6 @@
 package com.ezasm.parsing;
 
 import com.ezasm.instructions.DispatchInstruction;
-import com.ezasm.util.Conversion;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
@@ -63,15 +62,18 @@ public class Line {
             }
         }
 
-        Class<?>[] argTypes = getArgumentTypes();
-
-        DispatchInstruction dispatchInstruction = InstructionDispatcher.getOverload(instruction, argTypes);
-
-        if (dispatchInstruction == null) {
-            throw new ParseException("Instruction not found");
+        if (!InstructionDispatcher.getInstructions().containsKey(instruction)) {
+            throw new ParseException(String.format("Invalid instruction: %s", instruction));
         }
 
-        this.instruction = new Instruction(instruction, dispatchInstruction.getInvocationTarget());
+        DispatchInstruction dispatchInstruction = InstructionDispatcher.getInstruction(instruction, getArgumentTypes());
+
+        if (dispatchInstruction == null) {
+            throw new ParseException(String.format("Instruction %s could not be matched with the given %d arguments ",
+                    instruction, getArgumentTypes().length));
+        }
+
+        this.instruction = new Instruction(instruction, dispatchInstruction.invocationTarget());
     }
 
     /**
