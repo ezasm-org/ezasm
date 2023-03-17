@@ -49,6 +49,8 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setCodeFoldingEnabled(false);
         textArea.getDocument().addDocumentListener(new EditorDocumentListener());
 
+        fileSaved = true;
+
         scrollPane = new RTextScrollPane(textArea);
         scrollPane.setLineNumbersEnabled(true);
         scrollPane.setMinimumSize(textArea.getSize());
