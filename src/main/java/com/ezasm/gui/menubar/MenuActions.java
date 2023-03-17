@@ -4,6 +4,8 @@ import com.ezasm.gui.Window;
 import com.ezasm.util.FileIO;
 
 import javax.swing.*;
+
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -112,5 +114,40 @@ public class MenuActions {
             }
         }
     }
+
+    public static Action saveAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            save();
+        }
+    };
+
+    public static Action saveAsAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveAs();
+        }
+    };
+
+    public static Action openAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            load();
+        }
+    };
+
+    public static Action loadInputAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectInputFile();
+        }
+    };
+
+    public static Action loadOutputAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectOutputFile();
+        }
+    };
 
 }

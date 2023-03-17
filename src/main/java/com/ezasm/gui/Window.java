@@ -48,6 +48,17 @@ public class Window {
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
     private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
 
+    ActionMap actionMap;
+    InputMap inputMap;
+    KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+    KeyStroke saveAsKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S,
+            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+    KeyStroke openKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
+    KeyStroke loadInputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_I,
+            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+    KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
+            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+
     protected Window(ISimulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
@@ -173,32 +184,19 @@ public class Window {
         app.pack();
         app.setVisible(true);
 
-        KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
-        KeyStroke saveAsKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S,
-                KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-        KeyStroke openKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
-        KeyStroke loadInputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_I,
-                KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-        KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
-                KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+        inputMap = app.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        actionMap = app.getRootPane().getActionMap();
 
-        InputMap inputMap = app.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = app.getRootPane().getActionMap();
+        registerKeystroke("saveAction", saveKeyStroke, MenuActions.saveAction);
+        registerKeystroke("saveAsAction", saveAsKeyStroke, MenuActions.saveAsAction);
+        registerKeystroke("openAction", openKeyStroke, MenuActions.openAction);
+        registerKeystroke("loadInputAction", loadInputKeyStroke, MenuActions.loadInputAction);
+        registerKeystroke("loadOutputAction", loadOutputKeyStroke, MenuActions.loadOutputAction);
+    }
 
-        inputMap.put(saveKeyStroke, "saveAction");
-        actionMap.put("saveAction", saveAction);
-
-        inputMap.put(saveAsKeyStroke, "saveAsAction");
-        actionMap.put("saveAsAction", saveAsAction);
-
-        inputMap.put(openKeyStroke, "openAction");
-        actionMap.put("openAction", openAction);
-
-        inputMap.put(loadInputKeyStroke, "loadInputAction");
-        actionMap.put("loadInputKeyStroke", loadInputAction);
-
-        inputMap.put(loadOutputKeyStroke, "loadOutputAction");
-        actionMap.put("loadOutputKeyStroke", loadOutputAction);
+    private void registerKeystroke(String actionName, KeyStroke pnemonic, Action action) {
+        inputMap.put(pnemonic, actionName);
+        actionMap.put(actionName, action);
     }
 
     public void applyConfiguration(Config config) {
@@ -284,40 +282,5 @@ public class Window {
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
     }
-
-    Action saveAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MenuActions.save();
-        }
-    };
-
-    Action saveAsAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MenuActions.saveAs();
-        }
-    };
-
-    Action openAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MenuActions.load();
-        }
-    };
-
-    Action loadInputAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MenuActions.selectInputFile();
-        }
-    };
-
-    Action loadOutputAction = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MenuActions.selectOutputFile();
-        }
-    };
 
 }
