@@ -44,7 +44,7 @@ public class StreamManager {
     public void setOutputStream(OutputStream outputStream) {
         this.cursorPosition = 0;
         this.outputStream = outputStream;
-        this.outputWriter = new PrintStream(this.outputStream);
+        this.outputWriter = new PrintStream(this.outputStream, true);
     }
 
     /**
