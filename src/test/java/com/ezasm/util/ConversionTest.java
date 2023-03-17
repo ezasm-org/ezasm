@@ -1,4 +1,4 @@
-package com.ezasm;
+package com.ezasm.util;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
