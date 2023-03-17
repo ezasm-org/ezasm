@@ -46,7 +46,7 @@ public class StreamManager {
     public void setOutputStream(OutputStream outputStream) {
         this.cursorPosition = 0;
         this.outputStream = outputStream;
-        this.outputWriter = new PrintStream(this.outputStream);
+        this.outputWriter = new PrintStream(this.outputStream, true);
     }
 
     /**
@@ -233,6 +233,7 @@ public class StreamManager {
                 }
             }
 
+            System.out.println((int) sb.charAt(sb.length() - 1));
             return sb.toString();
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
