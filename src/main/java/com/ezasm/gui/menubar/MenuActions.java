@@ -50,6 +50,7 @@ public class MenuActions {
         } else {
             try {
                 FileIO.writeFile(fileToUpdate, Window.getInstance().getEditor().getText());
+                return true;
             } catch (IOException e) {
                 promptWarningDialog("Error Saving File",
                         String.format("There was an error saving to '%s'", fileToUpdate.getName()));
