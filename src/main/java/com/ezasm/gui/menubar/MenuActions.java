@@ -115,6 +115,7 @@ public class MenuActions {
         }
     }
 
+    // All the actions used to do these things
     public static Action saveAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {

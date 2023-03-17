@@ -194,6 +194,13 @@ public class Window {
         registerKeystroke("loadOutputAction", loadOutputKeyStroke, MenuActions.loadOutputAction);
     }
 
+    /**
+     * Registers a hotkey and the associated action
+     *
+     * @param actionName name of action (internal only)
+     * @param pnemonic   the KeyStroke in question
+     * @param action     the Action in question (usually located in MenuActions)
+     */
     private void registerKeystroke(String actionName, KeyStroke pnemonic, Action action) {
         inputMap.put(pnemonic, actionName);
         actionMap.put(actionName, action);
