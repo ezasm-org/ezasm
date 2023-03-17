@@ -6,6 +6,7 @@ import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGUIActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.settings.Config;
+import com.ezasm.gui.util.DialogFactory;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.simulation.Simulator;
@@ -227,6 +228,7 @@ public class Window {
      */
     public boolean parseText() throws ParseException {
         if (!MenuActions.save()) {
+            DialogFactory.promptErrorDialog("Error!", "You must save a file to run it");
             return false;
         }
         simulator.resetAll();
