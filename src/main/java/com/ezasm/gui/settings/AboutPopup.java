@@ -1,7 +1,7 @@
 package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.util.Properties;
 
 import javax.swing.*;
@@ -77,7 +77,7 @@ public class AboutPopup {
         textPane.setEditorKit(kit);
         StyleSheet style = kit.getStyleSheet();
         // Set the internal CSS for the editor pane
-        Theme theme = Theme.getTheme(config.getTheme());
+        EditorTheme theme = EditorTheme.getTheme(config.getTheme());
         style.addRule(String.format("p {color:#%s;}", colorCodeHex(theme.foreground())));
         style.addRule(String.format("a {color:#%s;}", colorCodeHex(theme.cyan())));
         style.addRule(String.format("html {background-color: #%s;}", colorCodeHex(theme.background())));
