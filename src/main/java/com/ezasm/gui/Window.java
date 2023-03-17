@@ -2,6 +2,7 @@ package com.ezasm.gui;
 
 import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EzEditorPane;
+import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
@@ -20,7 +21,9 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import java.awt.*;
-import java.io.*;
+import java.awt.event.KeyEvent;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
@@ -48,6 +51,17 @@ public class Window {
 
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
     private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
+
+    ActionMap actionMap;
+    InputMap inputMap;
+    KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+    KeyStroke saveAsKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S,
+            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+    KeyStroke openKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
+    KeyStroke loadInputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_I,
+            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+    KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
+            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 
     protected Window(ISimulator simulator, Config config) {
         instance = this;
@@ -212,6 +226,32 @@ public class Window {
         app.validate();
         app.pack();
         app.setVisible(true);
+
+        inputMap = app.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        actionMap = app.getRootPane().getActionMap();
+
+        registerKeystroke("saveAction", saveKeyStroke, MenuActions::save);
+        registerKeystroke("saveAsAction", saveAsKeyStroke, MenuActions::saveAs);
+        registerKeystroke("openAction", openKeyStroke, MenuActions::load);
+        registerKeystroke("loadInputAction", loadInputKeyStroke, MenuActions::selectInputFile);
+        registerKeystroke("loadOutputAction", loadOutputKeyStroke, MenuActions::selectOutputFile);
+    }
+
+    /**
+     * Registers a hotkey and the associated action
+     *
+     * @param actionName name of action (internal only)
+     * @param mnemonic   the KeyStroke in question
+     * @param action     the action to perform
+     */
+    private void registerKeystroke(String actionName, KeyStroke mnemonic, Runnable action) {
+        inputMap.put(mnemonic, actionName);
+        actionMap.put(actionName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                action.run();
+            }
+        });
     }
 
     public void applyConfiguration(Config config) {
@@ -317,4 +357,5 @@ public class Window {
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
     }
+
 }
