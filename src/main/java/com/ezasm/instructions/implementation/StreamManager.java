@@ -233,7 +233,6 @@ public class StreamManager {
                 }
             }
 
-            System.out.println((int) sb.charAt(sb.length() - 1));
             return sb.toString();
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
