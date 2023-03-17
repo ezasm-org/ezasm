@@ -90,7 +90,7 @@ public class Window {
         if (instance == null) {
             new Window(simulator, config);
             instance.setFileInputStream(new File(inputFilePath));
-            instance.setFileStream(new File(outputFilePath));
+            instance.setFileOutputStream(new File(outputFilePath));
         }
     }
 
@@ -114,7 +114,7 @@ public class Window {
      *
      * @param outputFile the desired file to use for the InputStream.
      */
-    public void setFileStream(File outputFile) {
+    public void setFileOutputStream(File outputFile) {
         try {
             outputFile.createNewFile();
             outputStream = new FileOutputStream(outputFile);

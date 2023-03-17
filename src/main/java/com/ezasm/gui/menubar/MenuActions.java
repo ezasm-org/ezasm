@@ -107,7 +107,7 @@ public class MenuActions {
             if (file != null) {
                 boolean overwrite = promptOverwriteDialog(file);
                 if (overwrite) {
-                    Window.getInstance().setFileStream(file);
+                    Window.getInstance().setFileOutputStream(file);
                 }
             }
         }
