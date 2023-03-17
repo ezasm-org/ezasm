@@ -151,6 +151,5 @@ public class SettingsPopup implements IThemeable {
                 instance.themeInput.setSelectedIndex(0);
             }
         }
-
     }
 }
