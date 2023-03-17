@@ -2,15 +2,10 @@ package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.StringInput;
-import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.TransformationSequence;
-import com.ezasm.util.FileIO;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Represents instructions that involve importing code from other files.
