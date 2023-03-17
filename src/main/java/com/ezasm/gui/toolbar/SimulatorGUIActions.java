@@ -83,7 +83,9 @@ public class SimulatorGUIActions {
         }
         if (state == State.IDLE || state == State.STOPPED) {
             try {
-                Window.getInstance().parseText();
+                if (!Window.getInstance().parseText()) {
+                    return;
+                }
                 System.out.println("** Program starting **");
                 setState(State.PAUSED);
                 startWorker();
@@ -134,8 +136,9 @@ public class SimulatorGUIActions {
      */
     static void start() {
         try {
-            Window.getInstance().getEditor().setEditable(false);
-            Window.getInstance().parseText();
+            if (!Window.getInstance().parseText()) {
+                return;
+            }
             setState(State.RUNNING);
             System.out.println("** Program starting **");
             startWorker();

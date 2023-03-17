@@ -222,14 +222,18 @@ public class Window {
     /**
      * Parses the current text content of the editor pane.
      *
+     * @return true if the file was parsed, false otherwise.
      * @throws ParseException if there are any errors lexing the given text.
      */
-    public void parseText() throws ParseException {
-        MenuActions.save();
+    public boolean parseText() throws ParseException {
+        if (!MenuActions.save()) {
+            return false;
+        }
         simulator.resetAll();
         registerTable.update();
         simulator.addLines(new File(editor.getOpenFilePath()));
         instance.editor.resetHighlighter();
+        return true;
     }
 
     /**

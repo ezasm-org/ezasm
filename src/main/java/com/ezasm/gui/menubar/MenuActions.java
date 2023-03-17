@@ -19,7 +19,7 @@ public class MenuActions {
     /**
      * Runs the action event for save as.
      */
-    public static void saveAs() {
+    public static boolean saveAs() {
         JFileChooser fileChooser = createFileChooser("Save", TEXT_FILE_MASK | EZ_FILE_MASK);
         fileChooser.setSelectedFile(new File("code.ez"));
         int fileChooserOption = fileChooser.showSaveDialog(null);
@@ -30,21 +30,23 @@ public class MenuActions {
                 try {
                     FileIO.writeFile(file, Window.getInstance().getEditor().getText());
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
+                    return true;
                 } catch (IOException e) {
                     promptWarningDialog("Error Saving File",
                             String.format("There was an error saving to '%s'", file.getName()));
                 }
             }
         }
+        return false;
     }
 
     /**
      * Runs the action event for save.
      */
-    public static void save() {
+    public static boolean save() {
         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
         if (!fileToUpdate.exists()) {
-            saveAs();
+            return saveAs();
         } else {
             try {
                 FileIO.writeFile(fileToUpdate, Window.getInstance().getEditor().getText());
@@ -53,12 +55,13 @@ public class MenuActions {
                         String.format("There was an error saving to '%s'", fileToUpdate.getName()));
             }
         }
+        return false;
     }
 
     /**
      * Runs the action event for load.
      */
-    public static void load() {
+    public static boolean load() {
         JFileChooser fileChooser = createFileChooser("Open File", TEXT_FILE_MASK | EZ_FILE_MASK);
         int fileChooserOption = fileChooser.showOpenDialog(null);
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
@@ -68,12 +71,14 @@ public class MenuActions {
                     String content = FileIO.readFile(file);
                     Window.getInstance().getEditor().setText(content);
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
+                    return true;
                 } catch (IOException ex) {
                     promptWarningDialog("Error Loading File",
                             String.format("There was an error loading '%s'", file.getName()));
                 }
             }
         }
+        return false;
     }
 
     /**
