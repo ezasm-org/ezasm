@@ -81,7 +81,7 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
      */
     private String getRemainingString() {
         try {
-            return getText(fixedTextEnd, getText().length() - fixedTextEnd);
+            return getText(fixedTextEnd, getText().length() - fixedTextEnd + 1);
         } catch (BadLocationException ignored) {
         }
         return "";
@@ -135,7 +135,7 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
                     // Legal newline character entered, save previously given text as final input
                     String toBuffer = getRemainingString();
                     console.writeTextToInputStream(toBuffer);
-                    fixedTextEnd += toBuffer.length() + 1;
+                    fixedTextEnd += toBuffer.length();
                 }
             }
 
