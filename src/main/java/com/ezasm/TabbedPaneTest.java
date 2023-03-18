@@ -2,7 +2,6 @@ package com.ezasm;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -16,12 +15,17 @@ import javax.swing.JTextField;
 
 class TabbedPaneTest {
 
+	private static class BoxPanel extends JPanel {
+		private BoxPanel() {
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		}
+	}
+
 	static {
-		
 		//buttonActionListener = new ButtonActionListener();
 		final var popup = new JFrame("EzASM Configurator");
 		popup.setMinimumSize(new Dimension(500, 300));
-		popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popup.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final var themeLabel = new JLabel("Theme");
 		final var themeInput = new JComboBox<>(new String[] { "test1", "test2" });
@@ -33,19 +37,19 @@ class TabbedPaneTest {
 		final var fontInput = new JTextField("font input");
 		final var speedSlider = new JSlider(10, 1000, 69);
 
-		final var generalPanel = new JPanel(new BoxLayout(null, BoxLayout.Y_AXIS));
+		final var generalPanel = new BoxPanel();
 
-		final var fontSizePanel = new JPanel(new FlowLayout());
+		final var fontSizePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		fontSizePanel.add(fontSizeLabel);
 		fontSizePanel.add(fontInput);
 		generalPanel.add(fontSizePanel);
 
-		final var speedPanel = new JPanel(new FlowLayout());
+		final var speedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		speedPanel.add(speedLabel);
 		speedPanel.add(speedSlider);
 		generalPanel.add(speedPanel);
 
-		final var themePanel = new JPanel(new FlowLayout());
+		final var themePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		themePanel.add(themeLabel);
 		themePanel.add(themeInput);
 		generalPanel.add(themePanel);
@@ -53,8 +57,7 @@ class TabbedPaneTest {
 		final var save = new JButton("Save Changes");
 		final var resetDefaults = new JButton("Reset to Defaults");
 
-		final var btnLayout = new FlowLayout(FlowLayout.RIGHT, 5, 5);
-		final var buttonsRow = new JPanel(btnLayout);
+		final var buttonsRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		generalPanel.add(buttonsRow);
 		buttonsRow.add(save);
 		buttonsRow.add(resetDefaults);
