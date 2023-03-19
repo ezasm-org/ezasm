@@ -14,7 +14,6 @@ public class StreamManager {
     private OutputStream outputStream;
     private long cursorPosition;
 
-    private BufferedReader inputReader;
     private PrintStream outputWriter;
 
     /**
@@ -35,7 +34,6 @@ public class StreamManager {
      */
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
-        this.inputReader = new BufferedReader(new InputStreamReader(this.inputStream));
     }
 
     /**
@@ -46,7 +44,7 @@ public class StreamManager {
     public void setOutputStream(OutputStream outputStream) {
         this.cursorPosition = 0;
         this.outputStream = outputStream;
-        this.outputWriter = new PrintStream(this.outputStream);
+        this.outputWriter = new PrintStream(this.outputStream, true);
     }
 
     /**
@@ -164,7 +162,7 @@ public class StreamManager {
         try {
             int c;
             do {
-                c = inputReader.read();
+                c = inputStream.read();
                 ++cursorPosition;
             } while (Character.isWhitespace(c));
             if (c == -1) {
@@ -187,7 +185,7 @@ public class StreamManager {
             StringBuilder sb = new StringBuilder();
             int c;
             do {
-                c = inputReader.read();
+                c = inputStream.read();
                 ++cursorPosition;
             } while (Character.isWhitespace(c));
             if (c == -1) {
@@ -195,7 +193,7 @@ public class StreamManager {
             }
             do {
                 sb.append((char) c);
-                c = inputReader.read();
+                c = inputStream.read();
                 ++cursorPosition;
             } while (!Character.isWhitespace(c) && c != -1);
 
@@ -216,14 +214,14 @@ public class StreamManager {
         // the EOL delimiter is assumed to be of at least length 1
         try {
             StringBuilder sb = new StringBuilder();
-            int c = inputReader.read();
+            int c = inputStream.read();
             if (c == -1) {
                 throw new SimulationException("Reached the end of file while reading");
             } else {
                 sb.append((char) c);
             }
             while (c != -1) {
-                c = inputReader.read();
+                c = inputStream.read();
                 ++cursorPosition;
                 sb.append((char) c);
 

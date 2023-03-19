@@ -1,6 +1,6 @@
-package com.ezasm.gui.util;
+package com.ezasm.gui.ui;
 
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -9,18 +9,18 @@ import java.awt.*;
 /**
  * ScrollBarUI to apply to scrollbars in this application's GUI.
  */
-public class ScrollBarUI extends BasicScrollBarUI {
+public class EzScrollBarUI extends BasicScrollBarUI {
 
-    private final Theme theme;
+    private final EditorTheme editorTheme;
 
-    public ScrollBarUI(Theme theme) {
-        this.theme = theme;
+    public EzScrollBarUI(EditorTheme editorTheme) {
+        this.editorTheme = editorTheme;
     }
 
     @Override
     protected void configureScrollBarColors() {
-        this.trackColor = theme.currentLine();
-        this.thumbColor = this.trackColor.darker().darker();
+        this.trackColor = editorTheme.currentLine();
+        this.thumbColor = editorTheme.modifyAwayFromBackground(this.trackColor, 2);
         this.thumbDarkShadowColor = this.thumbColor;
     }
 

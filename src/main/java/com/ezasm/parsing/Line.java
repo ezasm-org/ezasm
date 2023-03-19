@@ -1,6 +1,6 @@
 package com.ezasm.parsing;
 
-import com.ezasm.util.Conversion;
+import com.ezasm.instructions.DispatchInstruction;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
@@ -20,7 +20,6 @@ public class Line {
     private final Instruction instruction;
     private final IAbstractTarget[] arguments;
     private final String label;
-    private int registerNum;
 
     /**
      * Creates and validates a line based on the given tokens.
@@ -34,7 +33,6 @@ public class Line {
             this.label = instruction.substring(0, instruction.length() - 1);
             this.instruction = null;
             this.arguments = null;
-            this.registerNum = 0;
             if (arguments != null && arguments.length > 0) {
                 throw new ParseException(String.format("Unexpected token after label: '%s'", arguments[0]));
             }
@@ -43,15 +41,8 @@ public class Line {
             throw new ParseException("Error parsing instruction '" + instruction + "'");
         }
 
-        this.instruction = new Instruction(instruction,
-                InstructionDispatcher.getInstructions().get(instruction).getInvocationTarget());
         this.arguments = new IAbstractTarget[arguments.length];
         this.label = null;
-        if (this.instruction.target().getParameterCount() != arguments.length) {
-            throw new ParseException(
-                    String.format("Incorrect number of arguments for instruction '%s': expected %d but got %d",
-                            instruction, this.instruction.target().getParameterCount(), arguments.length));
-        }
 
         // Determine the type of each argument and create the token respectively
         for (int i = 0; i < arguments.length; ++i) {
@@ -69,15 +60,20 @@ public class Line {
                 // The argument did not match any of the given types
                 throw new ParseException("Error parsing token '" + arguments[i] + "'");
             }
-
-            // Ensure that the given token is of the required type
-            if (!this.instruction.target().getParameterTypes()[i].isInstance(this.arguments[i])) {
-                throw new ParseException("Expected token of type '"
-                        + this.instruction.target().getParameterTypes()[i].getSimpleName().replace("IAbstract", "")
-                        + "' but got '" + this.arguments[i].getClass().getSimpleName() + "' instead");
-            }
-
         }
+
+        if (!InstructionDispatcher.getInstructions().containsKey(instruction)) {
+            throw new ParseException(String.format("Invalid instruction: %s", instruction));
+        }
+
+        DispatchInstruction dispatchInstruction = InstructionDispatcher.getInstruction(instruction, getArgumentTypes());
+
+        if (dispatchInstruction == null) {
+            throw new ParseException(String.format("Instruction %s could not be matched with the given %d arguments ",
+                    instruction, getArgumentTypes().length));
+        }
+
+        this.instruction = new Instruction(instruction, dispatchInstruction.invocationTarget());
     }
 
     /**
@@ -87,6 +83,21 @@ public class Line {
      */
     public Instruction getInstruction() {
         return instruction;
+    }
+
+    /**
+     * Gets the "right-hand side" token types of this line.
+     *
+     * @return the "right-hand side" token types.
+     */
+    public Class<?>[] getArgumentTypes() {
+        Class<?>[] types = new Class[arguments.length];
+
+        for (int i = 0; i < arguments.length; i++) {
+            types[i] = arguments[i].getClass();
+        }
+
+        return types;
     }
 
     /**

@@ -62,9 +62,31 @@ public class TerminalInstructions {
     @Instruction
     public TransformationSequence prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         int address = (int) input1.get(simulator).intValue();
+        int index = 0;
         int maxSize = (int) input2.get(simulator).intValue();
-        String s = simulator.getMemory().readString(address, maxSize);
-        streams.write(s);
+        long current = simulator.getMemory().read(address).intValue();
+
+        while (index < maxSize && current != 0) {
+            streams.write((char) current);
+            index++;
+            current = simulator.getMemory().read(address + index * simulator.getMemory().WORD_SIZE).intValue();
+        }
+
+        return new TransformationSequence();
+    }
+
+    @Instruction
+    public TransformationSequence prints(IAbstractInput input1) throws SimulationException {
+        int address = (int) input1.get(simulator).intValue();
+        int index = 0;
+        long current = simulator.getMemory().read(address).intValue();
+
+        while (current != 0) {
+            streams.write((char) current);
+            index++;
+            current = simulator.getMemory().read(address + index * simulator.getMemory().WORD_SIZE).intValue();
+        }
+
         return new TransformationSequence();
     }
 
@@ -120,6 +142,28 @@ public class TerminalInstructions {
     }
 
     @Instruction
+    public TransformationSequence reads(IAbstractInput input1) throws SimulationException {
+        int address = (int) input1.get(simulator).intValue();
+
+        FileReadTransformation f = new FileReadTransformation(simulator, streams().getCursor());
+        String string = streams.readString();
+
+        int size = string.length();
+        Transformation[] transformations = new Transformation[size + 2];
+        transformations[0] = f.transformation(new RawData(streams().getCursor()));
+
+        for (int i = 1; i < size + 1; ++i) {
+            MemoryTransformable m = new MemoryTransformable(simulator, address);
+            transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
+            address = address + simulator.getMemory().WORD_SIZE;
+        }
+        MemoryTransformable m = new MemoryTransformable(simulator, address);
+        transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
+
+        return new TransformationSequence(transformations);
+    }
+
+    @Instruction
     public TransformationSequence readln(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
         int address = (int) input1.get(simulator).intValue();
         int maxSize = (int) input2.get(simulator).intValue();
@@ -128,10 +172,32 @@ public class TerminalInstructions {
         String string = streams.readLine();
 
         int size = min(maxSize, string.length());
-        Transformation[] transformations = new Transformation[size + 1];
+        Transformation[] transformations = new Transformation[size + 2];
         transformations[0] = f.transformation(new RawData(streams().getCursor()));
 
-        for (int i = 1; i < size; ++i) {
+        for (int i = 1; i < size + 1; ++i) {
+            MemoryTransformable m = new MemoryTransformable(simulator, address);
+            transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
+            address = address + simulator.getMemory().WORD_SIZE;
+        }
+        MemoryTransformable m = new MemoryTransformable(simulator, address);
+        transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
+
+        return new TransformationSequence(transformations);
+    }
+
+    @Instruction
+    public TransformationSequence readln(IAbstractInput input1) throws SimulationException {
+        int address = (int) input1.get(simulator).intValue();
+
+        FileReadTransformation f = new FileReadTransformation(simulator, streams().getCursor());
+        String string = streams.readLine();
+
+        int size = string.length();
+        Transformation[] transformations = new Transformation[size + 2];
+        transformations[0] = f.transformation(new RawData(streams().getCursor()));
+
+        for (int i = 1; i < size + 1; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
             address = address + simulator.getMemory().WORD_SIZE;

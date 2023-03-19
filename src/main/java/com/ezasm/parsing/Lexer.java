@@ -243,7 +243,7 @@ public class Lexer {
     }
 
     /**
-     * Determines if a given token is a valid instruction or not.
+     * Determines if a given prototype is a valid instruction or not.
      *
      * @param token the token String in question.
      * @return true if the token is a registered instruction, false otherwise.
@@ -289,6 +289,7 @@ public class Lexer {
         List<Line> linesLexed = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
+        // individually read lines treating semicolons as line breaks
         for (int i = 0; i < lines.length(); ++i) {
             char c = lines.charAt(i);
             if (c == '\n') {
