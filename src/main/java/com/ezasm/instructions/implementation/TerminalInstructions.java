@@ -111,7 +111,7 @@ public class TerminalInstructions {
         for (int i = 1; i < size; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
-            address = address + simulator.getMemory().WORD_SIZE;
+            address = address + simulator.getMemory().wordSize;
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
         transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
@@ -134,7 +134,7 @@ public class TerminalInstructions {
         for (int i = 1; i < size; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
-            address = address + simulator.getMemory().WORD_SIZE;
+            address = address + simulator.getMemory().wordSize;
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
         transformations[transformations.length - 1] = m.transformation(new RawData('\0'));

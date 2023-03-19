@@ -118,7 +118,7 @@ public class Simulator {
     /**
      * Adds the given line to the program for the corresponding file identifier.
      *
-     * @param line the line to add to the program.
+     * @param line   the line to add to the program.
      * @param fileId a number representing the file in which this line originated.
      */
     private void addLine(Line line, int fileId) throws ParseException {
@@ -127,7 +127,8 @@ public class Simulator {
             if (labelToFileIdAndLineNumber.containsKey(line.getLabel())) {
                 throw new ParseException(String.format("Label %s already declared", line.getLabel()));
             }
-            labelToFileIdAndLineNumber.put(line.getLabel(), new ImmutablePair<>(fileId, (long) fileIdToLineArray.get(fileId).size()));
+            labelToFileIdAndLineNumber.put(line.getLabel(),
+                    new ImmutablePair<>(fileId, (long) fileIdToLineArray.get(fileId).size()));
         }
         fileIdToLineArray.get(fileId).add(line);
         try {
@@ -164,7 +165,7 @@ public class Simulator {
     /**
      * Adds the given lines to the main program. Then adds those lines to the program.
      *
-     * @param lines the lines
+     * @param lines    the lines
      * @param mainFile the main program file.
      */
     public void addLines(List<Line> lines, File mainFile) throws ParseException {

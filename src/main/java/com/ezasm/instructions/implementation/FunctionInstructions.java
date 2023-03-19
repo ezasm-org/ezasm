@@ -72,9 +72,9 @@ public class FunctionInstructions {
         t = t.concatenate(new TransformationSequence(raio.transformation(pc.getData())));
 
         // If we are jumping via a label, push the potentially new file id to the stack
-        t = t.concatenate(memoryInstructions.push(fi));
+        t = t.concatenate(memoryInstructions.consecutivePush(fi, 1));
         if (input instanceof LabelReferenceInput l) {
-            int nextFileId = simulator.getLabelToFileIdAndLineNumber().get(l.getLabel()).getLeft();
+            long nextFileId = l.getLabelFileId(simulator).intValue();
             t = t.concatenate(new TransformationSequence(fiio.transformation(new RawData(nextFileId))));
         }
         t = t.concatenate(jump(input));
@@ -105,7 +105,7 @@ public class FunctionInstructions {
 
         t = t.concatenate(jump(new RegisterInputOutput(Registers.RA)));
         t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.FI)));
-        t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.RA)));
+        t = t.concatenate(memoryInstructions.consecutivePop(new RegisterInputOutput(Registers.RA), 1));
         return t;
     }
 

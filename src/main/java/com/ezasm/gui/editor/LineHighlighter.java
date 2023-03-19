@@ -51,7 +51,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
     /**
      * For a given text component, highlight a certain line (ignoring non program lines).
      *
-     * @param textComp    the text component to highlight.
+     * @param textComp  the text component to highlight.
      * @param simulator the program simulator.
      */
     public void highlight(JTextComponent textComp, Simulator simulator) {

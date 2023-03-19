@@ -33,12 +33,17 @@ public class LabelReferenceInput implements IAbstractInput {
     }
 
     /**
-     * Gets the label string referred to by this input.
+     * Gets the file id referred to by the label.
      *
-     * @return the label string referred to by this input.
+     * @param simulator the program simulator.
+     * @return the file id referred to by the label.
      */
-    public String getLabel() {
-        return label;
+    public RawData getLabelFileId(Simulator simulator) throws SimulationException {
+        try {
+            return new RawData(simulator.getLabelToFileIdAndLineNumber().get(label).getLeft());
+        } catch (NullPointerException e) {
+            throw new SimulationException(String.format("Label '%s' does not exist", label));
+        }
     }
 
     @Override
