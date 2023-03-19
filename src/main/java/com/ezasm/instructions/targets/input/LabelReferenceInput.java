@@ -26,7 +26,7 @@ public class LabelReferenceInput implements IAbstractInput {
     @Override
     public RawData get(Simulator simulator) throws SimulationException {
         try {
-            return new RawData(simulator.getLabels().get(label).getRight());
+            return new RawData(simulator.getLabelToFileIdAndLineNumber().get(label).getRight());
         } catch (NullPointerException e) {
             throw new SimulationException(String.format("Label '%s' does not exist", label));
         }

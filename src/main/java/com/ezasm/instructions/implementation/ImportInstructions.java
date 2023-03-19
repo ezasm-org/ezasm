@@ -33,7 +33,7 @@ public class ImportInstructions {
     @Instruction
     public TransformationSequence _import(StringInput input) throws SimulationException {
         try {
-            simulator.addLinesByFile(input.getString());
+            simulator.importLinesFromFile(input.getString());
         } catch (ParseException e) {
             throw new SimulationException(String.format("Error importing %s: %s", input.getString(), e.getMessage()));
         }

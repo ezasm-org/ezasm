@@ -16,6 +16,8 @@ import java.util.Objects;
  */
 public class FileIO {
 
+    public static final String LINE_SEPARATOR = "\n";
+
     /**
      * Store the home directory for use with file operations default locations.
      */
@@ -39,13 +41,11 @@ public class FileIO {
      */
     public static String readFile(File file) throws IOException {
         if (!file.exists() || !file.canRead()) {
-            throw new IOException(String.format("Could not load specified file %s", file.getName()));
+            throw new IOException(String.format("Could not load specified file %s", file.getPath()));
         }
         BufferedReader reader = new BufferedReader(new FileReader(file));
         StringBuilder sb = new StringBuilder();
-        reader.lines().forEachOrdered(line -> {
-            sb.append(line).append(System.lineSeparator());
-        });
+        reader.lines().forEachOrdered(line -> sb.append(line).append(LINE_SEPARATOR));
         return sb.toString();
     }
 

@@ -190,5 +190,9 @@ class LexerTest {
         assertArrayEquals(Lexer.tokenizeLine(" \t\"\t\"\r\n "), new String[] { "\"\t\"" });
         assertArrayEquals(Lexer.tokenizeLine("\"''\""), new String[] { "\"''\"" });
         assertArrayEquals(Lexer.tokenizeLine("\"'\"'"), new String[] { "\"'\"'" });
+
+        // test backslash '\' escape character
+        assertArrayEquals(Lexer.tokenizeLine("\" \\\" Hello, World! \\\" \""),
+                new String[] { "\" \\\" Hello, World! \\\" \"" });
     }
 }

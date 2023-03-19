@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -42,33 +43,37 @@ public class CommandLineInterface {
      * Constructs a CLI based on the given Simulator for operating on code from a file.
      *
      * @param simulator the given Simulator.
-     * @param file      the file to read code from.
+     * @param path      the file to read code from.
      */
-    public CommandLineInterface(Simulator simulator, String file) {
+    public CommandLineInterface(Simulator simulator, String path) {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(new File(file));
-        } catch (ParseException e) {
-            System.err.println(e.getMessage());
+            File file = new File(path);
+            List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
+            this.simulator.addLines(lines, file);
+        } catch (ParseException | IOException e) {
+            System.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
         }
     }
 
     /**
-     * Constructs a CLI based ont he given Simulator for operating code from a file with redirected input and/or output
+     * Constructs a CLI based ont the given Simulator for operating code from a file with redirected input and/or output
      *
      * @param simulator      the given Simulator.
      * @param file           the file to read code from.
      * @param inputFilePath  the file to read the input from.
      * @param outputFilePath the file to write the output to.
      */
-    public CommandLineInterface(Simulator simulator, String file, String inputFilePath, String outputFilePath) {
+    public CommandLineInterface(Simulator simulator, String path, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(new File(file));
-        } catch (ParseException e) {
+            File file = new File(path);
+            List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
+            this.simulator.addLines(lines, file);
+        } catch (ParseException | IOException e) {
             System.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
         }

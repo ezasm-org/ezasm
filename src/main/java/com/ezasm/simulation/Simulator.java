@@ -26,19 +26,20 @@ import java.util.*;
  */
 public class Simulator {
 
+    public static final int MAIN_FILE_IDENTIFIER = 0;
+
     private final Memory memory;
     private final Registers registers;
     private final InstructionDispatcher instructionDispatcher;
-    private final Register pc;
 
-    private final Map<String, List<Line>> linesByFileMap;
-    private final Map<String, Pair<String, Long>> labels;
+    private final Map<String, Integer> fileToIdentifier;
+    private final Map<Integer, List<Line>> fileIdToLineArray;
+    private final Map<String, Pair<Integer, Long>> labelToFileIdAndLineNumber;
     private final Deque<TransformationSequence> transforms;
-    private final Deque<String> fileCallstack;
 
+    private final Register pc;
+    private final Register fi;
     private String executionDirectory;
-    private String mainFile;
-    private String currentFile;
 
     /**
      * Constructs a Simulator with the given word size and memory size specifications.
@@ -49,14 +50,17 @@ public class Simulator {
     public Simulator(int wordSize, int memorySize) {
         this.memory = new Memory(wordSize, memorySize);
         this.registers = new Registers(wordSize);
-        this.linesByFileMap = new HashMap<>();
-        this.labels = new HashMap<>();
-        this.transforms = new ArrayDeque<>();
-        this.fileCallstack = new ArrayDeque<>();
-        this.mainFile = "/";
-        this.currentFile = mainFile;
         this.instructionDispatcher = new InstructionDispatcher(this);
+
+        this.fileToIdentifier = new HashMap<>();
+        this.fileIdToLineArray = new HashMap<>();
+        this.labelToFileIdAndLineNumber = new HashMap<>();
+        this.transforms = new ArrayDeque<>();
+
         this.pc = registers.getRegister(Registers.PC);
+        this.fi = registers.getRegister(Registers.FI);
+        this.executionDirectory = "";
+
         initialize();
     }
 
@@ -65,6 +69,7 @@ public class Simulator {
      */
     private void initialize() {
         registers.getRegister(Registers.SP).setLong(memory.initialStackPointer());
+        fi.setLong(MAIN_FILE_IDENTIFIER);
     }
 
     /**
@@ -80,12 +85,15 @@ public class Simulator {
      */
     public void resetAll() {
         resetData();
-        linesByFileMap.clear();
-        labels.clear();
+        fileToIdentifier.clear();
+        fileIdToLineArray.clear();
+        labelToFileIdAndLineNumber.clear();
         transforms.clear();
-        fileCallstack.clear();
         initialize();
-        currentFile = mainFile;
+    }
+
+    private List<Line> currentFileLines() {
+        return fileIdToLineArray.get((int) fi.getLong());
     }
 
     /**
@@ -94,7 +102,7 @@ public class Simulator {
      * @return true if the program has run off of the end of the code as in program completion, false otherwise.
      */
     public boolean isDone() {
-        return linesByFileMap.isEmpty() || pc.getLong() == linesByFileMap.get(currentFile).size();
+        return fileIdToLineArray.isEmpty() || pc.getLong() == currentFileLines().size();
     }
 
     /**
@@ -104,33 +112,24 @@ public class Simulator {
      */
     public boolean isError() {
         long line = pc.getLong();
-        return !linesByFileMap.isEmpty() && (line > linesByFileMap.get(currentFile).size() || line < 0);
+        return !fileIdToLineArray.isEmpty() && (line > currentFileLines().size() || line < 0);
     }
 
     /**
-     * Adds the given line to the program.
+     * Adds the given line to the program for the corresponding file identifier.
      *
      * @param line the line to add to the program.
+     * @param fileId a number representing the file in which this line originated.
      */
-    public void addLine(Line line) throws ParseException {
-        addLine(line, currentFile);
-    }
-
-    /**
-     * Adds the given line to the program.
-     *
-     * @param line the line to add to the program.
-     * @param file the file in which this line originated.
-     */
-    private void addLine(Line line, String file) throws ParseException {
-        linesByFileMap.computeIfAbsent(file, k -> new ArrayList<>());
+    private void addLine(Line line, int fileId) throws ParseException {
+        fileIdToLineArray.computeIfAbsent(fileId, k -> new ArrayList<>());
         if (line.isLabel()) {
-            if (labels.containsKey(line.getLabel())) {
+            if (labelToFileIdAndLineNumber.containsKey(line.getLabel())) {
                 throw new ParseException(String.format("Label %s already declared", line.getLabel()));
             }
-            labels.put(line.getLabel(), new ImmutablePair<>(file, (long) linesByFileMap.get(file).size()));
+            labelToFileIdAndLineNumber.put(line.getLabel(), new ImmutablePair<>(fileId, (long) fileIdToLineArray.get(fileId).size()));
         }
-        linesByFileMap.get(file).add(line);
+        fileIdToLineArray.get(fileId).add(line);
         try {
             memory.addStringImmediates(line.getStringImmediates());
         } catch (SimulationException e) {
@@ -143,16 +142,19 @@ public class Simulator {
      *
      * @param file the relative path from the main file to the file to read lines from.
      */
-    public void addLinesByFile(String file) throws ParseException {
+    public void importLinesFromFile(String file) throws ParseException {
+        String absoluteFilePath = executionDirectory + File.separator + file;
+        if (fileToIdentifier.containsKey(absoluteFilePath)) {
+            return;
+        }
+        int fileId = fileToIdentifier.size();
+        fileToIdentifier.put(absoluteFilePath, fileId);
+
         try {
-            String absoluteFilePath = String.format("%s%s%s", executionDirectory, File.separator, file);
-            if (linesByFileMap.containsKey(absoluteFilePath)) {
-                return;
-            }
             String contentText = FileIO.readFile(new File(absoluteFilePath));
             List<Line> content = Lexer.parseLines(contentText);
             for (Line line : content) {
-                addLine(line, absoluteFilePath);
+                addLine(line, fileId);
             }
         } catch (IOException e) {
             throw new ParseException(e.getMessage());
@@ -160,15 +162,19 @@ public class Simulator {
     }
 
     /**
-     * Parses the given text as a multi-line String. Then adds those lines to the program.
+     * Adds the given lines to the main program. Then adds those lines to the program.
      *
-     * @param file the main program file.
+     * @param lines the lines
+     * @param mainFile the main program file.
      */
-    public void addLines(File file) throws ParseException {
-        file = file.getAbsoluteFile();
-        currentFile = mainFile = file.getAbsolutePath();
-        executionDirectory = file.getParent();
-        addLinesByFile(file.getName());
+    public void addLines(List<Line> lines, File mainFile) throws ParseException {
+        String parent = mainFile.getParent();
+        parent = Objects.requireNonNullElse(parent, "");
+        this.executionDirectory = parent;
+        fileToIdentifier.put(mainFile.getAbsolutePath(), MAIN_FILE_IDENTIFIER);
+        for (Line line : lines) {
+            addLine(line, MAIN_FILE_IDENTIFIER);
+        }
     }
 
     /**
@@ -205,7 +211,7 @@ public class Simulator {
      */
     public void executeLineFromPC() throws SimulationException {
         int lineNumber = validatePC();
-        runLine(linesByFileMap.get(currentFile).get(lineNumber));
+        runLine(currentFileLines().get(lineNumber));
         validatePC();
     }
 
@@ -244,7 +250,7 @@ public class Simulator {
      * @return the last valid program counter.
      */
     public long endPC() {
-        return linesByFileMap.get(currentFile).size() - 1;
+        return currentFileLines().size() - 1;
     }
 
     /**
@@ -260,59 +266,12 @@ public class Simulator {
     }
 
     /**
-     * Adds a new file as the top element of the file switch stack.
-     *
-     * @param file the new top element of the file switch stack.
-     */
-    public void pushFileSwitch(String file) {
-        fileCallstack.push(currentFile);
-        currentFile = file;
-    }
-
-    /**
-     * Gets and removes the top element of the file switch stack.
-     *
-     * @return the top element of the file switch stack.
-     */
-    public String popFileSwitch() {
-        currentFile = fileCallstack.pop();
-        return currentFile;
-    }
-
-    /**
-     * Gets the top element of the file switch stack.
-     *
-     * @return the top element of the file switch stack.
-     */
-    public String peekFileSwitch() {
-        return fileCallstack.peek();
-    }
-
-    /**
-     * Gets the program's currently executing file.
-     *
-     * @return the program's currently executing file file if it exists, "/" otherwise.
-     */
-    public String getCurrentFile() {
-        return currentFile;
-    }
-
-    /**
-     * Gets the program's main file.
-     *
-     * @return the program's main file if it exists, "/" otherwise.
-     */
-    public String getMainFile() {
-        return mainFile;
-    }
-
-    /**
      * Get the labels mapping for the simulator
      *
      * @return the label mapping.
      */
-    public Map<String, Pair<String, Long>> getLabels() {
-        return labels;
+    public Map<String, Pair<Integer, Long>> getLabelToFileIdAndLineNumber() {
+        return labelToFileIdAndLineNumber;
     }
 
     /**

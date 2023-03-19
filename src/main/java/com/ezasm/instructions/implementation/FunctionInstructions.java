@@ -8,7 +8,6 @@ import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
-import com.ezasm.simulation.transform.transformable.FileTransformable;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.util.RawData;
 
@@ -64,17 +63,22 @@ public class FunctionInstructions {
     public TransformationSequence call(IAbstractInput input) throws SimulationException {
         RegisterInputOutput ra = new RegisterInputOutput(Registers.RA);
         InputOutputTransformable raio = new InputOutputTransformable(simulator, ra);
+        RegisterInputOutput fi = new RegisterInputOutput(Registers.FI);
+        InputOutputTransformable fiio = new InputOutputTransformable(simulator, fi);
         Register pc = simulator.getRegisters().getRegister(Registers.PC);
         TransformationSequence t = new TransformationSequence();
+
         t = t.concatenate(memoryInstructions.push(ra));
         t = t.concatenate(new TransformationSequence(raio.transformation(pc.getData())));
-        t = t.concatenate(jump(input));
+
+        // If we are jumping via a label, push the potentially new file id to the stack
+        t = t.concatenate(memoryInstructions.push(fi));
         if (input instanceof LabelReferenceInput l) {
-            String nextFile = simulator.getLabels().get(l.getLabel()).getLeft();
-            FileTransformable fileTransformable = new FileTransformable(simulator, nextFile);
-            simulator.getLabels().get(l.getLabel());
-            t = t.concatenate(new TransformationSequence(fileTransformable.transformation(new RawData(0))));
+            int nextFileId = simulator.getLabelToFileIdAndLineNumber().get(l.getLabel()).getLeft();
+            t = t.concatenate(new TransformationSequence(fiio.transformation(new RawData(nextFileId))));
         }
+        t = t.concatenate(jump(input));
+
         return t;
     }
 
@@ -98,10 +102,10 @@ public class FunctionInstructions {
     @Instruction
     public TransformationSequence _return() throws SimulationException {
         TransformationSequence t = new TransformationSequence();
+
         t = t.concatenate(jump(new RegisterInputOutput(Registers.RA)));
+        t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.FI)));
         t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.RA)));
-        FileTransformable fileTransformable = new FileTransformable(simulator, simulator.peekFileSwitch());
-        t = t.concatenate(new TransformationSequence(fileTransformable.transformation(new RawData(1))));
         return t;
     }
 

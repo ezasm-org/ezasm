@@ -49,14 +49,14 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
     }
 
     /**
-     * For a given text component, highlight a certain line (ignore non program lines)
+     * For a given text component, highlight a certain line (ignoring non program lines).
      *
-     * @param textComp    the text component to highlight
-     * @param line_number which program line to highlight
+     * @param textComp    the text component to highlight.
+     * @param simulator the program simulator.
      */
     public void highlight(JTextComponent textComp, Simulator simulator) {
         int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
-        if (simulator.getCurrentFile().equals(simulator.getMainFile())) {
+        if (simulator.getRegisters().getRegister(Registers.FI).getLong() == Simulator.MAIN_FILE_IDENTIFIER) {
             try {
                 textComp.getHighlighter().addHighlight(startLineNums.get(lineNumber), endLineNums.get(lineNumber),
                         this);

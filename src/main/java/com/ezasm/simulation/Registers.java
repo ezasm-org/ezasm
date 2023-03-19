@@ -7,24 +7,25 @@ import java.util.*;
  */
 public class Registers {
 
-    private static final int REGISTERS_COUNT = 32;
-    private static final int FP_REGISTERS_COUNT = 22;
-    private static final int TOTAL_REGISTERS = REGISTERS_COUNT + FP_REGISTERS_COUNT;
+    private static final int REGISTERS_COUNT = 34;
 
     private final Register[] registers;
 
     // Base registers
-    public static final String ZERO = "ZERO";
-    public static final String PC = "PC";
-    public static final String SP = "SP";
-    public static final String RA = "RA";
-    public static final String A0 = "A0";
-    public static final String A1 = "A1";
-    public static final String A2 = "A2";
-    public static final String R0 = "R0";
-    public static final String R1 = "R1";
-    public static final String R2 = "R2";
+    public static final String ZERO = "ZERO"; // The number zero
+    public static final String PC = "PC"; // Program counter
+    public static final String FI = "FI"; // File Identifier
+    public static final String SP = "SP"; // Stack pointer
+    public static final String RA = "RA"; // Return address
+    public static final String PI = "PI"; // Program identifier
+    public static final String A0 = "A0"; // Argument 0
+    public static final String A1 = "A1"; // Argument 1
+    public static final String A2 = "A2"; // Argument 2
+    public static final String R0 = "R0"; // Return 0
+    public static final String R1 = "R1"; // Return 1
+    public static final String R2 = "R2"; // Return 2
 
+    // Saved registers
     public static final String S0 = "S0";
     public static final String S1 = "S1";
     public static final String S2 = "S2";
@@ -36,6 +37,7 @@ public class Registers {
     public static final String S8 = "S8";
     public static final String S9 = "S9";
 
+    // Temporary registers
     public static final String T0 = "T0";
     public static final String T1 = "T1";
     public static final String T2 = "T2";
@@ -47,106 +49,11 @@ public class Registers {
     public static final String T8 = "T8";
     public static final String T9 = "T9";
 
-    public static final String LO = "LO";
-    public static final String HI = "HI";
-
-    // Floating point registers
-    public static final String FS0 = "FS0";
-    public static final String FS1 = "FS1";
-    public static final String FS2 = "FS2";
-    public static final String FS3 = "FS3";
-    public static final String FS4 = "FS4";
-    public static final String FS5 = "FS5";
-    public static final String FS6 = "FS6";
-    public static final String FS7 = "FS7";
-    public static final String FS8 = "FS8";
-    public static final String FS9 = "FS9";
-
-    public static final String FT0 = "FT0";
-    public static final String FT1 = "FT1";
-    public static final String FT2 = "FT2";
-    public static final String FT3 = "FT3";
-    public static final String FT4 = "FT4";
-    public static final String FT5 = "FT5";
-    public static final String FT6 = "FT6";
-    public static final String FT7 = "FT7";
-    public static final String FT8 = "FT8";
-    public static final String FT9 = "FT9";
-
-    public static final String FLO = "FLO";
-    public static final String FHI = "FHI";
+    public static final String LO = "LO"; // Special "LOW" register to store the lower part of a multiplication
+    public static final String HI = "HI"; // Special "HIGH" register to store the higher part of a multiplication
 
     public static Map<String, Integer> registerByString;
     public static Map<Integer, String> registerByInt;
-    private static final int FLOAT_OFFSET = REGISTERS_COUNT;
-
-    /**
-     * Initialization function for the registers. Creates both mapping of register number to String and vice-versa.
-     */
-    private static void initialize() {
-        registerByString = new HashMap<>(TOTAL_REGISTERS);
-        registerByInt = new HashMap<>(TOTAL_REGISTERS);
-        addRegister(ZERO, 0);
-        addRegister(PC, 1);
-        addRegister(SP, 2);
-        addRegister(RA, 3);
-        addRegister(A0, 4);
-        addRegister(A1, 5);
-        addRegister(A2, 6);
-        addRegister(R0, 7);
-        addRegister(R1, 8);
-        addRegister(R2, 9);
-
-        addRegister(S0, 10);
-        addRegister(S1, 11);
-        addRegister(S2, 12);
-        addRegister(S3, 13);
-        addRegister(S4, 14);
-        addRegister(S5, 15);
-        addRegister(S6, 16);
-        addRegister(S7, 17);
-        addRegister(S8, 18);
-        addRegister(S9, 19);
-
-        addRegister(T0, 20);
-        addRegister(T1, 21);
-        addRegister(T2, 22);
-        addRegister(T3, 23);
-        addRegister(T4, 24);
-        addRegister(T5, 25);
-        addRegister(T6, 26);
-        addRegister(T7, 27);
-        addRegister(T8, 28);
-        addRegister(T9, 29);
-
-        addRegister(LO, 30);
-        addRegister(HI, 31);
-
-        addRegister(FS0, 0 + FLOAT_OFFSET);
-        addRegister(FS1, 1 + FLOAT_OFFSET);
-        addRegister(FS2, 2 + FLOAT_OFFSET);
-        addRegister(FS3, 3 + FLOAT_OFFSET);
-        addRegister(FS4, 4 + FLOAT_OFFSET);
-        addRegister(FS5, 5 + FLOAT_OFFSET);
-        addRegister(FS6, 6 + FLOAT_OFFSET);
-        addRegister(FS7, 7 + FLOAT_OFFSET);
-        addRegister(FS8, 8 + FLOAT_OFFSET);
-        addRegister(FS9, 9 + FLOAT_OFFSET);
-
-        addRegister(FT0, 10 + FLOAT_OFFSET);
-        addRegister(FT1, 11 + FLOAT_OFFSET);
-        addRegister(FT2, 12 + FLOAT_OFFSET);
-        addRegister(FT3, 13 + FLOAT_OFFSET);
-        addRegister(FT4, 14 + FLOAT_OFFSET);
-        addRegister(FT5, 15 + FLOAT_OFFSET);
-        addRegister(FT6, 16 + FLOAT_OFFSET);
-        addRegister(FT7, 17 + FLOAT_OFFSET);
-        addRegister(FT8, 18 + FLOAT_OFFSET);
-        addRegister(FT9, 19 + FLOAT_OFFSET);
-
-        addRegister(FLO, 20 + FLOAT_OFFSET);
-        addRegister(FHI, 21 + FLOAT_OFFSET);
-    }
 
     /*
      * Initializes the registers and mappings in a static context whenever this code is loaded. This prevents the
@@ -157,15 +64,28 @@ public class Registers {
     }
 
     /**
+     * Initialization function for the registers. Creates both mapping of register number to String and vice-versa.
+     */
+    private static void initialize() {
+        registerByString = new HashMap<>(REGISTERS_COUNT);
+        registerByInt = new HashMap<>(REGISTERS_COUNT);
+        addRegisters(ZERO, PC, FI, SP, RA, PI, A0, A1, A2, R0, R1, R2); // Add base registers
+        addRegisters(S0, S1, S2, S3, S4, S5, S6, S7, S8, S9); // Add saved registers
+        addRegisters(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9); // Add temporary registers
+        addRegisters(LO, HI); // Add special registers
+    }
+
+    /**
      * Adds a given register to the static register mappings.
      *
-     * @param name   the name of the register to add.
-     * @param number the reference number of the register to add.
+     * @param names the names of all the register to add.
      */
-    private static void addRegister(String name, int number) {
-        assert number < TOTAL_REGISTERS && number >= 0;
-        registerByString.put(name.toLowerCase(), number);
-        registerByInt.put(number, name.toLowerCase());
+    private static void addRegisters(String... names) {
+        int base = registerByInt.size();
+        for (int i = base; i < base + names.length; ++i) {
+            registerByString.put(names[i - base].toLowerCase(), i);
+            registerByInt.put(i, names[i - base].toLowerCase());
+        }
     }
 
     /**
@@ -235,6 +155,7 @@ public class Registers {
      */
     public static String getRegisterName(int register) {
         if (!isRegister(register)) {
+            System.out.println(register);
             // TODO add appropriate exception
             throw new RuntimeException();
         }
@@ -247,7 +168,7 @@ public class Registers {
      * @param wordSize the given word size in bytes.
      */
     public Registers(int wordSize) {
-        registers = new Register[TOTAL_REGISTERS];
+        registers = new Register[REGISTERS_COUNT];
         for (Integer i : registerByInt.keySet()) {
             registers[i] = new Register(i, wordSize);
         }
@@ -269,7 +190,7 @@ public class Registers {
      * @return the register obtained.
      */
     public Register getRegister(int register) {
-        if (register < 0 || register > TOTAL_REGISTERS) {
+        if (register < 0 || register > REGISTERS_COUNT) {
             // TODO add appropriate exception
             throw new RuntimeException();
         }

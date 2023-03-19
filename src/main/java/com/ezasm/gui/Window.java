@@ -9,6 +9,7 @@ import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.DialogFactory;
 import com.ezasm.gui.util.Theme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
+import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
@@ -223,19 +224,13 @@ public class Window {
     /**
      * Parses the current text content of the editor pane.
      *
-     * @return true if the file was parsed, false otherwise.
      * @throws ParseException if there are any errors lexing the given text.
      */
-    public boolean parseText() throws ParseException {
-        if (!MenuActions.save()) {
-            DialogFactory.promptErrorDialog("Error!", "You must save a file to run it");
-            return false;
-        }
+    public void parseText() throws ParseException {
         simulator.resetAll();
         registerTable.update();
-        simulator.addLines(new File(editor.getOpenFilePath()));
+        simulator.addLines(Lexer.parseLines(editor.getText()), new File(editor.getOpenFilePath()));
         instance.editor.resetHighlighter();
-        return true;
     }
 
     /**

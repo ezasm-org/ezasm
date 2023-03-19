@@ -375,10 +375,17 @@ public class Lexer {
         StringBuilder currentToken = new StringBuilder();
         boolean inSingleQuotes = false;
         boolean inDoubleQuotes = false;
+        boolean escapeNext = false;
 
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
-            if (c == '\'' && !inDoubleQuotes) {
+            if (escapeNext) {
+                escapeNext = false;
+                currentToken.append(c);
+            } else if (c == '\\') {
+                escapeNext = true;
+                currentToken.append(c);
+            } else if (c == '\'' && !inDoubleQuotes) {
                 inSingleQuotes = !inSingleQuotes;
                 currentToken.append(c);
             } else if (c == '\"' && !inSingleQuotes) {
