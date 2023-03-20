@@ -249,4 +249,13 @@ public class EditorPane extends JPanel implements IThemeable {
             textArea.repaint();
         }
     }
+
+    /**
+     * Set tab size from the setting changes
+     * 
+     * @param size the size of tab to change to
+     */
+    public void resizeTabSize(int size){
+        textArea.setTabSize(size);
+    }
 }

@@ -222,6 +222,7 @@ public class Window {
         registerTable.applyTheme(font, theme);
         ToolbarFactory.applyTheme(font, theme, toolbar);
         editor.applyTheme(font, theme);
+        editor.resizeTabSize(config.getTabSize());
         SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
     }
 

@@ -20,17 +20,19 @@ public class SettingsPopup implements IThemeable {
     private static final String FONTSIZE = "Font Size";
     private static final String SIMULATION_SPEED = "Instruction Delay";
     private static final String THEME = "Theme";
+    private static final String TABSIZE = "Tab Size";
     public static final String SAVE = "Save Changes";
     public static final String RESET = "Reset to Defaults";
 
     private JFrame popup;
     private JSlider speedSlider;
     private JTextField fontInput;
+    private JTextField tabSizeInput;
     private JComboBox themeInput;
     private JPanel grid;
     private JButton resetDefaults;
     private JButton save;
-    private JLabel speedLabel, fontSizeLabel, themeLabel;
+    private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel;
     private BorderLayout layout;
 
     private Config config;
@@ -60,14 +62,17 @@ public class SettingsPopup implements IThemeable {
         themeLabel.setOpaque(true);
         fontSizeLabel.setOpaque(true);
         speedLabel.setOpaque(true);
+        tabSizeLabel.setOpaque(true);
         Theme.applyFontAndTheme(speedSlider, font, theme);
         Theme.applyFontAndTheme(themeInput, font, theme);
         Theme.applyFontThemeBorder(fontInput, font, theme, border);
+        Theme.applyFontThemeBorder(tabSizeInput, font, theme, border);
         Theme.applyFontThemeBorder(save, font, theme, buttonBorder);
         Theme.applyFontThemeBorder(resetDefaults, font, theme, buttonBorder);
         Theme.applyFontAndTheme(speedLabel, font, theme);
         Theme.applyFontAndTheme(fontSizeLabel, font, theme);
         Theme.applyFontAndTheme(themeLabel, font, theme);
+        Theme.applyFontAndTheme(tabSizeLabel, font, theme);
     }
 
     private void initialize() {
@@ -88,6 +93,9 @@ public class SettingsPopup implements IThemeable {
         fontInput = new JTextField(String.valueOf(config.getFontSize()));
         speedSlider = new JSlider(10, 1000, config.getSimSpeed());
 
+        tabSizeLabel = new JLabel(TABSIZE);
+        tabSizeInput = new JTextField(String.valueOf(config.getTabSize()));
+
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
         grid = new JPanel(gridLayout);
@@ -97,6 +105,8 @@ public class SettingsPopup implements IThemeable {
         grid.add(speedSlider);
         grid.add(themeLabel);
         grid.add(themeInput);
+        grid.add(tabSizeLabel);
+        grid.add(tabSizeInput);
 
         save = new JButton(SAVE);
         resetDefaults = new JButton(RESET);
@@ -133,6 +143,12 @@ public class SettingsPopup implements IThemeable {
                     JOptionPane.showMessageDialog(new JFrame(), "Bad format for font size, please input a number");
                     return;
                 }
+                try{
+                    instance.config.setTabSize(Integer.parseInt(instance.tabSizeInput.getText()));
+                } catch (NumberFormatException er){
+                    JOptionPane.showMessageDialog(new JFrame(), "Bad format for tab size, please input a number");
+                    return;
+                }
                 instance.config.setSimSpeed(instance.speedSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
@@ -144,6 +160,7 @@ public class SettingsPopup implements IThemeable {
                 instance.config.resetDefaults();
                 instance.fontInput.setText(Config.DEFAULT_FONT_SIZE);
                 instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
+                instance.tabSizeInput.setText(Config.DEFAULT_TAB_SIZE);
                 instance.themeInput.setSelectedIndex(0);
             }
         }

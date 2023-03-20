@@ -32,9 +32,11 @@ public class Config {
     public static final String FONT_SIZE = "FONT_SIZE";
     public static final String SIMULATION_SPEED = "SIMULATION_SPEED";
     public static final String THEME = "THEME";
+    public static final String TAB_SIZE = "TAB_SIZE";
 
     // All of EzASM's defaults
     public static final String DEFAULT_FONT_SIZE = "12";
+    public static final String DEFAULT_TAB_SIZE = "2";
     public static final String DEFAULT_SIMULATION_SPEED = "250";
     public static final String DEFAULT_THEME = "Light";
     public static final String DEFAULT_FONT = "Monospaced"; // unclear if this will be allowed to change
@@ -52,6 +54,7 @@ public class Config {
             props.setProperty(FONT_SIZE, DEFAULT_FONT_SIZE);
             props.setProperty(SIMULATION_SPEED, DEFAULT_SIMULATION_SPEED);
             props.setProperty(THEME, DEFAULT_THEME);
+            props.setProperty(TAB_SIZE, DEFAULT_TAB_SIZE);
             saveChanges();
         }
     }
@@ -80,10 +83,19 @@ public class Config {
         props.setProperty(SIMULATION_SPEED, String.valueOf(speed));
     }
 
+    public int getTabSize(){
+        return Integer.parseInt(props.getProperty(TAB_SIZE));
+    }
+
+    public void setTabSize(int size) {
+        props.setProperty(TAB_SIZE, String.valueOf(size));
+    }
+
     public void resetDefaults() {
         this.setTheme(DEFAULT_THEME);
         this.setFontSize(Integer.parseInt(DEFAULT_FONT_SIZE));
         this.setSimSpeed(Integer.parseInt(DEFAULT_SIMULATION_SPEED));
+        this.setTabSize(Integer.parseInt(DEFAULT_TAB_SIZE));
     }
 
     public void saveChanges() {
