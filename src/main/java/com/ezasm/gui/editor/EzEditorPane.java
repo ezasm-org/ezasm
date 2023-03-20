@@ -4,7 +4,9 @@ import javax.swing.*;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
+import com.ezasm.gui.util.PatchedRSyntaxTextArea;
 import com.ezasm.simulation.Registers;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -13,16 +15,16 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.ezasm.gui.util.Theme.applyFontAndTheme;
+import static com.ezasm.gui.util.EditorTheme.applyFontAndTheme;
 
 import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
-public class EditorPane extends JPanel implements IThemeable {
+public class EzEditorPane extends JPanel implements IThemeable {
 
-    private final RSyntaxTextArea textArea;
+    private final PatchedRSyntaxTextArea textArea;
     private final RTextScrollPane scrollPane;
     private LineHighlighter highlighter;
     private String openFilePath;
@@ -35,12 +37,12 @@ public class EditorPane extends JPanel implements IThemeable {
     /**
      * Creates a text edit field using RSyntaxTextArea features.
      */
-    public EditorPane() {
+    public EzEditorPane() {
         super();
 
         ((AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance()).putMapping(EZASM_TOKEN_MAKER_NAME,
                 EzTokenMaker.class.getName());
-        textArea = new RSyntaxTextArea();
+        textArea = new PatchedRSyntaxTextArea();
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);
         textArea.setCodeFoldingEnabled(false);
@@ -54,53 +56,52 @@ public class EditorPane extends JPanel implements IThemeable {
         setLayout(new BorderLayout());
         add(scrollPane);
 
-        String theme = Window.getInstance().getConfig().getTheme();
-        highlighter = new LineHighlighter(com.ezasm.gui.util.Theme.getTheme(theme).yellow(), textArea);
+        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
     }
 
     /**
      * Themes the syntax text area according to the given font and theme.
      */
-    private void themeSyntaxTextArea(Font font, com.ezasm.gui.util.Theme newTheme) {
+    private void themeSyntaxTextArea(Font font, EditorTheme newEditorTheme) {
         try {
             // Load a good default theme for things we are not setting
             org.fife.ui.rsyntaxtextarea.Theme theme = org.fife.ui.rsyntaxtextarea.Theme
                     .load(getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/idea.xml"));
 
             // Background and caret theme
-            theme.bgColor = newTheme.background();
-            theme.marginLineColor = newTheme.background();
-            theme.caretColor = newTheme.foreground();
+            theme.bgColor = newEditorTheme.background();
+            theme.marginLineColor = newEditorTheme.background();
+            theme.caretColor = newEditorTheme.foreground();
 
             // Selection does not override the foreground color
-            theme.selectionBG = newTheme.selection();
+            theme.selectionBG = newEditorTheme.selection();
             theme.useSelectionFG = false;
 
             // Line number background theme
-            theme.gutterBackgroundColor = newTheme.modifyAwayFromBackground(newTheme.background());
+            theme.gutterBackgroundColor = newEditorTheme.modifyAwayFromBackground(newEditorTheme.background());
             theme.gutterBorderColor = theme.gutterBackgroundColor;
 
             // Line number theme
             theme.lineNumberFont = font.getFontName();
             theme.lineNumberFontSize = font.getSize();
-            theme.lineNumberColor = newTheme.modifyAwayFromBackground(newTheme.background(), 3);
-            theme.currentLineNumberColor = newTheme.modifyAwayFromBackground(newTheme.background(), 5);
-            theme.currentLineHighlight = newTheme.currentLine();
+            theme.lineNumberColor = newEditorTheme.modifyAwayFromBackground(newEditorTheme.background(), 3);
+            theme.currentLineNumberColor = newEditorTheme.modifyAwayFromBackground(newEditorTheme.background(), 5);
+            theme.currentLineHighlight = newEditorTheme.currentLine();
 
             // Token-specific theme
-            theme.scheme.getStyle(Token.NULL).foreground = newTheme.foreground();
-            theme.scheme.getStyle(Token.IDENTIFIER).foreground = newTheme.foreground();
-            theme.scheme.getStyle(Token.SEPARATOR).foreground = newTheme.foreground();
-            theme.scheme.getStyle(Token.WHITESPACE).foreground = newTheme
-                    .modifyAwayFromBackground(newTheme.currentLine());
-            theme.scheme.getStyle(Token.COMMENT_EOL).foreground = newTheme.comment();
-            theme.scheme.getStyle(Token.LITERAL_CHAR).foreground = newTheme.green();
-            theme.scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = newTheme.green();
-            theme.scheme.getStyle(Token.LITERAL_NUMBER_DECIMAL_INT).foreground = newTheme.orange();
-            theme.scheme.getStyle(Token.RESERVED_WORD).foreground = newTheme.cyan();
-            theme.scheme.getStyle(Token.VARIABLE).foreground = newTheme.pink();
-            theme.scheme.getStyle(Token.ERROR_IDENTIFIER).foreground = newTheme.red();
-            theme.scheme.getStyle(Token.ERROR_NUMBER_FORMAT).foreground = newTheme.red();
+            theme.scheme.getStyle(Token.NULL).foreground = newEditorTheme.foreground();
+            theme.scheme.getStyle(Token.IDENTIFIER).foreground = newEditorTheme.foreground();
+            theme.scheme.getStyle(Token.SEPARATOR).foreground = newEditorTheme.foreground();
+            theme.scheme.getStyle(Token.WHITESPACE).foreground = newEditorTheme
+                    .modifyAwayFromBackground(newEditorTheme.currentLine());
+            theme.scheme.getStyle(Token.COMMENT_EOL).foreground = newEditorTheme.comment();
+            theme.scheme.getStyle(Token.LITERAL_CHAR).foreground = newEditorTheme.green();
+            theme.scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = newEditorTheme.green();
+            theme.scheme.getStyle(Token.LITERAL_NUMBER_DECIMAL_INT).foreground = newEditorTheme.orange();
+            theme.scheme.getStyle(Token.RESERVED_WORD).foreground = newEditorTheme.cyan();
+            theme.scheme.getStyle(Token.VARIABLE).foreground = newEditorTheme.pink();
+            theme.scheme.getStyle(Token.ERROR_IDENTIFIER).foreground = newEditorTheme.red();
+            theme.scheme.getStyle(Token.ERROR_NUMBER_FORMAT).foreground = newEditorTheme.red();
 
             theme.apply(textArea);
             setFont(textArea, font);
@@ -133,13 +134,13 @@ public class EditorPane extends JPanel implements IThemeable {
     /**
      * Applies the proper theming to the editor area.
      */
-    public void applyTheme(Font font, com.ezasm.gui.util.Theme theme) {
-        themeSyntaxTextArea(font, theme);
+    public void applyTheme(Font font, EditorTheme editorTheme) {
+        themeSyntaxTextArea(font, editorTheme);
         setFont(textArea, font);
-        applyFontAndTheme(scrollPane, font, theme);
-        theme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
-        theme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
-        recolorHighlights(theme);
+        applyFontAndTheme(scrollPane, font, editorTheme);
+        editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
+        editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
+        recolorHighlights(editorTheme);
     }
 
     /**
@@ -176,6 +177,7 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void setText(String content) {
         textArea.setText(content);
+        textArea.setCaretPosition(0);
     }
 
     /**
@@ -198,8 +200,6 @@ public class EditorPane extends JPanel implements IThemeable {
 
     /**
      * Highlights a given line number and clears old highlight
-     *
-     * @param line the line to highlight
      */
     public void updateHighlight() {
         removeHighlights(textArea);
@@ -215,16 +215,15 @@ public class EditorPane extends JPanel implements IThemeable {
      */
     public void resetHighlighter() {
         removeHighlights(textArea);
-        String theme = Window.getInstance().getConfig().getTheme();
-        highlighter = new LineHighlighter(com.ezasm.gui.util.Theme.getTheme(theme).yellow(), textArea);
+        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
     }
 
     /**
      * Recolor the current highlight in accordance with the provided theme
      *
-     * @param theme the theme to recolor to
+     * @param editorTheme the theme to recolor to
      */
-    private void recolorHighlights(com.ezasm.gui.util.Theme theme) {
+    private void recolorHighlights(EditorTheme editorTheme) {
         // Store the old highlights
         Highlighter highlight = textArea.getHighlighter();
         Highlighter.Highlight[] highlights = highlight.getHighlights();
@@ -234,7 +233,7 @@ public class EditorPane extends JPanel implements IThemeable {
 
         // init new highlighter with new color
         if (highlights.length > 0) {
-            highlighter = new LineHighlighter(theme.yellow(), textArea);
+            highlighter = new LineHighlighter(editorTheme.yellow(), textArea);
         }
 
         // add new highlights with the new color

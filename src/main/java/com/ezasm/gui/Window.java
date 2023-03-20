@@ -1,12 +1,14 @@
 package com.ezasm.gui;
 
-import com.ezasm.gui.editor.EditorPane;
+import com.ezasm.gui.console.Console;
+import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
-import com.ezasm.gui.toolbar.SimulatorGUIActions;
+import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
+import com.ezasm.gui.tabbedpane.FixedTabbedPane;
 import com.ezasm.gui.settings.Config;
-import com.ezasm.gui.util.Theme;
+import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.ISimulator;
@@ -16,17 +18,17 @@ import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.function.Consumer;
+import java.io.PrintStream;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
@@ -44,8 +46,13 @@ public class Window {
     private JPanel panel;
     private JToolBar toolbar;
     private JMenuBar menubar;
-    private EditorPane editor;
+    private EzEditorPane editor;
     private RegisterTable registerTable;
+    private FixedTabbedPane tools;
+    private Console console;
+
+    private JSplitPane mainSplit;
+    private JSplitPane toolSplit;
 
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
     private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
@@ -101,8 +108,8 @@ public class Window {
     public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
         if (instance == null) {
             new Window(simulator, config);
-            instance.setInputStream(new File(inputFilePath));
-            instance.setOutputStream(new File(outputFilePath));
+            instance.setFileInputStream(new File(inputFilePath));
+            instance.setFileOutputStream(new File(outputFilePath));
         }
     }
 
@@ -111,7 +118,7 @@ public class Window {
      *
      * @param inputFile the desired file to use for the InputStream.
      */
-    public void setInputStream(File inputFile) {
+    public void setFileInputStream(File inputFile) {
         try {
             inputStream = new RandomAccessFileStream(inputFile);
         } catch (IOException e) {
@@ -126,7 +133,7 @@ public class Window {
      *
      * @param outputFile the desired file to use for the InputStream.
      */
-    public void setOutputStream(File outputFile) {
+    public void setFileOutputStream(File outputFile) {
         try {
             outputFile.createNewFile();
             outputStream = new FileOutputStream(outputFile);
@@ -134,6 +141,26 @@ public class Window {
             promptWarningDialog("Error Writing File",
                     String.format("There was an error writing to '%s'\nOperation cancelled", outputFile.getName()));
         }
+        TerminalInstructions.streams().setOutputStream(outputStream);
+    }
+
+    /**
+     * Sets the input stream for program output to the given input stream.
+     *
+     * @param inputStream the output stream to read from.
+     */
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+        TerminalInstructions.streams().setInputStream(inputStream);
+    }
+
+    /**
+     * Sets the output stream for program output to the given output stream.
+     *
+     * @param outputStream the output stream to write to.
+     */
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
         TerminalInstructions.streams().setOutputStream(outputStream);
     }
 
@@ -168,14 +195,33 @@ public class Window {
 
         menubar = MenubarFactory.makeMenuBar();
         toolbar = ToolbarFactory.makeToolbar();
-        editor = new EditorPane();
+        editor = new EzEditorPane();
         registerTable = new RegisterTable(simulator.getRegisters());
+
+        console = new Console();
+        setInputStream(console.getInputStream());
+        setOutputStream(console.getOutputStream());
+        // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
+        System.setIn(inputStream);
+        System.setOut(new PrintStream(outputStream));
+        System.setErr(new PrintStream(console.getErrorStream()));
+
+        tools = new FixedTabbedPane();
+        tools.addTab(console, null, "Console", "Your Console");
+
+        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
+        mainSplit.setResizeWeight(0.8);
+        mainSplit.setUI(new BasicSplitPaneUI());
+        mainSplit.setBorder(null);
+        toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, tools);
+        toolSplit.setResizeWeight(0.75);
+        toolSplit.setUI(new BasicSplitPaneUI());
+        toolSplit.setBorder(null);
 
         app.setJMenuBar(menubar);
         panel.setLayout(new BorderLayout());
         panel.add(toolbar, BorderLayout.PAGE_START);
-        panel.add(editor, BorderLayout.CENTER);
-        panel.add(registerTable, BorderLayout.EAST);
+        panel.add(toolSplit, BorderLayout.CENTER);
 
         ToolbarFactory.setButtonsEnabled(true);
 
@@ -215,15 +261,17 @@ public class Window {
 
     public void applyConfiguration(Config config) {
         this.config = config;
-        Theme theme = Theme.getTheme(config.getTheme());
+        EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
         Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
 
-        panel.setBackground(theme.background());
-        registerTable.applyTheme(font, theme);
-        ToolbarFactory.applyTheme(font, theme, toolbar);
-        editor.applyTheme(font, theme);
+        tools.applyTheme(font, editorTheme);
+        mainSplit.setBackground(editorTheme.background());
+        panel.setBackground(editorTheme.background());
+        registerTable.applyTheme(font, editorTheme);
+        ToolbarFactory.applyTheme(font, editorTheme, toolbar);
+        editor.applyTheme(font, editorTheme);
         editor.resizeTabSize(config.getTabSize());
-        SimulatorGUIActions.setInstructionDelayMS(config.getSimSpeed());
+        SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
     /**
@@ -236,11 +284,29 @@ public class Window {
     }
 
     /**
+     * Gets the theme stored in the instance configuration.
+     *
+     * @return the theme stored in the instance configuration.
+     */
+    public EditorTheme getTheme() {
+        return EditorTheme.getTheme(config.getTheme());
+    }
+
+    /**
+     * Gets this instance's console object.
+     *
+     * @return the instance's console object.
+     */
+    public Console getConsole() {
+        return this.console;
+    }
+
+    /**
      * Gets the instance's editor pane.
      *
      * @return the instance's editor pane.
      */
-    public EditorPane getEditor() {
+    public EzEditorPane getEditor() {
         return editor;
     }
 
