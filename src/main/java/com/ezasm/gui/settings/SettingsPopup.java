@@ -144,6 +144,10 @@ public class SettingsPopup implements IThemeable {
                     return;
                 }
                 try{
+                    if (Integer.parseInt(instance.tabSizeInput.getText()) > 8){
+                        JOptionPane.showMessageDialog(new JFrame(), "Too large, try a number between 1 to 8!");
+                        return;
+                    }
                     instance.config.setTabSize(Integer.parseInt(instance.tabSizeInput.getText()));
                 } catch (NumberFormatException er){
                     JOptionPane.showMessageDialog(new JFrame(), "Bad format for tab size, please input a number");
