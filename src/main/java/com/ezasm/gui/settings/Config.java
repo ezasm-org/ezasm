@@ -83,7 +83,7 @@ public class Config {
         props.setProperty(SIMULATION_SPEED, String.valueOf(speed));
     }
 
-    public int getTabSize(){
+    public int getTabSize() {
         return Integer.parseInt(props.getProperty(TAB_SIZE));
     }
 
