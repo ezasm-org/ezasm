@@ -26,8 +26,8 @@ public class SettingsPopup implements IThemeable {
 
     private JFrame popup;
     private JSlider speedSlider;
+    private JSlider tabSizeSlider;
     private JTextField fontInput;
-    private JTextField tabSizeInput;
     private JComboBox themeInput;
     private JPanel grid;
     private JButton resetDefaults;
@@ -64,9 +64,9 @@ public class SettingsPopup implements IThemeable {
         speedLabel.setOpaque(true);
         tabSizeLabel.setOpaque(true);
         Theme.applyFontAndTheme(speedSlider, font, theme);
+        Theme.applyFontAndTheme(tabSizeSlider, font, theme);
         Theme.applyFontAndTheme(themeInput, font, theme);
         Theme.applyFontThemeBorder(fontInput, font, theme, border);
-        Theme.applyFontThemeBorder(tabSizeInput, font, theme, border);
         Theme.applyFontThemeBorder(save, font, theme, buttonBorder);
         Theme.applyFontThemeBorder(resetDefaults, font, theme, buttonBorder);
         Theme.applyFontAndTheme(speedLabel, font, theme);
@@ -94,7 +94,9 @@ public class SettingsPopup implements IThemeable {
         speedSlider = new JSlider(10, 1000, config.getSimSpeed());
 
         tabSizeLabel = new JLabel(TABSIZE);
-        tabSizeInput = new JTextField(String.valueOf(config.getTabSize()));
+        tabSizeSlider = new JSlider(1, 8, config.getTabSize());
+        tabSizeSlider.setMajorTickSpacing(1);
+        tabSizeSlider.setPaintLabels(true);
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
@@ -106,7 +108,7 @@ public class SettingsPopup implements IThemeable {
         grid.add(themeLabel);
         grid.add(themeInput);
         grid.add(tabSizeLabel);
-        grid.add(tabSizeInput);
+        grid.add(tabSizeSlider);
 
         save = new JButton(SAVE);
         resetDefaults = new JButton(RESET);
@@ -143,17 +145,8 @@ public class SettingsPopup implements IThemeable {
                     JOptionPane.showMessageDialog(new JFrame(), "Bad format for font size, please input a number");
                     return;
                 }
-                try{
-                    if (Integer.parseInt(instance.tabSizeInput.getText()) > 8){
-                        JOptionPane.showMessageDialog(new JFrame(), "Too large, try a number between 1 to 8!");
-                        return;
-                    }
-                    instance.config.setTabSize(Integer.parseInt(instance.tabSizeInput.getText()));
-                } catch (NumberFormatException er){
-                    JOptionPane.showMessageDialog(new JFrame(), "Bad format for tab size, please input a number");
-                    return;
-                }
                 instance.config.setSimSpeed(instance.speedSlider.getValue());
+                instance.config.setTabSize(instance.tabSizeSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.saveChanges();
                 instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
@@ -164,7 +157,7 @@ public class SettingsPopup implements IThemeable {
                 instance.config.resetDefaults();
                 instance.fontInput.setText(Config.DEFAULT_FONT_SIZE);
                 instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
-                instance.tabSizeInput.setText(Config.DEFAULT_TAB_SIZE);
+                instance.tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
                 instance.themeInput.setSelectedIndex(0);
             }
         }
