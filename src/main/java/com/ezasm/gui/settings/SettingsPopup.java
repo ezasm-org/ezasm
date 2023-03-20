@@ -66,6 +66,7 @@ public class SettingsPopup implements IThemeable {
         themeLabel.setOpaque(true);
         fontSizeLabel.setOpaque(true);
         speedLabel.setOpaque(true);
+        tabSizeLabel.setOpaque(true);
         EditorTheme.applyFontAndTheme(speedSlider, font, editorTheme);
         EditorTheme.applyFontAndTheme(themeInput, font, editorTheme);
         EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
