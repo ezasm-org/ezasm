@@ -270,6 +270,7 @@ public class Window {
         registerTable.applyTheme(font, editorTheme);
         ToolbarFactory.applyTheme(font, editorTheme, toolbar);
         editor.applyTheme(font, editorTheme);
+        editor.resizeTabSize(config.getTabSize());
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
