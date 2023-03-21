@@ -139,6 +139,15 @@ public class Simulator {
     }
 
     /**
+     * Adds the given line to the program to the main file.
+     *
+     * @param line the line to add to the program.
+     */
+    public void addLine(Line line) throws ParseException {
+        addLine(line, MAIN_FILE_IDENTIFIER);
+    }
+
+    /**
      * Parses the given text as a multi-line String. Then adds those lines to the program.
      *
      * @param file the relative path from the main file to the file to read lines from.
