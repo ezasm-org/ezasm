@@ -1,9 +1,13 @@
 package com.ezasm;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -13,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 class TabbedPaneTest {
 
@@ -50,6 +55,7 @@ class TabbedPaneTest {
 
 	private static HBoxPanel settingsRow(JLabel label, Component component) {
 		final var panel = new HBoxPanel();
+		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 		final var labelPanel = new LeftFlowPanel();
 		final var componentPanel = new RightFlowPanel();
@@ -65,6 +71,7 @@ class TabbedPaneTest {
 
 	private static RightFlowPanel buttonsRow(JButton... buttons) {
 		final var row = new RightFlowPanel(5, 5);
+		row.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		for (final var button : buttons)
 			row.add(button);
 		return row;
@@ -89,6 +96,8 @@ class TabbedPaneTest {
 
 		// constructing the "General" tab
 		final var generalPanel = new VBoxPanel();
+		final var padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+		generalPanel.setBorder(padding);
 
 		final var fontSizeRow = settingsRow(fontSizeLabel, fontInput);
 		generalPanel.add(fontSizeRow);
@@ -103,11 +112,12 @@ class TabbedPaneTest {
 		final var resetDefaults = new JButton("Reset to Defaults");
 
 		final var buttonsRow = buttonsRow(save, resetDefaults);
+		buttonsRow.setBounds(100, 100, 100, 100);
 		generalPanel.add(buttonsRow);
 
 		final var tp = new JTabbedPane(JTabbedPane.LEFT);
 		tp.setBounds(0, 0, popup.getWidth(), popup.getHeight());
-
+		
 		// adding the tabs to a JTabbedPane
 		tp.add("General", generalPanel);
 
