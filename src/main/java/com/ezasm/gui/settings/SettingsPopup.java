@@ -185,6 +185,8 @@ public class SettingsPopup implements IThemeable {
                 instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
                 instance.tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
                 instance.themeInput.setSelectedIndex(0);
+                instance.AutoSaveButton.setText(Config.DEFAULT_AUTO_SAVE);
+                instance.AutoSaveButton.setSelected(false);
             }
         }
     }
