@@ -1,9 +1,6 @@
 package com.ezasm.parsing;
 
-<<<<<<< HEAD
-=======
 import com.ezasm.instructions.DispatchInstruction;
->>>>>>> main
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.instructions.targets.input.ImmediateInput;
@@ -26,10 +23,7 @@ public class Line {
     private final Instruction instruction;
     private final IAbstractTarget[] arguments;
     private final String label;
-<<<<<<< HEAD
     private final List<String> stringImmediates;
-=======
->>>>>>> main
 
     /**
      * Creates and validates a line based on the given tokens.
@@ -43,10 +37,7 @@ public class Line {
             this.label = instruction.substring(0, instruction.length() - 1);
             this.instruction = null;
             this.arguments = null;
-<<<<<<< HEAD
             this.stringImmediates = null;
-=======
->>>>>>> main
             if (arguments != null && arguments.length > 0) {
                 throw new ParseException(String.format("Unexpected token after label: '%s'", arguments[0]));
             }
@@ -88,7 +79,7 @@ public class Line {
         DispatchInstruction dispatchInstruction = InstructionDispatcher.getInstruction(instruction, getArgumentTypes());
 
         if (dispatchInstruction == null) {
-            throw new ParseException(String.format("Instruction %s could not be matched with the given %d arguments ",
+            throw new ParseException(String.format("Instruction %s could not be matched for the given %d argument(s)",
                     instruction, getArgumentTypes().length));
         }
 
