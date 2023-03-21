@@ -6,7 +6,6 @@ import com.ezasm.util.FileIO;
 
 import javax.swing.*;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -81,8 +80,8 @@ public class MenuActions {
             File file = fileChooser.getSelectedFile();
             if (file != null && file.exists() && file.canRead()) {
                 try {
+                    EzEditorPane newEditor = Window.getInstance().openNewFileTab(file);
                     String content = FileIO.readFile(file);
-                    EzEditorPane newEditor = Window.getInstance().openNewFileTab(file.getName());
                     newEditor.setText(content);
                     newEditor.setOpenFilePath(file.getPath());
                     newEditor.setFileSaved(true);

@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.ListIterator;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
@@ -52,6 +55,8 @@ public class Window {
     private RegisterTable registerTable;
     private FixedTabbedPane tools;
     private Console console;
+
+    private static boolean debugMode;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -94,7 +99,8 @@ public class Window {
      * @param simulator the simulator to use.
      * @param config    the program configuration.
      */
-    public static void instantiate(Simulator simulator, Config config) {
+    public static void instantiate(Simulator simulator, Config config, boolean dbg) {
+        debugMode = dbg;
         if (instance == null)
             new Window(simulator, config);
     }
@@ -108,7 +114,9 @@ public class Window {
      * @param inputFilePath  the desired file to use for the InputStream.
      * @param outputFilePath the desired file to use for the OutputStream.
      */
-    public static void instantiate(Simulator simulator, Config config, String inputFilePath, String outputFilePath) {
+    public static void instantiate(Simulator simulator, Config config, boolean dbg, String inputFilePath,
+            String outputFilePath) {
+        debugMode = dbg;
         if (instance == null) {
             new Window(simulator, config);
             instance.setFileInputStream(new File(inputFilePath));
@@ -210,7 +218,9 @@ public class Window {
         // they want
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
-        System.setErr(new PrintStream(console.getErrorStream()));
+        if (!debugMode) {
+            System.setErr(new PrintStream(console.getErrorStream()));
+        }
 
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
@@ -265,10 +275,15 @@ public class Window {
         });
     }
 
-    public EzEditorPane openNewFileTab(String filename) {
-        EzEditorPane newEditor = new EzEditorPane();
-        editors.addTab(newEditor, null, filename, "");
-        applyConfiguration(config);
+    public EzEditorPane openNewFileTab(File fileIn) {
+        EzEditorPane newEditor;
+        // if (!isOpen(fileIn.getPath())){
+            newEditor = new EzEditorPane();
+            editors.addTab(newEditor, null, fileIn.getName(), "");
+            applyConfiguration(config);
+        // }
+        // else{
+        // }
         editors.setActiveTab(newEditor);
         return newEditor;
     }
@@ -342,8 +357,14 @@ public class Window {
      *
      * @return the instance's editor panes.
      */
-    public Component[] getEditors() {
-        return editors.getComponents();
+    public ArrayList<EzEditorPane> getEditors() {
+        ArrayList<EzEditorPane> output = new ArrayList<>();
+        for (Component c : editors.getComponents()) {
+            if (c instanceof EzEditorPane) {
+                output.add((EzEditorPane) c);
+            }
+        }
+        return output;
     }
 
     /**
@@ -435,6 +456,15 @@ public class Window {
      */
     public void handleParseException(Exception e) {
         System.err.println(e.getMessage());
+    }
+
+    public boolean isOpen(String path) {
+        for (EzEditorPane ez : instance.getEditors()) {
+            if (ez.getOpenFilePath().equals(path)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
