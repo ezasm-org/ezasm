@@ -151,4 +151,8 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
     public JComponent[] getTabComponents() {
         return (JComponent[]) tabbedPane.getComponents();
     }
+
+    public void setActiveTab(JComponent comp) {
+        tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(comp));
+    }
 }

@@ -6,6 +6,8 @@ import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
+import com.ezasm.gui.tabbedpane.ClosableTabPanel;
+import com.ezasm.gui.tabbedpane.ClosableTabbedPane;
 import com.ezasm.gui.tabbedpane.FixedTabbedPane;
 import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
@@ -46,7 +48,7 @@ public class Window {
     private JPanel panel;
     private JToolBar toolbar;
     private JMenuBar menubar;
-    private EzEditorPane editor;
+    private ClosableTabbedPane editors;
     private RegisterTable registerTable;
     private FixedTabbedPane tools;
     private Console console;
@@ -196,14 +198,16 @@ public class Window {
         panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();
+        editors = new ClosableTabbedPane();
+        editors.addTab(new EzEditorPane(), null, "New Document.ez", "");
         toolbar = ToolbarFactory.makeToolbar();
-        editor = new EzEditorPane();
         registerTable = new RegisterTable(simulator.getRegisters());
 
         console = new Console();
         setInputStream(console.getInputStream());
         setOutputStream(console.getOutputStream());
-        // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
+        // TfileNameODO maybe make this configurable to allow them to use their terminal which they ran this with if
+        // they want
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
         System.setErr(new PrintStream(console.getErrorStream()));
@@ -211,7 +215,7 @@ public class Window {
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
 
-        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
+        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editors, registerTable);
         mainSplit.setResizeWeight(0.8);
         mainSplit.setUI(new BasicSplitPaneUI());
         mainSplit.setBorder(null);
@@ -261,6 +265,18 @@ public class Window {
         });
     }
 
+    public EzEditorPane openNewFileTab(String filename) {
+        EzEditorPane newEditor = new EzEditorPane();
+        editors.addTab(newEditor, null, filename, "");
+        applyConfiguration(config);
+        editors.setActiveTab(newEditor);
+        return newEditor;
+    }
+
+    public ClosableTabbedPane getEditorPanes() {
+        return editors;
+    }
+
     public void applyConfiguration(Config config) {
         this.config = config;
         EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
@@ -271,8 +287,13 @@ public class Window {
         panel.setBackground(editorTheme.background());
         registerTable.applyTheme(font, editorTheme);
         ToolbarFactory.applyTheme(font, editorTheme, toolbar);
-        editor.applyTheme(font, editorTheme);
-        editor.resizeTabSize(config.getTabSize());
+        editors.applyTheme(font, editorTheme);
+        for (Component jc : getEditors()) {
+            if (jc instanceof EzEditorPane) {
+                EzEditorPane ez = (EzEditorPane) jc;
+                ez.resizeTabSize(config.getTabSize());
+            }
+        }
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
@@ -309,7 +330,20 @@ public class Window {
      * @return the instance's editor pane.
      */
     public EzEditorPane getEditor() {
-        return editor;
+        JComponent jc = editors.getSelectedComponent();
+        if (jc instanceof EzEditorPane) {
+            return (EzEditorPane) jc;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the instance's editor panes.
+     *
+     * @return the instance's editor panes.
+     */
+    public Component[] getEditors() {
+        return editors.getComponents();
     }
 
     /**
@@ -338,8 +372,8 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         registerTable.update();
-        simulator.addLines(Lexer.parseLines(editor.getText()), new File(editor.getOpenFilePath()));
-        instance.editor.resetHighlighter();
+        simulator.addLines(Lexer.parseLines(getEditor().getText()), new File(getEditor().getOpenFilePath()));
+        instance.getEditor().resetHighlighter();
     }
 
     /**
@@ -354,7 +388,7 @@ public class Window {
         } else {
             System.out.println("** Program terminated forcefully **");
         }
-        editor.resetHighlighter();
+        getEditor().resetHighlighter();
     }
 
     /**
@@ -363,7 +397,7 @@ public class Window {
      * @param content the text to set the text within the editor to.
      */
     public void setText(String content) {
-        editor.setText(content);
+        getEditor().setText(content);
     }
 
     /**
@@ -372,7 +406,7 @@ public class Window {
      * @return the text content of the text editor.
      */
     public String getText() {
-        return editor.getText();
+        return getEditor().getText();
     }
 
     /**
@@ -382,7 +416,7 @@ public class Window {
      * @param value true to enable, false to disable.
      */
     public void setEditable(boolean value) {
-        editor.setEditable(value);
+        getEditor().setEditable(value);
     }
 
     /**
@@ -391,7 +425,7 @@ public class Window {
      * @return true if the editor can be typed in currently, false otherwise.
      */
     public boolean getEditable() {
-        return editor.getEditable();
+        return getEditor().getEditable();
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.ezasm.gui.menubar;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.util.FileIO;
 
 import javax.swing.*;
@@ -81,9 +82,10 @@ public class MenuActions {
             if (file != null && file.exists() && file.canRead()) {
                 try {
                     String content = FileIO.readFile(file);
-                    Window.getInstance().getEditor().setText(content);
-                    Window.getInstance().getEditor().setOpenFilePath(file.getPath());
-                    Window.getInstance().getEditor().setFileSaved(true);
+                    EzEditorPane newEditor = Window.getInstance().openNewFileTab(file.getName());
+                    newEditor.setText(content);
+                    newEditor.setOpenFilePath(file.getPath());
+                    newEditor.setFileSaved(true);
                     return true;
                 } catch (IOException ex) {
                     promptWarningDialog("Error Loading File",
