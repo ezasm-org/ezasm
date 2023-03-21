@@ -1,6 +1,6 @@
 package com.ezasm.simulation.transform.transformable;
 
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.util.RawData;
@@ -10,7 +10,7 @@ import com.ezasm.util.RawData;
  */
 public abstract class AbstractTransformableInput extends AbstractTransformable {
 
-    protected AbstractTransformableInput(ISimulator simulator) {
+    protected AbstractTransformableInput(Simulator simulator) {
         super(simulator);
     }
 

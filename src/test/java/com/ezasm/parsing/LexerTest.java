@@ -29,67 +29,67 @@ class LexerTest {
 
     @Test
     void isDereference() {
-        assertTrue(Lexer.isDereference("($t0)"));
-        assertTrue(Lexer.isDereference("10($t0)"));
-        assertTrue(Lexer.isDereference("-4($t0)"));
-        assertFalse(Lexer.isDereference("-($t0)"));
-        assertFalse(Lexer.isDereference("10(t0)"));
-        assertFalse(Lexer.isDereference("10($t0)aaaa"));
-        assertFalse(Lexer.isDereference("#10($t0)"));
-        assertFalse(Lexer.isDereference(""));
-        assertFalse(Lexer.isDereference("()"));
+        assertTrue(Lexer.looksLikeDereference("($t0)"));
+        assertTrue(Lexer.looksLikeDereference("10($t0)"));
+        assertTrue(Lexer.looksLikeDereference("-4($t0)"));
+        assertFalse(Lexer.looksLikeDereference("-($t0)"));
+        assertFalse(Lexer.looksLikeDereference("10(t0)"));
+        assertFalse(Lexer.looksLikeDereference("10($t0)aaaa"));
+        assertFalse(Lexer.looksLikeDereference("#10($t0)"));
+        assertFalse(Lexer.looksLikeDereference(""));
+        assertFalse(Lexer.looksLikeDereference("()"));
     }
 
     @Test
     void isImmediate() {
-        assertTrue(Lexer.isImmediate("123"));
-        assertTrue(Lexer.isImmediate("-123"));
-        assertTrue(Lexer.isImmediate("1234567890123456789"));
+        assertTrue(Lexer.looksLikeImmediate("123"));
+        assertTrue(Lexer.looksLikeImmediate("-123"));
+        assertTrue(Lexer.looksLikeImmediate("1234567890123456789"));
 
-        assertTrue(Lexer.isImmediate("0x1000"));
-        assertTrue(Lexer.isImmediate("0xABCDEF"));
-        assertTrue(Lexer.isImmediate("0b100101"));
+        assertTrue(Lexer.looksLikeImmediate("0x1000"));
+        assertTrue(Lexer.looksLikeImmediate("0xABCDEF"));
+        assertTrue(Lexer.looksLikeImmediate("0b100101"));
 
-        assertTrue(Lexer.isImmediate("-0xABCDEF"));
-        assertTrue(Lexer.isImmediate("-0b100101"));
+        assertTrue(Lexer.looksLikeImmediate("-0xABCDEF"));
+        assertTrue(Lexer.looksLikeImmediate("-0b100101"));
 
-        assertTrue(Lexer.isImmediate("123.456"));
-        assertTrue(Lexer.isImmediate("123."));
-        assertTrue(Lexer.isImmediate(".456"));
-        assertTrue(Lexer.isImmediate("0xABC.DEF"));
-        assertTrue(Lexer.isImmediate("0b1001.01"));
+        assertTrue(Lexer.looksLikeImmediate("123.456"));
+        assertTrue(Lexer.looksLikeImmediate("123."));
+        assertTrue(Lexer.looksLikeImmediate(".456"));
+        assertTrue(Lexer.looksLikeImmediate("0xABC.DEF"));
+        assertTrue(Lexer.looksLikeImmediate("0b1001.01"));
 
-        assertTrue(Lexer.isImmediate("-0xABC.DEF"));
-        assertTrue(Lexer.isImmediate("-0b1001.01"));
+        assertTrue(Lexer.looksLikeImmediate("-0xABC.DEF"));
+        assertTrue(Lexer.looksLikeImmediate("-0b1001.01"));
 
-        assertTrue(Lexer.isImmediate("0xABCDEF."));
-        assertTrue(Lexer.isImmediate("0b100101."));
-        assertTrue(Lexer.isImmediate("0x.ABCDEF"));
-        assertTrue(Lexer.isImmediate("0b.100101"));
+        assertTrue(Lexer.looksLikeImmediate("0xABCDEF."));
+        assertTrue(Lexer.looksLikeImmediate("0b100101."));
+        assertTrue(Lexer.looksLikeImmediate("0x.ABCDEF"));
+        assertTrue(Lexer.looksLikeImmediate("0b.100101"));
 
-        assertFalse(Lexer.isImmediate(".123."));
-        assertFalse(Lexer.isImmediate("0xABCDEFG"));
-        assertFalse(Lexer.isImmediate("0b0121"));
-        assertFalse(Lexer.isImmediate("ABC"));
-        assertFalse(Lexer.isImmediate(""));
+        assertFalse(Lexer.looksLikeImmediate(".123."));
+        assertFalse(Lexer.looksLikeImmediate("0xABCDEFG"));
+        assertFalse(Lexer.looksLikeImmediate("0b0121"));
+        assertFalse(Lexer.looksLikeImmediate("ABC"));
+        assertFalse(Lexer.looksLikeImmediate(""));
     }
 
     @Test
     void isCharacterImmediate() throws ParseException {
-        assertTrue(Lexer.isCharacterImmediate("'a'"));
-        assertTrue(Lexer.isCharacterImmediate("' '"));
-        assertTrue(Lexer.isCharacterImmediate("'\n'"));
-        assertTrue(Lexer.isCharacterImmediate("'\\n'"));
-        assertTrue(Lexer.isCharacterImmediate("'''"));
-        assertTrue(Lexer.isCharacterImmediate("','"));
-        assertTrue(Lexer.isCharacterImmediate("''"));
+        assertTrue(Lexer.looksLikeCharacterImmediate("'a'"));
+        assertTrue(Lexer.looksLikeCharacterImmediate("' '"));
+        assertTrue(Lexer.looksLikeCharacterImmediate("'\n'"));
+        assertTrue(Lexer.looksLikeCharacterImmediate("'\\n'"));
+        assertTrue(Lexer.looksLikeCharacterImmediate("'''"));
+        assertTrue(Lexer.looksLikeCharacterImmediate("','"));
+        assertTrue(Lexer.looksLikeCharacterImmediate("''"));
         assertEquals(Lexer.getCharacterImmediate("','"), ',');
 
-        assertFalse(Lexer.isCharacterImmediate("a'"));
-        assertFalse(Lexer.isCharacterImmediate("a'b'"));
-        assertFalse(Lexer.isCharacterImmediate("'a'b"));
-        assertFalse(Lexer.isCharacterImmediate("'a"));
-        assertFalse(Lexer.isCharacterImmediate(""));
+        assertFalse(Lexer.looksLikeCharacterImmediate("a'"));
+        assertFalse(Lexer.looksLikeCharacterImmediate("a'b'"));
+        assertFalse(Lexer.looksLikeCharacterImmediate("'a'b"));
+        assertFalse(Lexer.looksLikeCharacterImmediate("'a"));
+        assertFalse(Lexer.looksLikeCharacterImmediate(""));
     }
 
     @Test
@@ -190,5 +190,9 @@ class LexerTest {
         assertArrayEquals(Lexer.tokenizeLine(" \t\"\t\"\r\n "), new String[] { "\"\t\"" });
         assertArrayEquals(Lexer.tokenizeLine("\"''\""), new String[] { "\"''\"" });
         assertArrayEquals(Lexer.tokenizeLine("\"'\"'"), new String[] { "\"'\"'" });
+
+        // test backslash '\' escape character
+        assertArrayEquals(Lexer.tokenizeLine("\" \\\" Hello, World! \\\" \""),
+                new String[] { "\" \\\" Hello, World! \\\" \"" });
     }
 }

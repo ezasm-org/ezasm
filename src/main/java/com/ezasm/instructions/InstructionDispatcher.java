@@ -1,16 +1,10 @@
 package com.ezasm.instructions;
 
-import com.ezasm.instructions.implementation.FunctionInstructions;
-import com.ezasm.instructions.implementation.MemoryInstructions;
-import com.ezasm.instructions.implementation.ComparisonInstructions;
-import com.ezasm.instructions.implementation.BranchInstructions;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.instructions.implementation.*;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
-import com.ezasm.instructions.implementation.ArithmeticInstructions;
-import com.ezasm.instructions.implementation.FloatArithmeticInstructions;
-import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
@@ -38,6 +32,7 @@ public class InstructionDispatcher {
         registerInstructions(ComparisonInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
+        registerInstructions(ImportInstructions.class);
     }
 
     /**
@@ -118,14 +113,14 @@ public class InstructionDispatcher {
     /**
      * The bound simulator for this dispatcher.
      */
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
-     * Create a new Instruction Dispatcher, and bind it to an existing {@link ISimulator}.
+     * Create a new Instruction Dispatcher, and bind it to an existing {@link Simulator}.
      *
      * @param simulator the simulator to bind to.
      */
-    public InstructionDispatcher(ISimulator simulator) {
+    public InstructionDispatcher(Simulator simulator) {
         this.simulator = simulator;
         loadInstructionHandlers();
     }
@@ -147,7 +142,7 @@ public class InstructionDispatcher {
      */
     private void loadInstructionHandler(DispatchInstruction instruction) {
         try {
-            Constructor<?> constructor = instruction.parent().getDeclaredConstructor(ISimulator.class);
+            Constructor<?> constructor = instruction.parent().getDeclaredConstructor(Simulator.class);
             Object inst = constructor.newInstance(this.simulator);
             this.instructionHandlerInstances.put(instruction.parent(), inst);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
