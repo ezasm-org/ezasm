@@ -1,5 +1,6 @@
 package com.ezasm;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
@@ -15,20 +16,69 @@ import javax.swing.JTextField;
 
 class TabbedPaneTest {
 
-	private static class BoxPanel extends JPanel {
-		private BoxPanel() {
+	private static class VBoxPanel extends JPanel {
+		private VBoxPanel() {
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		}
 	}
 
+	private static class HBoxPanel extends JPanel {
+		private HBoxPanel() {
+			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		}
+	}
+
+	private static class LeftFlowPanel extends JPanel {
+		private LeftFlowPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+		}
+
+		private LeftFlowPanel(int hgap, int vgap) {
+			super(new FlowLayout(FlowLayout.LEFT, hgap, vgap));
+		}
+	}
+
+	private static class RightFlowPanel extends JPanel {
+		private RightFlowPanel() {
+			super(new FlowLayout(FlowLayout.RIGHT));
+		}
+
+		private RightFlowPanel(int hgap, int vgap) {
+			super(new FlowLayout(FlowLayout.RIGHT, hgap, vgap));
+		}
+	}
+
+	private static HBoxPanel settingsRow(JLabel label, Component component) {
+		final var panel = new HBoxPanel();
+
+		final var labelPanel = new LeftFlowPanel();
+		final var componentPanel = new RightFlowPanel();
+
+		labelPanel.add(label);
+		componentPanel.add(component);
+
+		panel.add(labelPanel);
+		panel.add(componentPanel);
+
+		return panel;
+	}
+
+	private static RightFlowPanel buttonsRow(JButton... buttons) {
+		final var row = new RightFlowPanel(5, 5);
+		for (final var button : buttons)
+			row.add(button);
+		return row;
+	}
+
 	static {
+		// disable button actions for now, this is a visual test
 		//buttonActionListener = new ButtonActionListener();
 		final var popup = new JFrame("EzASM Configurator");
 		popup.setMinimumSize(new Dimension(500, 300));
 		popup.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final var themeLabel = new JLabel("Theme");
-		final var themeInput = new JComboBox<>(new String[] { "test1", "test2" });
+		final var themeInput = new JComboBox<>(new String[] { "theme 1", "theme 2" });
 		themeInput.setSelectedItem("test1");
 
 		final var fontSizeLabel = new JLabel("Font Size");
@@ -37,36 +87,31 @@ class TabbedPaneTest {
 		final var fontInput = new JTextField("font input");
 		final var speedSlider = new JSlider(10, 1000, 69);
 
-		final var generalPanel = new BoxPanel();
+		// constructing the "General" tab
+		final var generalPanel = new VBoxPanel();
 
-		final var fontSizePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		fontSizePanel.add(fontSizeLabel);
-		fontSizePanel.add(fontInput);
-		generalPanel.add(fontSizePanel);
+		final var fontSizeRow = settingsRow(fontSizeLabel, fontInput);
+		generalPanel.add(fontSizeRow);
 
-		final var speedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		speedPanel.add(speedLabel);
-		speedPanel.add(speedSlider);
-		generalPanel.add(speedPanel);
+		final var speedRow = settingsRow(speedLabel, speedSlider);
+		generalPanel.add(speedRow);
 
-		final var themePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		themePanel.add(themeLabel);
-		themePanel.add(themeInput);
+		final var themePanel = settingsRow(themeLabel, themeInput);
 		generalPanel.add(themePanel);
 
 		final var save = new JButton("Save Changes");
 		final var resetDefaults = new JButton("Reset to Defaults");
 
-		final var buttonsRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+		final var buttonsRow = buttonsRow(save, resetDefaults);
 		generalPanel.add(buttonsRow);
-		buttonsRow.add(save);
-		buttonsRow.add(resetDefaults);
 
 		final var tp = new JTabbedPane(JTabbedPane.LEFT);
 		tp.setBounds(0, 0, popup.getWidth(), popup.getHeight());
 
+		// adding the tabs to a JTabbedPane
 		tp.add("General", generalPanel);
 
+		// disable button actions for now, this is a visual test
 		//resetDefaults.addActionListener(buttonActionListener);
 		//save.addActionListener(buttonActionListener);
 
