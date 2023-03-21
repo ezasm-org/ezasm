@@ -13,6 +13,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class SettingsPopup implements IThemeable {
     private static SettingsPopup instance;
@@ -21,18 +23,20 @@ public class SettingsPopup implements IThemeable {
     private static final String SIMULATION_SPEED = "Instruction Delay";
     private static final String THEME = "Theme";
     private static final String TABSIZE = "Tab Size";
+    private static final String AUTOSAVE = "Auto Save";
     public static final String SAVE = "Save Changes";
     public static final String RESET = "Reset to Defaults";
 
     private JFrame popup;
     private JSlider speedSlider;
     private JSlider tabSizeSlider;
+    private JToggleButton AutoSaveButton;
     private JTextField fontInput;
     private JComboBox themeInput;
     private JPanel grid;
     private JButton resetDefaults;
     private JButton save;
-    private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel;
+    private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel, autoSaveLabel;
     private BorderLayout layout;
 
     private Config config;
@@ -69,6 +73,7 @@ public class SettingsPopup implements IThemeable {
         tabSizeLabel.setOpaque(true);
         EditorTheme.applyFontAndTheme(speedSlider, font, editorTheme);
         EditorTheme.applyFontAndTheme(themeInput, font, editorTheme);
+        EditorTheme.applyFontAndTheme(AutoSaveButton, font, editorTheme);
         EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
         EditorTheme.applyFontThemeBorder(save, font, editorTheme, buttonBorder);
         EditorTheme.applyFontThemeBorder(resetDefaults, font, editorTheme, buttonBorder);
@@ -76,6 +81,7 @@ public class SettingsPopup implements IThemeable {
         EditorTheme.applyFontAndTheme(fontSizeLabel, font, editorTheme);
         EditorTheme.applyFontAndTheme(themeLabel, font, editorTheme);
         EditorTheme.applyFontAndTheme(tabSizeLabel, font, editorTheme);
+        EditorTheme.applyFontAndTheme(autoSaveLabel, font, editorTheme);
         EditorTheme.applyFontAndTheme(tabSizeSlider, font, editorTheme);
     }
 
@@ -102,6 +108,19 @@ public class SettingsPopup implements IThemeable {
         tabSizeSlider.setMajorTickSpacing(1);
         tabSizeSlider.setPaintLabels(true);
 
+        autoSaveLabel = new JLabel(AUTOSAVE);
+        AutoSaveButton = new JToggleButton("OFF");
+        AutoSaveButton.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent event) {
+                if (AutoSaveButton.isSelected()){
+                    AutoSaveButton.setText("ON");
+                } else {
+                    AutoSaveButton.setText("OFF");
+                }
+            }
+        });;
+
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
         grid = new JPanel(gridLayout);
@@ -113,6 +132,8 @@ public class SettingsPopup implements IThemeable {
         grid.add(themeInput);
         grid.add(tabSizeLabel);
         grid.add(tabSizeSlider);
+        grid.add(autoSaveLabel);
+        grid.add(AutoSaveButton);
 
         save = new JButton(SAVE);
         resetDefaults = new JButton(RESET);
@@ -152,6 +173,7 @@ public class SettingsPopup implements IThemeable {
                 instance.config.setSimSpeed(instance.speedSlider.getValue());
                 instance.config.setTabSize(instance.tabSizeSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
+                instance.config.setAutoSave(instance.AutoSaveButton.getText());
                 instance.config.saveChanges();
                 instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
                         EditorTheme.getTheme(instance.config.getTheme()));
@@ -163,6 +185,8 @@ public class SettingsPopup implements IThemeable {
                 instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
                 instance.tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
                 instance.themeInput.setSelectedIndex(0);
+                instance.AutoSaveButton.setText(Config.DEFAULT_AUTO_SAVE);
+                instance.AutoSaveButton.setSelected(false);
             }
         }
     }
