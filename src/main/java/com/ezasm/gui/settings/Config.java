@@ -45,7 +45,7 @@ public class Config {
     // All of EzASM's defaults
     public static final String DEFAULT_FONT_SIZE = "12";
     public static final String DEFAULT_TAB_SIZE = "2";
-    public static final String DEFAULT_AUTO_SAVE = "off";
+    public static final String DEFAULT_AUTO_SAVE = "OFF";
     public static final String DEFAULT_SIMULATION_SPEED = "250";
     public static final String DEFAULT_THEME = "Light";
     public static final String DEFAULT_FONT = "Monospaced"; // unclear if this will be allowed to change
