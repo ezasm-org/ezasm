@@ -4,6 +4,8 @@ import com.ezasm.gui.Window;
 import com.ezasm.util.FileIO;
 
 import javax.swing.*;
+
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -18,6 +20,8 @@ public class MenuActions {
 
     /**
      * Runs the action event for save as.
+     *
+     * @return true if the operation was successful, false otherwise.
      */
     public static boolean saveAs() {
         JFileChooser fileChooser = createFileChooser("Save", TEXT_FILE_MASK | EZ_FILE_MASK);
@@ -42,6 +46,8 @@ public class MenuActions {
 
     /**
      * Runs the action event for save.
+     *
+     * @return true if the operation was successful, false otherwise.
      */
     public static boolean save() {
         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
@@ -61,6 +67,8 @@ public class MenuActions {
 
     /**
      * Runs the action event for load.
+     *
+     * @return true if the operation was successful, false otherwise.
      */
     public static boolean load() {
         JFileChooser fileChooser = createFileChooser("Open File", TEXT_FILE_MASK | EZ_FILE_MASK);
@@ -92,7 +100,7 @@ public class MenuActions {
             File file = fileChooser.getSelectedFile();
             if (file != null) {
                 if (file.exists() && file.canRead()) {
-                    Window.getInstance().setInputStream(file);
+                    Window.getInstance().setFileInputStream(file);
                 } else {
                     promptWarningDialog("Error Reading File",
                             String.format("There was an error reading from '%s'\nOperation cancelled", file.getName()));
@@ -113,7 +121,7 @@ public class MenuActions {
             if (file != null) {
                 boolean overwrite = promptOverwriteDialog(file);
                 if (overwrite) {
-                    Window.getInstance().setOutputStream(file);
+                    Window.getInstance().setFileOutputStream(file);
                 }
             }
         }

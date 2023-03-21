@@ -1,4 +1,4 @@
-package com.ezasm.instructions.impl;
+package com.ezasm.instructions.implementation;
 
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class BranchTest {
+public class BranchInstructionsTest {
 
     private final Simulator simulator = new Simulator(Memory.DEFAULT_WORD_SIZE, Memory.DEFAULT_MEMORY_WORDS);
 

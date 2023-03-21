@@ -253,6 +253,7 @@ public class Lexer {
     }
 
     /**
+<<<<<<< HEAD
      * Gets the string represented by the given string immediate. This also accepts the Java escape sequences.
      *
      * @param token the string immediate.
@@ -275,13 +276,13 @@ public class Lexer {
     }
 
     /**
-     * Determines if a given token is a valid instruction or not.
+     * Determines if a given prototype is a valid instruction or not.
      *
      * @param token the token String in question.
      * @return true if the token is a registered instruction, false otherwise.
      */
     public static boolean isInstruction(String token) {
-        return InstructionDispatcher.getInstructions().containsKey(token);
+        return Instru.getInstructions().containsKey(token);
     }
 
     /**
@@ -321,6 +322,7 @@ public class Lexer {
         List<Line> linesLexed = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
+        // individually read lines treating semicolons as line breaks
         for (int i = 0; i < lines.length(); ++i) {
             char c = lines.charAt(i);
             if (c == '\n') {
