@@ -34,6 +34,7 @@ public class MenuActions {
                 try {
                     FileIO.writeFile(file, Window.getInstance().getEditor().getText());
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
+                    Window.getInstance().getEditor().setFileSaved(true);
                     return true;
                 } catch (IOException e) {
                     promptWarningDialog("Error Saving File",
@@ -51,11 +52,13 @@ public class MenuActions {
      */
     public static boolean save() {
         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
+
         if (!fileToUpdate.exists()) {
             return saveAs();
         } else {
             try {
                 FileIO.writeFile(fileToUpdate, Window.getInstance().getEditor().getText());
+                Window.getInstance().getEditor().setFileSaved(true);
                 return true;
             } catch (IOException e) {
                 promptWarningDialog("Error Saving File",
@@ -80,6 +83,7 @@ public class MenuActions {
                     String content = FileIO.readFile(file);
                     Window.getInstance().getEditor().setText(content);
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
+                    Window.getInstance().getEditor().setFileSaved(true);
                     return true;
                 } catch (IOException ex) {
                     promptWarningDialog("Error Loading File",

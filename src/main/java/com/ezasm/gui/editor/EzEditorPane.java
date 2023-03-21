@@ -1,6 +1,8 @@
 package com.ezasm.gui.editor;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
@@ -28,6 +30,7 @@ public class EzEditorPane extends JPanel implements IThemeable {
     private final RTextScrollPane scrollPane;
     private LineHighlighter highlighter;
     private String openFilePath;
+    private boolean fileSaved;
 
     private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
 
@@ -46,6 +49,9 @@ public class EzEditorPane extends JPanel implements IThemeable {
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);
         textArea.setCodeFoldingEnabled(false);
+        textArea.getDocument().addDocumentListener(new EditorDocumentListener());
+
+        fileSaved = true;
 
         scrollPane = new RTextScrollPane(textArea);
         scrollPane.setLineNumbersEnabled(true);
@@ -196,6 +202,14 @@ public class EzEditorPane extends JPanel implements IThemeable {
      */
     public void setOpenFilePath(String openFilePath) {
         this.openFilePath = openFilePath;
+    }
+
+    public boolean getFileSaved() {
+        return this.fileSaved;
+    }
+
+    public void setFileSaved(boolean value) {
+        this.fileSaved = value;
     }
 
     /**

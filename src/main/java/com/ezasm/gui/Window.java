@@ -185,7 +185,8 @@ public class Window {
         }
 
         app = new JFrame("EzASM Simulator");
-        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        app.addWindowListener(new WindowCloseListener());
         app.setMinimumSize(new Dimension(800, 600));
         try {
             app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
@@ -354,6 +355,43 @@ public class Window {
             System.out.println("** Program terminated forcefully **");
         }
         editor.resetHighlighter();
+    }
+
+    /**
+     * Sets the text of the editor to the given content.
+     *
+     * @param content the text to set the text within the editor to.
+     */
+    public void setText(String content) {
+        editor.setText(content);
+    }
+
+    /**
+     * Gets the text content of the text editor.
+     *
+     * @return the text content of the text editor.
+     */
+    public String getText() {
+        return editor.getText();
+    }
+
+    /**
+     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while this is the set to
+     * false.
+     *
+     * @param value true to enable, false to disable.
+     */
+    public void setEditable(boolean value) {
+        editor.setEditable(value);
+    }
+
+    /**
+     * Gets the truth value of whether the editor can be typed in.
+     *
+     * @return true if the editor can be typed in currently, false otherwise.
+     */
+    public boolean getEditable() {
+        return editor.getEditable();
     }
 
     /**

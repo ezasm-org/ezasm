@@ -36,6 +36,19 @@ public class DialogFactory {
     }
 
     /**
+     * Creates a prompt dialog asking the user a Yes/No question with Cancel option.
+     *
+     * @param title   the title of the dialog.
+     * @param message the message to display on the dialog.
+     * @return
+     */
+    public static int promptYesNoCancelDialog(String title, String message) {
+        int confirmDialogOption = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+        return confirmDialogOption;
+    }
+
+    /**
      * Creates an error dialog to display the error message.
      *
      * @param title   the title of the dialog.

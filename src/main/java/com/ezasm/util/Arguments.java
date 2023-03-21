@@ -121,7 +121,6 @@ public class Arguments {
                 Window.instantiate(sim, config);
             }
         }
-
     }
 
     /**
