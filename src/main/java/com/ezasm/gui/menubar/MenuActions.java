@@ -67,6 +67,12 @@ public class MenuActions {
         return false;
     }
 
+    /**Auto called Save function to save file periodically
+     * 
+     */
+    public static void autosave(){
+        
+    } 
     /**
      * Runs the action event for load.
      *
