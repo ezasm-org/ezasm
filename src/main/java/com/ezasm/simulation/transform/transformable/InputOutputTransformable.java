@@ -1,7 +1,7 @@
 package com.ezasm.simulation.transform.transformable;
 
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RawData;
 
@@ -18,7 +18,7 @@ public class InputOutputTransformable extends AbstractTransformableInput {
      * @param simulator   the simulator to use.
      * @param inputOutput the input/output to write to.
      */
-    public InputOutputTransformable(ISimulator simulator, IAbstractInputOutput inputOutput) {
+    public InputOutputTransformable(Simulator simulator, IAbstractInputOutput inputOutput) {
         super(simulator);
         this.inputOutput = inputOutput;
     }

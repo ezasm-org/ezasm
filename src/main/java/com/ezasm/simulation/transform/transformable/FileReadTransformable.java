@@ -1,7 +1,7 @@
 package com.ezasm.simulation.transform.transformable;
 
 import com.ezasm.instructions.implementation.TerminalInstructions;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RawData;
 
@@ -9,7 +9,7 @@ import com.ezasm.util.RawData;
  * Represents the transformation of reading from a file. The main transformation is to the "cursor" of the file or the
  * position which data will be read from the file.
  */
-public class FileReadTransformation extends AbstractTransformableInput {
+public class FileReadTransformable extends AbstractTransformableInput {
 
     private final long cursor;
 
@@ -19,7 +19,7 @@ public class FileReadTransformation extends AbstractTransformableInput {
      * @param simulator the simulator to use.
      * @param cursor    the current position of the file's cursor.
      */
-    public FileReadTransformation(ISimulator simulator, long cursor) {
+    public FileReadTransformable(Simulator simulator, long cursor) {
         super(simulator);
         this.cursor = cursor;
     }

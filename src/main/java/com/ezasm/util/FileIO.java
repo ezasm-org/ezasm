@@ -1,6 +1,6 @@
 package com.ezasm.util;
 
-import com.ezasm.Main;
+import com.ezasm.gui.Window;
 import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
@@ -15,6 +15,8 @@ import java.util.Objects;
  * A utility class to provide file I/O functionality.
  */
 public class FileIO {
+
+    public static final String LINE_SEPARATOR = "\n";
 
     /**
      * Store the home directory for use with file operations default locations.
@@ -39,13 +41,11 @@ public class FileIO {
      */
     public static String readFile(File file) throws IOException {
         if (!file.exists() || !file.canRead()) {
-            throw new IOException("Could not load specified file");
+            throw new IOException(String.format("Could not load specified file %s", file.getPath()));
         }
         BufferedReader reader = new BufferedReader(new FileReader(file));
         StringBuilder sb = new StringBuilder();
-        reader.lines().forEachOrdered(line -> {
-            sb.append(line).append(System.lineSeparator());
-        });
+        reader.lines().forEachOrdered(line -> sb.append(line).append(LINE_SEPARATOR));
         return sb.toString();
     }
 
@@ -106,7 +106,13 @@ public class FileIO {
     public static JFileChooser createFileChooser(String windowTitle, int acceptedFileTypeMask) {
         JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
         fileChooser.setDialogTitle(windowTitle);
-        fileChooser.setCurrentDirectory(getHomeDirectoryFile());
+        String currentFilePath = Window.getInstance().getEditor().getOpenFilePath();
+        File currentDir = new File(currentFilePath).getParentFile();
+        if (currentDir != null && currentDir.exists() && currentDir.isDirectory()) {
+            fileChooser.setCurrentDirectory(currentDir);
+        } else {
+            fileChooser.setCurrentDirectory(getHomeDirectoryFile());
+        }
 
         // This if statement chain should be ordered from the least significant extension type to most significant
         if ((acceptedFileTypeMask & TEXT_FILE_MASK) != 0) {

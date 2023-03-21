@@ -1,7 +1,7 @@
 package com.ezasm.simulation.transform.transformable;
 
 import com.ezasm.instructions.targets.output.IAbstractOutput;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.util.RawData;
@@ -21,7 +21,7 @@ public class OutputTransformable extends AbstractTransformable {
      * @param output    the output to write to.
      * @param from      the data that was previously stored in that output.
      */
-    public OutputTransformable(ISimulator simulator, IAbstractOutput output, RawData from) {
+    public OutputTransformable(Simulator simulator, IAbstractOutput output, RawData from) {
         super(simulator);
         this.output = output;
         this.from = from;

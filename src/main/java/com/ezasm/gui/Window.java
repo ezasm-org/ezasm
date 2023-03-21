@@ -11,7 +11,7 @@ import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
 import com.ezasm.util.FileIO;
@@ -39,7 +39,7 @@ import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 public class Window {
 
     private static Window instance;
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     private Config config;
     private JFrame app;
@@ -57,18 +57,19 @@ public class Window {
     private InputStream inputStream = TerminalInstructions.DEFAULT_INPUT_STREAM;
     private OutputStream outputStream = TerminalInstructions.DEFAULT_OUTPUT_STREAM;
 
-    ActionMap actionMap;
-    InputMap inputMap;
-    KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
-    KeyStroke saveAsKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S,
+    private ActionMap actionMap;
+    private InputMap inputMap;
+
+    private final KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+    private final KeyStroke saveAsKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-    KeyStroke openKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
-    KeyStroke loadInputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_I,
+    private final KeyStroke openKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
+    private final KeyStroke loadInputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_I,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-    KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
+    private final KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 
-    protected Window(ISimulator simulator, Config config) {
+    protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
         this.config = config;
@@ -91,7 +92,7 @@ public class Window {
      * @param simulator the simulator to use.
      * @param config    the program configuration.
      */
-    public static void instantiate(ISimulator simulator, Config config) {
+    public static void instantiate(Simulator simulator, Config config) {
         if (instance == null)
             new Window(simulator, config);
     }
@@ -105,7 +106,7 @@ public class Window {
      * @param inputFilePath  the desired file to use for the InputStream.
      * @param outputFilePath the desired file to use for the OutputStream.
      */
-    public static void instantiate(ISimulator simulator, Config config, String inputFilePath, String outputFilePath) {
+    public static void instantiate(Simulator simulator, Config config, String inputFilePath, String outputFilePath) {
         if (instance == null) {
             new Window(simulator, config);
             instance.setFileInputStream(new File(inputFilePath));
@@ -184,7 +185,8 @@ public class Window {
         }
 
         app = new JFrame("EzASM Simulator");
-        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        app.addWindowListener(new WindowCloseListener());
         app.setMinimumSize(new Dimension(800, 600));
         try {
             app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
@@ -270,6 +272,7 @@ public class Window {
         registerTable.applyTheme(font, editorTheme);
         ToolbarFactory.applyTheme(font, editorTheme, toolbar);
         editor.applyTheme(font, editorTheme);
+        editor.resizeTabSize(config.getTabSize());
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
     }
 
@@ -323,7 +326,7 @@ public class Window {
      *
      * @return the current simulator in use.
      */
-    public ISimulator getSimulator() {
+    public Simulator getSimulator() {
         return simulator;
     }
 
@@ -335,7 +338,7 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         registerTable.update();
-        simulator.addLines(Lexer.parseLines(editor.getText()));
+        simulator.addLines(Lexer.parseLines(editor.getText()), new File(editor.getOpenFilePath()));
         instance.editor.resetHighlighter();
     }
 
@@ -352,6 +355,43 @@ public class Window {
             System.out.println("** Program terminated forcefully **");
         }
         editor.resetHighlighter();
+    }
+
+    /**
+     * Sets the text of the editor to the given content.
+     *
+     * @param content the text to set the text within the editor to.
+     */
+    public void setText(String content) {
+        editor.setText(content);
+    }
+
+    /**
+     * Gets the text content of the text editor.
+     *
+     * @return the text content of the text editor.
+     */
+    public String getText() {
+        return editor.getText();
+    }
+
+    /**
+     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while this is the set to
+     * false.
+     *
+     * @param value true to enable, false to disable.
+     */
+    public void setEditable(boolean value) {
+        editor.setEditable(value);
+    }
+
+    /**
+     * Gets the truth value of whether the editor can be typed in.
+     *
+     * @return true if the editor can be typed in currently, false otherwise.
+     */
+    public boolean getEditable() {
+        return editor.getEditable();
     }
 
     /**

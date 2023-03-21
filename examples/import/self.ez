@@ -1,0 +1,5 @@
+import "self.ez"
+
+main:
+  prints "Hello, self!\n" 32
+  exit 0

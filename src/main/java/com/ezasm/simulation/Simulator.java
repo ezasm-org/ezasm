@@ -3,30 +3,43 @@ package com.ezasm.simulation;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
+import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.InvalidProgramCounterException;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.util.FileIO;
 import com.ezasm.util.RawData;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * An implementation of a simulator which manages the memory, registers, and lines of code in an instance of the EzASM
  * runtime. Provides capabilities to run lines of code and access to the internal representation.
  */
-public class Simulator implements ISimulator {
+public class Simulator {
+
+    public static final int MAIN_FILE_IDENTIFIER = 0;
 
     private final Memory memory;
     private final Registers registers;
     private final InstructionDispatcher instructionDispatcher;
-    private final Register pc;
 
-    private final List<Line> lines;
-    private final Map<String, Integer> labels;
+    private final Map<String, Integer> fileToIdentifier;
+    private final Map<Integer, List<Line>> fileIdToLineArray;
+    private final Map<String, Pair<Integer, Long>> labelToFileIdAndLineNumber;
     private final Deque<TransformationSequence> transforms;
+
+    private final Register pc;
+    private final Register fi;
+    private String executionDirectory;
 
     /**
      * Constructs a Simulator with the given word size and memory size specifications.
@@ -37,11 +50,17 @@ public class Simulator implements ISimulator {
     public Simulator(int wordSize, int memorySize) {
         this.memory = new Memory(wordSize, memorySize);
         this.registers = new Registers(wordSize);
-        this.lines = new ArrayList<>();
-        this.labels = new HashMap<>();
+        this.instructionDispatcher = new InstructionDispatcher(this);
+
+        this.fileToIdentifier = new HashMap<>();
+        this.fileIdToLineArray = new HashMap<>();
+        this.labelToFileIdAndLineNumber = new HashMap<>();
         this.transforms = new ArrayDeque<>();
-        pc = registers.getRegister(Registers.PC);
-        instructionDispatcher = new InstructionDispatcher(this);
+
+        this.pc = registers.getRegister(Registers.PC);
+        this.fi = registers.getRegister(Registers.FID);
+        this.executionDirectory = "";
+
         initialize();
     }
 
@@ -50,6 +69,7 @@ public class Simulator implements ISimulator {
      */
     private void initialize() {
         registers.getRegister(Registers.SP).setLong(memory.initialStackPointer());
+        fi.setLong(MAIN_FILE_IDENTIFIER);
     }
 
     /**
@@ -65,10 +85,15 @@ public class Simulator implements ISimulator {
      */
     public void resetAll() {
         resetData();
-        lines.clear();
-        labels.clear();
+        fileToIdentifier.clear();
+        fileIdToLineArray.clear();
+        labelToFileIdAndLineNumber.clear();
         transforms.clear();
         initialize();
+    }
+
+    private List<Line> currentFileLines() {
+        return fileIdToLineArray.get((int) fi.getLong());
     }
 
     /**
@@ -77,7 +102,7 @@ public class Simulator implements ISimulator {
      * @return true if the program has run off of the end of the code as in program completion, false otherwise.
      */
     public boolean isDone() {
-        return pc.getLong() == lines.size();
+        return fileIdToLineArray.isEmpty() || pc.getLong() == currentFileLines().size();
     }
 
     /**
@@ -87,28 +112,79 @@ public class Simulator implements ISimulator {
      */
     public boolean isError() {
         long line = pc.getLong();
-        return line > lines.size() || line < 0;
+        return !fileIdToLineArray.isEmpty() && (line > currentFileLines().size() || line < 0);
     }
 
     /**
-     * Adds the given line to the program.
+     * Adds the given line to the program for the corresponding file identifier.
+     *
+     * @param line   the line to add to the program.
+     * @param fileId a number representing the file in which this line originated.
+     */
+    private void addLine(Line line, int fileId) throws ParseException {
+        fileIdToLineArray.computeIfAbsent(fileId, k -> new ArrayList<>());
+        if (line.isLabel()) {
+            if (labelToFileIdAndLineNumber.containsKey(line.getLabel())) {
+                throw new ParseException(String.format("Label %s already declared", line.getLabel()));
+            }
+            labelToFileIdAndLineNumber.put(line.getLabel(),
+                    new ImmutablePair<>(fileId, (long) fileIdToLineArray.get(fileId).size()));
+        }
+        fileIdToLineArray.get(fileId).add(line);
+        try {
+            memory.addStringImmediates(line.getStringImmediates());
+        } catch (SimulationException e) {
+            throw new ParseException(e.getMessage());
+        }
+    }
+
+    /**
+     * Adds the given line to the program to the main file.
      *
      * @param line the line to add to the program.
      */
-    public void addLine(Line line) {
-        if (line.isLabel()) {
-            labels.put(line.getLabel(), lines.size());
-        }
-        lines.add(line);
+    public void addLine(Line line) throws ParseException {
+        addLine(line, MAIN_FILE_IDENTIFIER);
     }
 
     /**
      * Parses the given text as a multi-line String. Then adds those lines to the program.
      *
-     * @param content the collection of Lines to add to the program.
+     * @param file the relative path from the main file to the file to read lines from.
      */
-    public void addLines(Collection<Line> content) {
-        content.forEach(this::addLine);
+    public void importLinesFromFile(String file) throws ParseException {
+        String absoluteFilePath = executionDirectory + File.separator + file;
+        if (fileToIdentifier.containsKey(absoluteFilePath)) {
+            return;
+        }
+        int fileId = fileToIdentifier.size();
+        fileToIdentifier.put(absoluteFilePath, fileId);
+
+        try {
+            String contentText = FileIO.readFile(new File(absoluteFilePath));
+            List<Line> content = Lexer.parseLines(contentText);
+            for (Line line : content) {
+                addLine(line, fileId);
+            }
+        } catch (IOException e) {
+            throw new ParseException(e.getMessage());
+        }
+    }
+
+    /**
+     * Adds the given lines to the main program. Then adds those lines to the program.
+     *
+     * @param lines    the lines
+     * @param mainFile the main program file.
+     */
+    public void addLines(List<Line> lines, File mainFile) throws ParseException {
+        String parent = mainFile.getParent();
+        parent = Objects.requireNonNullElse(parent, "");
+        this.executionDirectory = parent;
+        fileToIdentifier.put(mainFile.getAbsolutePath(), MAIN_FILE_IDENTIFIER);
+        for (Line line : lines) {
+            addLine(line, MAIN_FILE_IDENTIFIER);
+        }
     }
 
     /**
@@ -127,7 +203,11 @@ public class Simulator implements ISimulator {
         }
     }
 
-    @Override
+    /**
+     * Runs the program continuously until completion or error.
+     *
+     * @throws SimulationException if there is an error executing the program.
+     */
     public void executeProgramFromPC() throws SimulationException {
         while (!isDone() && !isError()) {
             executeLineFromPC();
@@ -141,11 +221,17 @@ public class Simulator implements ISimulator {
      */
     public void executeLineFromPC() throws SimulationException {
         int lineNumber = validatePC();
-        runLine(lines.get(lineNumber));
+        runLine(currentFileLines().get(lineNumber));
         validatePC();
     }
 
-    @Override
+    /**
+     * Applies the given transformation sequence to the simulation.
+     *
+     * @param t the transformation sequence to apply.
+     *
+     * @throws SimulationException if there is an error in applying the transformation.
+     */
     public void applyTransformations(TransformationSequence t) throws SimulationException {
         t.apply();
         InputOutputTransformable io = new InputOutputTransformable(this, new RegisterInputOutput(Registers.PC));
@@ -169,17 +255,12 @@ public class Simulator implements ISimulator {
     }
 
     /**
-     * Causes the program to terminate naturally.
-     */
-    public void exit() {
-        pc.setLong(lines.size() - 1);
-    }
-
-    /**
-     * Causes the program to terminate naturally.
+     * Gets the last valid program counter.
+     *
+     * @return the last valid program counter.
      */
     public long endPC() {
-        return lines.size() - 1;
+        return currentFileLines().size() - 1;
     }
 
     /**
@@ -199,8 +280,8 @@ public class Simulator implements ISimulator {
      *
      * @return the label mapping.
      */
-    public Map<String, Integer> getLabels() {
-        return labels;
+    public Map<String, Pair<Integer, Long>> getLabelToFileIdAndLineNumber() {
+        return labelToFileIdAndLineNumber;
     }
 
     /**

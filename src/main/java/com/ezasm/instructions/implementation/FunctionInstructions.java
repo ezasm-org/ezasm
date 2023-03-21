@@ -2,6 +2,7 @@ package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
+import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
@@ -15,7 +16,7 @@ import com.ezasm.util.RawData;
  */
 public class FunctionInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
     private final MemoryInstructions memoryInstructions;
 
     /**
@@ -23,7 +24,7 @@ public class FunctionInstructions {
      *
      * @param simulator the provided Simulator.
      */
-    public FunctionInstructions(ISimulator simulator) {
+    public FunctionInstructions(Simulator simulator) {
         this.simulator = simulator;
         this.memoryInstructions = new MemoryInstructions(simulator);
     }
@@ -62,11 +63,22 @@ public class FunctionInstructions {
     public TransformationSequence call(IAbstractInput input) throws SimulationException {
         RegisterInputOutput ra = new RegisterInputOutput(Registers.RA);
         InputOutputTransformable raio = new InputOutputTransformable(simulator, ra);
+        RegisterInputOutput fi = new RegisterInputOutput(Registers.FID);
+        InputOutputTransformable fiio = new InputOutputTransformable(simulator, fi);
         Register pc = simulator.getRegisters().getRegister(Registers.PC);
         TransformationSequence t = new TransformationSequence();
+
         t = t.concatenate(memoryInstructions.push(ra));
         t = t.concatenate(new TransformationSequence(raio.transformation(pc.getData())));
+
+        // If we are jumping via a label, push the potentially new file id to the stack
+        t = t.concatenate(memoryInstructions.consecutivePush(fi, 1));
+        if (input instanceof LabelReferenceInput l) {
+            long nextFileId = l.getLabelFileId(simulator).intValue();
+            t = t.concatenate(new TransformationSequence(fiio.transformation(new RawData(nextFileId))));
+        }
         t = t.concatenate(jump(input));
+
         return t;
     }
 
@@ -90,8 +102,10 @@ public class FunctionInstructions {
     @Instruction
     public TransformationSequence _return() throws SimulationException {
         TransformationSequence t = new TransformationSequence();
+
         t = t.concatenate(jump(new RegisterInputOutput(Registers.RA)));
-        t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.RA)));
+        t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.FID)));
+        t = t.concatenate(memoryInstructions.consecutivePop(new RegisterInputOutput(Registers.RA), 1));
         return t;
     }
 

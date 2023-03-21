@@ -107,6 +107,11 @@ public class SimulatorGuiActions {
      */
     static void stepBack() {
         try {
+            if (state == State.STOPPED) {
+                setState(State.PAUSED);
+                startWorker();
+                System.out.println("** Stepping back into stopped program **");
+            }
             if (Window.getInstance().getSimulator().undoLastTransformations()) {
                 // Some inverse transform was executed
                 setState(State.PAUSED);
@@ -128,7 +133,6 @@ public class SimulatorGuiActions {
      */
     static void start() {
         try {
-            Window.getInstance().getEditor().setEditable(false);
             Window.getInstance().parseText();
             setState(State.RUNNING);
             Window.getInstance().getConsole().reset();

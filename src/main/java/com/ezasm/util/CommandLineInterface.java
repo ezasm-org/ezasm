@@ -4,7 +4,7 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -22,7 +23,7 @@ import java.util.Scanner;
  */
 public class CommandLineInterface {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
     private final boolean cli;
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
@@ -33,7 +34,7 @@ public class CommandLineInterface {
      *
      * @param simulator the given Simulator.
      */
-    public CommandLineInterface(ISimulator simulator) {
+    public CommandLineInterface(Simulator simulator) {
         this.simulator = simulator;
         this.cli = true;
     }
@@ -42,32 +43,36 @@ public class CommandLineInterface {
      * Constructs a CLI based on the given Simulator for operating on code from a file.
      *
      * @param simulator the given Simulator.
-     * @param file      the file to read code from.
+     * @param path      the file to read code from.
      */
-    public CommandLineInterface(ISimulator simulator, String file) {
+    public CommandLineInterface(Simulator simulator, String path) {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file))));
+            File file = new File(path);
+            List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
+            this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
         }
     }
 
     /**
-     * Constructs a CLI based ont he given Simulator for operating code from a file with redirected input and/or output
+     * Constructs a CLI based ont the given Simulator for operating code from a file with redirected input and/or output
      *
      * @param simulator      the given Simulator.
      * @param file           the file to read code from.
      * @param inputFilePath  the file to read the input from.
      * @param outputFilePath the file to write the output to.
      */
-    public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
+    public CommandLineInterface(Simulator simulator, String path, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file))));
+            File file = new File(path);
+            List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
+            this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
             System.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
