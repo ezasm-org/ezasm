@@ -20,12 +20,12 @@ public class WindowCloseListener extends WindowAdapter {
     @Override
     public void windowClosing(WindowEvent e) {
         if (!Window.getInstance().getEditor().getFileSaved()) {
-            if(Window.getInstance().getEditor().getText().equals("")
+            if (Window.getInstance().getEditor().getText().equals("")
                     && Window.getInstance().getEditor().getOpenFilePath().equals("")) {
                 System.exit(0);
             }
-            int resp = promptYesNoCancelDialog("Exiting...",
-                    "Your changes have not been saved." + System.getProperty("line.separator") + "Would you like to save them?");
+            int resp = promptYesNoCancelDialog("Exiting...", "Your changes have not been saved."
+                    + System.getProperty("line.separator") + "Would you like to save them?");
 
             if (resp == 0) {
                 if (!Window.getInstance().getEditor().getOpenFilePath().equals("")) {
@@ -36,7 +36,7 @@ public class WindowCloseListener extends WindowAdapter {
                     try {
                         Scanner in = new Scanner(new FileReader(file));
                         StringBuilder sb = new StringBuilder();
-                        while(in.hasNext()){
+                        while (in.hasNext()) {
                             sb.append(in.next());
                         }
                         in.close();
@@ -47,13 +47,13 @@ public class WindowCloseListener extends WindowAdapter {
 
                     System.out.println(pastText);
 
-                    //saveAs();
+                    // saveAs();
                 }
                 System.exit(0);
             } else if (resp == 1) {
                 System.exit(0);
             } else {
-                //cancel closing operation
+                // cancel closing operation
             }
         } else {
             System.exit(0);
