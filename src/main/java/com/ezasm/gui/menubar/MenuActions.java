@@ -13,6 +13,8 @@ import static com.ezasm.gui.util.DialogFactory.promptOverwriteDialog;
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 import static com.ezasm.util.FileIO.*;
 
+import java.util.Timer;
+
 /**
  * Action functions for the menubar actions like Save, Save As, Open, New, etc.
  */
@@ -68,12 +70,7 @@ public class MenuActions {
         return false;
     }
 
-    /**Auto called Save function to save file periodically
-     * 
-     */
-    public static void autosave(){
-        
-    } 
+    
     /**
      * Runs the action event for load.
      *
@@ -137,4 +134,13 @@ public class MenuActions {
         }
     }
 
+    /**Auto called Save function to save file periodically
+     * 
+     */
+    
+    public static void autoSave(){
+        Timer time = new Timer();
+        TaskTimer Task = new TaskTimer();
+        time.schedule(Task, 0, 5000);
+    }
 }
