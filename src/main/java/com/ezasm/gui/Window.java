@@ -57,6 +57,7 @@ public class Window {
     private Console console;
 
     private static boolean debugMode;
+    private ArrayList<EzEditorPane> editorPanes;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -194,6 +195,8 @@ public class Window {
             System.err.println("Unable to set look and feel");
         }
 
+        editorPanes = new ArrayList<>();
+
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         app.addWindowListener(new WindowCloseListener());
@@ -207,7 +210,9 @@ public class Window {
 
         menubar = MenubarFactory.makeMenuBar();
         editors = new ClosableTabbedPane();
-        editors.addTab(new EzEditorPane(), null, "New Document.ez", "");
+        EzEditorPane newEditor = new EzEditorPane();
+        editors.addTab(newEditor, null, "New Document.ez", "");
+        editorPanes.add(newEditor);
         toolbar = ToolbarFactory.makeToolbar();
         registerTable = new RegisterTable(simulator.getRegisters());
 
@@ -277,13 +282,18 @@ public class Window {
 
     public EzEditorPane openNewFileTab(File fileIn) {
         EzEditorPane newEditor;
-        // if (!isOpen(fileIn.getPath())){
+        int k = getEditorIndexOfOpenPath(fileIn.getPath());
+        if (k == -1) {
             newEditor = new EzEditorPane();
+            editorPanes.add(newEditor);
             editors.addTab(newEditor, null, fileIn.getName(), "");
             applyConfiguration(config);
-        // }
-        // else{
-        // }
+        } else {
+            if (!(editors.getComponentAt(k) instanceof EzEditorPane)) {
+                return null;
+            }
+            newEditor = (EzEditorPane) editors.getComponentAt(k);
+        }
         editors.setActiveTab(newEditor);
         return newEditor;
     }
@@ -358,13 +368,7 @@ public class Window {
      * @return the instance's editor panes.
      */
     public ArrayList<EzEditorPane> getEditors() {
-        ArrayList<EzEditorPane> output = new ArrayList<>();
-        for (Component c : editors.getComponents()) {
-            if (c instanceof EzEditorPane) {
-                output.add((EzEditorPane) c);
-            }
-        }
-        return output;
+        return editorPanes;
     }
 
     /**
@@ -458,13 +462,14 @@ public class Window {
         System.err.println(e.getMessage());
     }
 
-    public boolean isOpen(String path) {
-        for (EzEditorPane ez : instance.getEditors()) {
-            if (ez.getOpenFilePath().equals(path)) {
-                return true;
+    public int getEditorIndexOfOpenPath(String path) {
+        ArrayList<EzEditorPane> panes = instance.getEditors();
+        for (int i = 0; i < panes.size(); i++) {
+            if (panes.get(i).getOpenFilePath().equals(path)) {
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
 }

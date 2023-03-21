@@ -115,6 +115,10 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
         return tabbedPane.indexOfTab(title);
     }
 
+    public int indexOfComponent(Component c) {
+        return tabbedPane.indexOfComponent(c);
+    }
+
     /**
      * Returns the number of tabs in this object.
      *
@@ -143,16 +147,11 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
         return (JComponent) tabbedPane.getSelectedComponent();
     }
 
-    /**
-     * Gets the array of components stored in the tab pane.
-     *
-     * @return the array of components stored in the tab pane.
-     */
-    public JComponent[] getTabComponents() {
-        return (JComponent[]) tabbedPane.getComponents();
-    }
-
     public void setActiveTab(JComponent comp) {
         tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(comp));
+    }
+
+    public void setActiveTab(int idx) {
+        tabbedPane.setSelectedIndex(idx);
     }
 }
