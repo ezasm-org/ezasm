@@ -32,6 +32,7 @@ public class MenuActions {
                 try {
                     FileIO.writeFile(file, Window.getInstance().getEditor().getText());
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
+                    Window.getInstance().getEditor().setFileSaved(true);
                 } catch (IOException e) {
                     promptWarningDialog("Error Saving File",
                             String.format("There was an error saving to '%s'", file.getName()));
@@ -45,11 +46,13 @@ public class MenuActions {
      */
     public static void save() {
         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
+
         if (!fileToUpdate.exists()) {
             saveAs();
         } else {
             try {
                 FileIO.writeFile(fileToUpdate, Window.getInstance().getEditor().getText());
+                Window.getInstance().getEditor().setFileSaved(true);
             } catch (IOException e) {
                 promptWarningDialog("Error Saving File",
                         String.format("There was an error saving to '%s'", fileToUpdate.getName()));
@@ -70,6 +73,7 @@ public class MenuActions {
                     String content = FileIO.readFile(file);
                     Window.getInstance().getEditor().setText(content);
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
+                    Window.getInstance().getEditor().setFileSaved(true);
                 } catch (IOException ex) {
                     promptWarningDialog("Error Loading File",
                             String.format("There was an error loading '%s'", file.getName()));
