@@ -56,7 +56,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      */
     public void highlight(JTextComponent textComp, Simulator simulator) {
         int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
-        if (simulator.getRegisters().getRegister(Registers.FI).getLong() == Simulator.MAIN_FILE_IDENTIFIER) {
+        if (simulator.getRegisters().getRegister(Registers.FID).getLong() == Simulator.MAIN_FILE_IDENTIFIER) {
             try {
                 textComp.getHighlighter().addHighlight(startLineNums.get(lineNumber), endLineNums.get(lineNumber),
                         this);

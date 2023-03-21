@@ -58,7 +58,7 @@ public class Simulator {
         this.transforms = new ArrayDeque<>();
 
         this.pc = registers.getRegister(Registers.PC);
-        this.fi = registers.getRegister(Registers.FI);
+        this.fi = registers.getRegister(Registers.FID);
         this.executionDirectory = "";
 
         initialize();

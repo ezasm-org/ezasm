@@ -63,7 +63,7 @@ public class FunctionInstructions {
     public TransformationSequence call(IAbstractInput input) throws SimulationException {
         RegisterInputOutput ra = new RegisterInputOutput(Registers.RA);
         InputOutputTransformable raio = new InputOutputTransformable(simulator, ra);
-        RegisterInputOutput fi = new RegisterInputOutput(Registers.FI);
+        RegisterInputOutput fi = new RegisterInputOutput(Registers.FID);
         InputOutputTransformable fiio = new InputOutputTransformable(simulator, fi);
         Register pc = simulator.getRegisters().getRegister(Registers.PC);
         TransformationSequence t = new TransformationSequence();
@@ -104,7 +104,7 @@ public class FunctionInstructions {
         TransformationSequence t = new TransformationSequence();
 
         t = t.concatenate(jump(new RegisterInputOutput(Registers.RA)));
-        t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.FI)));
+        t = t.concatenate(memoryInstructions.pop(new RegisterInputOutput(Registers.FID)));
         t = t.concatenate(memoryInstructions.consecutivePop(new RegisterInputOutput(Registers.RA), 1));
         return t;
     }

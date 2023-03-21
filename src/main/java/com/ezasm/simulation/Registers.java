@@ -7,17 +7,17 @@ import java.util.*;
  */
 public class Registers {
 
-    private static final int REGISTERS_COUNT = 34;
+    private static int REGISTERS_COUNT = 54;
 
     private final Register[] registers;
 
     // Base registers
     public static final String ZERO = "ZERO"; // The number zero
+    public static final String PID = "PID"; // Program identifier
+    public static final String FID = "FID"; // File Identifier
     public static final String PC = "PC"; // Program counter
-    public static final String FI = "FI"; // File Identifier
     public static final String SP = "SP"; // Stack pointer
     public static final String RA = "RA"; // Return address
-    public static final String PI = "PI"; // Program identifier
     public static final String A0 = "A0"; // Argument 0
     public static final String A1 = "A1"; // Argument 1
     public static final String A2 = "A2"; // Argument 2
@@ -49,6 +49,30 @@ public class Registers {
     public static final String T8 = "T8";
     public static final String T9 = "T9";
 
+    // Saved float registers
+    public static final String FS0 = "FS0";
+    public static final String FS1 = "FS1";
+    public static final String FS2 = "FS2";
+    public static final String FS3 = "FS3";
+    public static final String FS4 = "FS4";
+    public static final String FS5 = "FS5";
+    public static final String FS6 = "FS6";
+    public static final String FS7 = "FS7";
+    public static final String FS8 = "FS8";
+    public static final String FS9 = "FS9";
+
+    // Temporary float registers
+    public static final String FT0 = "FT0";
+    public static final String FT1 = "FT1";
+    public static final String FT2 = "FT2";
+    public static final String FT3 = "FT3";
+    public static final String FT4 = "FT4";
+    public static final String FT5 = "FT5";
+    public static final String FT6 = "FT6";
+    public static final String FT7 = "FT7";
+    public static final String FT8 = "FT8";
+    public static final String FT9 = "FT9";
+
     public static final String LO = "LO"; // Special "LOW" register to store the lower part of a multiplication
     public static final String HI = "HI"; // Special "HIGH" register to store the higher part of a multiplication
 
@@ -61,18 +85,21 @@ public class Registers {
      */
     static {
         initialize();
+        REGISTERS_COUNT = registerByInt.size();
     }
 
     /**
      * Initialization function for the registers. Creates both mapping of register number to String and vice-versa.
      */
     private static void initialize() {
-        registerByString = new HashMap<>(REGISTERS_COUNT);
-        registerByInt = new HashMap<>(REGISTERS_COUNT);
-        addRegisters(ZERO, PC, FI, SP, RA, PI, A0, A1, A2, R0, R1, R2); // Add base registers
+        registerByString = new HashMap<>();
+        registerByInt = new HashMap<>();
+        addRegisters(ZERO, PID, FID, PC, SP, RA, A0, A1, A2, R0, R1, R2); // Add base registers
+        addRegisters(LO, HI); // Add special registers
         addRegisters(S0, S1, S2, S3, S4, S5, S6, S7, S8, S9); // Add saved registers
         addRegisters(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9); // Add temporary registers
-        addRegisters(LO, HI); // Add special registers
+        addRegisters(FS0, FS1, FS2, FS3, FS4, FS5, FS6, FS7, FS8, FS9); // Add float saved registers
+        addRegisters(FT0, FT1, FT2, FT3, FT4, FT5, FT6, FT7, FT8, FT9); // Add float temporary registers
     }
 
     /**
