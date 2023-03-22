@@ -39,6 +39,8 @@ public class ArithmaticInstructionTest {
             simulator.runLine(Lexer.parseLine("add $t4 $s2 $s3", 0));
             simulator.runLine(Lexer.parseLine("add $t5 $s4 1", 0));
             simulator.runLine(Lexer.parseLine("add $t6 $s4 $s5", 0));
+            simulator.runLine(Lexer.parseLine("add $t7 $s4 $s4", 0));
+            simulator.runLine(Lexer.parseLine("add $t8 $s5 $s5", 0));
 
             assertEquals(simulator.getRegisters().getRegister(Registers.T0).getLong(), 15);
             assertEquals(simulator.getRegisters().getRegister(Registers.T1).getLong(), -5);
@@ -47,6 +49,8 @@ public class ArithmaticInstructionTest {
             assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), 0);
             assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), Long.MIN_VALUE);
             assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), -1);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), -2);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T8).getLong(), 0);
         } catch (Exception e) {
             fail();
         }
