@@ -4,6 +4,8 @@ import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.table.MemoryTable;
+import com.ezasm.gui.table.RegisterTable;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.tabbedpane.FixedTabbedPane;
@@ -50,7 +52,9 @@ public class Window {
     private EzEditorPane editor;
     private RegisterTable registerTable;
     private FixedTabbedPane tools;
+
     private Console console;
+    private MemoryTable memoryTable;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -209,8 +213,11 @@ public class Window {
         System.setOut(new PrintStream(outputStream));
         System.setErr(new PrintStream(console.getErrorStream()));
 
+        memoryTable = new MemoryTable(simulator.getMemory());
+
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
+        tools.addTab(memoryTable, null, "Memory", "System Memory");
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
         mainSplit.setResizeWeight(0.8);
@@ -301,7 +308,21 @@ public class Window {
      * @return the instance's console object.
      */
     public Console getConsole() {
-        return this.console;
+        return console;
+    }
+
+    /**
+     * Gets the instance's memory table object.
+     *
+     * @return the instance's memory table object.
+     */
+    public MemoryTable getMemoryTable() {
+        return memoryTable;
+    }
+
+    public void updateGraphicInformation() {
+        registerTable.update();
+        memoryTable.update();
     }
 
     /**
@@ -338,7 +359,7 @@ public class Window {
      */
     public void parseText() throws ParseException {
         simulator.resetAll();
-        registerTable.update();
+        updateGraphicInformation();
         simulator.addLines(Lexer.parseLines(editor.getText()), new File(editor.getOpenFilePath()));
         instance.editor.resetHighlighter();
     }

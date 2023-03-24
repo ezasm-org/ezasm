@@ -1,4 +1,4 @@
-package com.ezasm.gui;
+package com.ezasm.gui.table;
 
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
@@ -70,7 +70,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * Applies the proper theming to the editor area
+     * Applies the proper theming to the table and text within.
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
         scrollPane.setBackground(editorTheme.background());
