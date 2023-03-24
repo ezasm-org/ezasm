@@ -70,7 +70,6 @@ public class MenuActions {
         return false;
     }
 
-    
     /**
      * Runs the action event for load.
      *
@@ -134,11 +133,12 @@ public class MenuActions {
         }
     }
 
-    /**Auto called Save function to save file periodically
-     * 
+    /**
+     * Auto called Save function to save file periodically
+     *
      */
-    
-    public static void autoSave(){
+
+    public static void autoSave() {
         Timer time = new Timer();
         TaskTimer Task = new TaskTimer();
         time.schedule(Task, 0, 5000);

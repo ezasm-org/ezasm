@@ -113,13 +113,14 @@ public class SettingsPopup implements IThemeable {
         AutoSaveButton.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent event) {
-                if (AutoSaveButton.isSelected()){
+                if (AutoSaveButton.isSelected()) {
                     AutoSaveButton.setText("ON");
                 } else {
                     AutoSaveButton.setText("OFF");
                 }
             }
-        });;
+        });
+        ;
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
