@@ -88,5 +88,11 @@
             <artifactId>rsyntaxtextarea</artifactId>
             <version>3.3.2</version>
         </dependency>
+        <!-- https://central.sonatype.com/artifact/com.fifesoft/autocomplete/3.3.1 -->
+        <dependency>
+            <groupId>com.fifesoft</groupId>
+            <artifactId>autocomplete</artifactId>
+            <version>3.3.1</version>
+        </dependency>
     </dependencies>
 </project>
