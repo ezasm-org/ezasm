@@ -7,7 +7,6 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.SystemStreams;
 
-import static com.ezasm.gui.menubar.MenuActions.*;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -142,7 +141,6 @@ public class SimulatorGuiActions {
             Window.getInstance().getConsole().reset();
             SystemStreams.printlnCurrentOut("** Program starting **");
             startWorker();
-            autoSave();
         } catch (ParseException e) {
             setState(State.IDLE);
             Window.getInstance().handleParseException(e);

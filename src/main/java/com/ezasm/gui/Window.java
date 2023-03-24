@@ -17,6 +17,7 @@ import com.ezasm.simulation.Registers;
 import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
 import com.ezasm.util.SystemStreams;
+import static com.ezasm.gui.menubar.MenuActions.*;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -75,6 +76,7 @@ public class Window {
         this.simulator = simulator;
         this.config = config;
         initialize();
+        autoSave();
     }
 
     /**
