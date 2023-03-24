@@ -83,6 +83,17 @@ public final class RawData {
         return new RawData(Arrays.copyOf(data, data.length));
     }
 
+    /**
+     * Converts the integer value contained in the data to a 0-padded hexadecimal string that will be 21 characters long. the value representing 31 would turn into 0x0000_0000_0000_001F
+     *
+     * @return the hexadecimal formatted string.
+     */
+    public String toHexString() {
+        String output = String.format("%016x", intValue());
+        output = "0x" + output.substring(0, 4) + '_' + output.substring(4, 8) + '_' + output.substring(8, 12) + '_' + output.substring(12);
+        return output;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
