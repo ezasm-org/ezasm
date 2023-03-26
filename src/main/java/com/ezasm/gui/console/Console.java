@@ -5,6 +5,8 @@ import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * Represents a console in which a user can type input into and read output from.

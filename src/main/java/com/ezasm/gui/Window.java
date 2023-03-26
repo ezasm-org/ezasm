@@ -347,12 +347,12 @@ public class Window {
      */
     public void handleProgramCompletion() {
         if (simulator.isError()) {
-            System.out.println("** Program terminated due to an error **");
+            System.out.print("** Program terminated due to an error **\n");
         } else if (simulator.isDone()) {
             System.out.printf("** Program terminated with exit code %d **\n",
                     simulator.getRegisters().getRegister(Registers.R0).getLong());
         } else {
-            System.out.println("** Program terminated forcefully **");
+            System.out.print("** Program terminated forcefully **\n");
         }
         editor.resetHighlighter();
     }

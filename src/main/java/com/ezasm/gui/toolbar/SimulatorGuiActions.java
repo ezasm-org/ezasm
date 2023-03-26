@@ -83,8 +83,9 @@ public class SimulatorGuiActions {
         if (state == State.IDLE || state == State.STOPPED) {
             try {
                 Window.getInstance().parseText();
-                System.out.println("** Program starting **");
                 setState(State.PAUSED);
+                Window.getInstance().getConsole().reset();
+                System.out.print("** Program starting **\n");
                 startWorker();
             } catch (ParseException e) {
                 setState(State.IDLE);
@@ -110,7 +111,7 @@ public class SimulatorGuiActions {
             if (state == State.STOPPED) {
                 setState(State.PAUSED);
                 startWorker();
-                System.out.println("** Stepping back into stopped program **");
+                System.out.print("** Stepping back into stopped program **\n");
             }
             if (Window.getInstance().getSimulator().undoLastTransformations()) {
                 // Some inverse transform was executed
@@ -136,7 +137,7 @@ public class SimulatorGuiActions {
             Window.getInstance().parseText();
             setState(State.RUNNING);
             Window.getInstance().getConsole().reset();
-            System.out.println("** Program starting **");
+            System.out.print("** Program starting **\n");
             startWorker();
         } catch (ParseException e) {
             setState(State.IDLE);

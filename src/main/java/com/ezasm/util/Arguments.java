@@ -4,7 +4,6 @@ import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.Window;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Memory;
-import com.ezasm.simulation.Simulator;
 import org.apache.commons.cli.*;
 
 /**
@@ -60,7 +59,7 @@ public class Arguments {
         }
 
         if (commandLine.hasOption(verionOption)) {
-            System.out.printf("%s %s\n", Properties.NAME, Properties.VERSION);
+            System.out.printf("%s %s\n", MavenProperties.NAME, MavenProperties.VERSION);
             System.exit(0);
         }
 
