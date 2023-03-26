@@ -10,8 +10,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 /**
  * Represents a GUI console text box which a user will type into. To be used by the Console. Patches an issue with
@@ -166,10 +164,6 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
         if (e.getKeyCode() == KeyEvent.VK_C && e.isControlDown()) {
             // Copy attempt, allow this
             return;
-        }
-        if (e.getKeyChar() == '\r') {
-            // Consume windows 'CR' part of 'CRLF' enter press
-            e.consume();
         }
         if (pos < fixedTextEnd && isRealCharacter(c)) {
             // Trying to edit text that has already been submitted
