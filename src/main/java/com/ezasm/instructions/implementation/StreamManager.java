@@ -210,7 +210,7 @@ public class StreamManager {
      * @throws SimulationException if an error occurs reading from the stream of if it ends while seeking a word.
      */
     private String walkLine() throws SimulationException {
-        String eol = System.lineSeparator();
+        String eol = "\n";
         // the EOL delimiter is assumed to be of at least length 1
         try {
             StringBuilder sb = new StringBuilder();

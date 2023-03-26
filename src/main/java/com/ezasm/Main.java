@@ -1,5 +1,7 @@
 package com.ezasm;
 
+import com.ezasm.util.SystemStreams;
+
 import static com.ezasm.util.Arguments.handleArgs;
 
 /**

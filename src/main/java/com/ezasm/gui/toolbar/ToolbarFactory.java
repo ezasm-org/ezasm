@@ -1,6 +1,7 @@
 package com.ezasm.gui.toolbar;
 
 import com.ezasm.gui.util.EditorTheme;
+import com.ezasm.util.SystemStreams;
 
 import static com.ezasm.gui.toolbar.SimulatorGuiActions.*;
 
@@ -117,7 +118,7 @@ public class ToolbarFactory {
             case PAUSE -> pause();
             case RESUME -> resume();
             case RESET -> reset();
-            default -> System.err.printf("Button '%s' not yet implemented", e.getActionCommand());
+            default -> SystemStreams.err.printf("Button '%s' not yet implemented\n", e.getActionCommand());
             }
         }
 

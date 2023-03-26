@@ -59,7 +59,7 @@ public class Arguments {
         }
 
         if (commandLine.hasOption(verionOption)) {
-            System.out.printf("%s %s\n", MavenProperties.NAME, MavenProperties.VERSION);
+            SystemStreams.out.printf(String.format("%s %s\n", MavenProperties.NAME, MavenProperties.VERSION));
             System.exit(0);
         }
 
@@ -128,7 +128,7 @@ public class Arguments {
      * @param message the message to print before exiting.
      */
     private static void errorArgs(String message) {
-        System.err.println(message);
+        SystemStreams.err.println(message);
         System.exit(1);
     }
 

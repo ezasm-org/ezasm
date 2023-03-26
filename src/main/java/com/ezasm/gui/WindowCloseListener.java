@@ -45,7 +45,7 @@ public class WindowCloseListener extends WindowAdapter {
                         throw new RuntimeException(ex);
                     }
 
-                    System.out.print(pastText + "\n");
+                    System.out.println(pastText);
 
                     // saveAs();
                 }

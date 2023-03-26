@@ -53,7 +53,7 @@ public class CommandLineInterface {
             List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
             this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            System.err.println("Unable to parse the given file: " + e.getMessage());
+            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
         }
     }
@@ -74,7 +74,7 @@ public class CommandLineInterface {
             List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
             this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            System.err.println("Unable to parse the given file: " + e.getMessage());
+            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
         }
 
@@ -85,7 +85,7 @@ public class CommandLineInterface {
                 inputStream = System.in;
             }
         } catch (IOException e) {
-            System.err.printf("Unable to read input from %s: %s", inputFilePath, e.getMessage());
+            SystemStreams.err.printf("Unable to read input from %s: %s\n", inputFilePath, e.getMessage());
             System.exit(1);
         }
 
@@ -95,9 +95,9 @@ public class CommandLineInterface {
                 outputFile.createNewFile();
                 outputStream = new FileOutputStream(outputFile);
             } else
-                outputStream = System.out;
+                outputStream = SystemStreams.out;
         } catch (IOException e) {
-            System.err.printf("Unable to write output to %s: %s", outputFilePath, e.getMessage());
+            SystemStreams.err.printf("Unable to write output to %s: %s\n", outputFilePath, e.getMessage());
             System.exit(1);
         }
     }
@@ -126,15 +126,18 @@ public class CommandLineInterface {
         Scanner scanner = new Scanner(System.in);
         int lineNumber = 0;
 
-        System.out.print("> ");
+        SystemStreams.out.println("> ");
         while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
                 Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
-                simulator.runLine(line);
+                if (line != null) {
+                    simulator.runLine(line);
+                }
             } catch (ParseException | SimulationException e) {
-                System.err.flush();
+                SystemStreams.err.println(e.getMessage());
+                SystemStreams.err.flush();
             }
-            System.out.print("> ");
+            SystemStreams.out.println("> ");
         }
         try {
             Thread.sleep(50);
@@ -149,7 +152,7 @@ public class CommandLineInterface {
         try {
             simulator.executeProgramFromPC();
         } catch (SimulationException e) {
-            System.err.println(e.getMessage());
+            SystemStreams.err.println(e.getMessage());
         }
         System.exit((int) simulator.getRegisters().getRegister(Registers.R0).getLong());
     }

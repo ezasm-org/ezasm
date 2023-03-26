@@ -16,6 +16,7 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
 import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
+import com.ezasm.util.SystemStreams;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -181,7 +182,7 @@ public class Window {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            System.err.println("Unable to set look and feel");
+            SystemStreams.err.println("Unable to set look and feel");
         }
 
         app = new JFrame("EzASM Simulator");
@@ -191,7 +192,7 @@ public class Window {
         try {
             app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
         } catch (IOException e) {
-            System.err.println("Could not load icon");
+            SystemStreams.err.println("Could not load icon");
         }
         panel = new JPanel();
 
@@ -347,12 +348,12 @@ public class Window {
      */
     public void handleProgramCompletion() {
         if (simulator.isError()) {
-            System.out.print("** Program terminated due to an error **\n");
+            SystemStreams.printlnCurrentOut("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
-            System.out.printf("** Program terminated with exit code %d **\n",
-                    simulator.getRegisters().getRegister(Registers.R0).getLong());
+            SystemStreams.printlnCurrentOut(String.format("** Program terminated with exit code %d **",
+                    simulator.getRegisters().getRegister(Registers.R0).getLong()));
         } else {
-            System.out.print("** Program terminated forcefully **\n");
+            SystemStreams.printlnCurrentOut("** Program terminated forcefully **");
         }
         editor.resetHighlighter();
     }
@@ -376,31 +377,12 @@ public class Window {
     }
 
     /**
-     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while this is the set to
-     * false.
-     *
-     * @param value true to enable, false to disable.
-     */
-    public void setEditable(boolean value) {
-        editor.setEditable(value);
-    }
-
-    /**
-     * Gets the truth value of whether the editor can be typed in.
-     *
-     * @return true if the editor can be typed in currently, false otherwise.
-     */
-    public boolean getEditable() {
-        return editor.getEditable();
-    }
-
-    /**
      * Handles the parse exception by printing the message to the terminal.
      *
      * @param e the exception to handle.
      */
     public void handleParseException(Exception e) {
-        System.err.println(e.getMessage());
+        SystemStreams.printlnCurrentErr(e.getMessage());
     }
 
 }
