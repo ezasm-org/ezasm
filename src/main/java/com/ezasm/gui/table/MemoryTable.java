@@ -3,11 +3,12 @@ package com.ezasm.gui.table;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.simulation.Memory;
-import com.ezasm.simulation.exception.SimulationAddressOutOfBoundsException;
+import com.ezasm.simulation.exception.ReadOutOfBoundsException;
 import com.ezasm.util.RawData;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 public class MemoryTable extends JPanel implements IThemeable {
@@ -21,11 +22,6 @@ public class MemoryTable extends JPanel implements IThemeable {
         this.scrollPane = new JScrollPane(table);
         table.setModel(new MemoryTableModel(memory, 8, 20));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-
-        for (int i = 0; i < table.getColumnCount(); ++i) {
-            table.getColumnModel().getColumn(i).setPreferredWidth(300);
-        }
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -48,10 +44,17 @@ public class MemoryTable extends JPanel implements IThemeable {
         EditorTheme.applyFontAndTheme(table.getTableHeader(), font, editorTheme);
         table.setRowHeight(font.getSize() + 2);
         table.getTableHeader().setOpaque(false);
+
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        for (int i = 0; i < table.getColumnCount(); ++i) {
+            table.getColumnModel().getColumn(i).setPreferredWidth(20 + (14 * font.getSize()));
+            table.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
+        }
     }
 
     /**
-     * Forcibly refreshes the display of the table
+     * Forcibly refreshes the display of the table.
      */
     public void update() {
         SwingUtilities.invokeLater(table::updateUI);
@@ -89,7 +92,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         public Object getValueAt(int row, int col) {
             try {
                 return memory.read(offset + (col * rows + row) * memory.wordSize).toHexString();
-            } catch (SimulationAddressOutOfBoundsException e) {
+            } catch (ReadOutOfBoundsException e) {
                 return RawData.emptyBytes(memory.wordSize).toHexString();
             }
         }
