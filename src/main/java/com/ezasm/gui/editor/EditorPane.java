@@ -34,7 +34,7 @@ public class EditorPane extends JPanel implements IThemeable {
     private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
-//    Autocomplete autoComplete;
+    Autocomplete autoComplete;
     private static final String COMMIT_ACTION = "commit";
 
     private ArrayList<String> keywords = new ArrayList<>();
@@ -50,21 +50,21 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea = new RSyntaxTextArea();
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);
-        textArea.setCodeFoldingEnabled(true);
+        textArea.setCodeFoldingEnabled(false);
 
-        CompletionProvider provider = createCompletionProvider();
+//        CompletionProvider provider = createCompletionProvider();
         // Install auto-completion onto our text area.
-        ac = new AutoCompletion(provider);
-        ac.setListCellRenderer(new EzASMCellRenderer());
-        ac.setShowDescWindow(true);
-        ac.setParameterAssistanceEnabled(true);
+//        ac = new AutoCompletion(provider);
+//        ac.setListCellRenderer(new EzASMCellRenderer());
+//        ac.setShowDescWindow(true);
+//        ac.setParameterAssistanceEnabled(true);
 
-        ac.setAutoCompleteEnabled(true);
-        ac.setAutoActivationEnabled(true);
-        ac.setAutoCompleteSingleChoices(true);
-        ac.setAutoActivationDelay(800);
-        ac.setTriggerKey(KeyStroke.getKeyStroke("ctrl SPACE"));
-        ac.install(textArea);
+//        ac.setAutoCompleteEnabled(true);
+//        ac.setAutoActivationEnabled(true);
+//        ac.setAutoCompleteSingleChoices(true);
+//        ac.setAutoActivationDelay(800);
+//        ac.setTriggerKey(KeyStroke.getKeyStroke("ctrl SPACE"));
+//        ac.install(textArea);
 
 
         scrollPane = new RTextScrollPane(textArea);
@@ -81,21 +81,13 @@ public class EditorPane extends JPanel implements IThemeable {
         textArea.setFocusTraversalKeysEnabled(false);
 
 
-        textArea.setToolTipSupplier((ToolTipSupplier)provider);
-        ToolTipManager.sharedInstance().registerComponent(textArea);
 
+        keywords = new ArrayList<String>();
+        autoComplete = new Autocomplete(textArea, keywords);
+        textArea.getDocument().addDocumentListener(autoComplete);
 
-
-//        keywords = new ArrayList<String>();
-//        keywords.add("example");
-//        keywords.add("autocomplete");
-//        keywords.add("stackabuse");
-//        keywords.add("java");
-//        autoComplete = new Autocomplete(textArea, keywords);
-//        textArea.getDocument().addDocumentListener(autoComplete);
-
-//        textArea.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
-//        textArea.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
+        textArea.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
+        textArea.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
     }
 
     /**
