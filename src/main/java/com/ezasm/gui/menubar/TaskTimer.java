@@ -9,10 +9,6 @@ import java.util.TimerTask;
  * TimerTask for timer to run "Save" function for autosave
  */
 public class TaskTimer extends TimerTask {
-    public TaskTimer() {
-
-    }
-
     public void run() {
         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
         if (fileToUpdate.exists()) {

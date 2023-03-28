@@ -7,7 +7,6 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.SystemStreams;
 
-
 import java.util.concurrent.locks.LockSupport;
 
 import static com.ezasm.gui.toolbar.ToolbarFactory.*;
