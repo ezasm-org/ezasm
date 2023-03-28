@@ -104,12 +104,14 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
      * @param color   the color of the text.
      */
     public void writeTextWithColor(String newText, Color color) {
-        try {
-            getDocument().insertString(fixedTextEnd, newText, getColoredAttributeSet(color));
-            fixedTextEnd += newText.length();
-            setCaretPosition(getText().length());
-        } catch (BadLocationException ignored) {
-        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                getDocument().insertString(fixedTextEnd, newText, getColoredAttributeSet(color));
+                fixedTextEnd += newText.length();
+                setCaretPosition(getText().length());
+            } catch (BadLocationException | IllegalArgumentException ignored) {
+            }
+        });
     }
 
     /**

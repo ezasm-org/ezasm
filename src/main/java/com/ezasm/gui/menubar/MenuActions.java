@@ -5,7 +5,6 @@ import com.ezasm.util.FileIO;
 
 import javax.swing.*;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 

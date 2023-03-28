@@ -1,5 +1,7 @@
 package com.ezasm.gui.settings;
 
+import com.ezasm.util.SystemStreams;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -118,7 +120,7 @@ public class Config {
             props.store(writer, "");
             writer.close();
         } catch (IOException e) {
-            System.err.println("ERROR SAVING SETTING");
+            SystemStreams.printlnCurrentErr("Error saving settings");
         }
     }
 
@@ -129,7 +131,7 @@ public class Config {
             properties.load(propReader);
             propReader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            SystemStreams.printlnCurrentErr("Error loading settings");
         }
         return properties;
     }

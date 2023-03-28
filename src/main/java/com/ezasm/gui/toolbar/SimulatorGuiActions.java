@@ -5,6 +5,7 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.SystemStreams;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -83,8 +84,9 @@ public class SimulatorGuiActions {
         if (state == State.IDLE || state == State.STOPPED) {
             try {
                 Window.getInstance().parseText();
-                System.out.println("** Program starting **");
                 setState(State.PAUSED);
+                Window.getInstance().getConsole().reset();
+                SystemStreams.printlnCurrentOut("** Program starting **");
                 startWorker();
             } catch (ParseException e) {
                 setState(State.IDLE);
@@ -97,7 +99,7 @@ public class SimulatorGuiActions {
                 Window.getInstance().getRegisterTable().update();
             } catch (SimulationException e) {
                 setState(State.STOPPED);
-                System.err.println(e.getMessage());
+                Window.getInstance().handleParseException(e);
             }
         }
     }
@@ -110,7 +112,7 @@ public class SimulatorGuiActions {
             if (state == State.STOPPED) {
                 setState(State.PAUSED);
                 startWorker();
-                System.out.println("** Stepping back into stopped program **");
+                SystemStreams.printlnCurrentOut("** Stepping back into stopped program **");
             }
             if (Window.getInstance().getSimulator().undoLastTransformations()) {
                 // Some inverse transform was executed
@@ -123,7 +125,7 @@ public class SimulatorGuiActions {
             }
         } catch (SimulationException e) {
             setState(State.STOPPED);
-            System.err.println(e.getMessage());
+            Window.getInstance().handleParseException(e);
         }
     }
 
@@ -136,7 +138,7 @@ public class SimulatorGuiActions {
             Window.getInstance().parseText();
             setState(State.RUNNING);
             Window.getInstance().getConsole().reset();
-            System.out.println("** Program starting **");
+            SystemStreams.printlnCurrentOut("** Program starting **");
             startWorker();
         } catch (ParseException e) {
             setState(State.IDLE);
