@@ -2,7 +2,6 @@ package com.ezasm.gui.menubar;
 
 import com.ezasm.gui.Window;
 import com.ezasm.util.FileIO;
-
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
@@ -12,8 +11,6 @@ import java.io.IOException;
 import static com.ezasm.gui.util.DialogFactory.promptOverwriteDialog;
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 import static com.ezasm.util.FileIO.*;
-
-import java.util.Timer;
 
 /**
  * Action functions for the menubar actions like Save, Save As, Open, New, etc.
@@ -132,14 +129,5 @@ public class MenuActions {
             }
         }
     }
-
-    /**
-     * Auto called Save function to save file periodically
-     *
-     */
-
-    public static void autoSave() {
-        Timer time = new Timer();
-        time.schedule(new TaskTimer(), 0, 5000);
-    }
+   
 }
