@@ -39,17 +39,23 @@ public class Config {
     public static final String TAB_SIZE = "TAB_SIZE";
     public static final String FONT_FAMILY = "FONT_FAMILY";
     public static final String AUTO_SAVE = "AUTO_SAVE";
+    public static final String AUTO_SAVE_INTERVAL = "AUTO_SAVE_INTERVAL";
+    public static final String AUTO_SAVE_SELECTED = "AUTO_SAVE_SELECTED";
 
     // All of EzASM's defaults
     public static final String DEFAULT_FONT_SIZE = "12";
     public static final String DEFAULT_TAB_SIZE = "2";
     public static final String DEFAULT_AUTO_SAVE = "OFF";
+    public static final String DEFAULT_AUTO_SAVE_SELECTED = "false";
+    public static final String DEFAULT_AUTO_SAVE_INTERVAL = "10";
     public static final String DEFAULT_SIMULATION_SPEED = "250";
     public static final String DEFAULT_THEME = "Light";
     public static final String DEFAULT_FONT = "Monospaced"; // unclear if this will be allowed to change
     Map<String, String> defaultProperties = Map.ofEntries(entry(FONT_SIZE, DEFAULT_FONT_SIZE),
             entry(TAB_SIZE, DEFAULT_TAB_SIZE), entry(SIMULATION_SPEED, DEFAULT_SIMULATION_SPEED),
-            entry(THEME, DEFAULT_THEME), entry(FONT_FAMILY, DEFAULT_FONT), entry(AUTO_SAVE, DEFAULT_AUTO_SAVE));
+            entry(THEME, DEFAULT_THEME), entry(FONT_FAMILY, DEFAULT_FONT), entry(AUTO_SAVE, DEFAULT_AUTO_SAVE),
+            entry(AUTO_SAVE_INTERVAL, DEFAULT_AUTO_SAVE_INTERVAL),
+            entry(AUTO_SAVE_SELECTED, DEFAULT_AUTO_SAVE_SELECTED));
 
     // Possible themes
     private static final String[] THEME_ARRAY = { "Light", "Dark", "Purple" };
@@ -72,6 +78,8 @@ public class Config {
             props.setProperty(THEME, DEFAULT_THEME);
             props.setProperty(TAB_SIZE, DEFAULT_TAB_SIZE);
             props.setProperty(AUTO_SAVE, DEFAULT_AUTO_SAVE);
+            props.setProperty(AUTO_SAVE_INTERVAL, DEFAULT_AUTO_SAVE_INTERVAL);
+            props.setProperty(AUTO_SAVE_SELECTED, DEFAULT_AUTO_SAVE_SELECTED);
             saveChanges();
         }
     }
@@ -116,12 +124,30 @@ public class Config {
         props.setProperty(AUTO_SAVE, status);
     }
 
+    public int getAutoSaveInterval() {
+        return Integer.parseInt(props.getProperty(AUTO_SAVE_INTERVAL));
+    }
+
+    public void setAutoSaveInterval(int status) {
+        props.setProperty(AUTO_SAVE_INTERVAL, String.valueOf(status));
+    }
+
+    public Boolean getAutoSaveSelected() {
+        return Boolean.parseBoolean(props.getProperty(AUTO_SAVE_SELECTED));
+    }
+
+    public void setAutoSaveSelected(boolean selected) {
+        props.setProperty(AUTO_SAVE_SELECTED, String.valueOf(selected));
+    }
+
     public void resetDefaults() {
         this.setTheme(DEFAULT_THEME);
         this.setFontSize(Integer.parseInt(DEFAULT_FONT_SIZE));
         this.setSimSpeed(Integer.parseInt(DEFAULT_SIMULATION_SPEED));
         this.setTabSize(Integer.parseInt(DEFAULT_TAB_SIZE));
         this.setAutoSave(DEFAULT_AUTO_SAVE);
+        this.setAutoSaveInterval(Integer.parseInt(DEFAULT_AUTO_SAVE_INTERVAL));
+        this.setAutoSaveSelected(false);
     }
 
     public void saveChanges() {

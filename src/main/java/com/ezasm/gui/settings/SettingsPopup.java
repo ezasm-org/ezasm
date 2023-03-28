@@ -24,13 +24,14 @@ public class SettingsPopup implements IThemeable {
     private static final String THEME = "Theme";
     private static final String TABSIZE = "Tab Size";
     private static final String AUTOSAVE = "Auto Save";
+    private static final String AUTOSAVE_INTERVAL = "Auto Save Interval";
     public static final String SAVE = "Save Changes";
     public static final String RESET = "Reset to Defaults";
 
     private JFrame popup;
     private JSlider speedSlider;
     private JSlider tabSizeSlider;
-    private JToggleButton AutoSaveButton;
+    private SliderToggleButton AutoSaveButton;
     private JTextField fontInput;
     private JComboBox themeInput;
     private JPanel grid;
@@ -106,21 +107,11 @@ public class SettingsPopup implements IThemeable {
         tabSizeLabel = new JLabel(TABSIZE);
         tabSizeSlider = new JSlider(1, 8, config.getTabSize());
         tabSizeSlider.setMajorTickSpacing(1);
+        tabSizeSlider.setPaintTicks(true);
         tabSizeSlider.setPaintLabels(true);
 
         autoSaveLabel = new JLabel(AUTOSAVE);
-        AutoSaveButton = new JToggleButton("OFF");
-        AutoSaveButton.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent event) {
-                if (AutoSaveButton.isSelected()) {
-                    AutoSaveButton.setText("ON");
-                } else {
-                    AutoSaveButton.setText("OFF");
-                }
-            }
-        });
-        ;
+        AutoSaveButton = new SliderToggleButton(instance.config.getAutoSave());
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
@@ -171,10 +162,17 @@ public class SettingsPopup implements IThemeable {
                     JOptionPane.showMessageDialog(new JFrame(), "Bad format for font size, please input a number");
                     return;
                 }
+                if (instance.AutoSaveButton.getSliderValue() == 0) {
+                    instance.config.setAutoSaveInterval(1);
+                    instance.AutoSaveButton.setToggleButtonStatus(false);
+                    instance.config.setAutoSave(instance.AutoSaveButton.getToggleButtonText());
+                }
                 instance.config.setSimSpeed(instance.speedSlider.getValue());
                 instance.config.setTabSize(instance.tabSizeSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
-                instance.config.setAutoSave(instance.AutoSaveButton.getText());
+                instance.config.setAutoSave(instance.AutoSaveButton.getToggleButtonText());
+                instance.config.setAutoSaveInterval(instance.AutoSaveButton.getSliderValue());
+                instance.config.setAutoSaveSelected(instance.AutoSaveButton.getToggleButtonStatus());
                 instance.config.saveChanges();
                 instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
                         EditorTheme.getTheme(instance.config.getTheme()));
@@ -186,9 +184,78 @@ public class SettingsPopup implements IThemeable {
                 instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
                 instance.tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
                 instance.themeInput.setSelectedIndex(0);
-                instance.AutoSaveButton.setText(Config.DEFAULT_AUTO_SAVE);
-                instance.AutoSaveButton.setSelected(false);
+                instance.AutoSaveButton.setToggleButtonText(Config.DEFAULT_AUTO_SAVE);
+                instance.AutoSaveButton.setToggleButtonStatus(false);
+                instance.AutoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
             }
+        }
+    }
+
+    public class SliderToggleButton extends JPanel {
+        private JToggleButton toggleButton;
+        private JSlider slider;
+
+        public SliderToggleButton(String label) {
+            setLayout(new BorderLayout());
+
+            toggleButton = new JToggleButton(label);
+            toggleButton.setSelected(instance.config.getAutoSaveSelected());
+            toggleButton.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent event) {
+                    if (AutoSaveButton.getToggleButtonStatus()) {
+                        AutoSaveButton.setToggleButtonText("ON");
+                        AutoSaveButton.setSliderVisible(true);
+                    } else {
+                        AutoSaveButton.setToggleButtonText("OFF");
+                        AutoSaveButton.setSliderVisible(false);
+                    }
+                }
+            });
+            add(toggleButton, BorderLayout.WEST);
+
+            slider = new JSlider(0, 30, instance.config.getAutoSaveInterval());
+            slider.setMajorTickSpacing(5);
+            slider.setPaintTicks(true);
+            slider.setPaintLabels(true);
+            slider.setVisible(instance.config.getAutoSaveSelected());
+            add(slider, BorderLayout.CENTER);
+        }
+
+        public JToggleButton getToggleButton() {
+            return toggleButton;
+        }
+
+        public boolean getToggleButtonStatus() {
+            return toggleButton.isSelected();
+        }
+
+        public void setToggleButtonStatus(boolean status) {
+            toggleButton.setSelected(status);
+        }
+
+        public String getToggleButtonText() {
+            return toggleButton.getText();
+        }
+
+        public void setToggleButtonText(String text) {
+            toggleButton.setText(text);
+        }
+
+        public JSlider getSlider() {
+            return slider;
+        }
+
+        public void setSliderVisible(Boolean visible) {
+            slider.setVisible(visible);
+        }
+
+        public int getSliderValue() {
+            return slider.getValue();
+        }
+
+        public void setSliderValue(int value) {
+            slider.setValue(value);
         }
     }
 }
