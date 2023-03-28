@@ -33,25 +33,60 @@ public class Autocomplete implements DocumentListener {
 
     @Override
     public void changedUpdate(DocumentEvent ev) {
-
     }
 
     @Override
     public void removeUpdate(DocumentEvent ev) {
+        keywords.clear();
+        String content = textField.getText();
+        //find the new keywords and add them
+        Matcher to_add = line_finder.matcher(content);
+        while (to_add.find()) {
+            String label = to_add.group().strip().replace(" ", "").replace(":", "");
+            keywords.add(label);
+        }
+        Collections.sort(keywords);
     }
 
     @Override
     public void insertUpdate(DocumentEvent ev) {
-        if (ev.getLength() != 1)
-            return;
-
+        String content = textField.getText();
         int pos = ev.getOffset();
-        String content = null;
-        try {
-            content = textField.getText(0, pos + 1);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
+        int len = ev.getLength();
+        // Get the original line without the change
+        int line_start = 0;
+        int line_end = content.length();
+
+        for (int i = pos-1; i >= 0; i--) {
+            if (content.charAt(i) == '\n') {
+                line_start = i+1;
+            }
         }
+        for (int i = pos+len; i < content.length(); i++) {
+            if (content.charAt(i) == '\n') {
+                line_end = i;
+            }
+        }
+        String old_line = content.substring(line_start, pos) + content.substring(pos + len, line_end);
+
+
+
+        // Find the old keywords and delete them
+        Matcher to_remove = line_finder.matcher(old_line);
+        while (to_remove.find()) {
+            String label = to_remove.group().strip().replace(" ", "").replace(":", "");
+            keywords.remove(label);
+        }
+
+        String new_line = content.substring(line_start, line_end);
+        //find the new keywords and add them
+        Matcher to_add = line_finder.matcher(new_line);
+        while (to_add.find()) {
+            String label = to_add.group().strip().replace(" ", "").replace(":", "");
+            keywords.add(label);
+        }
+        Collections.sort(keywords);
+
 
         // Find where the word starts
         int w;
@@ -64,18 +99,6 @@ public class Autocomplete implements DocumentListener {
         // Too few chars
         if (pos - w < 2) {
             return;
-        } else {
-            // only recheck keywords once we've typed 3 non-space characters
-            keywords.clear();
-            String s = textField.getText();
-            Matcher m = line_finder.matcher(s);
-            while (m.find()) {
-                String label = m.group().strip().replace(" ", "").replace(":", "");
-                if (!keywords.contains(label)) {
-                    keywords.add(label);
-                }
-            }
-            Collections.sort(keywords);
         }
 
         String prefix = content.substring(w + 1).toLowerCase();
@@ -134,6 +157,30 @@ public class Autocomplete implements DocumentListener {
             textField.moveCaretPosition(position);
             mode = Mode.COMPLETION;
         }
+    }
+
+    /**
+     *
+     * @param s The given string to search
+     * @param pos the position to exapnd from
+     * @return The full line the given position is in
+     */
+    private String expand_to_line(String s, int pos) {
+        int start = 0;
+        int end = 0;
+        for (int i = pos; i >= 0; i--) {
+            if (s.charAt(i) == '\n') {
+                start = i + 1;
+            }
+        }
+
+        for (int i = pos; i <= s.length(); i++) {
+            if (s.charAt(i) == '\n') {
+                end = i;
+            }
+        }
+
+        return s.substring(start, end);
     }
 
 }
