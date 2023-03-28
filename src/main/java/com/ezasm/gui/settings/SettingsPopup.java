@@ -24,7 +24,6 @@ public class SettingsPopup implements IThemeable {
     private static final String THEME = "Theme";
     private static final String TABSIZE = "Tab Size";
     private static final String AUTOSAVE = "Auto Save";
-    private static final String AUTOSAVE_INTERVAL = "Auto Save Interval";
     public static final String SAVE = "Save Changes";
     public static final String RESET = "Reset to Defaults";
 
