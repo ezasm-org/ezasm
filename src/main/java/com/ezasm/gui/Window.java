@@ -413,4 +413,28 @@ public class Window {
         }
     }
 
+    /**
+     * Auto called Save function to save file periodically
+     *
+     */
+
+    public static void autoSave() {
+        Boolean sw = Window.getInstance().getConfig().getAutoSaveSelected();
+        if (sw){
+            int interval = Window.getInstance().getConfig().getAutoSaveInterval();
+            interval *= 1000;
+            Timer time = new Timer();
+            TimerTask t = new TimerTask(){
+                public void run() {
+                    File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
+                    if (fileToUpdate.exists()) {
+                        System.out.println("Save once!");
+                    }
+            
+                }
+            };
+            time.schedule(t, 0, interval);
+        }     
+    }
+
 }
