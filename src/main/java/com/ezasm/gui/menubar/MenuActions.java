@@ -140,7 +140,6 @@ public class MenuActions {
 
     public static void autoSave() {
         Timer time = new Timer();
-        TaskTimer Task = new TaskTimer();
-        time.schedule(Task, 0, 5000);
+        time.schedule(new TaskTimer(), 0, 5000);
     }
 }

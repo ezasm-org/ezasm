@@ -6,7 +6,6 @@ import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
 
-
 import java.util.concurrent.locks.LockSupport;
 
 import static com.ezasm.gui.toolbar.ToolbarFactory.*;
