@@ -91,8 +91,6 @@ public class RegisterTable extends JPanel implements IThemeable {
         SwingUtilities.invokeLater(table::updateUI);
     }
 
-
-
     /**
      * Tell the table which register changed, and reset the array when new value comes
      *
