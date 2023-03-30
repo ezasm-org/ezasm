@@ -1,5 +1,7 @@
 package com.ezasm.util;
 
+import com.ezasm.simulation.Memory;
+
 import java.util.Arrays;
 
 /**
@@ -90,10 +92,20 @@ public final class RawData {
      * @return the hexadecimal formatted string.
      */
     public String toHexString() {
-        String output = String.format("%016x", intValue());
-        output = "0x" + output.substring(0, 4) + '_' + output.substring(4, 8) + '_' + output.substring(8, 12) + '_'
-                + output.substring(12);
-        return output;
+        String output = String.format("%0" + (Memory.wordSize() * 2) + 'x', intValue());
+        StringBuilder sb = new StringBuilder("0x");
+        for (int i = 0; i < output.length(); ++i) {
+            sb.append(output.charAt(i));
+            if (i % 4 == 3 && i != output.length() - 1) {
+                sb.append('_');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return Long.toString(intValue());
     }
 
     @Override

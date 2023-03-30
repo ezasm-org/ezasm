@@ -25,12 +25,18 @@ public class Memory {
     /**
      * The default word size of the system.
      */
-    public static final int DEFAULT_WORD_SIZE = 8;
+    public static final int DEFAULT_WORD_SIZE = 4;
+
+    private static int wordSize = DEFAULT_WORD_SIZE;
+
+    public static int wordSize() {
+        return wordSize;
+    }
+    
 
     private final int DEFAULT_OFFSET = 0x1_0000;
     private final int STRING_OFFSET = 0x1_0000;
 
-    public final int wordSize;
     private final int memorySize;
     private final int offsetBytes;
     private final int disallowedBytes;
@@ -44,9 +50,8 @@ public class Memory {
      * Constructs memory with the default parameters.
      */
     public Memory() {
-        this.wordSize = DEFAULT_WORD_SIZE;
         this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
-        this.disallowedBytes = this.wordSize * DEFAULT_OFFSET;
+        this.disallowedBytes = wordSize * DEFAULT_OFFSET;
         this.memorySize = offsetBytes + DEFAULT_MEMORY_WORDS * wordSize;
         this.memory = new byte[memorySize];
         this.alloc = offsetBytes;
@@ -61,13 +66,13 @@ public class Memory {
      * @param memorySize the memory size in words.
      */
     public Memory(int wordSize, int memorySize) {
-        this.wordSize = wordSize;
-        this.offsetBytes = this.wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
-        this.disallowedBytes = this.wordSize * DEFAULT_OFFSET;
-        this.memorySize = offsetBytes + memorySize * this.wordSize;
+        Memory.wordSize = wordSize;
+        this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
+        this.disallowedBytes = wordSize * DEFAULT_OFFSET;
+        this.memorySize = offsetBytes + memorySize * wordSize;
         this.memory = new byte[this.memorySize];
         this.alloc = offsetBytes;
-        this.stringAlloc = STRING_OFFSET * this.wordSize;
+        this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
     }
 
