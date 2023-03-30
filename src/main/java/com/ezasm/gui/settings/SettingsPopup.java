@@ -67,16 +67,16 @@ public class SettingsPopup implements IThemeable {
         fontSizeLabel.setOpaque(true);
         speedLabel.setOpaque(true);
         tabSizeLabel.setOpaque(true);
-        EditorTheme.applyFontAndTheme(speedSlider, font, editorTheme);
-        EditorTheme.applyFontAndTheme(themeInput, font, editorTheme);
+        EditorTheme.applyFontAndThemeBorderless(speedSlider, font, editorTheme);
+        EditorTheme.applyFontAndThemeBorderless(themeInput, font, editorTheme);
         EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
         EditorTheme.applyFontThemeBorder(save, font, editorTheme, buttonBorder);
         EditorTheme.applyFontThemeBorder(resetDefaults, font, editorTheme, buttonBorder);
-        EditorTheme.applyFontAndTheme(speedLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(fontSizeLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(themeLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(tabSizeLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(tabSizeSlider, font, editorTheme);
+        EditorTheme.applyFontAndThemeBorderless(speedLabel, font, editorTheme);
+        EditorTheme.applyFontAndThemeBorderless(fontSizeLabel, font, editorTheme);
+        EditorTheme.applyFontAndThemeBorderless(themeLabel, font, editorTheme);
+        EditorTheme.applyFontAndThemeBorderless(tabSizeLabel, font, editorTheme);
+        EditorTheme.applyFontAndThemeBorderless(tabSizeSlider, font, editorTheme);
     }
 
     private void initialize() {
