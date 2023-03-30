@@ -86,13 +86,13 @@ public final class RawData {
     }
 
     /**
-     * Converts the integer value contained in the data to a 0-padded hexadecimal string that will be 21 characters
-     * long. The value representing 31 would turn into 0x0000_0000_0000_001F.
+     * Converts the integer value contained in the data to a 0-padded hexadecimal string that will be (5 * memory size /
+     * 4 + 3) characters long. The value representing 31 would turn into 0x0000_0000_0000_001F.
      *
      * @return the hexadecimal formatted string.
      */
     public String toHexString() {
-        String output = String.format("%0" + (Memory.wordSize() * 2) + 'x', intValue());
+        String output = String.format("%0" + (Memory.wordSize() * 2) + 'x', intValue()).toUpperCase();
         StringBuilder sb = new StringBuilder("0x");
         for (int i = 0; i < output.length(); ++i) {
             sb.append(output.charAt(i));

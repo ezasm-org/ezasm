@@ -33,6 +33,13 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object
         return this;
     }
 
+    /**
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
+     */
     @Override
     public void applyTheme(Font font, EditorTheme editorTheme) {
         setForeground(editorTheme.foreground());

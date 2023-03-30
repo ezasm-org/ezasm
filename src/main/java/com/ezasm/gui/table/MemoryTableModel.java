@@ -24,6 +24,15 @@ class MemoryTableModel extends AbstractTableModel {
         this.offset = memory.currentHeapPointer();
     }
 
+    /**
+     * Assigns a new offset address of memory for the table to view.
+     *
+     * @param offset the new offset address.
+     */
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     @Override
     public int getRowCount() {
         return rows;

@@ -4,6 +4,7 @@ import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.table.MemoryViewerPanel;
 import com.ezasm.gui.table.MemoryTable;
 import com.ezasm.gui.table.RegisterTable;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
@@ -54,7 +55,7 @@ public class Window {
     private FixedTabbedPane tools;
 
     private Console console;
-    private MemoryTable memoryTable;
+    private MemoryViewerPanel memoryViewerPanel;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -213,11 +214,11 @@ public class Window {
         System.setOut(new PrintStream(outputStream));
         System.setErr(new PrintStream(console.getErrorStream()));
 
-        memoryTable = new MemoryTable(simulator.getMemory());
+        memoryViewerPanel = new MemoryViewerPanel(simulator.getMemory());
 
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
-        tools.addTab(memoryTable, null, "Memory", "System Memory");
+        tools.addTab(memoryViewerPanel, null, "Memory", "System Memory");
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
         mainSplit.setResizeWeight(0.8);
@@ -312,17 +313,17 @@ public class Window {
     }
 
     /**
-     * Gets the instance's memory table object.
+     * Gets the instance's memory view panel object.
      *
-     * @return the instance's memory table object.
+     * @return the instance's memory view panel object.
      */
-    public MemoryTable getMemoryTable() {
-        return memoryTable;
+    public MemoryViewerPanel getMemoryControlPanel() {
+        return memoryViewerPanel;
     }
 
     public void updateGraphicInformation() {
         registerTable.update();
-        memoryTable.update();
+        memoryViewerPanel.update();
     }
 
     /**

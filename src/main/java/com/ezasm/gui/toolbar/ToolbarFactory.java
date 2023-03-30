@@ -121,6 +121,5 @@ public class ToolbarFactory {
             default -> SystemStreams.err.printf("Button '%s' not yet implemented\n", e.getActionCommand());
             }
         }
-
     }
 }

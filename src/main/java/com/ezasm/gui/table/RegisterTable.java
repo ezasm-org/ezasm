@@ -50,7 +50,7 @@ public class RegisterTable extends JPanel implements IThemeable {
     /**
      * The function to highlight changed registers
      */
-    public void ChangeCellColor() {
+    public void changeCellColor() {
         TableCellRenderer render = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -68,12 +68,16 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * Applies the proper theming to the table and text within.
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
         scrollPane.getViewport().setBackground(editorTheme.currentLine());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
-        EditorTheme.applyFontAndThemeBorderless(this, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(this, font, editorTheme);
 
         table.applyTheme(font, editorTheme);
         table.setRowHeight(font.getSize() + 3);
@@ -86,7 +90,7 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        ChangeCellColor();
+        changeCellColor();
         reset = true;
         SwingUtilities.invokeLater(table::updateUI);
     }

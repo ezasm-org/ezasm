@@ -14,7 +14,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.ezasm.gui.util.EditorTheme.applyFontAndThemeBorderless;
+import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
 import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 
@@ -140,7 +140,7 @@ public class EzEditorPane extends JPanel implements IThemeable {
     public void applyTheme(Font font, EditorTheme editorTheme) {
         themeSyntaxTextArea(font, editorTheme);
         setFont(textArea, font);
-        applyFontAndThemeBorderless(scrollPane, font, editorTheme);
+        applyFontThemeBorderless(scrollPane, font, editorTheme);
         editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         recolorHighlights(editorTheme);

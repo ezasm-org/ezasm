@@ -17,10 +17,10 @@ public class MemoryTable extends JPanel implements IThemeable {
 
     private final AlternatingColorTable table;
     private final JScrollPane scrollPane;
-    private final JList<Object> rowHeader;
+    private JList<Object> rowHeader;
 
-    private static final int ROWS = 32;
-    private static final int COLUMNS = 16;
+    public static final int ROWS = 32;
+    public static final int COLUMNS = 16;
 
     private int offset;
 
@@ -37,15 +37,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         table.setModel(new MemoryTableModel(memory, ROWS, COLUMNS));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        Object[] rows = new Object[ROWS];
-        for (int i = 0; i < ROWS; ++i) {
-            rows[i] = (new RawData(offset + (long) i * Memory.wordSize() * COLUMNS)).toHexString();
-        }
-
-        rowHeader = new JList<>(new SimpleListModel(rows));
-        rowHeader.setCellRenderer(new RowHeaderRenderer(table));
-        scrollPane.setRowHeaderView(rowHeader);
-
+        updateRowHeaders();
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setWheelScrollingEnabled(true);
@@ -55,14 +47,18 @@ public class MemoryTable extends JPanel implements IThemeable {
     }
 
     /**
-     * Applies the proper theming to the memory table and text within.
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
         scrollPane.setBackground(editorTheme.currentLine());
         scrollPane.getViewport().setBackground(editorTheme.currentLine());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
-        EditorTheme.applyFontAndThemeBorderless(this, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(this, font, editorTheme);
 
         table.applyTheme(font, editorTheme);
 
@@ -78,15 +74,15 @@ public class MemoryTable extends JPanel implements IThemeable {
 
         int width = 20 + (Memory.wordSize() * 2 * font.getSize());
 
-        rowHeader.setFixedCellWidth(width);
-        rowHeader.setFixedCellHeight(table.getRowHeight());
-
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
         for (int i = 0; i < table.getColumnCount(); ++i) {
             table.getColumnModel().getColumn(i).setPreferredWidth(width);
             table.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
         }
+
+        rowHeader.setFixedCellWidth(width);
+        rowHeader.setFixedCellHeight(table.getRowHeight());
     }
 
     /**
@@ -96,13 +92,36 @@ public class MemoryTable extends JPanel implements IThemeable {
      */
     public void setOffset(int offset) {
         this.offset = offset;
+        ((MemoryTableModel) table.getModel()).setOffset(offset);
         update();
+    }
+
+    /**
+     * Gets the offset address of the memory viewer.
+     *
+     * @return the current view offset address.
+     */
+    public int getOffset() {
+        return offset;
     }
 
     /**
      * Forcibly refreshes the display of the table.
      */
     public void update() {
+        updateRowHeaders();
         SwingUtilities.invokeLater(table::updateUI);
+    }
+
+    private void updateRowHeaders() {
+        Object[] rows = new Object[ROWS];
+        for (int i = 0; i < ROWS; ++i) {
+            rows[i] = (new RawData(offset + (long) i * Memory.wordSize() * COLUMNS)).toHexString();
+        }
+        rowHeader = new JList<>(new SimpleListModel(rows));
+        rowHeader.setCellRenderer(new RowHeaderRenderer(table));
+        rowHeader.setFixedCellWidth(table.getColumnModel().getColumn(0).getWidth());
+        rowHeader.setFixedCellHeight(table.getRowHeight());
+        scrollPane.setRowHeaderView(rowHeader);
     }
 }
