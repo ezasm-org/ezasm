@@ -32,7 +32,6 @@ public class Memory {
     public static int wordSize() {
         return wordSize;
     }
-    
 
     private final int DEFAULT_OFFSET = 0x1_0000;
     private final int STRING_OFFSET = 0x1_0000;

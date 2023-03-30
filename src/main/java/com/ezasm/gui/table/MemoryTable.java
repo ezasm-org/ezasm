@@ -9,6 +9,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ * Represents a view of the memory. This view begins at the given offset which by default is the initial heap pointer.
+ * Each row displays the values from memory for (offset + (row * columns + column) * word size.
+ */
 public class MemoryTable extends JPanel implements IThemeable {
 
     private final AlternatingColorTable table;
@@ -20,6 +24,11 @@ public class MemoryTable extends JPanel implements IThemeable {
 
     private int offset;
 
+    /**
+     * Constructs a memory table with a default offset at the initial heap pointer.
+     *
+     * @param memory the memory to view.
+     */
     public MemoryTable(Memory memory) {
         super();
         this.table = new AlternatingColorTable(EditorTheme.Light);
@@ -78,6 +87,16 @@ public class MemoryTable extends JPanel implements IThemeable {
             table.getColumnModel().getColumn(i).setPreferredWidth(width);
             table.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
         }
+    }
+
+    /**
+     * Sets the offset of the memory viewer to a new address.
+     *
+     * @param offset the new offset to use.
+     */
+    public void setOffset(int offset) {
+        this.offset = offset;
+        update();
     }
 
     /**
