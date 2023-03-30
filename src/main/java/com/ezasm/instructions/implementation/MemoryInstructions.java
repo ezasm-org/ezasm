@@ -50,10 +50,10 @@ public class MemoryInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     public TransformationSequence consecutivePush(IAbstractInput input, int times) throws SimulationException {
-        int offset = times * simulator.getMemory().wordSize;
+        int offset = times * Memory.wordSize();
         RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
         Transformation t1 = new Transformation(new InputOutputTransformable(simulator, sp), sp.get(simulator),
-                new RawData(sp.get(simulator).intValue() - simulator.getMemory().wordSize - offset));
+                new RawData(sp.get(simulator).intValue() - Memory.wordSize() - offset));
         MemoryTransformable m = new MemoryTransformable(simulator, t1.to().intValue());
         Transformation t2 = m.transformation(input.get(simulator));
         return new TransformationSequence(t1, t2);
@@ -79,12 +79,12 @@ public class MemoryInstructions {
      */
     @Instruction
     public TransformationSequence consecutivePop(IAbstractInputOutput output, int times) throws SimulationException {
-        int offset = times * simulator.getMemory().wordSize;
+        int offset = times * Memory.wordSize();
         RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
         Transformation t1 = io.transformation(simulator.getMemory().read((int) sp.get(simulator).intValue() + offset));
         Transformation t2 = (new InputOutputTransformable(simulator, sp)
-                .transformation(new RawData(sp.get(simulator).intValue() + simulator.getMemory().wordSize + offset)));
+                .transformation(new RawData(sp.get(simulator).intValue() + Memory.wordSize() + offset)));
         return new TransformationSequence(t1, t2);
     }
 

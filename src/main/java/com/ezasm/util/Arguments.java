@@ -38,7 +38,7 @@ public class Arguments {
         options.addOption(memoryOption);
         memoryOption.setArgName("words");
 
-        Option wordSizeOption = new Option("s", "word-size", true, "The size in bytes of a word (default: 8)");
+        Option wordSizeOption = new Option("s", "word-size", true, "The size in bytes of a word (default: 4)");
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 

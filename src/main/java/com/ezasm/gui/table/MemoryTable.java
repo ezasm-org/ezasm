@@ -15,13 +15,29 @@ public class MemoryTable extends JPanel implements IThemeable {
 
     private final JTable table;
     private final JScrollPane scrollPane;
+    private final JList<Object> rowHeader;
+
+    private static final int ROWS = 16;
+    private static final int COLUMNS = 16;
+
+    private int offset;
 
     public MemoryTable(Memory memory) {
         super();
         this.table = new JTable();
         this.scrollPane = new JScrollPane(table);
-        table.setModel(new MemoryTableModel(memory, 8, 20));
+        this.offset = memory.initialHeapPointer();
+        table.setModel(new MemoryTableModel(memory, ROWS, COLUMNS));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+        Object[] rows = new Object[ROWS];
+        for (int i = 0; i < ROWS; ++i) {
+            rows[i] = (new RawData(offset + (long) i * Memory.wordSize() * COLUMNS)).toHexString();
+        }
+
+        rowHeader = new JList<>(new SimpleListModel(rows));
+        rowHeader.setCellRenderer(new RowHeaderRenderer(table));
+        scrollPane.setRowHeaderView(rowHeader);
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -42,13 +58,24 @@ public class MemoryTable extends JPanel implements IThemeable {
         EditorTheme.applyFontAndTheme(this, font, editorTheme);
         EditorTheme.applyFontAndTheme(table, font, editorTheme);
         EditorTheme.applyFontAndTheme(table.getTableHeader(), font, editorTheme);
+        EditorTheme.applyFontAndTheme(rowHeader, font, editorTheme);
+
         table.setRowHeight(font.getSize() + 2);
-        table.getTableHeader().setOpaque(false);
+
+        if (rowHeader.getCellRenderer() instanceof RowHeaderRenderer rowHeaderRenderer) {
+            rowHeaderRenderer.applyTheme(font, editorTheme);
+        }
+
+        int width = 20 + (Memory.wordSize() * 2 * font.getSize());
+
+        rowHeader.setFixedCellWidth(width);
+        rowHeader.setFixedCellHeight(table.getRowHeight());
+        rowHeader.setBorder(table.getBorder());
 
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
         for (int i = 0; i < table.getColumnCount(); ++i) {
-            table.getColumnModel().getColumn(i).setPreferredWidth(20 + (14 * font.getSize()));
+            table.getColumnModel().getColumn(i).setPreferredWidth(width);
             table.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
         }
     }
@@ -91,9 +118,9 @@ public class MemoryTable extends JPanel implements IThemeable {
         @Override
         public Object getValueAt(int row, int col) {
             try {
-                return memory.read(offset + (col * rows + row) * memory.wordSize).toHexString();
+                return memory.read(offset + (row * cols + col) * Memory.wordSize()).toHexString();
             } catch (ReadOutOfBoundsException e) {
-                return RawData.emptyBytes(memory.wordSize).toHexString();
+                return RawData.emptyBytes(Memory.wordSize()).toHexString();
             }
         }
 
@@ -109,7 +136,7 @@ public class MemoryTable extends JPanel implements IThemeable {
 
         @Override
         public String getColumnName(int column) {
-            return "" + new RawData(offset + ((long) column * rows) * memory.wordSize).toHexString();
+            return "+" + Long.toHexString((long) column * Memory.wordSize());
         }
     }
 }
