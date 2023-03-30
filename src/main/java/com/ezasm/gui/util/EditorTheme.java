@@ -109,7 +109,7 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
         scrollbar.setUI(new EzScrollBarUI(this));
     }
 
-    public static void applyFontAndTheme(JComponent component, Font font, EditorTheme editorTheme) {
+    public static void applyFontAndThemeBorderless(JComponent component, Font font, EditorTheme editorTheme) {
         editorTheme.applyTheme(component);
         component.setFont(font);
     }

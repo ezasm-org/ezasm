@@ -4,6 +4,7 @@ import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 
 import javax.swing.*;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 
 public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object>, IThemeable {
@@ -12,11 +13,13 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object
 
     public RowHeaderRenderer(JTable table) {
         this.table = table;
+        JTableHeader header = table.getTableHeader();
         setHorizontalAlignment(CENTER);
-        setBorder(table.getBorder());
-        setForeground(table.getForeground());
-        setBackground(table.getBackground());
-        setFont(table.getFont());
+        setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+        setForeground(header.getForeground());
+        setBackground(header.getBackground());
+        setFont(header.getFont());
+        setOpaque(true);
     }
 
     @Override
@@ -31,6 +34,8 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object
 
     @Override
     public void applyTheme(Font font, EditorTheme editorTheme) {
-        EditorTheme.applyFontAndTheme(this, font, editorTheme);
+        setForeground(editorTheme.foreground());
+        setBackground(editorTheme.background());
+        setFont(font);
     }
 }
