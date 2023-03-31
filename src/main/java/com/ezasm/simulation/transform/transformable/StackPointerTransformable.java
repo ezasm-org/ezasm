@@ -1,5 +1,6 @@
 package com.ezasm.simulation.transform.transformable;
 
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.MisalignedStackPointerException;
 import com.ezasm.simulation.exception.SimulationStackOverflowException;
@@ -22,7 +23,7 @@ public class StackPointerTransformable extends AbstractTransformableInput {
      */
     @Override
     public RawData get() {
-        return new RawData(simulator.getRegisters().getRegister("SP").getLong());
+        return new RawData(simulator.getRegisters().getRegister(Registers.SP).getLong());
     }
 
     /**
@@ -37,6 +38,6 @@ public class StackPointerTransformable extends AbstractTransformableInput {
         } else if (value.intValue() <= simulator.getMemory().currentHeapPointer()) {
             throw new SimulationStackOverflowException(value.intValue());
         }
-        simulator.getRegisters().getRegister("SP").setDataWithGuiCallback(new RawData((int) value.intValue()));
+        simulator.getRegisters().getRegister(Registers.SP).setDataWithGuiCallback(new RawData((int) value.intValue()));
     }
 }
