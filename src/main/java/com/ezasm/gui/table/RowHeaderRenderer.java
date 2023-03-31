@@ -7,12 +7,12 @@ import javax.swing.*;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 
+/**
+ * A list cell renderer specified for rendering row headers on a given table.
+ */
 public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object>, IThemeable {
 
-    private final JTable table;
-
     public RowHeaderRenderer(JTable table) {
-        this.table = table;
         JTableHeader header = table.getTableHeader();
         setHorizontalAlignment(CENTER);
         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
@@ -22,6 +22,16 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object
         setOpaque(true);
     }
 
+    /**
+     * Returns a component configured for the given display options.
+     *
+     * @param list         The JList we're painting.
+     * @param value        The value returned by list.getModel().getElementAt(index).
+     * @param index        The cells index.
+     * @param isSelected   True if the specified cell was selected.
+     * @param cellHasFocus True if the specified cell has the focus.
+     * @return the configured component.
+     */
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
             boolean cellHasFocus) {

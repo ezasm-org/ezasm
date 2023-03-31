@@ -87,7 +87,7 @@ public final class RawData {
 
     /**
      * Converts the integer value contained in the data to a 0-padded hexadecimal string that will be (5 * memory size /
-     * 4 + 3) characters long. The value representing 31 would turn into 0x0000_0000_0000_001F.
+     * 4 + 3) characters long. The value representing 31 in an 8-byte word would turn into 0x0000_0000_0000_001F.
      *
      * @return the hexadecimal formatted string.
      */

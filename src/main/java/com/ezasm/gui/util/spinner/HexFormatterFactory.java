@@ -8,6 +8,11 @@ import javax.swing.text.DefaultFormatterFactory;
  */
 public class HexFormatterFactory extends DefaultFormatterFactory {
 
+    /**
+     * Gets the hexadecimal number formatter as the default formatter.
+     *
+     * @return the hexadecimal number formatter.
+     */
     @Override
     public JFormattedTextField.AbstractFormatter getDefaultFormatter() {
         return new HexFormatter();

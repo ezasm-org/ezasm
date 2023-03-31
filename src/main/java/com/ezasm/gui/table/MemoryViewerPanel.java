@@ -41,6 +41,11 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     private static final String FORWARD = " ---> ";
     private static final String BACK = " <--- ";
 
+    /**
+     * Constructs a memory viewer panel bested on a given memory.
+     *
+     * @param memory the memory to be displayed by this element.
+     */
     public MemoryViewerPanel(Memory memory) {
         super();
         this.memory = memory;
@@ -61,7 +66,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     }
 
     /**
-     * Initializes the controls for the viewer
+     * Initializes the controls for the viewer.
      */
     private void initializeControls() {
         seekInputLabel = new JLabel("Memory position: ");

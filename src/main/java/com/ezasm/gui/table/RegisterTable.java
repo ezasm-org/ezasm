@@ -108,6 +108,9 @@ public class RegisterTable extends JPanel implements IThemeable {
         this.changedRegisterNumbers.add(number);
     }
 
+    /**
+     * Removes the current highlights in the register table.
+     */
     public void removeHighlightValue() {
         this.changedRegisterNumbers.clear();
     }

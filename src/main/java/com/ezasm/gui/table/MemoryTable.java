@@ -113,6 +113,9 @@ public class MemoryTable extends JPanel implements IThemeable {
         SwingUtilities.invokeLater(table::updateUI);
     }
 
+    /**
+     * Updates the row headers based on any potential change in memory viewer offset.
+     */
     private void updateRowHeaders() {
         Object[] rows = new Object[ROWS];
         for (int i = 0; i < ROWS; ++i) {

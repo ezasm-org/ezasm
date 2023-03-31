@@ -43,6 +43,11 @@ public class HexFormatter extends DefaultFormatter {
         return "0x" + Integer.toHexString((int) value).toUpperCase();
     }
 
+    /**
+     * Force the interface to use insert mode, not overwrite mode.
+     *
+     * @return false.
+     */
     @Override
     public boolean getOverwriteMode() {
         return false;
