@@ -15,7 +15,11 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
 import java.io.IOException;
+<<<<<<< HEAD:src/main/java/com/ezasm/gui/editor/EzEditorPane.java
 import java.util.Objects;
+=======
+import java.util.ArrayList;
+>>>>>>> 71e7181 (added autocmoplete class. implements autocomplete for a predefined set of keywords. Added testing .ez fiel):src/main/java/com/ezasm/gui/editor/EditorPane.java
 
 import static com.ezasm.gui.util.EditorTheme.applyFontAndTheme;
 
@@ -37,6 +41,9 @@ public class EzEditorPane extends JPanel implements IThemeable {
     private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
 
+    private static final String COMMIT_ACTION = "commit";
+    private static Autocomplete autoComplete;
+
     /**
      * Creates a text edit field using RSyntaxTextArea features.
      */
@@ -52,6 +59,11 @@ public class EzEditorPane extends JPanel implements IThemeable {
         textArea.getDocument().addDocumentListener(new EditorDocumentListener());
 
         fileSaved = true;
+
+
+        textArea.setFocusTraversalKeysEnabled(false);
+        autoComplete = new Autocomplete(textArea, new ArrayList<String>());
+        textArea.getDocument().addDocumentListener(autoComplete);
 
         scrollPane = new RTextScrollPane(textArea);
         scrollPane.setLineNumbersEnabled(true);
