@@ -11,6 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
 
 /**
  * Acts as a control panel for the memory view provided by a MemoryTable. Wraps the given MemoryTable.
@@ -21,8 +24,9 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
 
     private final MemoryTable memoryTable;
     private final JPanel controls;
+    private final Map<String, Integer> nameToAddress;
 
-    private static final MemoryViewerActionListener actionListener = new MemoryViewerActionListener();
+    private final int numTableWords = MemoryTable.COLUMNS * MemoryTable.ROWS * Memory.wordSize();
 
     private JLabel seekInputLabel;
     private JSpinner seekSpinner;
@@ -30,6 +34,8 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     private JButton seekButton;
     private JButton forwardButton;
     private JButton backButton;
+
+    private static final MemoryViewerActionListener actionListener = new MemoryViewerActionListener();
 
     private static final String SEEK = " Go ";
     private static final String FORWARD = " ---> ";
@@ -40,6 +46,13 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         this.memory = memory;
         this.memoryTable = new MemoryTable(memory);
         this.controls = new JPanel();
+        this.nameToAddress = new TreeMap<>() {
+            {
+                put("Initial Stack", memory.initialStackPointer() - numTableWords);
+                put("Initial Heap", memory.initialHeapPointer());
+                put("Text Section", memory.initialTextPointer());
+            }
+        };
 
         initializeControls();
         setLayout(new BorderLayout());
@@ -54,13 +67,18 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         seekInputLabel = new JLabel("Memory position: ");
 
         SpinnerIntegerModel longModel = new SpinnerIntegerModel(memoryTable.getOffset(), 0,
-                memory.initialStackPointer() - MemoryTable.ROWS * MemoryTable.COLUMNS * Memory.wordSize(),
-                Memory.wordSize());
+                memory.initialStackPointer() - numTableWords, Memory.wordSize());
         seekSpinner = new JSpinner(longModel);
         JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) seekSpinner.getEditor();
         editor.getTextField().setFormatterFactory(new HexFormatterFactory());
 
-        seekComboBox = new JComboBox<>();
+        seekComboBox = new JComboBox<>(new Vector<>(nameToAddress.keySet()));
+        seekComboBox.addActionListener((actionEvent) -> {
+            if (actionEvent.getActionCommand().equals("comboBoxChanged")) {
+                seekSpinner.setValue(
+                        nameToAddress.get((String) ((JComboBox<?>) actionEvent.getSource()).getSelectedItem()));
+            }
+        });
 
         addButton(SEEK);
         addButton(FORWARD);
@@ -132,7 +150,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
      * Moves the view such that the address directly after the currently last address becomes the first address.
      */
     private void forward() {
-        int newOffset = memoryTable.getOffset() + MemoryTable.COLUMNS * MemoryTable.ROWS * Memory.wordSize();
+        int newOffset = memoryTable.getOffset() + numTableWords;
         if (isViewable(newOffset)) {
             memoryTable.setOffset(newOffset);
             seekSpinner.setValue(newOffset);
@@ -144,7 +162,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
      * Moves the view such that the address directly before the currently last address becomes the last address.
      */
     private void back() {
-        int newOffset = memoryTable.getOffset() - MemoryTable.COLUMNS * MemoryTable.ROWS * Memory.wordSize();
+        int newOffset = memoryTable.getOffset() - numTableWords;
         if (isViewable(newOffset)) {
             memoryTable.setOffset(newOffset);
             seekSpinner.setValue(newOffset);
@@ -159,8 +177,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
      * @return true if the address is within the viewable range, false otherwise.
      */
     private boolean isViewable(int address) {
-        return 0 <= address
-                && address <= memory.initialStackPointer() - MemoryTable.ROWS * MemoryTable.COLUMNS * Memory.wordSize();
+        return 0 <= address && address <= memory.initialStackPointer() - numTableWords;
     }
 
     /**

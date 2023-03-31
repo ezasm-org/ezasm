@@ -113,6 +113,15 @@ public class Memory {
     }
 
     /**
+     * Gets the initial text pointer of the memory.
+     *
+     * @return the initial text pointer of the memory.
+     */
+    public int initialTextPointer() {
+        return STRING_OFFSET * wordSize;
+    }
+
+    /**
      * Gets the current heap pointer of the memory.
      *
      * @return the current heap pointer of the memory.

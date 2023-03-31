@@ -88,7 +88,7 @@ public class SettingsPopup implements IThemeable {
         popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         themeLabel = new JLabel(THEME);
-        themeInput = new JComboBox<String>(Config.THEMES);
+        themeInput = new JComboBox<>(Config.THEMES);
         themeInput.setSelectedItem(config.getTheme());
 
         fontSizeLabel = new JLabel(FONTSIZE);
