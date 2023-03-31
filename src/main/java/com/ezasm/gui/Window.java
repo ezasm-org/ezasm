@@ -33,8 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
