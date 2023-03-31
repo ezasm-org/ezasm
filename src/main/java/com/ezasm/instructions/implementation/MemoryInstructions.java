@@ -51,13 +51,13 @@ public class MemoryInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     public TransformationSequence consecutivePush(IAbstractInput input, int times) throws SimulationException {
-         int offset = times * simulator.getMemory().wordSize;
-         StackPointerTransformable sp = new StackPointerTransformable(simulator);
-         Transformation t1 = new Transformation(sp, sp.get(),
-         new RawData(sp.get().intValue() - simulator.getMemory().wordSize - offset));
-         MemoryTransformable m = new MemoryTransformable(simulator, t1.to().intValue());
-         Transformation t2 = m.transformation(input.get(simulator));
-         return new TransformationSequence(t1, t2);
+        int offset = times * simulator.getMemory().wordSize;
+        StackPointerTransformable sp = new StackPointerTransformable(simulator);
+        Transformation t1 = new Transformation(sp, sp.get(),
+                new RawData(sp.get().intValue() - simulator.getMemory().wordSize - offset));
+        MemoryTransformable m = new MemoryTransformable(simulator, t1.to().intValue());
+        Transformation t2 = m.transformation(input.get(simulator));
+        return new TransformationSequence(t1, t2);
     }
 
     /**
