@@ -101,12 +101,12 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         EditorTheme.applyFontTheme(controls, font, editorTheme);
         EditorTheme.applyFontTheme(seekInputLabel, font, editorTheme);
         EditorTheme.applyFontTheme(seekSpinner, font, editorTheme);
-        EditorTheme.applyFontTheme((JComponent) seekSpinner.getEditor().getComponent(0), font, editorTheme);
         EditorTheme.applyFontTheme(seekComboBox, font, editorTheme);
         EditorTheme.applyFontTheme(seekButton, font, editorTheme);
         EditorTheme.applyFontTheme(forwardButton, font, editorTheme);
         EditorTheme.applyFontTheme(backButton, font, editorTheme);
 
+        ((JSpinner.NumberEditor) seekSpinner.getEditor()).getTextField().setCaretColor(editorTheme.foreground());
         seekSpinner.setPreferredSize(
                 new Dimension(8 + (2 * Memory.wordSize() * font.getSize()), seekSpinner.getPreferredSize().height));
     }
