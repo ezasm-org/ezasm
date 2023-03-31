@@ -58,6 +58,7 @@ public class ArithmaticInstructionTest {
         }
     }
 
+    @Test
     void testSub() {
         try {
             simulator.getRegisters().getRegister(Registers.S0).setLong(3);
@@ -71,7 +72,7 @@ public class ArithmaticInstructionTest {
             simulator.runLine(Lexer.parseLine("sub $t1 2 3", 1));
             simulator.runLine(Lexer.parseLine("sub $t2 -5 7", 2));
             simulator.runLine(Lexer.parseLine("sub $t3 7 -5", 3));
-            simulator.runLine(Lexer.parseLine("sub $t4 0 0", 4));
+            simulator.runLine(Lexer.parseLine("sub $t4 0 $zero", 4));
             simulator.runLine(Lexer.parseLine("sub $t5 3505 $s2", 5));
             simulator.runLine(Lexer.parseLine("sub $t6 $s3 -12930", 6));
             simulator.runLine(Lexer.parseLine("sub $t7 $s2 $s3", 7));
@@ -88,17 +89,36 @@ public class ArithmaticInstructionTest {
             assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), 18229426);
             assertEquals(simulator.getRegisters().getRegister(Registers.T8).getLong(), -1);
             assertEquals(simulator.getRegisters().getRegister(Registers.T9).getLong(), 1);
-
         } catch (Exception e) {
             fail();
         }
     }
 
+    @Test
     void testMul() {
+        try {
+            simulator.getRegisters().getRegister(Registers.S0).setLong(3);
+            simulator.getRegisters().getRegister(Registers.S1).setLong(5);
+            simulator.getRegisters().getRegister(Registers.S2).setLong(-10);
+            simulator.getRegisters().getRegister(Registers.S3).setLong(Long.MAX_VALUE);
+            simulator.getRegisters().getRegister(Registers.S4).setLong(Long.MIN_VALUE);
 
+            // reflexive, negative, zero, max, min
+            simulator.runLine(Lexer.parseLine("mul $t0 $s4 $s4", 0));
+            simulator.runLine(Lexer.parseLine("mul $t1 $s5 $s5", 0));
+
+            assertEquals(simulator.getRegisters().getRegister(Registers.T0), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T1), 0);
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     void testDiv() {
+        try {
 
+        } catch (Exception e) {
+            fail();
+        }
     }
 }
