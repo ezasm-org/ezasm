@@ -104,11 +104,11 @@ public class ArithmaticInstructionTest {
             simulator.getRegisters().getRegister(Registers.S4).setLong(Long.MIN_VALUE);
 
             // reflexive, negative, zero, max, min
-            simulator.runLine(Lexer.parseLine("mul $t0 $s4 $s4", 0));
-            simulator.runLine(Lexer.parseLine("mul $t1 $s5 $s5", 0));
+            simulator.runLine(Lexer.parseLine("mul $t0 $s0 $s1", 0));
+            simulator.runLine(Lexer.parseLine("mul $t1 $s2 $s3", 0));
 
-            assertEquals(simulator.getRegisters().getRegister(Registers.T0), 0);
-            assertEquals(simulator.getRegisters().getRegister(Registers.T1), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T0), 15);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T1), -50);
         } catch (Exception e) {
             fail();
         }
