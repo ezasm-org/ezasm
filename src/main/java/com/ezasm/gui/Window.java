@@ -79,7 +79,7 @@ public class Window {
         this.simulator = simulator;
         this.config = config;
         initialize();
-        autoSave();
+        autoSave(false);
     }
 
     /**
@@ -395,15 +395,23 @@ public class Window {
      *
      */
 
-    public static void autoSave() {
+    public static void autoSave(Boolean changed) {
+
         Boolean sw = Window.getInstance().getConfig().getAutoSaveSelected();
+        System.out.println("Run!");
         if (sw){
             int interval = Window.getInstance().getConfig().getAutoSaveInterval();
             interval *= 1000;
+            System.out.println(interval);
             Timer time = new Timer();
             TimerTask t = new TimerTask(){
                 public void run() {
                     File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
+                    Boolean w = Window.getInstance().getConfig().getAutoSaveSelected();
+                    if(!w || changed){
+                        this.cancel();
+                        System.out.println("cancel");
+                    }
                     if (fileToUpdate.exists()) {
                         System.out.println("Save once!");
                     }
