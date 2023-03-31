@@ -83,11 +83,6 @@ public class EzTokenMaker extends AbstractTokenMaker {
         int offset = text.offset;
         int count = text.count;
         int end = offset + count;
-
-        // Token starting offsets are always of the form:
-        // 'startOffset + (currentTokenStart-offset)', but since startOffset and
-        // offset are constant, tokens' starting positions become:
-        // 'newStartOffset+currentTokenStart'.
         int newStartOffset = startOffset - offset;
 
         currentTokenStart = offset;
@@ -105,7 +100,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
             case Token.NULL -> {
                 currentTokenStart = i; // Starting a new token here.
                 switch (c) {
-                case ' ', '\t', ';', ',' -> currentTokenType = Token.WHITESPACE;
+                case ' ', '\t', ',' -> currentTokenType = Token.WHITESPACE;
                 case '"' -> currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
                 case '\'' -> currentTokenType = Token.LITERAL_CHAR;
                 case '#' -> currentTokenType = Token.COMMENT_EOL;
@@ -128,7 +123,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
             }
             case Token.WHITESPACE -> {
                 switch (c) {
-                case ' ', '\t', ';', ',' -> {
+                case ' ', '\t', ',' -> {
                     // Still whitespace.
                 }
                 case '"' -> {
@@ -179,7 +174,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
             }
             case Token.IDENTIFIER -> {
                 switch (c) {
-                case ' ', '\t', ';', ',' -> {
+                case ' ', '\t', ',' -> {
                     addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.WHITESPACE;
@@ -207,7 +202,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
             }
             case Token.LITERAL_NUMBER_DECIMAL_INT -> {
                 switch (c) {
-                case ' ', '\t', ';', ',' -> {
+                case ' ', '\t', ',' -> {
                     expectIntegerTypeCharacter = expectHexadecimal = expectBinary = hasDecimalPoint = false;
                     addToken(text, currentTokenStart, i - 1, Token.LITERAL_NUMBER_DECIMAL_INT,
                             newStartOffset + currentTokenStart);
@@ -275,7 +270,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
             }
             case REGISTER_VARIABLE -> {
                 switch (c) {
-                case ' ', '\t', ';', ',' -> {
+                case ' ', '\t', ',' -> {
                     addToken(text, currentTokenStart, i - 1, REGISTER_VARIABLE, newStartOffset + currentTokenStart);
                     currentTokenStart = i;
                     currentTokenType = Token.WHITESPACE;
@@ -303,7 +298,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
             }
             case Token.ERROR_IDENTIFIER -> {
                 switch (c) {
-                case ' ', '\t', ';', ',' -> {
+                case ' ', '\t', ',' -> {
                     addToken(text, currentTokenStart, i - 1, Token.ERROR_IDENTIFIER,
                             newStartOffset + currentTokenStart);
                     currentTokenStart = i;

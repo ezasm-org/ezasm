@@ -1,28 +1,32 @@
-
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
-import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.Registers;
+import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.*;
 import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.util.Conversion;
-import com.ezasm.simulation.Memory;
+import com.ezasm.simulation.transform.Transformation;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.HeapPointerTransformable;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.simulation.transform.transformable.MemoryTransformable;
+import com.ezasm.util.RawData;
 
 /**
  * An implementation of memory manipulation instructions for the simulation.
  */
 public class MemoryInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
      * Some instructions require access to the Simulator directly, so that is provided.
      *
      * @param simulator the provided Simulator.
      */
-    public MemoryInstructions(ISimulator simulator) {
+    public MemoryInstructions(Simulator simulator) {
         this.simulator = simulator;
     }
 
@@ -33,10 +37,26 @@ public class MemoryInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void push(IAbstractInput input) throws SimulationException {
-        long sp = simulator.getRegisters().getRegister(Registers.SP).getLong() - simulator.getMemory().WORD_SIZE;
-        simulator.getRegisters().getRegister(Registers.SP).setLong(sp);
-        simulator.getMemory().write((int) sp, input.get(simulator));
+    public TransformationSequence push(IAbstractInput input) throws SimulationException {
+        return consecutivePush(input, 0);
+    }
+
+    /**
+     * Represents a consecutive push made in a transformation after any initial push.
+     *
+     * @param input the value to be stored on the stack.
+     * @param times the number of times before this that something has been pushed.
+     * @return the transformation sequence for this push.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    public TransformationSequence consecutivePush(IAbstractInput input, int times) throws SimulationException {
+        int offset = times * simulator.getMemory().wordSize;
+        RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
+        Transformation t1 = new Transformation(new InputOutputTransformable(simulator, sp), sp.get(simulator),
+                new RawData(sp.get(simulator).intValue() - simulator.getMemory().wordSize - offset));
+        MemoryTransformable m = new MemoryTransformable(simulator, t1.to().intValue());
+        Transformation t2 = m.transformation(input.get(simulator));
+        return new TransformationSequence(t1, t2);
     }
 
     /**
@@ -46,36 +66,56 @@ public class MemoryInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void pop(IAbstractOutput output) throws SimulationException {
-        long sp = simulator.getRegisters().getRegister(Registers.SP).getLong();
-        output.set(simulator, simulator.getMemory().read((int) sp, simulator.getMemory().WORD_SIZE));
-        simulator.getRegisters().getRegister(Registers.SP).setLong(sp + simulator.getMemory().WORD_SIZE);
+    public TransformationSequence pop(IAbstractInputOutput output) throws SimulationException {
+        return consecutivePop(output, 0);
+    }
+
+    /**
+     * Represents a consecutive pop made in a transformation after any initial pop.
+     *
+     * @param output the place to store the obtained value.
+     * @param times  the number of times before this that something has been popped.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public TransformationSequence consecutivePop(IAbstractInputOutput output, int times) throws SimulationException {
+        int offset = times * simulator.getMemory().wordSize;
+        RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        Transformation t1 = io.transformation(simulator.getMemory().read((int) sp.get(simulator).intValue() + offset));
+        Transformation t2 = (new InputOutputTransformable(simulator, sp)
+                .transformation(new RawData(sp.get(simulator).intValue() + simulator.getMemory().wordSize + offset)));
+        return new TransformationSequence(t1, t2);
     }
 
     @Instruction
-    public void load(IAbstractOutput output, IAbstractInput input) throws SimulationException {
-        Memory m = this.simulator.getMemory();
-        byte[] word = m.read((int) Conversion.bytesToLong(input.get(simulator)), m.WORD_SIZE);
-        output.set(this.simulator, word);
+    public TransformationSequence load(IAbstractInputOutput output, DereferenceInputOutput input)
+            throws SimulationException {
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
     @Instruction
-    public void store(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        Memory m = this.simulator.getMemory();
-        m.write((int) Conversion.bytesToLong(input2.get(simulator)), input1.get(simulator));
+    public TransformationSequence store(IAbstractInput input, DereferenceInputOutput output)
+            throws SimulationException {
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
     @Instruction
-
-    public void alloc(IAbstractOutput output, IAbstractInput input) throws SimulationException {
-        Memory m = this.simulator.getMemory();
-        int bytesWritten = m.unsafeAllocate((int) Conversion.bytesToLong(input.get(simulator)));
-        output.set(this.simulator, Conversion.longToBytes(bytesWritten));
+    public TransformationSequence alloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        HeapPointerTransformable h = new HeapPointerTransformable(simulator);
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        Transformation t1 = new Transformation(h, h.get(),
+                new RawData(h.get().intValue() + input.get(simulator).intValue()));
+        Transformation t2 = io.transformation(t1.from());
+        return new TransformationSequence(t1, t2);
     }
 
     @Instruction
-    public void move(IAbstractOutput output, IAbstractInput input) throws SimulationException {
-        output.set(simulator, input.get(simulator));
+    public TransformationSequence move(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
 }

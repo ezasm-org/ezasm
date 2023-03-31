@@ -1,29 +1,31 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.util.Conversion;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
-import com.ezasm.instructions.targets.output.IAbstractOutput;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
 import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 
 /**
  * An implementation of standard arithmetic instructions for the simulation.
  */
 public class ArithmeticInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
      * Some instructions require access to the Simulator directly, so that is provided.
      *
      * @param simulator the provided Simulator.
      */
-    public ArithmeticInstructions(ISimulator simulator) {
+    public ArithmeticInstructions(Simulator simulator) {
         this.simulator = simulator;
     }
 
@@ -35,12 +37,27 @@ public class ArithmeticInstructions {
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
      */
-    private void arithmetic(BinaryOperator<Long> op, IAbstractOutput output, IAbstractInput input1,
-            IAbstractInput input2) throws SimulationException {
+    private TransformationSequence arithmetic(BinaryOperator<Long> op, IAbstractInputOutput output,
+            IAbstractInput input1, IAbstractInput input2) throws SimulationException {
 
-        long res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
-                Conversion.bytesToLong(input2.get(simulator)));
-        output.set(this.simulator, Conversion.longToBytes(res));
+        long res = op.apply(input1.get(simulator).intValue(), input2.get(simulator).intValue());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(new RawData(res)));
+    }
+
+    /**
+     * Template unary operation.
+     *
+     * @param op     operation to apply to the arguments.
+     * @param output the output of the operation.
+     * @param input  the input of the operation.
+     */
+    private TransformationSequence unaryOperation(UnaryOperator<Long> op, IAbstractInputOutput output,
+            IAbstractInput input) throws SimulationException {
+
+        long res = op.apply(input.get(simulator).intValue());
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+        return new TransformationSequence(io.transformation(new RawData(res)));
     }
 
     /**
@@ -52,8 +69,9 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void add(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic(Long::sum, output, input1, input2);
+    public TransformationSequence add(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic(Long::sum, output, input1, input2);
     }
 
     /**
@@ -65,8 +83,9 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sub(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic((a, b) -> a - b, output, input1, input2);
+    public TransformationSequence sub(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a - b, output, input1, input2);
     }
 
     /**
@@ -78,8 +97,9 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void mul(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic((a, b) -> a * b, output, input1, input2);
+    public TransformationSequence mul(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a * b, output, input1, input2);
     }
 
     /**
@@ -91,11 +111,12 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void div(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        if (Conversion.bytesToLong(input2.get(simulator)) == 0) {
+    public TransformationSequence div(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        if (input2.get(simulator).intValue() == 0) {
             throw new IllegalArgumentException(-1);
         }
-        arithmetic((a, b) -> a / b, output, input1, input2);
+        return arithmetic((a, b) -> a / b, output, input1, input2);
     }
 
     /**
@@ -107,8 +128,9 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void and(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic((a, b) -> a & b, output, input1, input2);
+    public TransformationSequence and(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a & b, output, input1, input2);
     }
 
     /**
@@ -120,8 +142,9 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void or(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic((a, b) -> a | b, output, input1, input2);
+    public TransformationSequence or(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a | b, output, input1, input2);
     }
 
     /**
@@ -133,8 +156,23 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void xor(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic((a, b) -> a ^ b, output, input1, input2);
+    public TransformationSequence xor(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a ^ b, output, input1, input2);
+    }
+
+    /**
+     * The standard modulus operation.
+     *
+     * @param output the output of the operation.
+     * @param input1 the left-hand side of the modullus operation.
+     * @param input2 the right-hand side of the modulus operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public TransformationSequence mod(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a % b, output, input1, input2);
     }
 
     /**
@@ -145,11 +183,8 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void not(IAbstractOutput output, IAbstractInput input) throws SimulationException {
-        byte[] bytes = input.get(this.simulator);
-        long val = Conversion.bytesToLong(bytes);
-        val = ~val;
-        output.set(this.simulator, Conversion.longToBytes(val));
+    public TransformationSequence not(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        return unaryOperation((a) -> ~a, output, input);
     }
 
     /**
@@ -161,8 +196,9 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void sll(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic((a, b) -> a << b, output, input1, input2);
+    public TransformationSequence sll(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a << b, output, input1, input2);
     }
 
     /**
@@ -174,29 +210,32 @@ public class ArithmeticInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void srl(IAbstractOutput output, IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        arithmetic((a, b) -> a >> b, output, input1, input2);
+    public TransformationSequence srl(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        return arithmetic((a, b) -> a >> b, output, input1, input2);
     }
 
     /**
      * The standard decrement operation. Subtracts one from the given data.
      *
-     * @param input the input/output to be modified.
+     * @param output the output of the operation.
+     * @param input  the input of the operation.
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void dec(IAbstractInputOutput input) throws SimulationException {
-        input.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) - 1));
+    public TransformationSequence dec(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        return unaryOperation((a) -> a - 1, output, input);
     }
 
     /**
      * The standard increment operation. Adds one to the given data.
      *
-     * @param input the input/output to be modified.
+     * @param output the output of the operation.
+     * @param input  the input of the operation.
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void inc(IAbstractInputOutput input) throws SimulationException {
-        input.set(this.simulator, Conversion.longToBytes(Conversion.bytesToLong(input.get(this.simulator)) + 1));
+    public TransformationSequence inc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        return unaryOperation((a) -> a + 1, output, input);
     }
 }

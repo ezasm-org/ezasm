@@ -23,18 +23,6 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots compile assembly:single --file pom.xml
-
-      - run: |
-          ref="${GITHUB_REF#refs/heads/}" && echo "::set-output name=branch::${ref////-}"
-          FILE_NAME=$(basename $(find -name '*with-dependencies.jar') | sed "s/-jar-with-dependencies.jar//")
-          echo "::set-output name=file::$FILE_NAME"
-          mkdir staging && cp target/*with-dependencies.jar "staging/$FILE_NAME.jar"
-        id: res
-      - name: Produce Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ezasm-artifacts-${{ steps.res.outputs.branch }}
-          path: staging
   test:
     runs-on: ubuntu-latest
     steps:
@@ -46,6 +34,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Test Format with Maven
-        run: mvn --batch-mode formatter:validate --file pom.xml
+        run: mvn --batch-mode --update-snapshots formatter:validate --file pom.xml
       - name: Test Code with Maven
-        run: mvn --batch-mode clean test --file pom.xml
+        run: mvn --batch-mode --update-snapshots test --file pom.xml

@@ -1,10 +1,9 @@
 package com.ezasm.util;
 
-import com.ezasm.gui.Config;
+import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.Window;
-import com.ezasm.simulation.ISimulator;
-import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.Memory;
 import org.apache.commons.cli.*;
 
 /**
@@ -20,6 +19,9 @@ public class Arguments {
     public static void handleArgs(String[] args) {
         Config config = new Config();
         Options options = new Options();
+
+        Option verionOption = new Option("v", "version", false, "States the program version and then exits");
+        options.addOption(verionOption);
 
         Option windowlessOption = new Option("w", "windowless", false,
                 "Starts the program in windowless mode \n(default: disabled)");
@@ -56,6 +58,11 @@ public class Arguments {
             errorArgs(e.getMessage());
         }
 
+        if (commandLine.hasOption(verionOption)) {
+            SystemStreams.out.printf(String.format("%s %s\n", MavenProperties.NAME, MavenProperties.VERSION));
+            System.exit(0);
+        }
+
         int memorySize = 0;
         int wordSize = 0;
 
@@ -80,7 +87,7 @@ public class Arguments {
             wordSize = Memory.DEFAULT_WORD_SIZE;
         }
 
-        ISimulator sim = new Simulator(wordSize, memorySize);
+        Simulator sim = new Simulator(wordSize, memorySize);
         String filepath = "";
         if (commandLine.hasOption(fileOption)) {
             filepath = commandLine.getOptionValue(fileOption);
@@ -107,9 +114,12 @@ public class Arguments {
             }
             cli.startSimulation();
         } else {
-            Window.instantiate(sim, config);
+            if (!inputpath.equals("") || !outputpath.equals("")) {
+                Window.instantiate(sim, config, inputpath, outputpath);
+            } else {
+                Window.instantiate(sim, config);
+            }
         }
-
     }
 
     /**
@@ -118,7 +128,7 @@ public class Arguments {
      * @param message the message to print before exiting.
      */
     private static void errorArgs(String message) {
-        System.err.println(message);
+        SystemStreams.err.println(message);
         System.exit(1);
     }
 

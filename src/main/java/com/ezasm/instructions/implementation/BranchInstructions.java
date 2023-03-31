@@ -1,9 +1,11 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.util.Conversion;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.transform.TransformationSequence;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -14,14 +16,14 @@ import java.util.function.BiFunction;
  */
 public class BranchInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
      * Some instructions require access to the Simulator directly, so that is provided.
      *
      * @param simulator the provided Simulator.
      */
-    public BranchInstructions(ISimulator simulator) {
+    public BranchInstructions(Simulator simulator) {
         this.simulator = simulator;
     }
 
@@ -33,13 +35,16 @@ public class BranchInstructions {
      * @param input1 the left-hand side of the operation.
      * @param input2 the right-hand side of the operation.
      */
-    private void branch(BiFunction<Long, Long, Boolean> op, IAbstractInput label, IAbstractInput input1,
-            IAbstractInput input2) throws SimulationException {
+    private TransformationSequence branch(BiFunction<Long, Long, Boolean> op, IAbstractInput label,
+            IAbstractInput input1, IAbstractInput input2) throws SimulationException {
 
-        boolean res = op.apply(Conversion.bytesToLong(input1.get(simulator)),
-                Conversion.bytesToLong(input2.get(simulator)));
-        if (res)
-            simulator.getRegisters().getRegister(Registers.PC).setBytes(label.get(simulator));
+        boolean res = op.apply(input1.get(simulator).intValue(), input2.get(simulator).intValue());
+        if (res) {
+            InputOutputTransformable io = new InputOutputTransformable(simulator,
+                    new RegisterInputOutput(Registers.PC));
+            return new TransformationSequence(io.transformation(label.get(simulator)));
+        }
+        return new TransformationSequence();
     }
 
     /**
@@ -51,8 +56,9 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void beq(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
-        branch(Long::equals, label, input1, input2);
+    public TransformationSequence beq(IAbstractInput input1, IAbstractInput input2, IAbstractInput label)
+            throws SimulationException {
+        return branch(Long::equals, label, input1, input2);
     }
 
     /**
@@ -64,8 +70,9 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void bne(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
-        branch((l, r) -> l.longValue() != r.longValue(), label, input1, input2);
+    public TransformationSequence bne(IAbstractInput input1, IAbstractInput input2, IAbstractInput label)
+            throws SimulationException {
+        return branch((l, r) -> l.longValue() != r.longValue(), label, input1, input2);
     }
 
     /**
@@ -77,8 +84,9 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void blt(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
-        branch((l, r) -> l < r, label, input1, input2);
+    public TransformationSequence blt(IAbstractInput input1, IAbstractInput input2, IAbstractInput label)
+            throws SimulationException {
+        return branch((l, r) -> l < r, label, input1, input2);
     }
 
     /**
@@ -90,8 +98,9 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void ble(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
-        branch((l, r) -> l <= r, label, input1, input2);
+    public TransformationSequence ble(IAbstractInput input1, IAbstractInput input2, IAbstractInput label)
+            throws SimulationException {
+        return branch((l, r) -> l <= r, label, input1, input2);
     }
 
     /**
@@ -103,8 +112,9 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void bgt(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
-        branch((l, r) -> l > r, label, input1, input2);
+    public TransformationSequence bgt(IAbstractInput input1, IAbstractInput input2, IAbstractInput label)
+            throws SimulationException {
+        return branch((l, r) -> l > r, label, input1, input2);
     }
 
     /**
@@ -116,7 +126,8 @@ public class BranchInstructions {
      * @throws SimulationException if there is an error in accessing the simulation.
      */
     @Instruction
-    public void bge(IAbstractInput input1, IAbstractInput input2, IAbstractInput label) throws SimulationException {
-        branch((l, r) -> l >= r, label, input1, input2);
+    public TransformationSequence bge(IAbstractInput input1, IAbstractInput input2, IAbstractInput label)
+            throws SimulationException {
+        return branch((l, r) -> l >= r, label, input1, input2);
     }
 }

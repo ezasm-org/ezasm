@@ -4,7 +4,7 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -22,7 +23,7 @@ import java.util.Scanner;
  */
 public class CommandLineInterface {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
     private final boolean cli;
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
@@ -33,7 +34,7 @@ public class CommandLineInterface {
      *
      * @param simulator the given Simulator.
      */
-    public CommandLineInterface(ISimulator simulator) {
+    public CommandLineInterface(Simulator simulator) {
         this.simulator = simulator;
         this.cli = true;
     }
@@ -42,34 +43,38 @@ public class CommandLineInterface {
      * Constructs a CLI based on the given Simulator for operating on code from a file.
      *
      * @param simulator the given Simulator.
-     * @param file      the file to read code from.
+     * @param path      the file to read code from.
      */
-    public CommandLineInterface(ISimulator simulator, String file) {
+    public CommandLineInterface(Simulator simulator, String path) {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
+            File file = new File(path);
+            List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
+            this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            System.err.println(e.getMessage());
+            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
         }
     }
 
     /**
-     * Constructs a CLI based ont he given Simulator for operating code from a file with redirected input and/or output
+     * Constructs a CLI based ont the given Simulator for operating code from a file with redirected input and/or output
      *
      * @param simulator      the given Simulator.
      * @param file           the file to read code from.
      * @param inputFilePath  the file to read the input from.
      * @param outputFilePath the file to write the output to.
      */
-    public CommandLineInterface(ISimulator simulator, String file, String inputFilePath, String outputFilePath) {
+    public CommandLineInterface(Simulator simulator, String path, String inputFilePath, String outputFilePath) {
         this.simulator = simulator;
         this.cli = false;
         try {
-            this.simulator.addLines(Lexer.parseLines(FileIO.readFile(new File(file)), 0));
+            File file = new File(path);
+            List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
+            this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            System.err.println("Unable to parse the given file: " + e.getMessage());
+            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
             System.exit(1);
         }
 
@@ -80,7 +85,7 @@ public class CommandLineInterface {
                 inputStream = System.in;
             }
         } catch (IOException e) {
-            System.err.printf("Unable to read input from %s: %s", inputFilePath, e.getMessage());
+            SystemStreams.err.printf("Unable to read input from %s: %s\n", inputFilePath, e.getMessage());
             System.exit(1);
         }
 
@@ -90,9 +95,9 @@ public class CommandLineInterface {
                 outputFile.createNewFile();
                 outputStream = new FileOutputStream(outputFile);
             } else
-                outputStream = System.out;
+                outputStream = SystemStreams.out;
         } catch (IOException e) {
-            System.err.printf("Unable to write output to %s: %s", outputFilePath, e.getMessage());
+            SystemStreams.err.printf("Unable to write output to %s: %s\n", outputFilePath, e.getMessage());
             System.exit(1);
         }
     }
@@ -101,8 +106,12 @@ public class CommandLineInterface {
      * Begins the simulation. Starts reading CLI input or reads and executes from the given file.
      */
     public void startSimulation() {
-        if (inputStream != null || outputStream != null)
-            TerminalInstructions.setInputOutput(inputStream, outputStream);
+        if (inputStream != null) {
+            TerminalInstructions.streams().setInputStream(inputStream);
+        }
+        if (outputStream != null) {
+            TerminalInstructions.streams().setOutputStream(outputStream);
+        }
         if (cli) {
             runFromCliInput();
         } else {
@@ -117,15 +126,18 @@ public class CommandLineInterface {
         Scanner scanner = new Scanner(System.in);
         int lineNumber = 0;
 
-        System.out.print("> ");
+        SystemStreams.out.println("> ");
         while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
                 Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
-                simulator.runLine(line);
+                if (line != null) {
+                    simulator.runLine(line);
+                }
             } catch (ParseException | SimulationException e) {
-                System.err.flush();
+                SystemStreams.err.println(e.getMessage());
+                SystemStreams.err.flush();
             }
-            System.out.print("> ");
+            SystemStreams.out.println("> ");
         }
         try {
             Thread.sleep(50);
@@ -140,7 +152,7 @@ public class CommandLineInterface {
         try {
             simulator.executeProgramFromPC();
         } catch (SimulationException e) {
-            System.err.println(e.getMessage());
+            SystemStreams.err.println(e.getMessage());
         }
         System.exit((int) simulator.getRegisters().getRegister(Registers.R0).getLong());
     }

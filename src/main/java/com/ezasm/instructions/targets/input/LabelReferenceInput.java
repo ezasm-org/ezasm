@@ -1,8 +1,8 @@
 package com.ezasm.instructions.targets.input;
 
-import com.ezasm.util.Conversion;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
 import java.util.Objects;
 
@@ -24,9 +24,23 @@ public class LabelReferenceInput implements IAbstractInput {
      * @return the constant value.
      */
     @Override
-    public byte[] get(ISimulator simulator) throws SimulationException {
+    public RawData get(Simulator simulator) throws SimulationException {
         try {
-            return Conversion.longToBytes(simulator.getLabels().get(label));
+            return new RawData(simulator.getLabelToFileIdAndLineNumber().get(label).getRight());
+        } catch (NullPointerException e) {
+            throw new SimulationException(String.format("Label '%s' does not exist", label));
+        }
+    }
+
+    /**
+     * Gets the file id referred to by the label.
+     *
+     * @param simulator the program simulator.
+     * @return the file id referred to by the label.
+     */
+    public RawData getLabelFileId(Simulator simulator) throws SimulationException {
+        try {
+            return new RawData(simulator.getLabelToFileIdAndLineNumber().get(label).getLeft());
         } catch (NullPointerException e) {
             throw new SimulationException(String.format("Label '%s' does not exist", label));
         }
@@ -39,7 +53,7 @@ public class LabelReferenceInput implements IAbstractInput {
         if (o == null || getClass() != o.getClass())
             return false;
         LabelReferenceInput that = (LabelReferenceInput) o;
-        return Objects.equals(label, that.label);
+        return label.equals(that.label);
     }
 
     @Override

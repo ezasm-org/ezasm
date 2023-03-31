@@ -1,9 +1,9 @@
 package com.ezasm.instructions.targets.inputoutput;
 
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
+import com.ezasm.util.RawData;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -38,9 +38,9 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * @return the value stored within the register.
      */
     @Override
-    public byte[] get(ISimulator simulator) {
-        byte[] val = simulator.getRegisters().getRegister(register).getBytes();
-        return Arrays.copyOf(val, val.length);
+    public RawData get(Simulator simulator) {
+        RawData val = simulator.getRegisters().getRegister(register).getData();
+        return val.copy();
     }
 
     /**
@@ -50,8 +50,8 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(ISimulator simulator, byte[] value) {
-        simulator.getRegisters().getRegister(register).setBytes(value);
+    public void set(Simulator simulator, RawData value) {
+        simulator.getRegisters().getRegister(register).setDataWithGuiCallback(value);
     }
 
     @Override
