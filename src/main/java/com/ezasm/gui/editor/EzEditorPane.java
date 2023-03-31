@@ -30,11 +30,11 @@ import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 
 public class EzEditorPane extends JPanel implements IThemeable {
     private final PatchedRSyntaxTextArea textArea;
-//    private AutoCompletion ac;
-//    private JCheckBoxMenuItem cellRenderingItem;
-//    private JCheckBoxMenuItem alternateRowColorsItem;
-//    private JCheckBoxMenuItem showDescWindowItem;
-//    private JCheckBoxMenuItem paramAssistanceItem;
+    // private AutoCompletion ac;
+    // private JCheckBoxMenuItem cellRenderingItem;
+    // private JCheckBoxMenuItem alternateRowColorsItem;
+    // private JCheckBoxMenuItem showDescWindowItem;
+    // private JCheckBoxMenuItem paramAssistanceItem;
     private final RTextScrollPane scrollPane;
     private LineHighlighter highlighter;
     private String openFilePath;
@@ -65,20 +65,19 @@ public class EzEditorPane extends JPanel implements IThemeable {
 
         fileSaved = true;
 
-//        CompletionProvider provider = createCompletionProvider();
+        // CompletionProvider provider = createCompletionProvider();
         // Install auto-completion onto our text area.
-//        ac = new AutoCompletion(provider);
-//        ac.setListCellRenderer(new EzASMCellRenderer());
-//        ac.setShowDescWindow(true);
-//        ac.setParameterAssistanceEnabled(true);
+        // ac = new AutoCompletion(provider);
+        // ac.setListCellRenderer(new EzASMCellRenderer());
+        // ac.setShowDescWindow(true);
+        // ac.setParameterAssistanceEnabled(true);
 
-//        ac.setAutoCompleteEnabled(true);
-//        ac.setAutoActivationEnabled(true);
-//        ac.setAutoCompleteSingleChoices(true);
-//        ac.setAutoActivationDelay(800);
-//        ac.setTriggerKey(KeyStroke.getKeyStroke("ctrl SPACE"));
-//        ac.install(textArea);
-
+        // ac.setAutoCompleteEnabled(true);
+        // ac.setAutoActivationEnabled(true);
+        // ac.setAutoCompleteSingleChoices(true);
+        // ac.setAutoActivationDelay(800);
+        // ac.setTriggerKey(KeyStroke.getKeyStroke("ctrl SPACE"));
+        // ac.install(textArea);
 
         scrollPane = new RTextScrollPane(textArea);
         scrollPane.setLineNumbersEnabled(true);
@@ -92,8 +91,6 @@ public class EzEditorPane extends JPanel implements IThemeable {
         highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
 
         textArea.setFocusTraversalKeysEnabled(false);
-
-
 
         keywords = new ArrayList<String>();
         autoComplete = new Autocomplete(textArea, keywords);
@@ -300,41 +297,41 @@ public class EzEditorPane extends JPanel implements IThemeable {
     }
 
     /**
-<<<<<<< HEAD:src/main/java/com/ezasm/gui/editor/EditorPane.java
-     * Create a simple provider that adds some Java-related completions.
+     * <<<<<<< HEAD:src/main/java/com/ezasm/gui/editor/EditorPane.java Create a simple provider that adds some
+     * Java-related completions.
      */
-//    private CompletionProvider createCompletionProvider() {
-//
-//        // A DefaultCompletionProvider is the simplest concrete implementation
-//        // of CompletionProvider. This provider has no understanding of
-//        // language semantics. It simply checks the text entered up to the
-//        // caret position for a match against known completions. This is all
-//        // that is needed in the majority of cases.
-//        DefaultCompletionProvider provider = new DefaultCompletionProvider();
-//
-//        // Add completions for all Java keywords. A BasicCompletion is just
-//        // a straightforward word completion.
-//        provider.addCompletion(new BasicCompletion(provider, "abstract"));
-//        provider.addCompletion(new BasicCompletion(provider, "assert"));
-//        provider.addCompletion(new BasicCompletion(provider, "break"));
-//        provider.addCompletion(new BasicCompletion(provider, "case"));
-//        // ... etc ...
-//        provider.addCompletion(new BasicCompletion(provider, "transient"));
-//        provider.addCompletion(new BasicCompletion(provider, "try"));
-//        provider.addCompletion(new BasicCompletion(provider, "void"));
-//        provider.addCompletion(new BasicCompletion(provider, "volatile"));
-//        provider.addCompletion(new BasicCompletion(provider, "while"));
-//
-//        // Add a couple of "shorthand" completions. These completions don't
-//        // require the input text to be the same thing as the replacement text.
-//        provider.addCompletion(new ShorthandCompletion(provider, "sysout",
-//                "System.out.println(", "System.out.println("));
-//        provider.addCompletion(new ShorthandCompletion(provider, "syserr",
-//                "System.err.println(", "System.err.println("));
-//
-//        return provider;
-//
-//    }
+    // private CompletionProvider createCompletionProvider() {
+    //
+    // // A DefaultCompletionProvider is the simplest concrete implementation
+    // // of CompletionProvider. This provider has no understanding of
+    // // language semantics. It simply checks the text entered up to the
+    // // caret position for a match against known completions. This is all
+    // // that is needed in the majority of cases.
+    // DefaultCompletionProvider provider = new DefaultCompletionProvider();
+    //
+    // // Add completions for all Java keywords. A BasicCompletion is just
+    // // a straightforward word completion.
+    // provider.addCompletion(new BasicCompletion(provider, "abstract"));
+    // provider.addCompletion(new BasicCompletion(provider, "assert"));
+    // provider.addCompletion(new BasicCompletion(provider, "break"));
+    // provider.addCompletion(new BasicCompletion(provider, "case"));
+    // // ... etc ...
+    // provider.addCompletion(new BasicCompletion(provider, "transient"));
+    // provider.addCompletion(new BasicCompletion(provider, "try"));
+    // provider.addCompletion(new BasicCompletion(provider, "void"));
+    // provider.addCompletion(new BasicCompletion(provider, "volatile"));
+    // provider.addCompletion(new BasicCompletion(provider, "while"));
+    //
+    // // Add a couple of "shorthand" completions. These completions don't
+    // // require the input text to be the same thing as the replacement text.
+    // provider.addCompletion(new ShorthandCompletion(provider, "sysout",
+    // "System.out.println(", "System.out.println("));
+    // provider.addCompletion(new ShorthandCompletion(provider, "syserr",
+    // "System.err.println(", "System.err.println("));
+    //
+    // return provider;
+    //
+    // }
     /**
      * Set tab size from the setting changes
      *

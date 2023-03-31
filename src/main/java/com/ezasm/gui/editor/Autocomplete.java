@@ -39,7 +39,7 @@ public class Autocomplete implements DocumentListener {
     public void removeUpdate(DocumentEvent ev) {
         keywords.clear();
         String content = textField.getText();
-        //find the new keywords and add them
+        // find the new keywords and add them
         Matcher to_add = line_finder.matcher(content);
         while (to_add.find()) {
             String label = to_add.group().strip().replace(" ", "").replace(":", "");
@@ -57,19 +57,17 @@ public class Autocomplete implements DocumentListener {
         int line_start = 0;
         int line_end = content.length();
 
-        for (int i = pos-1; i >= 0; i--) {
+        for (int i = pos - 1; i >= 0; i--) {
             if (content.charAt(i) == '\n') {
-                line_start = i+1;
+                line_start = i + 1;
             }
         }
-        for (int i = pos+len; i < content.length(); i++) {
+        for (int i = pos + len; i < content.length(); i++) {
             if (content.charAt(i) == '\n') {
                 line_end = i;
             }
         }
         String old_line = content.substring(line_start, pos) + content.substring(pos + len, line_end);
-
-
 
         // Find the old keywords and delete them
         Matcher to_remove = line_finder.matcher(old_line);
@@ -79,14 +77,13 @@ public class Autocomplete implements DocumentListener {
         }
 
         String new_line = content.substring(line_start, line_end);
-        //find the new keywords and add them
+        // find the new keywords and add them
         Matcher to_add = line_finder.matcher(new_line);
         while (to_add.find()) {
             String label = to_add.group().strip().replace(" ", "").replace(":", "");
             keywords.add(label);
         }
         Collections.sort(keywords);
-
 
         // Find where the word starts
         int w;
@@ -161,7 +158,7 @@ public class Autocomplete implements DocumentListener {
 
     /**
      *
-     * @param s The given string to search
+     * @param s   The given string to search
      * @param pos the position to exapnd from
      * @return The full line the given position is in
      */
