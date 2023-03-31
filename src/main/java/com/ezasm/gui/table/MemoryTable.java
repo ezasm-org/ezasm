@@ -63,10 +63,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         table.applyTheme(font, editorTheme);
         table.setCellSelectionEnabled(false);
 
-        if (rowHeader.getCellRenderer() instanceof RowHeaderRenderer rowHeaderRenderer) {
-            rowHeaderRenderer.applyTheme(font, editorTheme);
-        }
-
+        ((IThemeable) rowHeader.getCellRenderer()).applyTheme(font, editorTheme);
         rowHeader.setBackground(editorTheme.currentLine());
         rowHeader.setForeground(editorTheme.foreground());
 
