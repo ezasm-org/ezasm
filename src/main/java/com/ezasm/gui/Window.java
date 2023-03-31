@@ -17,6 +17,7 @@ import com.ezasm.simulation.Registers;
 import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
 import com.ezasm.util.SystemStreams;
+import com.ezasm.gui.settings.AutoSave;
 
 import static com.ezasm.gui.menubar.MenuActions.*;
 
@@ -74,12 +75,14 @@ public class Window {
     private final KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 
+    private AutoSave AS = new AutoSave();
+
     protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
         this.config = config;
         initialize();
-        autoSave(false);
+    
     }
 
     /**
@@ -280,6 +283,8 @@ public class Window {
         editor.applyTheme(font, editorTheme);
         editor.resizeTabSize(config.getTabSize());
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
+
+        AS.run(config.getAutoSaveSelected(),config.getAutoSaveInterval());
     }
 
     /**
@@ -390,36 +395,5 @@ public class Window {
         SystemStreams.printlnCurrentErr(e.getMessage());
     }
 
-    /**
-     * Auto called Save function to save file periodically
-     *
-     */
-
-    public static void autoSave(Boolean changed) {
-
-        Boolean sw = Window.getInstance().getConfig().getAutoSaveSelected();
-        System.out.println("Run!");
-        if (sw){
-            int interval = Window.getInstance().getConfig().getAutoSaveInterval();
-            interval *= 1000;
-            System.out.println(interval);
-            Timer time = new Timer();
-            TimerTask t = new TimerTask(){
-                public void run() {
-                    File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
-                    Boolean w = Window.getInstance().getConfig().getAutoSaveSelected();
-                    if(!w || changed){
-                        this.cancel();
-                        System.out.println("cancel");
-                    }
-                    if (fileToUpdate.exists()) {
-                        System.out.println("Save once!");
-                    }
-            
-                }
-            };
-            time.schedule(t, 0, interval);
-        }     
-    }
 
 }
