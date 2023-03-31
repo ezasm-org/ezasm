@@ -61,6 +61,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         EditorTheme.applyFontThemeBorderless(this, font, editorTheme);
 
         table.applyTheme(font, editorTheme);
+        table.setCellSelectionEnabled(false);
 
         if (rowHeader.getCellRenderer() instanceof RowHeaderRenderer rowHeaderRenderer) {
             rowHeaderRenderer.applyTheme(font, editorTheme);
@@ -109,7 +110,7 @@ public class MemoryTable extends JPanel implements IThemeable {
      * Forcibly refreshes the display of the table.
      */
     public void update() {
-        updateRowHeaders();
+        SwingUtilities.invokeLater(this::updateRowHeaders);
         SwingUtilities.invokeLater(table::updateUI);
     }
 

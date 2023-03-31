@@ -218,7 +218,7 @@ public class Window {
 
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
-        tools.addTab(memoryViewerPanel, null, "Memory", "System Memory");
+        tools.addTab(memoryViewerPanel, null, "Memory", "Simulator Memory");
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
         mainSplit.setResizeWeight(0.8);
