@@ -35,8 +35,7 @@ public class Arguments {
         options.addOption(fileOption);
 
         Option memoryOption = new Option("m", "memory", true,
-                "The number of words to allocate space for on the stack and heap each, "
-                        + "must be larger than 0\n(default: word size * 0x20_0000)");
+                "The number of words to allocate space for on the stack and heap each; must be larger than the word size\n(default: word size * 0x20_0000)");
         options.addOption(memoryOption);
         memoryOption.setArgName("memory size");
 
@@ -44,11 +43,13 @@ public class Arguments {
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 
-        Option inputOption = new Option("i", "input", true, "A file name to receive standard input from\n(default: none)");
+        Option inputOption = new Option("i", "input", true,
+                "A file name to receive standard input from\n(default: none)");
         options.addOption(inputOption);
         inputOption.setArgName("input file path");
 
-        Option outputOption = new Option("o", "output", true, "A file name to send standard output to\n (default: none)");
+        Option outputOption = new Option("o", "output", true,
+                "A file name to send standard output to\n (default: none)");
         options.addOption(outputOption);
         outputOption.setArgName("output file path");
 
