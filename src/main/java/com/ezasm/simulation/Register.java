@@ -117,7 +117,7 @@ public class Register {
      */
     @Override
     public String toString() {
-        return String.format("%2d: 0x%016X", number, getLong());
+        return String.format("%2d: 0x%08X", number, getLong());
     }
 
     /**

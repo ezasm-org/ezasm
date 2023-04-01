@@ -67,16 +67,16 @@ public class SettingsPopup implements IThemeable {
         fontSizeLabel.setOpaque(true);
         speedLabel.setOpaque(true);
         tabSizeLabel.setOpaque(true);
-        EditorTheme.applyFontAndTheme(speedSlider, font, editorTheme);
-        EditorTheme.applyFontAndTheme(themeInput, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(speedSlider, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(themeInput, font, editorTheme);
         EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
         EditorTheme.applyFontThemeBorder(save, font, editorTheme, buttonBorder);
         EditorTheme.applyFontThemeBorder(resetDefaults, font, editorTheme, buttonBorder);
-        EditorTheme.applyFontAndTheme(speedLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(fontSizeLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(themeLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(tabSizeLabel, font, editorTheme);
-        EditorTheme.applyFontAndTheme(tabSizeSlider, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(speedLabel, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(fontSizeLabel, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(themeLabel, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(tabSizeLabel, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(tabSizeSlider, font, editorTheme);
     }
 
     private void initialize() {
@@ -88,7 +88,7 @@ public class SettingsPopup implements IThemeable {
         popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         themeLabel = new JLabel(THEME);
-        themeInput = new JComboBox<String>(Config.THEMES);
+        themeInput = new JComboBox<>(Config.THEMES);
         themeInput.setSelectedItem(config.getTheme());
 
         fontSizeLabel = new JLabel(FONTSIZE);

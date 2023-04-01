@@ -1,11 +1,10 @@
-package com.ezasm.gui;
+package com.ezasm.gui.table;
 
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.simulation.Registers;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.JTable;
@@ -17,13 +16,12 @@ import javax.swing.table.TableCellRenderer;
  */
 public class RegisterTable extends JPanel implements IThemeable {
 
-    private final JTable table;
+    private final AlternatingColorTable table;
     private final JScrollPane scrollPane;
     private final ArrayList<Integer> changedRegisterNumbers;
     private boolean reset = false;
-    private Color CellForeground;
+    private Color cellForeground;
     private Color DefaultCellForeground;
-    private static final String[] columns = { "Register", "Value" };
     private static final Dimension MIN_SIZE = new Dimension(200, 100);
     private static final Dimension MAX_SIZE = new Dimension(350, 2000);
 
@@ -35,9 +33,9 @@ public class RegisterTable extends JPanel implements IThemeable {
     public RegisterTable(Registers registers) {
         super();
         this.changedRegisterNumbers = new ArrayList<>();
-        this.table = new JTable();
+        this.table = new AlternatingColorTable(EditorTheme.Light);
         this.scrollPane = new JScrollPane(table);
-        table.setModel(new RegistersTableModel(registers));
+        table.setModel(new RegisterTableModel(registers));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(table.getPreferredSize());
@@ -52,14 +50,14 @@ public class RegisterTable extends JPanel implements IThemeable {
     /**
      * The function to highlight changed registers
      */
-    public void ChangeCellColor() {
+    public void changeCellColor() {
         TableCellRenderer render = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int col) {
                 final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
                 if (changedRegisterNumbers.contains(row)) {
-                    c.setForeground(CellForeground);
+                    c.setForeground(cellForeground);
                 } else {
                     c.setForeground(DefaultCellForeground);
                 }
@@ -70,17 +68,21 @@ public class RegisterTable extends JPanel implements IThemeable {
     }
 
     /**
-     * Applies the proper theming to the editor area
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
-        scrollPane.setBackground(editorTheme.background());
+        scrollPane.getViewport().setBackground(editorTheme.currentLine());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
-        EditorTheme.applyFontAndTheme(this, font, editorTheme);
-        EditorTheme.applyFontAndTheme(table, font, editorTheme);
-        EditorTheme.applyFontAndTheme(table.getTableHeader(), font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(this, font, editorTheme);
+
+        table.applyTheme(font, editorTheme);
         table.setRowHeight(font.getSize() + 3);
-        table.getTableHeader().setOpaque(false);
-        CellForeground = editorTheme.red();
+
+        cellForeground = editorTheme.red();
         DefaultCellForeground = editorTheme.foreground();
     }
 
@@ -88,59 +90,9 @@ public class RegisterTable extends JPanel implements IThemeable {
      * Forcibly refreshes the display of the table
      */
     public void update() {
-        ChangeCellColor();
+        changeCellColor();
         reset = true;
         SwingUtilities.invokeLater(table::updateUI);
-    }
-
-    /**
-     * Helper model class to inform the TableModel of how to construct and read from itself.
-     */
-    private class RegistersTableModel extends AbstractTableModel {
-
-        private final Registers registers;
-
-        public RegistersTableModel(Registers registers) {
-            super();
-            this.registers = registers;
-        }
-
-        public int getRowCount() {
-            return registers.getRegisters().length;
-        }
-
-        public int getColumnCount() {
-            return columns.length;
-        }
-
-        public Object getValueAt(int row, int col) {
-            if (col == 0) {
-                // labels
-                return "$" + Registers.getRegisterName(row);
-            } else if (col == 1) {
-                // values
-                return registers.getRegister(row).getLong();
-            } else {
-                // Error
-                throw new RuntimeException();
-            }
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            fireTableCellUpdated(rowIndex, columnIndex);
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return false;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return columns[column];
-        }
-
     }
 
     /**
@@ -156,6 +108,9 @@ public class RegisterTable extends JPanel implements IThemeable {
         this.changedRegisterNumbers.add(number);
     }
 
+    /**
+     * Removes the current highlights in the register table.
+     */
     public void removeHighlightValue() {
         this.changedRegisterNumbers.clear();
     }

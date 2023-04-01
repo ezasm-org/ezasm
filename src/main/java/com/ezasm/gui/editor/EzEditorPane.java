@@ -1,15 +1,12 @@
 package com.ezasm.gui.editor;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.PatchedRSyntaxTextArea;
-import com.ezasm.simulation.Registers;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -17,7 +14,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.ezasm.gui.util.EditorTheme.applyFontAndTheme;
+import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
 import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 
@@ -143,7 +140,7 @@ public class EzEditorPane extends JPanel implements IThemeable {
     public void applyTheme(Font font, EditorTheme editorTheme) {
         themeSyntaxTextArea(font, editorTheme);
         setFont(textArea, font);
-        applyFontAndTheme(scrollPane, font, editorTheme);
+        applyFontThemeBorderless(scrollPane, font, editorTheme);
         editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         recolorHighlights(editorTheme);

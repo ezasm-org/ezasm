@@ -51,7 +51,7 @@ public class Console extends JPanel implements IThemeable {
     public void applyTheme(Font font, EditorTheme editorTheme) {
         textArea.applyTheme(font, editorTheme);
 
-        outputStreamColor = editorTheme.comment();
+        outputStreamColor = editorTheme.modifyAwayFromBackground(editorTheme.currentLine(), 3);
         errorStreamColor = editorTheme.red();
 
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
@@ -72,7 +72,6 @@ public class Console extends JPanel implements IThemeable {
      * @param text the text to write.
      */
     public void writeTextFromOutputStream(String text) {
-        // TODO maybe use a different color for user input and console output than current
         textArea.writeTextWithColor(text, outputStreamColor);
     }
 
