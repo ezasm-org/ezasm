@@ -129,9 +129,41 @@ public class ArithmaticInstructionTest {
         }
     }
 
+    @Test
     void testDiv() {
         try {
+            simulator.getRegisters().getRegister(Registers.S0).setLong(12);
+            simulator.getRegisters().getRegister(Registers.S1).setLong(-12);
+            simulator.getRegisters().getRegister(Registers.S2).setLong(3);
+            simulator.getRegisters().getRegister(Registers.S3).setLong(-3);
+            simulator.getRegisters().getRegister(Registers.S4).setLong(5);
+            simulator.getRegisters().getRegister(Registers.S5).setLong(-5);
+            simulator.getRegisters().getRegister(Registers.S6).setLong(15);
+            simulator.getRegisters().getRegister(Registers.S7).setLong(-15);
+            simulator.getRegisters().getRegister(Registers.S8).setLong(Long.MIN_VALUE);
+            simulator.getRegisters().getRegister(Registers.S9).setLong(Long.MAX_VALUE);
 
+            simulator.runLine(Lexer.parseLine("div $t0 $s0 $s2", 0));
+            simulator.runLine(Lexer.parseLine("div $t1 $s0 $s3", 1));
+            simulator.runLine(Lexer.parseLine("div $t2 $s1 $s2", 2));
+            simulator.runLine(Lexer.parseLine("div $t3 $s1 $s3", 3));
+            simulator.runLine(Lexer.parseLine("div $t4 $s0 $s4", 4));
+            simulator.runLine(Lexer.parseLine("div $t5 $s0 $s5", 5));
+            simulator.runLine(Lexer.parseLine("div $t6 $s0 $s6", 6));
+            simulator.runLine(Lexer.parseLine("div $t7 $s0 $s7", 7));
+            simulator.runLine(Lexer.parseLine("div $t8 $s8 $s9", 8));
+            simulator.runLine(Lexer.parseLine("div $t9 $s9 $s8", 9));
+
+            assertEquals(simulator.getRegisters().getRegister(Registers.T0).getLong(), 4);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T1).getLong(), -4);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T2).getLong(), -4);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T3).getLong(), 4);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), 2);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), -2);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T8).getLong(), -1);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T9).getLong(), 0);
         } catch (Exception e) {
             fail();
         }
@@ -146,6 +178,54 @@ public class ArithmaticInstructionTest {
     }
 
     void testOr() {
+        try {
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    void testXor() {
+        try {
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    void testNot() {
+        try {
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    void testSll() {
+        try {
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    void testSrl() {
+        try {
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    void testDec() {
+        try {
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    void testInc() {
         try {
 
         } catch (Exception e) {
