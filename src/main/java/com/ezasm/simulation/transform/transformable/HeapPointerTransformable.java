@@ -1,6 +1,8 @@
 package com.ezasm.simulation.transform.transformable;
 
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.exception.SimulationOutOfMemoryException;
 import com.ezasm.util.RawData;
 
 /**
@@ -33,7 +35,10 @@ public class HeapPointerTransformable extends AbstractTransformableInput {
      * @param value the heap pointer's new value.
      */
     @Override
-    public void set(RawData value) {
+    public void set(RawData value) throws SimulationOutOfMemoryException {
+        if (simulator.getRegisters().getRegister(Registers.SP).getLong() <= value.intValue()) {
+            throw new SimulationOutOfMemoryException(value.intValue() - simulator.getMemory().currentHeapPointer());
+        }
         simulator.getMemory().setHeapPointer((int) value.intValue());
     }
 }
