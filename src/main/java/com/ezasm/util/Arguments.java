@@ -49,7 +49,7 @@ public class Arguments {
         inputOption.setArgName("input file path");
 
         Option outputOption = new Option("o", "output", true,
-                "A file name to send standard output to\n (default: none)");
+                "A file name to send standard output to\n(default: none)");
         options.addOption(outputOption);
         outputOption.setArgName("output file path");
 
