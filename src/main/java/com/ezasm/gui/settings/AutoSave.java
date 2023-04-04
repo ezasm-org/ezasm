@@ -9,7 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class AutoSave {
-    private TimerTask task = new TimerTask(){
+    private class Task extends TimerTask{
         public void run() {
             File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
                     if (fileToUpdate.exists()) {
@@ -18,7 +18,10 @@ public class AutoSave {
                     }
     
         }
-    };
+    }
+
+    private Task task = new Task();
+
     private Timer time = new Timer();
     private int sec_Interval;
     private int mil_Interval;
@@ -41,21 +44,12 @@ public class AutoSave {
             if(!ran){
                 this.sec_Interval = sec;
                 this.mil_Interval = sec * 1000;
-                time.schedule(task, 0, this.mil_Interval);
+                time.schedule(this.task, 0, this.mil_Interval);
                 this.ran = true;
             }
             else{
                 this.task.cancel();
-                this.task = new TimerTask(){
-                    public void run() {
-                        File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
-                                if (fileToUpdate.exists()) {
-                                    System.out.println("Save once!");
-                                    System.out.println(save());
-                                }
-                
-                    }
-                };
+                this.task = new Task();
                 this.sec_Interval = sec;
                 this.mil_Interval = sec * 1000;
                 time.schedule(this.task, 0, this.mil_Interval);
@@ -68,16 +62,7 @@ public class AutoSave {
             }
             else{
                 this.task.cancel();
-                this.task = new TimerTask(){
-                    public void run() {
-                        File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
-                                if (fileToUpdate.exists()) {
-                                    System.out.println("Save once!");
-                                    System.out.println(save());
-                                }
-                
-                    }
-                };
+                this.task = new Task();
                 System.out.println("cancel!");
             }                
         }     
