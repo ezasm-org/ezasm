@@ -2,6 +2,7 @@ package com.ezasm.gui.settings;
 
 import com.ezasm.util.FileIO;
 import com.ezasm.gui.Window;
+import static com.ezasm.gui.menubar.MenuActions.save;
 
 import java.io.File;
 import java.util.Timer;
@@ -13,6 +14,7 @@ public class AutoSave {
             File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
                     if (fileToUpdate.exists()) {
                         System.out.println("Save once!");
+                        save();
                     }
     
         }
@@ -49,6 +51,7 @@ public class AutoSave {
                         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
                                 if (fileToUpdate.exists()) {
                                     System.out.println("Save once!");
+
                                 }
                 
                     }
