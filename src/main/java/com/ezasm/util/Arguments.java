@@ -35,7 +35,7 @@ public class Arguments {
         options.addOption(fileOption);
 
         Option memoryOption = new Option("m", "memory", true,
-                "The number of words to allocate space for on the stack and heap each; must be larger than the word size\n(default: word size * 0x20_0000)");
+                "The number of words to allocate space for on the stack and heap each; must be larger than the word size\n(default: 0x20_0000)");
         options.addOption(memoryOption);
         memoryOption.setArgName("memory size");
 
