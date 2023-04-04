@@ -12,7 +12,6 @@ import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.HeapPointerTransformable;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.simulation.transform.transformable.MemoryTransformable;
-import com.ezasm.simulation.transform.transformable.StackPointerTransformable;
 import com.ezasm.util.RawData;
 
 /**
@@ -52,9 +51,9 @@ public class MemoryInstructions {
      */
     public TransformationSequence consecutivePush(IAbstractInput input, int times) throws SimulationException {
         int offset = times * simulator.getMemory().wordSize;
-        StackPointerTransformable sp = new StackPointerTransformable(simulator);
-        Transformation t1 = new Transformation(sp, sp.get(),
-                new RawData(sp.get().intValue() - simulator.getMemory().wordSize - offset));
+        RegisterInputOutput sp = new RegisterInputOutput(Registers.SP);
+        Transformation t1 = new Transformation(new InputOutputTransformable(simulator, sp), sp.get(simulator),
+                new RawData(sp.get(simulator).intValue() - simulator.getMemory().wordSize - offset));
         MemoryTransformable m = new MemoryTransformable(simulator, t1.to().intValue());
         Transformation t2 = m.transformation(input.get(simulator));
         return new TransformationSequence(t1, t2);
