@@ -80,7 +80,7 @@ public class Window {
         this.simulator = simulator;
         this.config = config;
         initialize();
-    
+
     }
 
     /**
@@ -282,7 +282,7 @@ public class Window {
         editor.resizeTabSize(config.getTabSize());
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
 
-        AS.run(config.getAutoSaveSelected(),config.getAutoSaveInterval());
+        AS.run(config.getAutoSaveSelected(), config.getAutoSaveInterval());
     }
 
     /**
@@ -392,6 +392,5 @@ public class Window {
     public void handleParseException(Exception e) {
         SystemStreams.printlnCurrentErr(e.getMessage());
     }
-
 
 }
