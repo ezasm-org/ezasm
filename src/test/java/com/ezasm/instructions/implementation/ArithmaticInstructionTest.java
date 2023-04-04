@@ -107,9 +107,9 @@ public class ArithmaticInstructionTest {
             simulator.runLine(Lexer.parseLine("mul $t1 $s1 $s0", 1));
             simulator.runLine(Lexer.parseLine("mul $t2 $s1 $s2", 2));
             simulator.runLine(Lexer.parseLine("mul $t3 $s2 $s1", 3));
-            // simulator.runLine(Lexer.parseLine("mul $t4 Ss0 $zero", 4));
-            // simulator.runLine(Lexer.parseLine("mul $t5 $zero $s0", 5));
-            // simulator.runLine(Lexer.parseLine("mul $t6 $zero $zero", 6));
+            simulator.runLine(Lexer.parseLine("mul $t4 $s0 $zero", 4));
+            simulator.runLine(Lexer.parseLine("mul $t5 $zero $s0", 5));
+            simulator.runLine(Lexer.parseLine("mul $t6 $zero $zero", 6));
             simulator.runLine(Lexer.parseLine("mul $t7 $s3 $s3", 7));
             simulator.runLine(Lexer.parseLine("mul $t8 $s4 $s4", 8));
             simulator.runLine(Lexer.parseLine("mul $t9 $s3 $s4", 9));
@@ -118,9 +118,9 @@ public class ArithmaticInstructionTest {
             assertEquals(simulator.getRegisters().getRegister(Registers.T1).getLong(), 15);
             assertEquals(simulator.getRegisters().getRegister(Registers.T2).getLong(), -50);
             assertEquals(simulator.getRegisters().getRegister(Registers.T3).getLong(), -50);
-            // assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), 0);
-            // assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), 0);
-            // assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), 0);
             assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), Long.MAX_VALUE * Long.MAX_VALUE);
             assertEquals(simulator.getRegisters().getRegister(Registers.T8).getLong(), Long.MIN_VALUE * Long.MIN_VALUE);
             assertEquals(simulator.getRegisters().getRegister(Registers.T9).getLong(), Long.MAX_VALUE * Long.MIN_VALUE);
