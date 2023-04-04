@@ -14,7 +14,7 @@ public class AutoSave {
             File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
                     if (fileToUpdate.exists()) {
                         System.out.println("Save once!");
-                        save();
+                        System.out.println(save());
                     }
     
         }
@@ -51,7 +51,7 @@ public class AutoSave {
                         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
                                 if (fileToUpdate.exists()) {
                                     System.out.println("Save once!");
-
+                                    System.out.println(save());
                                 }
                 
                     }
@@ -73,6 +73,7 @@ public class AutoSave {
                         File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
                                 if (fileToUpdate.exists()) {
                                     System.out.println("Save once!");
+                                    System.out.println(save());
                                 }
                 
                     }
