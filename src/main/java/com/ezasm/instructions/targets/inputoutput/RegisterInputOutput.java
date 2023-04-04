@@ -2,6 +2,8 @@ package com.ezasm.instructions.targets.inputoutput;
 
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.exception.MisalignedStackPointerException;
+import com.ezasm.simulation.exception.SimulationStackOverflowException;
 import com.ezasm.util.RawData;
 
 import java.util.Objects;
@@ -44,13 +46,33 @@ public class RegisterInputOutput implements IAbstractInputOutput {
     }
 
     /**
+     * Checks if the new stack pointer value is valid.
+     *
+     * @param simulator the program simulator
+     * @param value the new stack pointer value
+     * @throws MisalignedStackPointerException if the new stack pointer is not aligned on a word boundary
+     * @throws SimulationStackOverflowException if the new stack pointer collides with the heap
+     */
+    public void validateStackPointer(Simulator simulator, RawData value) throws MisalignedStackPointerException, SimulationStackOverflowException {
+        if (value.intValue() % simulator.getMemory().wordSize != 0) {
+            throw new MisalignedStackPointerException(value.intValue());
+        } else if (value.intValue() <= simulator.getMemory().currentHeapPointer()) {
+            throw new SimulationStackOverflowException(value.intValue());
+        }
+    }
+
+    /**
      * Sets the value stored within the register.
      *
      * @param simulator the program simulator.
      * @param value     the value to set.
      */
     @Override
-    public void set(Simulator simulator, RawData value) {
+    public void set(Simulator simulator, RawData value) throws MisalignedStackPointerException, SimulationStackOverflowException {
+        if (register == Registers.getRegisterNumber(Registers.SP)) {
+            validateStackPointer(simulator, value);
+        }
+
         simulator.getRegisters().getRegister(register).setDataWithGuiCallback(value);
     }
 
