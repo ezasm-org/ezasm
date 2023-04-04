@@ -53,7 +53,7 @@ public class CommandLineInterface {
             List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
             this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
+            SystemStreams.err.println(e.getMessage());
             System.exit(1);
         }
     }
@@ -74,7 +74,7 @@ public class CommandLineInterface {
             List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
             this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
+            SystemStreams.err.println(e.getMessage());
             System.exit(1);
         }
 
@@ -126,7 +126,6 @@ public class CommandLineInterface {
         Scanner scanner = new Scanner(System.in);
         int lineNumber = 0;
 
-        SystemStreams.out.println("> ");
         while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
                 Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
@@ -136,12 +135,11 @@ public class CommandLineInterface {
             } catch (ParseException | SimulationException e) {
                 SystemStreams.err.println(e.getMessage());
                 SystemStreams.err.flush();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
             }
-            SystemStreams.out.println("> ");
-        }
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException ignored) {
         }
     }
 
