@@ -53,7 +53,7 @@ public class CommandLineInterface {
             List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
             this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
+            SystemStreams.err.println(e.getMessage());
             System.exit(1);
         }
     }
@@ -74,7 +74,7 @@ public class CommandLineInterface {
             List<Line> lines = Lexer.parseLines(FileIO.readFile(file));
             this.simulator.addLines(lines, file);
         } catch (ParseException | IOException e) {
-            SystemStreams.err.println("Unable to parse the given file: " + e.getMessage());
+            SystemStreams.err.println(e.getMessage());
             System.exit(1);
         }
 

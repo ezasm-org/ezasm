@@ -6,6 +6,8 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Memory;
 import org.apache.commons.cli.*;
 
+import java.util.Arrays;
+
 /**
  * Methods to handle the program arguments and begin the program correspondingly.
  */
@@ -30,12 +32,8 @@ public class Arguments {
                 "Starts the program in windowless mode\n(default: disabled)");
         options.addOption(windowlessOption);
 
-        Option fileOption = new Option("f", "file", true, "Path to EzASM code file to open\n(default: none)");
-        fileOption.setArgName("code file");
-        options.addOption(fileOption);
-
         Option memoryOption = new Option("m", "memory", true,
-                "The number of words to allocate space for on the stack and heap each; must be larger than the word size\n(default: 0x20_0000)");
+                "The number of words to allocate space for on the stack and heap each; must be larger than 0\n(default: 0x20_0000)");
         options.addOption(memoryOption);
         memoryOption.setArgName("memory size");
 
@@ -43,13 +41,11 @@ public class Arguments {
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 
-        Option inputOption = new Option("i", "input", true,
-                "A file name to receive standard input from\n(default: none)");
+        Option inputOption = new Option("i", "input", true, "A file to receive standard input from (default: none)");
         options.addOption(inputOption);
         inputOption.setArgName("input file path");
 
-        Option outputOption = new Option("o", "output", true,
-                "A file name to send standard output to\n(default: none)");
+        Option outputOption = new Option("o", "output", true, "A file to send standard output to (default: none)");
         options.addOption(outputOption);
         outputOption.setArgName("output file path");
 
@@ -64,7 +60,7 @@ public class Arguments {
 
         if (commandLine.hasOption(helpOption)) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("EzASM [options]", options);
+            formatter.printHelp("EzASM [options] [code file]", options);
             System.exit(0);
         }
 
@@ -108,8 +104,11 @@ public class Arguments {
 
         Simulator sim = new Simulator(wordSize, memorySize);
         String filepath = "";
-        if (commandLine.hasOption(fileOption)) {
-            filepath = commandLine.getOptionValue(fileOption);
+
+        if (commandLine.getArgs().length > 1) {
+            errorArgs(options, "Program can only accept one code file");
+        } else if (commandLine.getArgs().length > 0) {
+            filepath = commandLine.getArgs()[0];
         }
 
         String inputpath = "";
@@ -149,7 +148,7 @@ public class Arguments {
     private static void errorArgs(Options options, String message) {
         SystemStreams.err.println(message);
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("EzASM [option]", options);
+        formatter.printHelp("EzASM [options] [code file]", options);
 
         System.exit(1);
     }
