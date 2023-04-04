@@ -13,8 +13,7 @@ public class AutoSave {
         public void run() {
             File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
                     if (fileToUpdate.exists()) {
-                        System.out.println("Save once!");
-                        System.out.println(save());
+                        save();
                     }
     
         }
