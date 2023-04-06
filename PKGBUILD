@@ -1,14 +1,15 @@
 # Maintainer: Trevor Brunette <trevorbrunette@gmail.com>
 pkgname='ezasm'
 pkgver='1.3.1_beta'
+_ver_no_hyphen="${pkgver//_/-}"
 pkgrel=1
 pkgdesc='An assembly-like programming language for use in education'
 arch=('any')
 url="https://github.com/ezasm-org/EzASM"
 license=('MIT')
 depends=('java-runtime=17')
-source=("https://github.com/ezasm-org/EzASM-releases/releases/download/v${pkgver//_/-}/EzASM-${pkgver//_/-}-full.jar")
-noextract=("EzASM-${pkgver//_/-}-full.jar")
+source=("https://github.com/ezasm-org/EzASM-releases/releases/download/v${_ver_no_hyphen}/EzASM-${_ver_no_hyphen}-full.jar")
+noextract=("EzASM-${_ver_no_hyphen}-full.jar")
 sha256sums=('e479f3294274d10dc6d9bb08617705a7c26b2791fc879fe59cd9a9cd692afa02')
 
 package() {
