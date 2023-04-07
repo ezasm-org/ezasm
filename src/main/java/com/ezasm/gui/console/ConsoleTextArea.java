@@ -56,8 +56,7 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
      */
     @Override
     public void applyTheme(Font font, EditorTheme editorTheme) {
-        setForeground(editorTheme.foreground());
-        setBackground(editorTheme.background());
+        editorTheme.applyTheme(this);
         setSelectionColor(editorTheme.selection());
         setSelectedTextColor(editorTheme.foreground());
         setCaretColor(editorTheme.foreground());

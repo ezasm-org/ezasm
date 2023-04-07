@@ -7,8 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.border.Border;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 
 /**
  * Represents a theme for components and text in the application.
@@ -101,21 +100,36 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
     public void applyTheme(JComponent component) {
         component.setBackground(background);
         component.setForeground(foreground);
+
+        for (Component child : component.getComponents()) {
+            if (!(child instanceof IThemeable) && child instanceof JComponent jcomponent) {
+                applyTheme(jcomponent);
+            }
+        }
+    }
+
+    public void applyThemeBorderless(JComponent component) {
+        applyTheme(component);
         component.setBorder(BorderFactory.createEmptyBorder());
     }
 
     public void applyThemeScrollbar(JScrollBar scrollbar) {
-        applyTheme(scrollbar);
+        applyThemeBorderless(scrollbar);
         scrollbar.setUI(new EzScrollBarUI(this));
     }
 
-    public static void applyFontAndTheme(JComponent component, Font font, EditorTheme editorTheme) {
+    public static void applyFontTheme(JComponent component, Font font, EditorTheme editorTheme) {
         editorTheme.applyTheme(component);
         component.setFont(font);
     }
 
+    public static void applyFontThemeBorderless(JComponent component, Font font, EditorTheme editorTheme) {
+        editorTheme.applyThemeBorderless(component);
+        component.setFont(font);
+    }
+
     public static void applyFontThemeBorder(JComponent component, Font font, EditorTheme editorTheme, Border border) {
-        editorTheme.applyTheme(component);
+        editorTheme.applyThemeBorderless(component);
         component.setBorder(border);
         component.setFont(font);
     }

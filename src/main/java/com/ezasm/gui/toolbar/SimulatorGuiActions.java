@@ -96,7 +96,7 @@ public class SimulatorGuiActions {
             try {
                 Window.getInstance().getEditor().updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
-                Window.getInstance().getRegisterTable().update();
+                Window.getInstance().updateGraphicInformation();
             } catch (SimulationException e) {
                 setState(State.STOPPED);
                 Window.getInstance().handleParseException(e);
@@ -118,7 +118,7 @@ public class SimulatorGuiActions {
                 // Some inverse transform was executed
                 setState(State.PAUSED);
                 Window.getInstance().getEditor().updateHighlight();
-                Window.getInstance().getRegisterTable().update();
+                Window.getInstance().updateGraphicInformation();
             } else {
                 // No transform was executed; we are done
                 setState(State.IDLE);
@@ -178,7 +178,7 @@ public class SimulatorGuiActions {
         awaitWorkerTermination();
         setState(State.IDLE);
         Window.getInstance().getSimulator().resetAll();
-        Window.getInstance().getRegisterTable().update();
+        Window.getInstance().updateGraphicInformation();
         Window.getInstance().getEditor().resetHighlighter();
         Window.getInstance().getRegisterTable().removeHighlightValue();
     }
@@ -193,7 +193,7 @@ public class SimulatorGuiActions {
             try {
                 Window.getInstance().getEditor().updateHighlight();
                 Window.getInstance().getSimulator().executeLineFromPC();
-                Window.getInstance().getRegisterTable().update();
+                Window.getInstance().updateGraphicInformation();
             } catch (SimulationException e) {
                 Window.getInstance().handleParseException(e);
                 break;

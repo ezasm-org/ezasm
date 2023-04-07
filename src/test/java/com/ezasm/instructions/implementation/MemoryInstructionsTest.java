@@ -48,7 +48,7 @@ public class MemoryInstructionsTest {
         DereferenceInputOutput d = new DereferenceInputOutput(Registers.T0, 0);
         memoryInstructions.store(aiimmediateTwo, d).apply();
 
-        assertEquals(2, sim.getMemory().read((int) register.get(sim).intValue(), 16).intValue());
+        assertEquals(2, sim.getMemory().read((int) register.get(sim).intValue(), 8).intValue());
 
     }
 
