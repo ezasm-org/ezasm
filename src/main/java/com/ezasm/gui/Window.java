@@ -5,7 +5,6 @@ import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.gui.table.MemoryViewerPanel;
-import com.ezasm.gui.table.MemoryTable;
 import com.ezasm.gui.table.RegisterTable;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
@@ -20,6 +19,7 @@ import com.ezasm.simulation.Registers;
 import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
 import com.ezasm.util.SystemStreams;
+import com.ezasm.gui.settings.AutoSave;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -75,11 +75,14 @@ public class Window {
     private final KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 
+    private final AutoSave autoSave = new AutoSave();
+
     protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
         this.config = config;
         initialize();
+
     }
 
     /**
@@ -283,6 +286,8 @@ public class Window {
         editor.applyTheme(font, editorTheme);
         editor.resizeTabSize(config.getTabSize());
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
+
+        autoSave.toggleRunning(config.getAutoSaveSelected(), config.getAutoSaveInterval());
     }
 
     /**

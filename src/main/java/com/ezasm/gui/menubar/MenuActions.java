@@ -3,7 +3,6 @@ package com.ezasm.gui.menubar;
 import com.ezasm.DiscordActivity;
 import com.ezasm.gui.Window;
 import com.ezasm.util.FileIO;
-
 import javax.swing.*;
 
 import java.io.File;

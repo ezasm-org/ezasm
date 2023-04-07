@@ -125,7 +125,6 @@ public class CommandLineInterface {
     private void runFromCliInput() {
         Scanner scanner = new Scanner(System.in);
         int lineNumber = 0;
-
         while (scanner.hasNextLine() && !Thread.interrupted()) {
             try {
                 Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
