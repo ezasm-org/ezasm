@@ -13,10 +13,13 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
+/**
+ * The GUI settings popup. There can only be one of these instantiated at a time to avoid confusion. Allows the user to
+ * configure and save their preferences about program operations.
+ */
 public class SettingsPopup implements IThemeable {
+
     private static SettingsPopup instance;
 
     private static final String FONTSIZE = "Font Size";
@@ -30,38 +33,49 @@ public class SettingsPopup implements IThemeable {
     private JFrame popup;
     private JSlider speedSlider;
     private JSlider tabSizeSlider;
-    private SliderToggleButton AutoSaveButton;
+    private AutoSaveSliderToggleButton autoSaveButton;
     private JTextField fontInput;
-    private JComboBox themeInput;
+    private JComboBox<String> themeInput;
     private JPanel grid;
     private JButton resetDefaults;
     private JButton save;
     private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel, autoSaveLabel;
-    private BorderLayout layout;
 
-    private Config config;
+    public final Config config;
 
-    private ButtonActionListener buttonActionListener;
-
-    protected SettingsPopup() {
+    /**
+     * Constructs a new singleton instance of the settings popup.
+     */
+    private SettingsPopup() {
         instance = this;
         config = new Config();
         initialize();
     }
 
+    /**
+     * Gets the running instance of the settings popup object.
+     *
+     * @return the running instance of the settings popup object.
+     */
     public static SettingsPopup getInstance() {
         return instance;
     }
 
+    /**
+     * Instantiates this singleton if it does not already exist.
+     */
     public static void instantiate() {
         if (instance == null || !instance.popup.isVisible())
             new SettingsPopup();
     }
 
-    public static boolean hasInstance() {
-        return instance != null;
-    }
-
+    /**
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
+     */
     public void applyTheme(Font font, EditorTheme editorTheme) {
         Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, editorTheme.foreground());
         Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, editorTheme.foreground());
@@ -73,7 +87,7 @@ public class SettingsPopup implements IThemeable {
         tabSizeLabel.setOpaque(true);
         EditorTheme.applyFontThemeBorderless(speedSlider, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(themeInput, font, editorTheme);
-        EditorTheme.applyFontThemeBorderless(AutoSaveButton, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(autoSaveButton, font, editorTheme);
         EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
         EditorTheme.applyFontThemeBorder(save, font, editorTheme, buttonBorder);
         EditorTheme.applyFontThemeBorder(resetDefaults, font, editorTheme, buttonBorder);
@@ -85,11 +99,13 @@ public class SettingsPopup implements IThemeable {
         EditorTheme.applyFontThemeBorderless(tabSizeSlider, font, editorTheme);
     }
 
+    /**
+     * Constructs the GUI elements of the settings popup.
+     */
     private void initialize() {
-        buttonActionListener = new ButtonActionListener();
-        layout = new BorderLayout();
-        popup = new JFrame("EzASM Configurator");
-        popup.setLayout(layout);
+        ButtonActionListener buttonActionListener = new ButtonActionListener();
+        popup = new JFrame("EzASM Settings");
+        popup.setLayout(new BorderLayout());
         popup.setMinimumSize(new Dimension(500, 300));
         popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -110,7 +126,10 @@ public class SettingsPopup implements IThemeable {
         tabSizeSlider.setPaintLabels(true);
 
         autoSaveLabel = new JLabel(AUTOSAVE);
-        AutoSaveButton = new SliderToggleButton(instance.config.getAutoSave());
+        autoSaveButton = new AutoSaveSliderToggleButton(
+                instance.config.getAutoSaveSelected() ? AutoSaveSliderToggleButton.ON_TEXT
+                        : AutoSaveSliderToggleButton.OFF_TEXT,
+                config);
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
@@ -124,7 +143,7 @@ public class SettingsPopup implements IThemeable {
         grid.add(tabSizeLabel);
         grid.add(tabSizeSlider);
         grid.add(autoSaveLabel);
-        grid.add(AutoSaveButton);
+        grid.add(autoSaveButton);
 
         save = new JButton(SAVE);
         resetDefaults = new JButton(RESET);
@@ -144,6 +163,9 @@ public class SettingsPopup implements IThemeable {
                 EditorTheme.getTheme(config.getTheme()));
     }
 
+    /**
+     * Action listener helper class for settings operations buttons.
+     */
     private static class ButtonActionListener implements ActionListener {
 
         public ButtonActionListener() {
@@ -161,17 +183,15 @@ public class SettingsPopup implements IThemeable {
                     JOptionPane.showMessageDialog(new JFrame(), "Bad format for font size, please input a number");
                     return;
                 }
-                if (instance.AutoSaveButton.getSliderValue() == 0) {
+                if (instance.autoSaveButton.getSliderValue() == 0) {
                     instance.config.setAutoSaveInterval(1);
-                    instance.AutoSaveButton.setToggleButtonStatus(false);
-                    instance.config.setAutoSave(instance.AutoSaveButton.getToggleButtonText());
+                    instance.autoSaveButton.setToggleButtonStatus(false);
                 }
                 instance.config.setSimSpeed(instance.speedSlider.getValue());
                 instance.config.setTabSize(instance.tabSizeSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
-                instance.config.setAutoSave(instance.AutoSaveButton.getToggleButtonText());
-                instance.config.setAutoSaveInterval(instance.AutoSaveButton.getSliderValue());
-                instance.config.setAutoSaveSelected(instance.AutoSaveButton.getToggleButtonStatus());
+                instance.config.setAutoSaveInterval(instance.autoSaveButton.getSliderValue());
+                instance.config.setAutoSaveSelected(instance.autoSaveButton.getToggleButtonStatus());
                 instance.config.saveChanges();
                 instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
                         EditorTheme.getTheme(instance.config.getTheme()));
@@ -183,78 +203,9 @@ public class SettingsPopup implements IThemeable {
                 instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
                 instance.tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
                 instance.themeInput.setSelectedIndex(0);
-                instance.AutoSaveButton.setToggleButtonText(Config.DEFAULT_AUTO_SAVE);
-                instance.AutoSaveButton.setToggleButtonStatus(false);
-                instance.AutoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
+                instance.autoSaveButton.setToggleButtonStatus(Boolean.parseBoolean(Config.DEFAULT_AUTO_SAVE_SELECTED));
+                instance.autoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
             }
-        }
-    }
-
-    public class SliderToggleButton extends JPanel {
-        private JToggleButton toggleButton;
-        private JSlider slider;
-
-        public SliderToggleButton(String label) {
-            setLayout(new BorderLayout());
-
-            toggleButton = new JToggleButton(label);
-            toggleButton.setSelected(instance.config.getAutoSaveSelected());
-            toggleButton.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent event) {
-                    if (AutoSaveButton.getToggleButtonStatus()) {
-                        AutoSaveButton.setToggleButtonText("ON");
-                        AutoSaveButton.setSliderVisible(true);
-                    } else {
-                        AutoSaveButton.setToggleButtonText("OFF");
-                        AutoSaveButton.setSliderVisible(false);
-                    }
-                }
-            });
-            add(toggleButton, BorderLayout.WEST);
-
-            slider = new JSlider(0, 30, instance.config.getAutoSaveInterval());
-            slider.setMajorTickSpacing(5);
-            slider.setPaintTicks(true);
-            slider.setPaintLabels(true);
-            slider.setVisible(instance.config.getAutoSaveSelected());
-            add(slider, BorderLayout.CENTER);
-        }
-
-        public JToggleButton getToggleButton() {
-            return toggleButton;
-        }
-
-        public boolean getToggleButtonStatus() {
-            return toggleButton.isSelected();
-        }
-
-        public void setToggleButtonStatus(boolean status) {
-            toggleButton.setSelected(status);
-        }
-
-        public String getToggleButtonText() {
-            return toggleButton.getText();
-        }
-
-        public void setToggleButtonText(String text) {
-            toggleButton.setText(text);
-        }
-
-        public JSlider getSlider() {
-            return slider;
-        }
-
-        public void setSliderVisible(Boolean visible) {
-            slider.setVisible(visible);
-        }
-
-        public int getSliderValue() {
-            return slider.getValue();
-        }
-
-        public void setSliderValue(int value) {
-            slider.setValue(value);
         }
     }
 }

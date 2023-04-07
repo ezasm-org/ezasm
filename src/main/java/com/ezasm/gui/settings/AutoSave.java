@@ -1,6 +1,5 @@
 package com.ezasm.gui.settings;
 
-import com.ezasm.util.FileIO;
 import com.ezasm.gui.Window;
 import static com.ezasm.gui.menubar.MenuActions.save;
 
@@ -8,56 +7,42 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Supports saving the user's currently open file if it is not anonymous.
+ */
 public class AutoSave {
-    private class Task extends TimerTask {
+
+    /**
+     * Represents a timer task for saving a file if it is not anonymous.
+     */
+    private static class SaveTask extends TimerTask {
         public void run() {
             File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
             if (fileToUpdate.exists()) {
                 save();
             }
-
         }
     }
 
-    private Task task = new Task();
+    private final Timer timer = new Timer();
+    private SaveTask saveTask = new SaveTask();
 
-    private Timer time = new Timer();
-    private int sec_Interval;
-    private int mil_Interval;
-    private int def_mil_Interval = 10000;
-    private int def_sec_Interval = 10;
-    private boolean ran = false;
+    private int intervalMS;
 
     public AutoSave() {
-        this.mil_Interval = def_mil_Interval;
-        this.sec_Interval = def_sec_Interval;
+        this.intervalMS = 10000;
     }
 
     /**
-     * Auto called Save function to save file periodically
-     *
+     * Automatically called Save function to save file periodically.
      */
-
-    public void run(boolean sw, int sec) {
-        if (sw) {
-            if (!ran) {
-                this.sec_Interval = sec;
-                this.mil_Interval = sec * 1000;
-                time.schedule(this.task, 0, this.mil_Interval);
-                this.ran = true;
-            } else {
-                this.task.cancel();
-                this.task = new Task();
-                this.sec_Interval = sec;
-                this.mil_Interval = sec * 1000;
-                time.schedule(this.task, 0, this.mil_Interval);
-            }
-
-        } else {
-            if (ran) {
-                this.task.cancel();
-                this.task = new Task();
-            }
+    public void toggleRunning(boolean start, int intervalSeconds) {
+        this.timer.cancel();
+        this.saveTask.cancel();
+        this.saveTask = new SaveTask();
+        if (start) {
+            this.intervalMS = intervalSeconds * 1000;
+            timer.schedule(this.saveTask, 0, this.intervalMS);
         }
     }
 }
