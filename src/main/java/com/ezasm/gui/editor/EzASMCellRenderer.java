@@ -9,18 +9,17 @@ import org.fife.ui.autocomplete.FunctionCompletion;
 import org.fife.ui.autocomplete.VariableCompletion;
 
 /**
- * The cell renderer for the EzASM programming language
- *
+ * The cell renderer for the EzASM programming language. Currently unused. For future autocomplete development.
  */
-class EzASMCellRenderer extends CompletionCellRenderer {
+public class EzASMCellRenderer extends CompletionCellRenderer {
 
     private final Icon variableIcon;
     private final Icon functionIcon;
 
     /**
-     * Constructor.
+     * Constructs the cell renderer.
      */
-    EzASMCellRenderer() {
+    public EzASMCellRenderer() {
         variableIcon = getIcon("img/var.png");
         functionIcon = getIcon("img/function.png");
     }

@@ -3,27 +3,29 @@ package com.ezasm.gui.editor;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import java.util.regex.*;
 
+/**
+ * Implements autocomplete for EzASM labels.
+ */
 public class Autocomplete implements DocumentListener {
 
-    private static enum Mode {
+    private enum Mode {
         INSERT, COMPLETION
     };
 
-    private RSyntaxTextArea textField;
+    private final RSyntaxTextArea textField;
     private final List<String> keywords;
+    private final Pattern lineRegex = Pattern.compile("[ \\t]*[_a-zA-Z][_a-zA-Z0-9]*:");
     private Mode mode = Mode.INSERT;
-    private Pattern line_finder = Pattern.compile("[ \\t]*[_a-zA-Z][_a-zA-Z0-9]*:");
 
     public Autocomplete(RSyntaxTextArea textField, List<String> keywords) {
         this.textField = textField;
@@ -40,7 +42,7 @@ public class Autocomplete implements DocumentListener {
         keywords.clear();
         String content = textField.getText();
         // find the new keywords and add them
-        Matcher to_add = line_finder.matcher(content);
+        Matcher to_add = lineRegex.matcher(content);
         while (to_add.find()) {
             String label = to_add.group().strip().replace(" ", "").replace(":", "");
             keywords.add(label);
@@ -54,31 +56,31 @@ public class Autocomplete implements DocumentListener {
         int pos = ev.getOffset();
         int len = ev.getLength();
         // Get the original line without the change
-        int line_start = 0;
-        int line_end = content.length();
+        int lineStart = 0;
+        int lineEnd = content.length();
 
         for (int i = pos - 1; i >= 0; i--) {
             if (content.charAt(i) == '\n') {
-                line_start = i + 1;
+                lineStart = i + 1;
             }
         }
         for (int i = pos + len; i < content.length(); i++) {
             if (content.charAt(i) == '\n') {
-                line_end = i;
+                lineEnd = i;
             }
         }
-        String old_line = content.substring(line_start, pos) + content.substring(pos + len, line_end);
+        String previousLine = content.substring(lineStart, pos) + content.substring(pos + len, lineEnd);
 
         // Find the old keywords and delete them
-        Matcher to_remove = line_finder.matcher(old_line);
+        Matcher to_remove = lineRegex.matcher(previousLine);
         while (to_remove.find()) {
             String label = to_remove.group().strip().replace(" ", "").replace(":", "");
             keywords.remove(label);
         }
 
-        String new_line = content.substring(line_start, line_end);
+        String new_line = content.substring(lineStart, lineEnd);
         // find the new keywords and add them
-        Matcher to_add = line_finder.matcher(new_line);
+        Matcher to_add = lineRegex.matcher(new_line);
         while (to_add.find()) {
             String label = to_add.group().strip().replace(" ", "").replace(":", "");
             keywords.add(label);
@@ -105,8 +107,7 @@ public class Autocomplete implements DocumentListener {
             if (match.startsWith(prefix)) {
                 // A completion is found
                 String completion = match.substring(pos - w);
-                // We cannot modify Document from within notification,
-                // so we submit a task that does the change later
+                // We cannot modify Document from within notification, so we submit a task that does the change later
                 SwingUtilities.invokeLater(new CompletionTask(completion, pos + 1));
             }
         } else {
@@ -116,16 +117,15 @@ public class Autocomplete implements DocumentListener {
     }
 
     public class CommitAction extends AbstractAction {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 5794543109646743416L;
+
+        @Serial
+        private static final long serialVersionUID = -2173840931874903219L;
 
         @Override
         public void actionPerformed(ActionEvent ev) {
             if (mode == Mode.COMPLETION) {
                 int pos = textField.getSelectionEnd();
-                StringBuffer sb = new StringBuffer(textField.getText());
+                StringBuilder sb = new StringBuilder(textField.getText());
                 sb.insert(pos, " ");
                 textField.setText(sb.toString());
                 textField.setCaretPosition(pos + 1);
@@ -138,8 +138,8 @@ public class Autocomplete implements DocumentListener {
     }
 
     private class CompletionTask implements Runnable {
-        private String completion;
-        private int position;
+        private final String completion;
+        private final int position;
 
         CompletionTask(String completion, int position) {
             this.completion = completion;
@@ -157,12 +157,13 @@ public class Autocomplete implements DocumentListener {
     }
 
     /**
+     * Finds the next line in a given string starting at the given position.
      *
-     * @param s   The given string to search
-     * @param pos the position to exapnd from
-     * @return The full line the given position is in
+     * @param s   The given string to search.
+     * @param pos the position to expand from.
+     * @return The full line the given position is in.
      */
-    private String expand_to_line(String s, int pos) {
+    private static String getLineAt(String s, int pos) {
         int start = 0;
         int end = 0;
         for (int i = pos; i >= 0; i--) {
@@ -179,5 +180,4 @@ public class Autocomplete implements DocumentListener {
 
         return s.substring(start, end);
     }
-
 }
