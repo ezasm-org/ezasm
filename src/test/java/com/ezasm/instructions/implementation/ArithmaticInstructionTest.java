@@ -175,8 +175,8 @@ public class ArithmaticInstructionTest {
         try {
             simulator.getRegisters().getRegister(Registers.S0).setLong(0);
             simulator.getRegisters().getRegister(Registers.S1).setLong(-1);
-            simulator.getRegisters().getRegister(Registers.S2).setLong(3);
-            simulator.getRegisters().getRegister(Registers.S3).setLong(-5);
+            simulator.getRegisters().getRegister(Registers.S2).setLong(4);
+            simulator.getRegisters().getRegister(Registers.S3).setLong(-9);
             simulator.getRegisters().getRegister(Registers.S4).setLong(928235345);
             simulator.getRegisters().getRegister(Registers.S5).setLong(-671230823);
             simulator.getRegisters().getRegister(Registers.S6).setLong(Long.MAX_VALUE);
@@ -197,8 +197,8 @@ public class ArithmaticInstructionTest {
             assertEquals(simulator.getRegisters().getRegister(Registers.T1).getLong(), -1);
             assertEquals(simulator.getRegisters().getRegister(Registers.T2).getLong(), 0);
             assertEquals(simulator.getRegisters().getRegister(Registers.T3).getLong(), 0);
-            assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), -5 & 3);
-            assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), 3 & -5);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), -9 & 4);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), 4 & -9);
             assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), -671230823 & 928235345);
             assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), 928235345 & -671230823);
             assertEquals(simulator.getRegisters().getRegister(Registers.T8).getLong(), 0);
@@ -284,9 +284,35 @@ public class ArithmaticInstructionTest {
         }
     }
 
+    @Test
     void testNot() {
         try {
+            simulator.getRegisters().getRegister(Registers.S0).setLong(0);
+            simulator.getRegisters().getRegister(Registers.S1).setLong(-1);
+            simulator.getRegisters().getRegister(Registers.S2).setLong(7);
+            simulator.getRegisters().getRegister(Registers.S3).setLong(-6);
+            simulator.getRegisters().getRegister(Registers.S4).setLong(384629549);
+            simulator.getRegisters().getRegister(Registers.S5).setLong(-2048203945);
+            simulator.getRegisters().getRegister(Registers.S6).setLong(Long.MAX_VALUE);
+            simulator.getRegisters().getRegister(Registers.S7).setLong(Long.MIN_VALUE);
 
+            simulator.runLine(Lexer.parseLine("not $t0 $s0", 0));
+            simulator.runLine(Lexer.parseLine("not $t1 $s1", 1));
+            simulator.runLine(Lexer.parseLine("not $t2 $s2", 2));
+            simulator.runLine(Lexer.parseLine("not $t3 $s3", 3));
+            simulator.runLine(Lexer.parseLine("not $t4 $s4", 4));
+            simulator.runLine(Lexer.parseLine("not $t5 $s5", 5));
+            simulator.runLine(Lexer.parseLine("not $t6 $s6", 6));
+            simulator.runLine(Lexer.parseLine("not $t7 $s7", 7));
+
+            assertEquals(simulator.getRegisters().getRegister(Registers.T0).getLong(), -1);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T1).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T2).getLong(), -8);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T3).getLong(), 5);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), -384629550);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), 2048203944);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), ~Long.MAX_VALUE);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), ~Long.MIN_VALUE);
         } catch (Exception e) {
             fail();
         }
