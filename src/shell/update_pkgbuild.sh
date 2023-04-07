@@ -20,8 +20,8 @@ fi
 # Replace in PKGBUILD
 sed -i "s/pkgver='$OLD_VERSION'/pkgver='$VERSION'/" "$SOURCE/PKGBUILD" || exit 1
 
-(cd "$SOURCE" && makepkg --printsrcinfo -p "$SOURCE/PKGBUILD" > "$SOURCE/.SRCINFO") || exit 1
 (cd "$SOURCE" && updpkgsums) || exit 1
+(cd "$SOURCE" && makepkg --printsrcinfo -p "$SOURCE/PKGBUILD" > "$SOURCE/.SRCINFO") || exit 1
 rm "$SOURCE/EzASM-$NEW_VERSION-full.jar"
 
 AUR="$SOURCE/../ezasm-aur"
