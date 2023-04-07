@@ -31,7 +31,7 @@ public class AboutPopup {
     }
 
     /**
-     * Sets up the content of the popup
+     * Sets up the content of the popup.
      */
     private static void initialize() {
         BorderLayout layout = new BorderLayout();

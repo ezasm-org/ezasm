@@ -149,7 +149,6 @@ public class Arguments {
         SystemStreams.err.println(message);
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("EzASM [options] [code file]", options);
-
         System.exit(1);
     }
 
