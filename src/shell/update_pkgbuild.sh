@@ -23,5 +23,12 @@ sed -i "s/pkgver='$OLD_VERSION'/pkgver='$VERSION'/" "$SOURCE/PKGBUILD" || exit 1
 (cd "$SOURCE" && makepkg --printsrcinfo -p "$SOURCE/PKGBUILD" > "$SOURCE/.SRCINFO") || exit 1
 (cd "$SOURCE" && updpkgsums) || exit 1
 rm "$SOURCE/EzASM-$NEW_VERSION-full.jar"
+
+AUR="$SOURCE/../ezasm-aur"
+if [ -d "$AUR" ]; then
+  cp "$SOURCE/PKGBUILD" "$AUR/"
+  cp "$SOURCE/.SRCINFO" "$AUR/"
+fi
+
 echo "PKGBUILD updated from $OLD_VERSION to $NEW_VERSION"
 
