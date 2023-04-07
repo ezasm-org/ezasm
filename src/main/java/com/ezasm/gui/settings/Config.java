@@ -123,7 +123,7 @@ public class Config {
         props.setProperty(AUTO_SAVE_INTERVAL, String.valueOf(status));
     }
 
-    public Boolean getAutoSaveSelected() {
+    public boolean getAutoSaveSelected() {
         return Boolean.parseBoolean(props.getProperty(AUTO_SAVE_SELECTED));
     }
 

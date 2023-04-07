@@ -3,6 +3,9 @@ package com.ezasm.gui.settings;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A toggle button combined with a slider when enabled representing the auto-save delay.
+ */
 public class AutoSaveSliderToggleButton extends JPanel {
 
     private final JToggleButton toggleButton;
@@ -11,18 +14,24 @@ public class AutoSaveSliderToggleButton extends JPanel {
     public static final String ON_TEXT = "ON";
     public static final String OFF_TEXT = "OFF";
 
-    public AutoSaveSliderToggleButton(String label, Config config) {
+    /**
+     * Constructs this button slider.
+     *
+     * @param enabled         the initial state of the button.
+     * @param intervalSeconds the initial interval for the slider.
+     */
+    public AutoSaveSliderToggleButton(boolean enabled, int intervalSeconds) {
         setLayout(new BorderLayout());
 
-        slider = new JSlider(0, 30, config.getAutoSaveInterval());
+        slider = new JSlider(0, 30, intervalSeconds);
         slider.setMajorTickSpacing(5);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
-        slider.setVisible(config.getAutoSaveSelected());
+        slider.setVisible(enabled);
         add(slider, BorderLayout.CENTER);
 
-        toggleButton = new JToggleButton(label);
-        toggleButton.setSelected(config.getAutoSaveSelected());
+        toggleButton = new JToggleButton(enabled ? ON_TEXT : OFF_TEXT);
+        toggleButton.setSelected(enabled);
         toggleButton.addChangeListener(event -> {
             if (getToggleButtonStatus()) {
                 toggleButton.setText(ON_TEXT);

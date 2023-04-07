@@ -126,10 +126,7 @@ public class SettingsPopup implements IThemeable {
         tabSizeSlider.setPaintLabels(true);
 
         autoSaveLabel = new JLabel(AUTOSAVE);
-        autoSaveButton = new AutoSaveSliderToggleButton(
-                instance.config.getAutoSaveSelected() ? AutoSaveSliderToggleButton.ON_TEXT
-                        : AutoSaveSliderToggleButton.OFF_TEXT,
-                config);
+        autoSaveButton = new AutoSaveSliderToggleButton(config.getAutoSaveSelected(), config.getAutoSaveInterval());
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
