@@ -7,7 +7,7 @@
 
     <groupId>EzASM</groupId>
     <artifactId>EzASM</artifactId>
-    <version>1.3.1-beta</version>
+    <version>1.3.2-beta</version>
     <description>An assembly-like programming language for use in education</description>
     <url>https://github.com/ezasm-org/EzASM/</url>
     <inceptionYear>2022</inceptionYear>
