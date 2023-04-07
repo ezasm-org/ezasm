@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.output;
 
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.targets.IAbstractTarget;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RawData;
@@ -16,6 +16,6 @@ public interface IAbstractOutput extends IAbstractTarget {
      * @param simulator the program simulator.
      * @param value     the value to set.
      */
-    public void set(ISimulator simulator, RawData value) throws SimulationException;
+    public void set(Simulator simulator, RawData value) throws SimulationException;
 
 }

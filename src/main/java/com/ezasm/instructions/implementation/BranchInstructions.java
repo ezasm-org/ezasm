@@ -5,7 +5,7 @@ import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -16,14 +16,14 @@ import java.util.function.BiFunction;
  */
 public class BranchInstructions {
 
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
      * Some instructions require access to the Simulator directly, so that is provided.
      *
      * @param simulator the provided Simulator.
      */
-    public BranchInstructions(ISimulator simulator) {
+    public BranchInstructions(Simulator simulator) {
         this.simulator = simulator;
     }
 

@@ -1,16 +1,18 @@
 package com.ezasm.simulation;
 
-import com.ezasm.simulation.exception.SimulationAddressOutOfBoundsException;
-import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.*;
 import com.ezasm.util.RawData;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the system memory. There will be a single and contiguous array of memory which represents both the stack
  * and heap with the stack growing downward and the heap growing upward. Implements an "offset" for the address spacing
  * to not start at 0. Keeps track of allocated memory and throws an exception when the heap crosses the stack. Has a
- * default size of 2^16 words (or 2^19 bytes). Has a default word size of 8 bytes (the typical long integer or long
+ * default size of 2^21 words (or 2^24 bytes). Has a default word size of 8 bytes (the typical long integer or long
  * float size).
  */
 public class Memory {
@@ -18,31 +20,42 @@ public class Memory {
     /**
      * The default number of words possible to store in the system.
      */
-    public static final int DEFAULT_MEMORY_WORDS = 0x1_0000;
+    public static final int DEFAULT_MEMORY_WORDS = 0x20_0000;
 
     /**
      * The default word size of the system.
      */
-    public static final int DEFAULT_WORD_SIZE = 8;
+    public static final int DEFAULT_WORD_SIZE = 4;
 
-    /**
-     * The offset applied to all output addresses.
-     */
-    private static final int OFFSET = 0x1_0000;
+    private static int wordSize = DEFAULT_WORD_SIZE;
 
-    public final int WORD_SIZE;
-    private final int MEMORY_SIZE;
+    public static int wordSize() {
+        return wordSize;
+    }
+
+    private final int DEFAULT_OFFSET = 0x1_0000;
+    private final int STRING_OFFSET = 0x1_0000;
+
+    private final int memorySize;
+    private final int offsetBytes;
+    private final int disallowedBytes;
     private final byte[] memory;
     private int alloc;
+    private int stringAlloc;
+
+    private final Map<String, RawData> stringAddressMap;
 
     /**
      * Constructs memory with the default parameters.
      */
     public Memory() {
-        this.WORD_SIZE = DEFAULT_WORD_SIZE;
-        this.MEMORY_SIZE = DEFAULT_MEMORY_WORDS * WORD_SIZE;
-        this.memory = new byte[MEMORY_SIZE];
-        this.alloc = 0;
+        this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
+        this.disallowedBytes = wordSize * DEFAULT_OFFSET;
+        this.memorySize = offsetBytes + DEFAULT_MEMORY_WORDS * wordSize;
+        this.memory = new byte[memorySize];
+        this.alloc = offsetBytes;
+        this.stringAlloc = STRING_OFFSET * wordSize;
+        this.stringAddressMap = new HashMap<>();
     }
 
     /**
@@ -52,10 +65,14 @@ public class Memory {
      * @param memorySize the memory size in words.
      */
     public Memory(int wordSize, int memorySize) {
-        this.WORD_SIZE = wordSize;
-        this.MEMORY_SIZE = memorySize * this.WORD_SIZE;
-        this.memory = new byte[this.MEMORY_SIZE];
-        this.alloc = 0;
+        Memory.wordSize = wordSize;
+        this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
+        this.disallowedBytes = wordSize * DEFAULT_OFFSET;
+        this.memorySize = offsetBytes + memorySize * wordSize;
+        this.memory = new byte[this.memorySize];
+        this.alloc = offsetBytes;
+        this.stringAlloc = STRING_OFFSET * wordSize;
+        this.stringAddressMap = new HashMap<>();
     }
 
     /**
@@ -63,7 +80,9 @@ public class Memory {
      */
     public void reset() {
         Arrays.fill(memory, (byte) 0);
-        alloc = 0;
+        alloc = offsetBytes;
+        stringAlloc = STRING_OFFSET * wordSize;
+        stringAddressMap.clear();
     }
 
     /**
@@ -72,7 +91,7 @@ public class Memory {
      * @return the size of the memory as a number of words.
      */
     public int size() {
-        return MEMORY_SIZE;
+        return memorySize;
     }
 
     /**
@@ -81,7 +100,7 @@ public class Memory {
      * @return the initial stack pointer of the memory.
      */
     public int initialStackPointer() {
-        return MEMORY_SIZE + OFFSET;
+        return memorySize;
     }
 
     /**
@@ -90,7 +109,16 @@ public class Memory {
      * @return the initial heap pointer of the memory.
      */
     public int initialHeapPointer() {
-        return 0 + OFFSET;
+        return offsetBytes;
+    }
+
+    /**
+     * Gets the initial text pointer of the memory.
+     *
+     * @return the initial text pointer of the memory.
+     */
+    public int initialTextPointer() {
+        return STRING_OFFSET * wordSize;
     }
 
     /**
@@ -99,7 +127,7 @@ public class Memory {
      * @return the current heap pointer of the memory.
      */
     public int currentHeapPointer() {
-        return alloc + OFFSET;
+        return alloc;
     }
 
     /**
@@ -107,8 +135,11 @@ public class Memory {
      *
      * @param address the new heap pointer for the memory.
      */
-    public void setHeapPointer(int address) {
-        alloc = address - OFFSET;
+    public void setHeapPointer(int address) throws SimulationException {
+        if (address < offsetBytes || address > this.memorySize) {
+            throw new AllocationException(address, address - alloc);
+        }
+        alloc = address;
     }
 
     /**
@@ -120,13 +151,13 @@ public class Memory {
      * @return the allocated memory starting point
      */
     public int allocate(int bytes, int sp) throws SimulationException {
-        if (alloc + bytes + OFFSET > sp) {
+        if (alloc + bytes > sp) {
             throw new SimulationException(String.format(
                     "Allocating %d bytes with $SP at %d would cause the heap to overwrite the stack", bytes, sp));
         }
-        int addr = alloc;
+        int address = alloc;
         alloc = alloc + bytes;
-        return addr + OFFSET;
+        return address;
     }
 
     /**
@@ -136,9 +167,9 @@ public class Memory {
      * @return the allocated memory starting point.
      */
     public int unsafeAllocate(int bytes) {
-        int addr = alloc;
+        int address = alloc;
         alloc = alloc + bytes;
-        return addr + OFFSET;
+        return address;
     }
 
     /**
@@ -148,10 +179,9 @@ public class Memory {
      * @param count   the number of bytes to read.
      * @return the information read from the memory at a certain address.
      */
-    public RawData read(int address, int count) throws SimulationAddressOutOfBoundsException {
-        address = address - OFFSET;
-        if (address < 0 || (address + count) > this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
+    public RawData read(int address, int count) throws ReadOutOfBoundsException {
+        if (address < disallowedBytes || address + count > this.memorySize) {
+            throw new ReadOutOfBoundsException(address);
         }
         return new RawData(Arrays.copyOfRange(memory, address, address + count));
     }
@@ -162,34 +192,8 @@ public class Memory {
      * @param address the address to begin to read from.
      * @return the information read from the memory at a certain address.
      */
-    public RawData read(int address) throws SimulationAddressOutOfBoundsException {
-        return read(address, WORD_SIZE);
-    }
-
-    /**
-     * Gets the information from the memory at a certain address interpreted as a String.
-     *
-     * @param address the starting address to read from.
-     * @param maxSize the maximum size of the String to be in bytes.
-     * @return the String interpreted.
-     */
-    public String readString(int address, int maxSize) throws SimulationException {
-        if (maxSize < 0) {
-            throw new SimulationException(String.format("String size cannot be %d", maxSize));
-        }
-        if (address - OFFSET < 0 || (address + maxSize - OFFSET) >= this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < maxSize; ++i) {
-            char c = (char) read(address + i * WORD_SIZE).intValue();
-            if (c == '\0') {
-                break;
-            }
-            sb.append(c);
-        }
-        return sb.toString();
+    public RawData read(int address) throws ReadOutOfBoundsException {
+        return read(address, wordSize);
     }
 
     /**
@@ -198,12 +202,64 @@ public class Memory {
      * @param address the address to write at.
      * @param data    the data to write.
      */
-    public void write(int address, RawData data) throws SimulationAddressOutOfBoundsException {
-        address = address - OFFSET;
-        if (address < 0 || (address + data.data().length) > this.MEMORY_SIZE) {
-            throw new SimulationAddressOutOfBoundsException(address + OFFSET);
+    public void write(int address, RawData data) throws SimulationException {
+        if (address < 0 || address + data.data().length > this.memorySize) {
+            throw new WriteOutOfBoundsException(address);
+        } else if (address < offsetBytes) {
+            throw new WriteToReadOnlyException(address);
         }
         System.arraycopy(data.data(), 0, memory, address, data.data().length);
+    }
+
+    /**
+     * Writes data to the specified address.
+     *
+     * @param address the address to write at.
+     * @param data    the data to write.
+     */
+    public void unsafeWrite(int address, RawData data) throws WriteOutOfBoundsException {
+        if (address < 0 || address + data.data().length > this.memorySize) {
+            throw new WriteOutOfBoundsException(address);
+        }
+        System.arraycopy(data.data(), 0, memory, address, data.data().length);
+    }
+
+    /**
+     * Writes string immediates to read-only memory if it is not already in there.
+     *
+     * @param strings the list of strings to write.
+     * @throws SimulationException if there is an error writing or the writing goes out of the reserved area.
+     */
+    public void addStringImmediates(List<String> strings) throws SimulationException {
+        for (String string : strings) {
+            if (!stringAddressMap.containsKey(string)) {
+                // Write the string into read-only string memory
+                if (stringAlloc + string.length() >= offsetBytes) {
+                    throw new SimulationException("Attempted to write more string immediate bytes then possible");
+                }
+                for (int i = 0; i < string.length(); ++i) {
+                    unsafeWrite(stringAlloc + i * wordSize, new RawData(string.charAt(i)));
+                }
+                unsafeWrite(stringAlloc + string.length() * wordSize, RawData.emptyBytes(wordSize));
+
+                stringAddressMap.put(string, new RawData(stringAlloc));
+                stringAlloc += (string.length() + 1) * wordSize;
+            }
+        }
+    }
+
+    /**
+     * Gets the address of a string immediate.
+     *
+     * @param string the string immediate to get the address of.
+     * @return the address of the string immediate wrapped as a RawData.
+     * @throws SimulationException if the given immediate does not exist.
+     */
+    public RawData getStringImmediateAddress(String string) throws SimulationException {
+        if (!stringAddressMap.containsKey(string)) {
+            throw new SimulationException(String.format("String '%s' not found in memory", string));
+        }
+        return stringAddressMap.get(string);
     }
 
 }

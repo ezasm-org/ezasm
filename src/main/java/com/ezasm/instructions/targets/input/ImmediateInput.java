@@ -1,6 +1,6 @@
 package com.ezasm.instructions.targets.input;
 
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.util.RawData;
 
 /**
@@ -27,7 +27,7 @@ public class ImmediateInput implements IAbstractInput {
      * @return the constant value.
      */
     @Override
-    public RawData get(ISimulator simulator) {
+    public RawData get(Simulator simulator) {
         return value;
     }
 

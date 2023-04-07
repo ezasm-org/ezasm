@@ -1,7 +1,7 @@
 package com.ezasm.instructions.targets.inputoutput;
 
 import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RawData;
 
@@ -53,7 +53,7 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @return the value stored within the address.
      */
     @Override
-    public RawData get(ISimulator simulator) throws SimulationException {
+    public RawData get(Simulator simulator) throws SimulationException {
         int address = (int) register.get(simulator).intValue();
         return simulator.getMemory().read(address + offset).copy();
     }
@@ -65,7 +65,7 @@ public class DereferenceInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(ISimulator simulator, RawData value) throws SimulationException {
+    public void set(Simulator simulator, RawData value) throws SimulationException {
         int address = (int) register.get(simulator).intValue();
         simulator.getMemory().write(address + offset, value);
     }

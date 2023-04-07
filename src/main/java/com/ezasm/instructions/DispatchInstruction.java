@@ -10,18 +10,11 @@ import java.lang.reflect.Method;
 /**
  * An instruction which can be dispatched. This has all the information necessary to interpret a parsed {@link Line} and
  * caches it for quick interpretation.
+ *
+ * @param invocationTarget The method that corresponds to the instruction.
+ * @param parent           The parent class of the method that corresponds to the instruction.
  */
-public class DispatchInstruction {
-
-    /**
-     * The method that corresponds to the instruction.
-     */
-    private final Method invocationTarget;
-
-    /**
-     * The parent class of the method that corresponds to the instruction.
-     */
-    private final Class<?> parent;
+public record DispatchInstruction(Class<?> parent, Method invocationTarget) {
 
     /**
      * Create a new dispatchable instruction based on a method with specific parameters and its parent class.
@@ -30,9 +23,7 @@ public class DispatchInstruction {
      * @param invocationTarget the method for which to deduce operands for instructions and compile into a dispatchable
      *                         instruction.
      */
-    public DispatchInstruction(Class<?> parent, Method invocationTarget) {
-        this.parent = parent;
-        this.invocationTarget = invocationTarget;
+    public DispatchInstruction {
     }
 
     /**
@@ -40,18 +31,44 @@ public class DispatchInstruction {
      *
      * @return a Class object corresponding to the parent class.
      */
-    public Class<?> getParent() {
+    @Override
+    public Class<?> parent() {
         return parent;
     }
 
-    public Method getInvocationTarget() {
+    /**
+     * Gets the function to be invoked by this instruction.
+     *
+     * @return the function to be invoked by this instruction.
+     */
+    @Override
+    public Method invocationTarget() {
         return invocationTarget;
+    }
+
+    /**
+     * Checks if this instruction is callable with the given argument types.
+     *
+     * @param givenArguments the arguments the caller gave.
+     * @return true if this instruction is callable with the given argument types, false otherwise.
+     */
+    public boolean isCallableWith(Class<?>[] givenArguments) {
+        Class<?>[] arguments = invocationTarget.getParameterTypes();
+        if (arguments.length != givenArguments.length) {
+            return false;
+        }
+
+        for (int i = 0; i < arguments.length; i++) {
+            if (!arguments[i].isAssignableFrom(givenArguments[i]))
+                return false;
+        }
+        return true;
     }
 
     /**
      * Invoke an instruction based on the parsed line (interpret the arguments and invoke the bound method).
      *
-     * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#getParent()}.
+     * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#parent ()}.
      * @param line   the parsed line to interpret.
      */
     public TransformationSequence invoke(Object parent, Line line) throws SimulationException {

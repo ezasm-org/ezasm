@@ -1,16 +1,10 @@
 package com.ezasm.instructions;
 
-import com.ezasm.instructions.implementation.FunctionInstructions;
-import com.ezasm.instructions.implementation.MemoryInstructions;
-import com.ezasm.instructions.implementation.ComparisonInstructions;
-import com.ezasm.instructions.implementation.BranchInstructions;
-import com.ezasm.simulation.ISimulator;
+import com.ezasm.instructions.implementation.*;
+import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
-import com.ezasm.instructions.implementation.ArithmeticInstructions;
-import com.ezasm.instructions.implementation.FloatArithmeticInstructions;
-import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
@@ -28,7 +22,7 @@ public class InstructionDispatcher {
     /**
      * The internal backing map for Strings and loaded instructions.
      */
-    private static final HashMap<String, DispatchInstruction> instructions = new HashMap<>();
+    private static final HashMap<String, ArrayList<DispatchInstruction>> instructions = new HashMap<>();
 
     static {
         registerInstructions(ArithmeticInstructions.class);
@@ -38,6 +32,7 @@ public class InstructionDispatcher {
         registerInstructions(ComparisonInstructions.class);
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
+        registerInstructions(ImportInstructions.class);
     }
 
     /**
@@ -64,8 +59,11 @@ public class InstructionDispatcher {
         if (name.startsWith("_")) {
             name = name.substring(1);
         }
+
         validateInstruction(method);
-        instructions.put(name, new DispatchInstruction(parent, method));
+
+        instructions.putIfAbsent(name, new ArrayList<>());
+        instructions.get(name).add(new DispatchInstruction(parent, method));
     }
 
     private static void validateInstruction(Method method) {
@@ -80,8 +78,29 @@ public class InstructionDispatcher {
      *
      * @return the map of registered Instructions.
      */
-    public static Map<String, DispatchInstruction> getInstructions() {
+    public static Map<String, ArrayList<DispatchInstruction>> getInstructions() {
         return Collections.unmodifiableMap(instructions);
+    }
+
+    /**
+     * Gets the particular instruction overload for the given instruction name and argument types.
+     *
+     * @param name the instruction name.
+     * @param args the argument types for the instruction.
+     * @return the corresponding instruction if it exists, null otherwise.
+     */
+    public static DispatchInstruction getInstruction(String name, Class<?>[] args) {
+        ArrayList<DispatchInstruction> overloads = instructions.get(name);
+
+        if (overloads == null)
+            return null;
+
+        for (DispatchInstruction instruction : overloads) {
+            if (instruction.isCallableWith(args))
+                return instruction;
+        }
+
+        return null;
     }
 
     /**
@@ -94,14 +113,14 @@ public class InstructionDispatcher {
     /**
      * The bound simulator for this dispatcher.
      */
-    private final ISimulator simulator;
+    private final Simulator simulator;
 
     /**
-     * Create a new Instruction Dispatcher, and bind it to an existing {@link ISimulator}.
+     * Create a new Instruction Dispatcher, and bind it to an existing {@link Simulator}.
      *
      * @param simulator the simulator to bind to.
      */
-    public InstructionDispatcher(ISimulator simulator) {
+    public InstructionDispatcher(Simulator simulator) {
         this.simulator = simulator;
         loadInstructionHandlers();
     }
@@ -110,9 +129,10 @@ public class InstructionDispatcher {
      * For all registered instructions, load an instance for each handler and bind it to a simulator.
      */
     private void loadInstructionHandlers() {
-        InstructionDispatcher.instructions.values().stream()
-                .filter(instruction -> instructionHandlerInstances.get(instruction.getParent()) == null)
-                .forEach(this::loadInstructionHandler);
+        InstructionDispatcher.instructions.values()
+                .forEach(overloads -> overloads.stream()
+                        .filter(instruction -> instructionHandlerInstances.get(instruction.parent()) == null)
+                        .forEach(this::loadInstructionHandler));
     }
 
     /**
@@ -122,9 +142,9 @@ public class InstructionDispatcher {
      */
     private void loadInstructionHandler(DispatchInstruction instruction) {
         try {
-            Constructor<?> constructor = instruction.getParent().getDeclaredConstructor(ISimulator.class);
+            Constructor<?> constructor = instruction.parent().getDeclaredConstructor(Simulator.class);
             Object inst = constructor.newInstance(this.simulator);
-            this.instructionHandlerInstances.put(instruction.getParent(), inst);
+            this.instructionHandlerInstances.put(instruction.parent(), inst);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
                 | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -140,11 +160,11 @@ public class InstructionDispatcher {
      *                                      {@link IllegalInstructionException} if the instruction is unrecognized.
      */
     public void execute(Line line) throws SimulationException {
-        DispatchInstruction dispatch = instructions.get(line.getInstruction().text());
+        DispatchInstruction dispatch = getInstruction(line.getInstruction().text(), line.getArgumentTypes());
         if (dispatch == null)
             throw new IllegalInstructionException(line.getInstruction().text());
 
-        Object object = this.instructionHandlerInstances.get(dispatch.getParent());
+        Object object = this.instructionHandlerInstances.get(dispatch.parent());
 
         // TODO assume loaded for now
         assert object != null;

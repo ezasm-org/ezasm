@@ -1,5 +1,6 @@
 package com.ezasm.parsing;
 
+import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.simulation.Registers;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.util.RawData;
@@ -63,10 +64,10 @@ public class Lexer {
      */
     public static RawData textToBytes(String text) throws ParseException {
         int base = 10;
-        if (isHexadecimal(text)) {
+        if (looksHexadecimal(text)) {
             base = 16;
             text = text.replace("0x", "");
-        } else if (isBinary(text)) {
+        } else if (looksBinary(text)) {
             base = 2;
             text = text.replace("0b", "");
         }
@@ -95,7 +96,7 @@ public class Lexer {
      * @param text the string to inspect.
      * @return true if the given string is of a hexadecimal format: starting with "0x" or "-0x", false otherwise.
      */
-    private static boolean isHexadecimal(String text) {
+    private static boolean looksHexadecimal(String text) {
         return text.startsWith("0x") || text.startsWith("-0x");
     }
 
@@ -106,7 +107,7 @@ public class Lexer {
      * @param text the string to inspect.
      * @return true if the given string is of a binary format: starting with "0b" or "-0b", false otherwise.
      */
-    private static boolean isBinary(String text) {
+    private static boolean looksBinary(String text) {
         return text.startsWith("0b") || text.startsWith("-0b");
     }
 
@@ -162,12 +163,12 @@ public class Lexer {
     }
 
     /**
-     * Determines if a token is possibly a label reference or not.
+     * Determines if a token looks like a label reference or not.
      *
      * @param token the token of text in question.
-     * @return true if the token is a label reference, false otherwise.
+     * @return true if the token looks like a label reference, false otherwise.
      */
-    public static boolean isLabelReference(String token) {
+    public static boolean looksLikeLabelReference(String token) {
         return isAlphaNumeric(token);
     }
 
@@ -184,12 +185,12 @@ public class Lexer {
     }
 
     /**
-     * Determines if the given token is a dereference expression or not.
+     * Determines if the given token looks like a valid dereference expression or not.
      *
      * @param token the token String in question.
-     * @return true if the given token is a valid dereference expression, false otherwise.
+     * @return true if the given token looks like a valid dereference expression, false otherwise.
      */
-    public static boolean isDereference(String token) {
+    public static boolean looksLikeDereference(String token) {
         return token.matches("^(-?\\d+)?\\(\\$.+\\)$");
     }
 
@@ -199,7 +200,7 @@ public class Lexer {
      * @param token the token String in question.
      * @return true if the given token is a valid immediate, false otherwise.
      */
-    public static boolean isImmediate(String token) {
+    public static boolean looksLikeImmediate(String token) {
         if (token.isEmpty()) {
             return false;
         }
@@ -207,13 +208,23 @@ public class Lexer {
     }
 
     /**
-     * Determines if the given token is a character immediate or not.
+     * Determines if the given token looks like a character immediate or not.
      *
      * @param token the token String in question.
-     * @return true if the given token is a valid character immediate, false otherwise.
+     * @return true if the given token looks like a valid character immediate, false otherwise.
      */
-    public static boolean isCharacterImmediate(String token) {
+    public static boolean looksLikeCharacterImmediate(String token) {
         return token.length() > 1 && token.startsWith("'") && token.endsWith("'");
+    }
+
+    /**
+     * Determines if the given token looks like a string immediate or not.
+     *
+     * @param token the token string in question.
+     * @return true if the given token looks like a valid string immediate, false otherwise.
+     */
+    public static boolean looksLikeStringImmediate(String token) {
+        return token.length() > 1 && token.startsWith("\"") && token.endsWith("\"");
     }
 
     /**
@@ -229,11 +240,38 @@ public class Lexer {
         } else if (token.length() < 3) {
             throw new ParseException(String.format("Improperly formatted character token %s", token));
         }
-        String parsed = token.substring(1, token.length() - 1).translateEscapes();
+        String parsed = "";
+        try {
+            parsed = token.substring(1, token.length() - 1).translateEscapes();
+        } catch (IllegalArgumentException e) {
+            throw new ParseException(String.format("Unable to parse character token %s", token));
+        }
         if (parsed.length() != 1) {
             throw new ParseException(String.format("Unable to parse character token %s", token));
         }
         return parsed.charAt(0);
+    }
+
+    /**
+     * Gets the string represented by the given string immediate. This also accepts the Java escape sequences.
+     *
+     * @param token the string immediate.
+     * @return the string parsed.
+     * @throws ParseException if the given token is not a valid string immediate.
+     */
+    public static String getStringImmediate(String token) throws ParseException {
+        if (token.length() < 2) {
+            throw new ParseException(String.format("Improperly formatted string token %s", token));
+        }
+        if (token.length() == 2) {
+            return "";
+        }
+
+        try {
+            return token.substring(1, token.length() - 1).translateEscapes();
+        } catch (Exception e) {
+            throw new ParseException(String.format("Error formatting escape sequences in %s", token));
+        }
     }
 
     /**
@@ -283,6 +321,7 @@ public class Lexer {
         List<Line> linesLexed = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
+        // individually read lines treating semicolons as line breaks
         for (int i = 0; i < lines.length(); ++i) {
             char c = lines.charAt(i);
             if (c == '\n') {
@@ -337,10 +376,17 @@ public class Lexer {
         StringBuilder currentToken = new StringBuilder();
         boolean inSingleQuotes = false;
         boolean inDoubleQuotes = false;
+        boolean escapeNext = false;
 
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
-            if (c == '\'' && !inDoubleQuotes) {
+            if (escapeNext) {
+                escapeNext = false;
+                currentToken.append(c);
+            } else if (c == '\\') {
+                escapeNext = true;
+                currentToken.append(c);
+            } else if (c == '\'' && !inDoubleQuotes) {
                 inSingleQuotes = !inSingleQuotes;
                 currentToken.append(c);
             } else if (c == '\"' && !inSingleQuotes) {
