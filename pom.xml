@@ -7,7 +7,7 @@
 
     <groupId>EzASM</groupId>
     <artifactId>EzASM</artifactId>
-    <version>1.2-beta</version>
+    <version>1.3.3-beta</version>
     <description>An assembly-like programming language for use in education</description>
     <url>https://github.com/ezasm-org/EzASM/</url>
     <inceptionYear>2022</inceptionYear>
@@ -252,6 +252,12 @@
             <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
             <version>3.3.2</version>
+        </dependency>
+        <!-- https://central.sonatype.com/artifact/com.fifesoft/autocomplete/3.3.1 -->
+        <dependency>
+            <groupId>com.fifesoft</groupId>
+            <artifactId>autocomplete</artifactId>
+            <version>3.3.1</version>
         </dependency>
     </dependencies>
 </project>

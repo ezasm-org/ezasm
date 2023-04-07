@@ -1,6 +1,7 @@
 package com.ezasm.simulation.transform.transformable;
 
 import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.util.RawData;
 
 /**
@@ -33,7 +34,7 @@ public class HeapPointerTransformable extends AbstractTransformableInput {
      * @param value the heap pointer's new value.
      */
     @Override
-    public void set(RawData value) {
+    public void set(RawData value) throws SimulationException {
         simulator.getMemory().setHeapPointer((int) value.intValue());
     }
 }

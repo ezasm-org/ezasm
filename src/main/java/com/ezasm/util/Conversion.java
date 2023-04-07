@@ -1,6 +1,9 @@
 package com.ezasm.util;
 
+import com.ezasm.simulation.Memory;
+
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Utility class which provides functions for converting to and from byte arrays.
@@ -14,8 +17,12 @@ public class Conversion {
      * @return the byte data representation of the long.
      */
     public static byte[] longToBytes(long data) {
-        // TODO make this return array of word size
-        return ByteBuffer.wrap(new byte[8]).putLong(data).array();
+        if (Memory.wordSize() == 4) {
+            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putInt((int) data).array();
+        } else if (Memory.wordSize() == 8) {
+            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putLong(data).array();
+        }
+        return null;
     }
 
     /**
@@ -25,7 +32,12 @@ public class Conversion {
      * @return the long representation of that data.
      */
     public static long bytesToLong(byte[] data) {
-        return ByteBuffer.wrap(data).getLong();
+        if (data.length == 4) {
+            return ByteBuffer.wrap(data).getInt();
+        } else if (data.length == 8) {
+            return ByteBuffer.wrap(data).getLong();
+        }
+        return 0;
     }
 
     /**
@@ -35,8 +47,12 @@ public class Conversion {
      * @return the byte data representation of the double.
      */
     public static byte[] doubleToBytes(double data) {
-        // TODO make this return array of word size
-        return ByteBuffer.wrap(new byte[8]).putDouble(data).array();
+        if (Memory.wordSize() == 4) {
+            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putFloat((float) data).array();
+        } else if (Memory.wordSize() == 8) {
+            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putDouble(data).array();
+        }
+        return null;
     }
 
     /**
@@ -46,40 +62,11 @@ public class Conversion {
      * @return the double representation of that data.
      */
     public static double bytesToDouble(byte[] data) {
-        return ByteBuffer.wrap(data).getDouble();
-    }
-
-    /**
-     * Converts a String into its corresponding bytes.
-     *
-     * @param data the String to convert.
-     * @return the byte data representation of the String.
-     */
-    public static byte[][] stringToBytes(String data) {
-        byte[][] bytes = new byte[data.length() + 1][0];
-        for (int i = 0; i < data.length(); ++i) {
-            bytes[i] = Conversion.longToBytes(data.charAt(i));
+        if (data.length == 4) {
+            return ByteBuffer.wrap(data).getFloat();
+        } else if (data.length == 8) {
+            return ByteBuffer.wrap(data).getLong();
         }
-        bytes[bytes.length - 1] = Conversion.longToBytes(0);
-        return bytes;
+        return 0;
     }
-
-    /**
-     * Converts an array of bytes into the corresponding String.
-     *
-     * @param data the array of bytes to convert.
-     * @return the double representation of that data.
-     */
-    public static String bytesToString(byte[][] data) {
-        StringBuilder sb = new StringBuilder();
-        for (byte[] character : data) {
-            char c = (char) Conversion.bytesToLong(character);
-            if (c == '\0') {
-                return sb.toString();
-            }
-            sb.append(c);
-        }
-        return sb.toString();
-    }
-
 }

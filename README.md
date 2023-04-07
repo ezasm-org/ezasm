@@ -72,12 +72,13 @@ Run `mvn clean package` will build a variety of native executables in the `targe
 Options marked with an asterisk `*` will only be generated if you fulfill the requirements to install:
 being on the required operating system and having the necessary optional dependencies.
 - `EzASM-VERSION-full.jar` the distributable jar file
-- `EzASM-VERSION-windows.zip` the zipped program which will run on Windows natively
-- `EzASM-VERSION-mac.tar.gz` the archived program which will run on Mac OS X natively
-- `EzASM-VERSION-linux.tar.gz` the archived program which will run on many linux distros natively
+- `EzASM-VERSION-windows.zip`* the zipped program which will run on Windows natively
+- `EzASM-VERSION-mac.tar.gz`* the archived program which will run on Mac OS X natively
+- `EzASM-VERSION-linux.tar.gz`* the archived program which will run on many linux distros natively
 - `EzASM_VERSION.exe`* a Windows installation file
 - `EzASM_VERSION.dmg`* a Mac OSX installation file
 - `EzASM_VERSION.pkg`* a Mac OSX installation file
+- `EzASM.AppImage`* the archived program which will run on many linux distros natively
 - `EzASM_VERSION.deb`* an installation file for debian-based linux distributions (Ubuntu, Mint, etc.)
 - `EzASM_VERSION.rpm`* an installation file for distributions with the Red Hat package manager (Fedora, Red Hat, etc.)
 

@@ -3,6 +3,7 @@ package com.ezasm.instructions.implementation;
 import java.io.*;
 
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.FileReadTransformable;
@@ -69,7 +70,7 @@ public class TerminalInstructions {
         while (index < maxSize && current != 0) {
             streams.write((char) current);
             index++;
-            current = simulator.getMemory().read(address + index * simulator.getMemory().wordSize).intValue();
+            current = simulator.getMemory().read(address + index * Memory.wordSize()).intValue();
         }
 
         return new TransformationSequence();
@@ -84,7 +85,7 @@ public class TerminalInstructions {
         while (current != 0) {
             streams.write((char) current);
             index++;
-            current = simulator.getMemory().read(address + index * simulator.getMemory().wordSize).intValue();
+            current = simulator.getMemory().read(address + index * Memory.wordSize()).intValue();
         }
 
         return new TransformationSequence();
@@ -133,7 +134,7 @@ public class TerminalInstructions {
         for (int i = 1; i < size; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
-            address = address + simulator.getMemory().wordSize;
+            address = address + Memory.wordSize();
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
         transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
@@ -155,7 +156,7 @@ public class TerminalInstructions {
         for (int i = 1; i < size + 1; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
-            address = address + simulator.getMemory().wordSize;
+            address = address + Memory.wordSize();
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
         transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
@@ -178,7 +179,7 @@ public class TerminalInstructions {
         for (int i = 1; i < size + 1; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
-            address = address + simulator.getMemory().wordSize;
+            address = address + Memory.wordSize();
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
         transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
@@ -200,7 +201,7 @@ public class TerminalInstructions {
         for (int i = 1; i < size + 1; ++i) {
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
-            address = address + simulator.getMemory().wordSize;
+            address = address + Memory.wordSize();
         }
         MemoryTransformable m = new MemoryTransformable(simulator, address);
         transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
