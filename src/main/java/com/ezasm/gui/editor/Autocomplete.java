@@ -72,17 +72,17 @@ public class Autocomplete implements DocumentListener {
         String previousLine = content.substring(lineStart, pos) + content.substring(pos + len, lineEnd);
 
         // Find the old keywords and delete them
-        Matcher to_remove = lineRegex.matcher(previousLine);
-        while (to_remove.find()) {
-            String label = to_remove.group().strip().replace(" ", "").replace(":", "");
+        Matcher toRemove = lineRegex.matcher(previousLine);
+        while (toRemove.find()) {
+            String label = toRemove.group().strip().replace(" ", "").replace(":", "");
             keywords.remove(label);
         }
 
         String new_line = content.substring(lineStart, lineEnd);
         // find the new keywords and add them
-        Matcher to_add = lineRegex.matcher(new_line);
-        while (to_add.find()) {
-            String label = to_add.group().strip().replace(" ", "").replace(":", "");
+        Matcher toAdd = lineRegex.matcher(new_line);
+        while (toAdd.find()) {
+            String label = toAdd.group().strip().replace(" ", "").replace(":", "");
             keywords.add(label);
         }
         Collections.sort(keywords);

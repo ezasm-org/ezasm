@@ -1,36 +1,26 @@
 package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
-import static com.ezasm.gui.menubar.MenuActions.save;
+import com.ezasm.gui.menubar.MenuActions;
 
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Supports saving the user's currently open file if it is not anonymous.
+ * An automatic file saver that supports saving the user's currently open file if it is not anonymous.
  */
 public class AutoSave {
 
+    private Timer timer;
+    private SaveTask saveTask;
+
     /**
-     * Represents a timer task for saving a file if it is not anonymous.
+     * Constructs the automatic file saver
      */
-    private static class SaveTask extends TimerTask {
-        public void run() {
-            File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
-            if (fileToUpdate.exists()) {
-                save();
-            }
-        }
-    }
-
-    private final Timer timer = new Timer();
-    private SaveTask saveTask = new SaveTask();
-
-    private int intervalMS;
-
     public AutoSave() {
-        this.intervalMS = 10000;
+        timer = new Timer();
+        saveTask = new SaveTask();
     }
 
     /**
@@ -38,11 +28,26 @@ public class AutoSave {
      */
     public void toggleRunning(boolean start, int intervalSeconds) {
         this.timer.cancel();
+        this.timer = new Timer();
         this.saveTask.cancel();
         this.saveTask = new SaveTask();
+
         if (start) {
-            this.intervalMS = intervalSeconds * 1000;
-            timer.schedule(this.saveTask, 0, this.intervalMS);
+            int intervalMS = intervalSeconds * 1000;
+            timer.schedule(this.saveTask, 0, intervalMS);
+        }
+    }
+
+    /**
+     * Represents a timer task for saving a file if it is not anonymous.
+     */
+    private static class SaveTask extends TimerTask {
+        @Override
+        public void run() {
+            File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
+            if (fileToUpdate.exists()) {
+                MenuActions.save();
+            }
         }
     }
 }
