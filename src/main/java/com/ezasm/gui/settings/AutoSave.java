@@ -24,7 +24,7 @@ public class AutoSave {
         }
     }
 
-    private final Timer timer = new Timer();
+    private Timer timer = new Timer();
     private SaveTask saveTask = new SaveTask();
 
     private int intervalMS;
@@ -38,6 +38,7 @@ public class AutoSave {
      */
     public void toggleRunning(boolean start, int intervalSeconds) {
         this.timer.cancel();
+        this.timer = new Timer();
         this.saveTask.cancel();
         this.saveTask = new SaveTask();
         if (start) {
