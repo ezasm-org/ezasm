@@ -311,8 +311,8 @@ public class ArithmaticInstructionTest {
             assertEquals(simulator.getRegisters().getRegister(Registers.T3).getLong(), 5);
             assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), -384629550);
             assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), 2048203944);
-            assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), ~Long.MAX_VALUE);
-            assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), ~Long.MIN_VALUE);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), Long.MIN_VALUE);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T7).getLong(), Long.MAX_VALUE);
         } catch (Exception e) {
             fail();
         }
@@ -334,9 +334,24 @@ public class ArithmaticInstructionTest {
         }
     }
 
+    @Test
     void testDec() {
         try {
+            long a, b;
 
+            simulator.getRegisters().getRegister(Registers.S0).setLong(0);
+            simulator.getRegisters().getRegister(Registers.S1).setLong(-1);
+            simulator.getRegisters().getRegister(Registers.S2).setLong(236580639);
+            simulator.getRegisters().getRegister(Registers.S3).setLong(-939419913);
+            simulator.getRegisters().getRegister(Registers.S4).setLong(Long.MAX_VALUE);
+            simulator.getRegisters().getRegister(Registers.S5).setLong(Long.MIN_VALUE);
+
+            simulator.runLine(Lexer.parseLine("dec $t0 $s0", 0));
+            simulator.runLine(Lexer.parseLine("sub $t1 $s0 1", 0));
+
+            a = simulator.getRegisters().getRegister(Registers.T0).getLong();
+            b = simulator.getRegisters().getRegister(Registers.T1).getLong();
+            assertEquals(a, b);
         } catch (Exception e) {
             fail();
         }
