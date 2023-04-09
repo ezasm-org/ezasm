@@ -1,5 +1,6 @@
 package com.ezasm.instructions.targets.inputoutput;
 
+import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.MisalignedStackPointerException;
@@ -49,12 +50,13 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * Checks if the new stack pointer value is valid.
      *
      * @param simulator the program simulator
-     * @param value the new stack pointer value
-     * @throws MisalignedStackPointerException if the new stack pointer is not aligned on a word boundary
+     * @param value     the new stack pointer value
+     * @throws MisalignedStackPointerException  if the new stack pointer is not aligned on a word boundary
      * @throws SimulationStackOverflowException if the new stack pointer collides with the heap
      */
-    public void validateStackPointer(Simulator simulator, RawData value) throws MisalignedStackPointerException, SimulationStackOverflowException {
-        if (value.intValue() % simulator.getMemory().wordSize != 0) {
+    public void validateStackPointer(Simulator simulator, RawData value)
+            throws MisalignedStackPointerException, SimulationStackOverflowException {
+        if (value.intValue() % Memory.wordSize() != 0) {
             throw new MisalignedStackPointerException(value.intValue());
         } else if (value.intValue() <= simulator.getMemory().currentHeapPointer()) {
             throw new SimulationStackOverflowException(value.intValue());
@@ -68,7 +70,8 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      * @param value     the value to set.
      */
     @Override
-    public void set(Simulator simulator, RawData value) throws MisalignedStackPointerException, SimulationStackOverflowException {
+    public void set(Simulator simulator, RawData value)
+            throws MisalignedStackPointerException, SimulationStackOverflowException {
         if (register == Registers.getRegisterNumber(Registers.SP)) {
             validateStackPointer(simulator, value);
         }
