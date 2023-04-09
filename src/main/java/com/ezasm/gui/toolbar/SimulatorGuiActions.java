@@ -76,7 +76,7 @@ public class SimulatorGuiActions {
     }
 
     private static long getPC() {
-        return 1 + (long)Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
+        return 1 + (long) Window.getInstance().getSimulator().getRegisters().getRegister(Registers.PC).getLong();
     }
 
     /**

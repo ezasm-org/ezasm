@@ -9,73 +9,70 @@ import de.jcm.discordgamesdk.CreateParams;
 import de.jcm.discordgamesdk.activity.Activity;
 
 public final class DiscordActivity {
+    private static final String baseLibPath = "lib/discord_game_sdk/";
+    private static final long discordApplicationId = 1068652802483691641L;
+    private static final Activity activity;
+    private static final Core core;
 
-	private static final String baseLibPath = "lib/discord_game_sdk/";
-	private static final long discordApplicationId = 1068652802483691641L;
-	private static final Activity activity;
-	private static final Core core;
+    static {
+        final var os = System.getProperty("os.name").toLowerCase();
+        final var arch = System.getProperty("os.arch").toLowerCase();
 
-	static {
-		final var os = System.getProperty("os.name").toLowerCase();
-		final var arch = System.getProperty("os.arch").toLowerCase();
+        if (arch.contains("amd64")) {
+            final var libPath = baseLibPath + "x86_64/";
+            if (os.contains("windows")) {
+                Core.init(new File(libPath + "discord_game_sdk.dll"));
+            }
+        }
 
-		if (arch.contains("amd64")) {
-			final var libPath = baseLibPath + "x86_64/";
-			if (os.contains("windows")) {
-				Core.init(new File(libPath + "discord_game_sdk.dll"));
-			}
-		}
+        // will do macos and linux once i see what "os.name" looks like for them
+        // same for different architectures
 
-		// will do macos and linux once i see what "os.name" looks like for them
-		// same for different architectures
+        final var params = new CreateParams();
+        params.setClientID(discordApplicationId);
 
-		final var params = new CreateParams();
-		params.setClientID(discordApplicationId);
+        core = new Core(params);
 
-		core = new Core(params);
+        activity = new Activity();
+        activity.setDetails("I'm using EzASM");
+        activity.setState("EzASM is easy");
+        activity.assets().setLargeImage("ezasm");
+        activity.timestamps().setStart(Instant.now());
 
-		activity = new Activity();
-		activity.setDetails("I'm using EzASM");
-		activity.setState("EzASM is easy");
-		activity.timestamps().setStart(Instant.now());
+        updateActivity();
+    }
 
-		updateActivity();
-	}
+    /**
+     * This is an infinite loop... use a separate thread to run the core.
+     */
+    public static void runCore() {
+        while (true) {
+            core.runCallbacks();
+            LockSupport.parkNanos(16_000_000);
+        }
+    }
 
-	/**
-	 * This is an infinite loop... use a separate thread to run the core.
-	 */
-	public static void runCore() {
-		while (true) {
-			core.runCallbacks();
-			LockSupport.parkNanos(16_000_000);
-		}
-	}
+    /**
+     * The "details" field is the first line of text under the title when looking at the activity on Discord.
+     *
+     * @param details
+     */
+    public static void setDetails(String details) {
+        activity.setDetails(details);
+        updateActivity();
+    }
 
-	/**
-	 * The "details" field is the first line of text under the title when looking at
-	 * the activity on Discord.
-	 *
-	 * @param details
-	 */
-	public static void setDetails(String details) {
-		activity.setDetails(details);
-		updateActivity();
-	}
+    /**
+     * The "state" field is the second line of text under the title when looking at the activity on Discord.
+     *
+     * @param state
+     */
+    public static void setState(String state) {
+        activity.setState(state);
+        updateActivity();
+    }
 
-	/**
-	 * The "state" field is the second line of text under the title when looking at
-	 * the activity on Discord.
-	 *
-	 * @param state
-	 */
-	public static void setState(String state) {
-		activity.setState(state);
-		updateActivity();
-	}
-
-	private static void updateActivity() {
-		core.activityManager().updateActivity(activity);
-	}
-
+    private static void updateActivity() {
+        core.activityManager().updateActivity(activity);
+    }
 }
