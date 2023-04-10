@@ -2,7 +2,22 @@
 
 ### An assembly-like programming language for use in education
 
-Releases can be found at the [EzASM releases repository](https://github.com/ezasm-org/EzASM-releases). 
+## Installation
+
+The latest release can be found at the [EzASM releases repository](https://github.com/ezasm-org/EzASM-releases/releases/latest). You will have to install it manually.
+
+EzASM can also be downloaded via [homebrew](https://brew.sh/) the [EzASM tap](https://github.com/ezasm-org/homebrew-ezasm):
+
+```
+brew tap ezasm-org/ezasm
+brew install ezasm
+```
+
+or from the [AUR](https://aur.archlinux.org/packages/ezasm) for example using an AUR manager:
+
+```
+paru -S ezasm
+```
 
 ## Introduction
 
