@@ -6,8 +6,6 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Memory;
 import org.apache.commons.cli.*;
 
-import java.util.Arrays;
-
 /**
  * Methods to handle the program arguments and begin the program correspondingly.
  */
