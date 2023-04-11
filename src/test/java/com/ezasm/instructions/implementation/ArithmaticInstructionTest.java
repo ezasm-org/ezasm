@@ -347,10 +347,33 @@ public class ArithmaticInstructionTest {
             simulator.getRegisters().getRegister(Registers.S5).setLong(Long.MIN_VALUE);
 
             simulator.runLine(Lexer.parseLine("dec $t0 $s0", 0));
-            simulator.runLine(Lexer.parseLine("sub $t1 $s0 1", 0));
+            simulator.runLine(Lexer.parseLine("sub $t1 $s0 1", 1));
+            simulator.runLine(Lexer.parseLine("dec $t2 $s1", 2));
+            simulator.runLine(Lexer.parseLine("sub $t3 $s1 1", 3));
+            simulator.runLine(Lexer.parseLine("dec $t4 $s2", 4));
+            simulator.runLine(Lexer.parseLine("sub $t5 $s2 1", 5));
+            simulator.runLine(Lexer.parseLine("dec $t6 $s3", 6));
+            simulator.runLine(Lexer.parseLine("sub $t7 $s3 1", 7));
+            simulator.runLine(Lexer.parseLine("dec $t8 $s4", 8));
+            simulator.runLine(Lexer.parseLine("dec $t9 $s5", 9));
 
             a = simulator.getRegisters().getRegister(Registers.T0).getLong();
             b = simulator.getRegisters().getRegister(Registers.T1).getLong();
+            assertEquals(a, b);
+            a = simulator.getRegisters().getRegister(Registers.T2).getLong();
+            b = simulator.getRegisters().getRegister(Registers.T3).getLong();
+            assertEquals(a, b);
+            a = simulator.getRegisters().getRegister(Registers.T4).getLong();
+            b = simulator.getRegisters().getRegister(Registers.T5).getLong();
+            assertEquals(a, b);
+            a = simulator.getRegisters().getRegister(Registers.T6).getLong();
+            b = simulator.getRegisters().getRegister(Registers.T7).getLong();
+            assertEquals(a, b);
+            a = simulator.getRegisters().getRegister(Registers.T8).getLong();
+            b = Long.MAX_VALUE - 1;
+            assertEquals(a, b);
+            a = simulator.getRegisters().getRegister(Registers.T9).getLong();
+            b = Long.MAX_VALUE;
             assertEquals(a, b);
         } catch (Exception e) {
             fail();
