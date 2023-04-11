@@ -27,7 +27,7 @@ rm "$SOURCE/EzASM-$NEW_VERSION-full.jar"
 AUR="$SOURCE/../ezasm-aur"
 if [ -d "$AUR" ]; then
   cp "$SOURCE/PKGBUILD" "$AUR/"
-  cp "$SOURCE/.SRCINFO" "$AUR/"
+  mv "$SOURCE/.SRCINFO" "$AUR/"
   (cd "$AUR" && git commit -am "Version bump to $NEW_VERSION" && git push) || (echo "Failed to commit/push to AUR" && exit 1)
 fi
 
