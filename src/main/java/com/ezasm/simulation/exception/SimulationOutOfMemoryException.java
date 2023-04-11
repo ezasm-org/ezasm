@@ -1,5 +1,8 @@
 package com.ezasm.simulation.exception;
 
+/**
+ * Represents a situation where the program requested more memory than was available.
+ */
 public class SimulationOutOfMemoryException extends SimulationException {
 
     /**

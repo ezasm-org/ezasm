@@ -1,5 +1,8 @@
 package com.ezasm.simulation.exception;
 
+/**
+ * Represents a situation where the stack began to overwrite the heap.
+ */
 public class SimulationStackOverflowException extends SimulationException {
 
     /**

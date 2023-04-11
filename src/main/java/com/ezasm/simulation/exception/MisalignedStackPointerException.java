@@ -1,5 +1,8 @@
 package com.ezasm.simulation.exception;
 
+/**
+ * Represents a situation where the stack pointer becomes misaligned with the word size as this is probably unintended.
+ */
 public class MisalignedStackPointerException extends SimulationException {
 
     /**
