@@ -349,9 +349,32 @@ public class ArithmaticInstructionTest {
         }
     }
 
+    @Test
     void testSrl() {
         try {
+            simulator.getRegisters().getRegister(Registers.S0).setLong(0);
+            simulator.getRegisters().getRegister(Registers.S1).setLong(1);
+            simulator.getRegisters().getRegister(Registers.S2).setLong(-1);
+            simulator.getRegisters().getRegister(Registers.S3).setLong(134987323);
+            simulator.getRegisters().getRegister(Registers.S4).setLong(-956189413);
+            simulator.getRegisters().getRegister(Registers.S5).setLong(Long.MAX_VALUE);
+            simulator.getRegisters().getRegister(Registers.S6).setLong(Long.MIN_VALUE);
 
+            simulator.runLine(Lexer.parseLine("srl $t0 $s0 1", 0));
+            simulator.runLine(Lexer.parseLine("srl $t1 $s1 1", 1));
+            simulator.runLine(Lexer.parseLine("srl $t2 $s2 1", 2));
+            simulator.runLine(Lexer.parseLine("srl $t3 $s3 13", 3));
+            simulator.runLine(Lexer.parseLine("srl $t4 $s4 10", 4));
+            simulator.runLine(Lexer.parseLine("srl $t5 $s5 24", 5));
+            simulator.runLine(Lexer.parseLine("srl $t6 $s6 60", 6));
+
+            assertEquals(simulator.getRegisters().getRegister(Registers.T0).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T1).getLong(), 0);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T2).getLong(), -1);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T3).getLong(), 16477);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T4).getLong(), -933779);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T5).getLong(), Long.MAX_VALUE / 16777216);
+            assertEquals(simulator.getRegisters().getRegister(Registers.T6).getLong(), -8);
         } catch (Exception e) {
             fail();
         }
