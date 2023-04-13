@@ -9,17 +9,23 @@ import java.util.ArrayList;
 
 public class EditorTabbedPane extends ClosableTabbedPane {
 
+    public static final String NEW_FILE_NAME = "New Document";
+    public static final String NEW_FILE_SUFFIX = ".ez";
+    public static final String NEW_FILE_PREFIX = "//";
+
+    private static int newFileNumber = 1;
+
     public EditorTabbedPane() {
         super();
-        EzEditorPane newEditor = new EzEditorPane();
-        addTab(newEditor, null, "New Document.ez", "");
+        newFile();
     }
 
     @Override
     public void removeTab(int index) {
         super.removeTab(index);
-        if (getTabCount() == 0) { // Prevent there being no open editors
-            addTab(getNewThemedEditor(), null, "New Document.ez", "");
+        if (getTabCount() == 0) {
+            // Prevent there being no open editors
+            newFile();
         }
     }
 
@@ -55,6 +61,13 @@ public class EditorTabbedPane extends ClosableTabbedPane {
         return newEditor;
     }
 
+    public EzEditorPane newFile() {
+        EzEditorPane newEditor = getNewThemedEditor();
+        addTab(newEditor, null, newEditor.getOpenFilePath(), "");
+        setActiveTab(newEditor);
+        return newEditor;
+    }
+
     /**
      * Gets the instance's editor panes.
      *
@@ -73,6 +86,7 @@ public class EditorTabbedPane extends ClosableTabbedPane {
 
     private static EzEditorPane getNewThemedEditor() {
         EzEditorPane newEditor = new EzEditorPane();
+        newEditor.setOpenFilePath(NEW_FILE_PREFIX + NEW_FILE_NAME + newFileNumber++ + NEW_FILE_SUFFIX);
         newEditor.applyTheme(Window.getInstance().getConfig().getFont(), Window.getInstance().getTheme());
         return newEditor;
     }

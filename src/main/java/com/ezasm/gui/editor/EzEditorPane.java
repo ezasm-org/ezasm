@@ -5,7 +5,8 @@ import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.menubar.MenuActions;
-import com.ezasm.gui.tabbedpane.ClosableJComponent;
+import com.ezasm.gui.tabbedpane.EditorTabbedPane;
+import com.ezasm.gui.tabbedpane.JClosableComponent;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.PatchedRSyntaxTextArea;
@@ -25,7 +26,7 @@ import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
-public class EzEditorPane extends ClosableJComponent implements IThemeable {
+public class EzEditorPane extends JClosableComponent implements IThemeable {
 
     private final PatchedRSyntaxTextArea textArea;
 
@@ -204,7 +205,20 @@ public class EzEditorPane extends ClosableJComponent implements IThemeable {
      * @return the path to the file currently open in this editor.
      */
     public String getOpenFilePath() {
-        return Objects.requireNonNullElse(openFilePath, "");
+        String out = openFilePath;
+        if (openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX)) {
+            return out.substring(2);
+        }
+        return out;
+    }
+
+    /**
+     * Returns true if the file is an anonymous file, false otherwise.
+     *
+     * @return true if the file is an anonymous file, false otherwise.
+     */
+    public boolean isFileAnonymous() {
+        return openFilePath == null || openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX);
     }
 
     /**
@@ -281,20 +295,22 @@ public class EzEditorPane extends ClosableJComponent implements IThemeable {
         textArea.setTabSize(size);
     }
 
+    @Override
     public boolean close() {
         if (getFileSaved()) {
             return true;
         }
-        if (Window.getInstance().getEditor().getText().equals("")
-                && Window.getInstance().getEditor().getOpenFilePath().equals("")) {
+        if (getText().equals("") && isFileAnonymous()) {
             return true;
         }
         int resp = promptYesNoCancelDialog("Closing File",
-                "You have unsaved changes in your file, would you like to save them?");
+                "You have unsaved changes in " + getOpenFilePath() + ", would you like to save them?");
         if (resp == JOptionPane.YES_OPTION) {
             MenuActions.save();
-        } else if (resp != JOptionPane.CANCEL_OPTION) {
+        } else if (resp == JOptionPane.NO_OPTION) {
             return true;
+        } else if (resp == JOptionPane.CANCEL_OPTION || resp == JOptionPane.CLOSED_OPTION) {
+            return false;
         }
         return false;
     }

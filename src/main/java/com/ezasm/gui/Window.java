@@ -9,8 +9,6 @@ import com.ezasm.gui.table.MemoryViewerPanel;
 import com.ezasm.gui.table.RegisterTable;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
-import com.ezasm.gui.tabbedpane.ClosableTabPanel;
-import com.ezasm.gui.tabbedpane.ClosableTabbedPane;
 import com.ezasm.gui.tabbedpane.FixedTabbedPane;
 import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
@@ -25,8 +23,6 @@ import com.ezasm.util.SystemStreams;
 import com.ezasm.gui.settings.AutoSave;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import java.awt.*;

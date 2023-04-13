@@ -4,10 +4,8 @@ import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 
 import java.awt.*;
-import java.util.Arrays;
 
 /**
  * Represents a tabbed pane on which the tabs have a button which allows the user to close an individual tab.
@@ -65,7 +63,7 @@ public class ClosableTabbedPane extends FixedTabbedPane {
             return;
         }
         boolean close = true;
-        if (getComponentAt(index) instanceof ClosableJComponent closable) {
+        if (getComponentAt(index) instanceof JClosableComponent closable) {
             close = closable.close();
         }
         if (close) {

@@ -17,6 +17,10 @@ import static com.ezasm.util.FileIO.*;
  */
 public class MenuActions {
 
+    public static void newFile() {
+        Window.getInstance().getEditorPanes().newFile();
+    }
+
     /**
      * Runs the action event for save as.
      *

@@ -1,5 +1,7 @@
 package com.ezasm.gui;
 
+import com.ezasm.gui.editor.EzEditorPane;
+
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -15,27 +17,30 @@ public class WindowCloseListener extends WindowAdapter {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        if (!Window.getInstance().getEditor().getFileSaved()) {
-            if (Window.getInstance().getEditor().getText().equals("")
-                    && Window.getInstance().getEditor().getOpenFilePath().equals("")) {
-                System.exit(0);
+        boolean exit = true;
+        for (EzEditorPane editorPane : Window.getInstance().getEditorPanes().getEditors()) {
+
+            if (editorPane.getFileSaved() || (editorPane.getText().equals("") && editorPane.isFileAnonymous())) {
+                continue;
             }
-            int resp = promptYesNoCancelDialog("Exiting...", "Your changes have not been saved."
-                    + System.getProperty("line.separator") + "Would you like to save them?");
+            int resp = promptYesNoCancelDialog("Exiting...", "Your changes to '" + editorPane.getOpenFilePath()
+                    + "' have not been saved. Would you like to save them?");
 
             if (resp == JOptionPane.YES_OPTION) {
-                if (!Window.getInstance().getEditor().getOpenFilePath().equals("")) {
+                if (editorPane.isFileAnonymous()) {
                     save();
                 } else {
                     saveAs();
                 }
-                System.exit(0);
             } else if (resp == JOptionPane.NO_OPTION) {
-                System.exit(0);
-            } else {
-                // cancel closing operation
+                // Do not save, close
+            } else if (resp == JOptionPane.CANCEL_OPTION || resp == JOptionPane.CLOSED_OPTION) {
+                exit = false;
+                break;
             }
-        } else {
+
+        }
+        if (exit) {
             System.exit(0);
         }
     }
