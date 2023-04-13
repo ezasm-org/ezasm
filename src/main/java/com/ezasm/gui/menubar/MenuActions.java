@@ -79,7 +79,9 @@ public class MenuActions {
             File file = fileChooser.getSelectedFile();
             if (file != null && file.exists() && file.canRead()) {
                 try {
-                    EzEditorPane newEditor = Window.getInstance().openNewFileTab(file);
+                    boolean notOpen = Window.getInstance().getEditorPanes().indexOfFile(file.getAbsolutePath()) == -1;
+
+                    EzEditorPane newEditor = Window.getInstance().getEditorPanes().openFile(file);
                     String content = FileIO.readFile(file);
                     newEditor.setText(content);
                     newEditor.setOpenFilePath(file.getPath());

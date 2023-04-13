@@ -25,7 +25,7 @@ import javax.swing.plaf.basic.BasicButtonUI;
  * Implementation of the button on a tab which, when pressed, will close the tab it is connected to.
  */
 public class TabCloseButton extends JButton implements IThemeable, ActionListener {
-    private final JTabbedPane parent;
+    private final ClosableTabbedPane parent;
     private final String name;
     private static final int SIZE = 17;
     private EditorTheme editorTheme;
@@ -36,7 +36,7 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
      * @param parent   the parent tabbed pane.
      * @param tabTitle the title of the tab.
      */
-    public TabCloseButton(JTabbedPane parent, String tabTitle) {
+    public TabCloseButton(ClosableTabbedPane parent, String tabTitle) {
         this.parent = parent;
         this.name = tabTitle;
         setPreferredSize(new Dimension(SIZE, SIZE));
@@ -70,12 +70,7 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
     public void actionPerformed(ActionEvent e) {
         int i = parent.indexOfTab(name);
         if (i != -1) {
-            if ((parent.getComponentAt(i) instanceof ClosableJComponent)) {
-                if (!((ClosableJComponent) parent.getComponentAt(i)).close()) {
-                    return;
-                }
-            }
-            parent.remove(i);
+            parent.removeTab(i);
         }
     }
 

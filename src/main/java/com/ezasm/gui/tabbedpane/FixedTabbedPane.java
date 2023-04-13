@@ -92,20 +92,6 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
     }
 
     /**
-     * Removes the given component if it is in the data structure.
-     *
-     * @param component the component to remove.
-     */
-    public void removeTab(JComponent component) {
-        for (int i = 0; i < tabbedPane.getTabCount(); ++i) {
-            if (tabbedPane.getTabComponentAt(i) == component) {
-                removeTab(i);
-                return;
-            }
-        }
-    }
-
-    /**
      * Gets the index of a tab given the title.
      *
      * @param title the title to seek for.
@@ -123,7 +109,7 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
         return res;
     }
 
-    public int indexOfComponent(Component c) {
+    public int indexOf(Component c) {
         return tabbedPane.indexOfComponent(c);
     }
 

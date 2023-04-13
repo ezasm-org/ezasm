@@ -1,5 +1,6 @@
 package com.ezasm.gui;
 
+import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -22,14 +23,14 @@ public class WindowCloseListener extends WindowAdapter {
             int resp = promptYesNoCancelDialog("Exiting...", "Your changes have not been saved."
                     + System.getProperty("line.separator") + "Would you like to save them?");
 
-            if (resp == 0) {
+            if (resp == JOptionPane.YES_OPTION) {
                 if (!Window.getInstance().getEditor().getOpenFilePath().equals("")) {
                     save();
                 } else {
                     saveAs();
                 }
                 System.exit(0);
-            } else if (resp == 1) {
+            } else if (resp == JOptionPane.NO_OPTION) {
                 System.exit(0);
             } else {
                 // cancel closing operation

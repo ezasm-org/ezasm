@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 
 import java.awt.*;
+import java.util.Arrays;
 
 /**
  * Represents a tabbed pane on which the tabs have a button which allows the user to close an individual tab.
@@ -20,7 +21,7 @@ public class ClosableTabbedPane extends FixedTabbedPane {
      */
     public ClosableTabbedPane() {
         super();
-        closeableTabBuilder = new ClosableTabBuilder();
+        closeableTabBuilder = new ClosableTabBuilder(this);
     }
 
     /**
@@ -54,11 +55,21 @@ public class ClosableTabbedPane extends FixedTabbedPane {
     @Override
     public void addTab(JComponent component, Icon icon, String title, String tip) {
         super.addTab(component, icon, title, tip);
-        closeableTabBuilder.setParent(tabbedPane).setTabName(title);
+        closeableTabBuilder.setParent(this).setTabName(title);
         tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, closeableTabBuilder.build());
     }
 
-    public void addChangeListener(ChangeListener l) {
-        tabbedPane.addChangeListener(l);
+    @Override
+    public void removeTab(int index) {
+        if (index < 0 || index > getComponents().length) {
+            return;
+        }
+        boolean close = true;
+        if (getComponentAt(index) instanceof ClosableJComponent closable) {
+            close = closable.close();
+        }
+        if (close) {
+            super.removeTab(index);
+        }
     }
 }

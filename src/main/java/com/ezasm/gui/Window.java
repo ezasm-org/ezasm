@@ -4,6 +4,7 @@ import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.tabbedpane.EditorTabbedPane;
 import com.ezasm.gui.table.MemoryViewerPanel;
 import com.ezasm.gui.table.RegisterTable;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
@@ -57,7 +58,7 @@ public class Window {
     private JPanel panel;
     private JToolBar toolbar;
     private JMenuBar menubar;
-    private ClosableTabbedPane editors;
+    private EditorTabbedPane editors;
     private RegisterTable registerTable;
     private FixedTabbedPane tools;
 
@@ -217,26 +218,14 @@ public class Window {
         panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();
-        editors = new ClosableTabbedPane();
-        editors.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (editors.getTabCount() == 0) {
-                    EzEditorPane newEditor = new EzEditorPane();
-                    editors.addTab(newEditor, null, "New Document.ez", "");
-                    applyConfiguration(config);
-                }
-            }
-        });
-        EzEditorPane newEditor = new EzEditorPane();
-        editors.addTab(newEditor, null, "New Document.ez", "");
+        editors = new EditorTabbedPane();
         toolbar = ToolbarFactory.makeToolbar();
         registerTable = new RegisterTable(simulator.getRegisters());
 
         console = new Console();
         setInputStream(console.getInputStream());
         setOutputStream(console.getOutputStream());
-        // TfileNameODO maybe make this configurable to allow them to use their terminal which they ran this with if
-        // they want
+        // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
         if (!debugMode) {
@@ -299,31 +288,10 @@ public class Window {
         });
     }
 
-    public EzEditorPane openNewFileTab(File fileIn) {
-        EzEditorPane newEditor;
-        int k = getEditorIndexOfOpenPath(fileIn.getPath());
-        if (k == -1) {
-            newEditor = new EzEditorPane();
-            editors.addTab(newEditor, null, fileIn.getName(), "");
-            applyConfiguration(config);
-        } else {
-            if (!(editors.getComponentAt(k) instanceof EzEditorPane)) {
-                return null;
-            }
-            newEditor = (EzEditorPane) editors.getComponentAt(k);
-        }
-        editors.setActiveTab(newEditor);
-        return newEditor;
-    }
-
-    public ClosableTabbedPane getEditorPanes() {
-        return editors;
-    }
-
     public void applyConfiguration(Config config) {
         this.config = config;
         EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
-        Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
+        Font font = config.getFont();
 
         tools.applyTheme(font, editorTheme);
         mainSplit.setBackground(editorTheme.background());
@@ -331,11 +299,8 @@ public class Window {
         registerTable.applyTheme(font, editorTheme);
         ToolbarFactory.applyTheme(font, editorTheme, toolbar);
         editors.applyTheme(font, editorTheme);
-        for (Component jc : getEditors()) {
-            if (jc instanceof EzEditorPane) {
-                EzEditorPane ez = (EzEditorPane) jc;
-                ez.resizeTabSize(config.getTabSize());
-            }
+        for (EzEditorPane editor : getEditorPanes().getEditors()) {
+            editor.resizeTabSize(config.getTabSize());
         }
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
 
@@ -389,35 +354,17 @@ public class Window {
      * @return the instance's editor pane.
      */
     public EzEditorPane getEditor() {
-        JComponent jc = editors.getSelectedComponent();
-        if (jc instanceof EzEditorPane) {
-            return (EzEditorPane) jc;
-        }
-        return null;
+        return editors.getSelectedComponent();
+    }
+
+    public EditorTabbedPane getEditorPanes() {
+        return editors;
     }
 
     /**
-     * Gets the instance's editor panes.
+     * Gets the instance's register table.
      *
-     * @return the instance's editor panes.
-     */
-    public ArrayList<EzEditorPane> getEditors() {
-        Component[] cs = editors.getTabs();
-        ArrayList<EzEditorPane> res = new ArrayList<>();
-        for (Component c : cs) {
-            if (c instanceof EzEditorPane) {
-                res.add((EzEditorPane) c);
-            } else {
-                System.out.println(c.getClass());
-            }
-        }
-        return res;
-    }
-
-    /**
-     * Gets the instance's editor pane.
-     *
-     * @return the instance's editor pane.
+     * @return the instance's register table.
      */
     public RegisterTable getRegisterTable() {
         return registerTable;
@@ -478,41 +425,12 @@ public class Window {
     }
 
     /**
-     * Enable or disable the ability of the user to edit the text pane. Text cannot be selected while this is the set to
-     * false.
-     *
-     * @param value true to enable, false to disable.
-     */
-    public void setEditable(boolean value) {
-        getEditor().setEditable(value);
-    }
-
-    /**
-     * Gets the truth value of whether the editor can be typed in.
-     *
-     * @return true if the editor can be typed in currently, false otherwise.
-     */
-    public boolean getEditable() {
-        return getEditor().getEditable();
-    }
-
-    /**
      * Handles the parse exception by printing the message to the terminal.
      *
      * @param e the exception to handle.
      */
     public void handleParseException(Exception e) {
         SystemStreams.printlnCurrentErr(e.getMessage());
-    }
-
-    public int getEditorIndexOfOpenPath(String path) {
-        ArrayList<EzEditorPane> panes = instance.getEditors();
-        for (int i = 0; i < panes.size(); i++) {
-            if (panes.get(i).getOpenFilePath().equals(path)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
 }

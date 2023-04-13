@@ -291,10 +291,9 @@ public class EzEditorPane extends ClosableJComponent implements IThemeable {
         }
         int resp = promptYesNoCancelDialog("Closing File",
                 "You have unsaved changes in your file, would you like to save them?");
-        if (resp == 0) {
+        if (resp == JOptionPane.YES_OPTION) {
             MenuActions.save();
-        }
-        if (resp != 2) {
+        } else if (resp != JOptionPane.CANCEL_OPTION) {
             return true;
         }
         return false;
