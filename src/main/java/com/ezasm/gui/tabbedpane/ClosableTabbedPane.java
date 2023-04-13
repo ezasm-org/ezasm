@@ -4,6 +4,8 @@ import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 
 /**
@@ -54,5 +56,9 @@ public class ClosableTabbedPane extends FixedTabbedPane {
         super.addTab(component, icon, title, tip);
         closeableTabBuilder.setParent(tabbedPane).setTabName(title);
         tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, closeableTabBuilder.build());
+    }
+
+    public void addChangeListener(ChangeListener l) {
+        tabbedPane.addChangeListener(l);
     }
 }

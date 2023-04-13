@@ -20,6 +20,8 @@ import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import java.awt.*;
@@ -207,6 +209,15 @@ public class Window {
 
         menubar = MenubarFactory.makeMenuBar();
         editors = new ClosableTabbedPane();
+        editors.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (editors.getTabCount() == 0) {
+                    EzEditorPane newEditor = new EzEditorPane();
+                    editors.addTab(newEditor, null, "New Document.ez", "");
+                    applyConfiguration(config);
+                }
+            }
+        });
         EzEditorPane newEditor = new EzEditorPane();
         editors.addTab(newEditor, null, "New Document.ez", "");
         toolbar = ToolbarFactory.makeToolbar();
