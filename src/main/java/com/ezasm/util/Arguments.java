@@ -4,7 +4,6 @@ import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.Window;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Memory;
-import com.ezasm.simulation.Simulator;
 import org.apache.commons.cli.*;
 
 /**
@@ -21,24 +20,22 @@ public class Arguments {
         Config config = new Config();
         Options options = new Options();
 
-        Option verionOption = new Option("v", "version", false, "States the program version and then exits");
+        Option helpOption = new Option("h", "help", false, "Display this information");
+        options.addOption(helpOption);
+
+        Option verionOption = new Option("v", "version", false, "Display the program version");
         options.addOption(verionOption);
 
         Option windowlessOption = new Option("w", "windowless", false,
-                "Starts the program in windowless mode \n(default: disabled)");
+                "Starts the program in windowless mode\n(default: disabled)");
         options.addOption(windowlessOption);
 
-        Option fileOption = new Option("f", "file", true, "EzASM code file path to open");
-        fileOption.setArgName("path");
-        options.addOption(fileOption);
-
         Option memoryOption = new Option("m", "memory", true,
-                "The number of words to allocate space for on the stack and heap each, "
-                        + "must be larger than 0 (default 65536)");
+                "The number of words to allocate space for on the stack and heap each; must be larger than 0\n(default: 0x20_0000)");
         options.addOption(memoryOption);
-        memoryOption.setArgName("words");
+        memoryOption.setArgName("memory size");
 
-        Option wordSizeOption = new Option("s", "word-size", true, "The size in bytes of a word (default: 8)");
+        Option wordSizeOption = new Option("s", "word-size", true, "The size in bytes of a word\n(4 or 8, default: 4)");
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 
@@ -46,13 +43,13 @@ public class Arguments {
         options.addOption(debugOption);
         debugOption.setArgName("debug mode");
 
-        Option inputOption = new Option("i", "input", true, "A file name to get standard input from.");
+        Option inputOption = new Option("i", "input", true, "A file to receive standard input from (default: none)");
         options.addOption(inputOption);
-        inputOption.setArgName("input replacement file path");
+        inputOption.setArgName("input file path");
 
-        Option outputOption = new Option("o", "output", true, "A file name to send standard output to.");
+        Option outputOption = new Option("o", "output", true, "A file to send standard output to (default: none)");
         options.addOption(outputOption);
-        outputOption.setArgName("output replacement file path");
+        outputOption.setArgName("output file path");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = null;
@@ -60,42 +57,60 @@ public class Arguments {
         try {
             commandLine = parser.parse(options, args);
         } catch (org.apache.commons.cli.ParseException e) {
-            errorArgs(e.getMessage());
+            errorArgs(options, e.getMessage());
+        }
+
+        if (commandLine.hasOption(helpOption)) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("EzASM [options] [code file]", options);
+            System.exit(0);
         }
 
         if (commandLine.hasOption(verionOption)) {
-            System.out.printf("%s %s\n", Properties.NAME, Properties.VERSION);
+            SystemStreams.out.printf(String.format("%s %s\n", MavenProperties.NAME, MavenProperties.VERSION));
             System.exit(0);
         }
 
         int memorySize = 0;
         int wordSize = 0;
 
-        if (commandLine.hasOption(memoryOption)) {
-            String memoryString = commandLine.getOptionValue(memoryOption);
-            try {
-                memorySize = Integer.parseInt(memoryString);
-            } catch (Exception e) {
-                errorArgs("Unable to parse given word size");
-            }
-        } else {
-            memorySize = Memory.DEFAULT_MEMORY_WORDS;
-        }
         if (commandLine.hasOption(wordSizeOption)) {
             String wordSizeString = commandLine.getOptionValue(wordSizeOption);
             try {
                 wordSize = Integer.parseInt(wordSizeString);
+                if (wordSize != 4 && wordSize != 8) {
+                    errorArgs(options, "Word size must be 4 or 8");
+                }
             } catch (Exception e) {
-                errorArgs("Unable to parse given word size");
+                errorArgs(options, "Unable to parse given word size");
             }
         } else {
             wordSize = Memory.DEFAULT_WORD_SIZE;
         }
 
+        if (commandLine.hasOption(memoryOption)) {
+            String memoryString = commandLine.getOptionValue(memoryOption);
+            try {
+                memorySize = Integer.parseInt(memoryString);
+                if (memorySize < 0) {
+                    errorArgs(options, "Memory size must be positive");
+                } else if (memorySize < wordSize) {
+                    errorArgs(options, "Memory must be at least 1 word");
+                }
+            } catch (Exception e) {
+                errorArgs(options, "Unable to parse given memory size");
+            }
+        } else {
+            memorySize = Memory.DEFAULT_MEMORY_WORDS;
+        }
+
         Simulator sim = new Simulator(wordSize, memorySize);
         String filepath = "";
-        if (commandLine.hasOption(fileOption)) {
-            filepath = commandLine.getOptionValue(fileOption);
+
+        if (commandLine.getArgs().length > 1) {
+            errorArgs(options, "Program can only accept one code file");
+        } else if (commandLine.getArgs().length > 0) {
+            filepath = commandLine.getArgs()[0];
         }
 
         String inputpath = "";
@@ -137,8 +152,10 @@ public class Arguments {
      *
      * @param message the message to print before exiting.
      */
-    private static void errorArgs(String message) {
-        System.err.println(message);
+    private static void errorArgs(Options options, String message) {
+        SystemStreams.err.println(message);
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("EzASM [options] [code file]", options);
         System.exit(1);
     }
 

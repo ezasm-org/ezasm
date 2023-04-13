@@ -2,10 +2,6 @@ package com.ezasm.gui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Scanner;
 
 import static com.ezasm.gui.menubar.MenuActions.*;
 import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
@@ -40,6 +36,24 @@ public class WindowCloseListener extends WindowAdapter {
             }
         } else {
             System.exit(0);
+        }
+
+        int resp = promptYesNoCancelDialog("Exiting...",
+                "Your changes have not been saved.\nWould you like to save them?");
+
+        if (resp == 0) {
+            // Chose Yes
+            if (Window.getInstance().getEditor().getOpenFilePath().equals("")) { // Anonymous file
+                saveAs();
+            } else { // Known file
+                save();
+            }
+            System.exit(0);
+        } else if (resp == 1) {
+            // Chose No
+            System.exit(0);
+        } else {
+            // Chose to Cancel the closing operation
         }
     }
 }

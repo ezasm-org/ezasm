@@ -2,7 +2,7 @@ package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.util.EditorTheme;
-import com.ezasm.util.Properties;
+import com.ezasm.util.MavenProperties;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -31,7 +31,7 @@ public class AboutPopup {
     }
 
     /**
-     * Sets up the content of the popup
+     * Sets up the content of the popup.
      */
     private static void initialize() {
         BorderLayout layout = new BorderLayout();
@@ -68,7 +68,7 @@ public class AboutPopup {
                     </p>
                     <p>Copyright (c) 2022-%s Trevor Brunette</p>
                 </html>
-                """, Properties.NAME, Properties.DESCRIPTION, Properties.VERSION, Year.now().getValue());
+                """, MavenProperties.NAME, MavenProperties.DESCRIPTION, MavenProperties.VERSION, Year.now().getValue());
 
         Config config = Window.getInstance().getConfig();
         JEditorPane textPane = new JEditorPane();

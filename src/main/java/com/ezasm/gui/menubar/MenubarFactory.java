@@ -3,6 +3,7 @@ package com.ezasm.gui.menubar;
 import com.ezasm.gui.settings.AboutPopup;
 import com.ezasm.gui.settings.SettingsPopup;
 import com.ezasm.instructions.implementation.TerminalInstructions;
+import com.ezasm.util.SystemStreams;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -120,7 +121,7 @@ public class MenubarFactory {
             }
 
             // Unimplemented
-            default -> System.err.printf("'%s' action is not yet defined\n", e.getActionCommand());
+            default -> SystemStreams.err.printf("'%s' action is not yet defined\n", e.getActionCommand());
             }
         }
     }

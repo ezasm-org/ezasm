@@ -3,7 +3,6 @@ package com.ezasm.gui.menubar;
 import com.ezasm.gui.Window;
 import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.util.FileIO;
-
 import javax.swing.*;
 
 import java.io.File;

@@ -4,6 +4,8 @@ import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.table.MemoryViewerPanel;
+import com.ezasm.gui.table.RegisterTable;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
 import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.tabbedpane.ClosableTabPanel;
@@ -18,6 +20,8 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Registers;
 import com.ezasm.util.FileIO;
 import com.ezasm.util.RandomAccessFileStream;
+import com.ezasm.util.SystemStreams;
+import com.ezasm.gui.settings.AutoSave;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -56,7 +60,9 @@ public class Window {
     private ClosableTabbedPane editors;
     private RegisterTable registerTable;
     private FixedTabbedPane tools;
+
     private Console console;
+    private MemoryViewerPanel memoryViewerPanel;
 
     private static boolean debugMode;
 
@@ -78,11 +84,14 @@ public class Window {
     private final KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 
+    private final AutoSave autoSave = new AutoSave();
+
     protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
         this.config = config;
         initialize();
+
     }
 
     /**
@@ -193,7 +202,7 @@ public class Window {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            System.err.println("Unable to set look and feel");
+            SystemStreams.err.println("Unable to set look and feel");
         }
 
         app = new JFrame("EzASM Simulator");
@@ -203,7 +212,7 @@ public class Window {
         try {
             app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
         } catch (IOException e) {
-            System.err.println("Could not load icon");
+            SystemStreams.err.println("Could not load icon");
         }
         panel = new JPanel();
 
@@ -234,8 +243,11 @@ public class Window {
             System.setErr(new PrintStream(console.getErrorStream()));
         }
 
+        memoryViewerPanel = new MemoryViewerPanel(simulator.getMemory());
+
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
+        tools.addTab(memoryViewerPanel, null, "Memory", "Simulator Memory");
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editors, registerTable);
         mainSplit.setResizeWeight(0.8);
@@ -326,6 +338,8 @@ public class Window {
             }
         }
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
+
+        autoSave.toggleRunning(config.getAutoSaveSelected(), config.getAutoSaveInterval());
     }
 
     /**
@@ -352,7 +366,21 @@ public class Window {
      * @return the instance's console object.
      */
     public Console getConsole() {
-        return this.console;
+        return console;
+    }
+
+    /**
+     * Gets the instance's memory view panel object.
+     *
+     * @return the instance's memory view panel object.
+     */
+    public MemoryViewerPanel getMemoryControlPanel() {
+        return memoryViewerPanel;
+    }
+
+    public void updateGraphicInformation() {
+        registerTable.update();
+        memoryViewerPanel.update();
     }
 
     /**
@@ -421,12 +449,12 @@ public class Window {
      */
     public void handleProgramCompletion() {
         if (simulator.isError()) {
-            System.out.println("** Program terminated due to an error **");
+            SystemStreams.printlnCurrentOut("** Program terminated due to an error **");
         } else if (simulator.isDone()) {
-            System.out.printf("** Program terminated with exit code %d **\n",
-                    simulator.getRegisters().getRegister(Registers.R0).getLong());
+            SystemStreams.printlnCurrentOut(String.format("** Program terminated with exit code %d **",
+                    simulator.getRegisters().getRegister(Registers.R0).getLong()));
         } else {
-            System.out.println("** Program terminated forcefully **");
+            SystemStreams.printlnCurrentOut("** Program terminated forcefully **");
         }
         getEditor().resetHighlighter();
     }
@@ -474,7 +502,7 @@ public class Window {
      * @param e the exception to handle.
      */
     public void handleParseException(Exception e) {
-        System.err.println(e.getMessage());
+        SystemStreams.printlnCurrentErr(e.getMessage());
     }
 
     public int getEditorIndexOfOpenPath(String path) {

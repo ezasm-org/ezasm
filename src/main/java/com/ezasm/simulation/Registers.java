@@ -182,7 +182,6 @@ public class Registers {
      */
     public static String getRegisterName(int register) {
         if (!isRegister(register)) {
-            System.out.println(register);
             // TODO add appropriate exception
             throw new RuntimeException();
         }

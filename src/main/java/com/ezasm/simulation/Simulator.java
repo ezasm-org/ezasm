@@ -6,6 +6,7 @@ import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
 import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.exception.InvalidFileIdentifierException;
 import com.ezasm.simulation.exception.InvalidProgramCounterException;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.simulation.transform.Transformation;
@@ -93,7 +94,7 @@ public class Simulator {
     }
 
     private List<Line> currentFileLines() {
-        return fileIdToLineArray.get((int) fi.getLong());
+        return Objects.requireNonNullElse(fileIdToLineArray.get((int) fi.getLong()), new ArrayList<>());
     }
 
     /**
@@ -194,12 +195,10 @@ public class Simulator {
      * @throws InstructionDispatchException if there is an error executing the line.
      */
     public void runLine(Line line) throws SimulationException {
-        if (line != null) {
-            if (line.isLabel()) {
-                applyTransformations(new TransformationSequence());
-            } else {
-                instructionDispatcher.execute(line);
-            }
+        if (line.isLabel()) {
+            applyTransformations(new TransformationSequence());
+        } else {
+            instructionDispatcher.execute(line);
         }
     }
 
@@ -217,12 +216,14 @@ public class Simulator {
     /**
      * Runs a single line of code from the current PC.
      *
-     * @throws InstructionDispatchException if there is an error executing the line.
+     * @throws SimulationException if there is an error executing the line.
      */
     public void executeLineFromPC() throws SimulationException {
+        // Ensure a valid file identifier and program counter within that file
+        validateFID();
         int lineNumber = validatePC();
+
         runLine(currentFileLines().get(lineNumber));
-        validatePC();
     }
 
     /**
@@ -273,6 +274,19 @@ public class Simulator {
             throw new InvalidProgramCounterException(pc.getLong());
         }
         return (int) pc.getLong();
+    }
+
+    /**
+     * A helper function to validate the state of the FID register.
+     *
+     * @return the validated FID.
+     */
+    private int validateFID() throws InvalidFileIdentifierException {
+        int fid = (int) registers.getRegister(Registers.FID).getLong();
+        if (!fileIdToLineArray.containsKey(fid)) {
+            throw new InvalidFileIdentifierException(fid);
+        }
+        return fid;
     }
 
     /**

@@ -1,8 +1,6 @@
 package com.ezasm.gui.editor;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
@@ -11,15 +9,15 @@ import com.ezasm.gui.tabbedpane.ClosableJComponent;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.PatchedRSyntaxTextArea;
-import com.ezasm.simulation.Registers;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
-import static com.ezasm.gui.util.EditorTheme.applyFontAndTheme;
+import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
 import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
@@ -30,6 +28,7 @@ import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 public class EzEditorPane extends ClosableJComponent implements IThemeable {
 
     private final PatchedRSyntaxTextArea textArea;
+
     private final RTextScrollPane scrollPane;
     private LineHighlighter highlighter;
     private String openFilePath;
@@ -37,8 +36,9 @@ public class EzEditorPane extends ClosableJComponent implements IThemeable {
 
     private static final String EZASM_TOKEN_MAKER_NAME = "text/ezasm";
 
-    private static final Dimension MIN_SIZE = new Dimension(600, 400);
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
+    Autocomplete autoComplete;
+    private static final String COMMIT_ACTION = "commit";
 
     /**
      * Creates a text edit field using RSyntaxTextArea features.
@@ -66,6 +66,16 @@ public class EzEditorPane extends ClosableJComponent implements IThemeable {
         add(scrollPane);
 
         highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
+
+        textArea.setFocusTraversalKeysEnabled(false);
+
+        ArrayList<String> keywords = new ArrayList<String>();
+        autoComplete = new Autocomplete(textArea, keywords);
+        textArea.getDocument().addDocumentListener(autoComplete);
+
+        textArea.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
+        textArea.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
+
     }
 
     /**
@@ -115,8 +125,7 @@ public class EzEditorPane extends ClosableJComponent implements IThemeable {
             theme.apply(textArea);
             setFont(textArea, font);
             textArea.revalidate();
-        } catch (IOException e) { // Never happens
-            e.printStackTrace();
+        } catch (IOException ignored) { // Never happens
         }
     }
 
@@ -146,7 +155,7 @@ public class EzEditorPane extends ClosableJComponent implements IThemeable {
     public void applyTheme(Font font, EditorTheme editorTheme) {
         themeSyntaxTextArea(font, editorTheme);
         setFont(textArea, font);
-        applyFontAndTheme(scrollPane, font, editorTheme);
+        applyFontThemeBorderless(scrollPane, font, editorTheme);
         editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         recolorHighlights(editorTheme);

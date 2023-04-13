@@ -56,8 +56,7 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
      */
     @Override
     public void applyTheme(Font font, EditorTheme editorTheme) {
-        setForeground(editorTheme.foreground());
-        setBackground(editorTheme.background());
+        editorTheme.applyTheme(this);
         setSelectionColor(editorTheme.selection());
         setSelectedTextColor(editorTheme.foreground());
         setCaretColor(editorTheme.foreground());
@@ -104,12 +103,14 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
      * @param color   the color of the text.
      */
     public void writeTextWithColor(String newText, Color color) {
-        try {
-            getDocument().insertString(fixedTextEnd, newText, getColoredAttributeSet(color));
-            fixedTextEnd += newText.length();
-            setCaretPosition(getText().length());
-        } catch (BadLocationException ignored) {
-        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                getDocument().insertString(fixedTextEnd, newText, getColoredAttributeSet(color));
+                fixedTextEnd += newText.length();
+                setCaretPosition(getText().length());
+            } catch (BadLocationException | IllegalArgumentException ignored) {
+            }
+        });
     }
 
     /**
