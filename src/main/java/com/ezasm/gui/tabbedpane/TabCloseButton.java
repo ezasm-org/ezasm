@@ -70,6 +70,11 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
     public void actionPerformed(ActionEvent e) {
         int i = parent.indexOfTab(name);
         if (i != -1) {
+            if ((parent.getComponentAt(i) instanceof ClosableJComponent)) {
+                if (!((ClosableJComponent) parent.getComponentAt(i)).close()) {
+                    return;
+                }
+            }
             parent.remove(i);
         }
     }

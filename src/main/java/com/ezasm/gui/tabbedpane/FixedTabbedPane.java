@@ -115,6 +115,14 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
         return tabbedPane.indexOfTab(title);
     }
 
+    public Component[] getTabs() {
+        Component[] res = new Component[tabbedPane.getTabCount()];
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            res[i] = tabbedPane.getComponentAt(i);
+        }
+        return res;
+    }
+
     public int indexOfComponent(Component c) {
         return tabbedPane.indexOfComponent(c);
     }
@@ -135,7 +143,7 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
      * @return the component at the given index.
      */
     public JComponent getComponentAt(int index) {
-        return (JComponent) tabbedPane.getTabComponentAt(index);
+        return (JComponent) tabbedPane.getComponentAt(index);
     }
 
     /**

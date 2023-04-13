@@ -6,6 +6,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.menubar.MenuActions;
+import com.ezasm.gui.tabbedpane.ClosableJComponent;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.PatchedRSyntaxTextArea;
@@ -20,11 +22,12 @@ import java.util.Objects;
 import static com.ezasm.gui.util.EditorTheme.applyFontAndTheme;
 
 import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
+import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
-public class EzEditorPane extends JPanel implements IThemeable {
+public class EzEditorPane extends ClosableJComponent implements IThemeable {
 
     private final PatchedRSyntaxTextArea textArea;
     private final RTextScrollPane scrollPane;
@@ -267,5 +270,24 @@ public class EzEditorPane extends JPanel implements IThemeable {
      */
     public void resizeTabSize(int size) {
         textArea.setTabSize(size);
+    }
+
+    public boolean close() {
+        if (getFileSaved()) {
+            return true;
+        }
+        if (Window.getInstance().getEditor().getText().equals("")
+                && Window.getInstance().getEditor().getOpenFilePath().equals("")) {
+            return true;
+        }
+        int resp = promptYesNoCancelDialog("Closing File",
+                "You have unsaved changes in your file, would you like to save them?");
+        if (resp == 0) {
+            MenuActions.save();
+        }
+        if (resp != 2) {
+            return true;
+        }
+        return false;
     }
 }

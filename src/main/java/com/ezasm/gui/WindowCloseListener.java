@@ -9,7 +9,6 @@ import java.util.Scanner;
 
 import static com.ezasm.gui.menubar.MenuActions.*;
 import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
-import static com.ezasm.gui.util.DialogFactory.promptYesNoDialog;
 
 public class WindowCloseListener extends WindowAdapter {
 
@@ -31,23 +30,7 @@ public class WindowCloseListener extends WindowAdapter {
                 if (!Window.getInstance().getEditor().getOpenFilePath().equals("")) {
                     save();
                 } else {
-                    String pastText = "";
-                    File file = new File(Window.getInstance().getEditor().getOpenFilePath());
-                    try {
-                        Scanner in = new Scanner(new FileReader(file));
-                        StringBuilder sb = new StringBuilder();
-                        while (in.hasNext()) {
-                            sb.append(in.next());
-                        }
-                        in.close();
-                        pastText = sb.toString();
-                    } catch (FileNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
-
-                    System.out.println(pastText);
-
-                    // saveAs();
+                    saveAs();
                 }
                 System.exit(0);
             } else if (resp == 1) {

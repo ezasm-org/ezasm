@@ -57,7 +57,6 @@ public class Window {
     private Console console;
 
     private static boolean debugMode;
-    private ArrayList<EzEditorPane> editorPanes;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -195,8 +194,6 @@ public class Window {
             System.err.println("Unable to set look and feel");
         }
 
-        editorPanes = new ArrayList<>();
-
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         app.addWindowListener(new WindowCloseListener());
@@ -212,7 +209,6 @@ public class Window {
         editors = new ClosableTabbedPane();
         EzEditorPane newEditor = new EzEditorPane();
         editors.addTab(newEditor, null, "New Document.ez", "");
-        editorPanes.add(newEditor);
         toolbar = ToolbarFactory.makeToolbar();
         registerTable = new RegisterTable(simulator.getRegisters());
 
@@ -285,7 +281,6 @@ public class Window {
         int k = getEditorIndexOfOpenPath(fileIn.getPath());
         if (k == -1) {
             newEditor = new EzEditorPane();
-            editorPanes.add(newEditor);
             editors.addTab(newEditor, null, fileIn.getName(), "");
             applyConfiguration(config);
         } else {
@@ -368,7 +363,16 @@ public class Window {
      * @return the instance's editor panes.
      */
     public ArrayList<EzEditorPane> getEditors() {
-        return editorPanes;
+        Component[] cs = editors.getTabs();
+        ArrayList<EzEditorPane> res = new ArrayList<>();
+        for (Component c : cs) {
+            if (c instanceof EzEditorPane) {
+                res.add((EzEditorPane) c);
+            } else {
+                System.out.println(c.getClass());
+            }
+        }
+        return res;
     }
 
     /**
