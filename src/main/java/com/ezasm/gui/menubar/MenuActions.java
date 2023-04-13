@@ -80,12 +80,14 @@ public class MenuActions {
             if (file != null && file.exists() && file.canRead()) {
                 try {
                     boolean notOpen = Window.getInstance().getEditorPanes().indexOfFile(file.getAbsolutePath()) == -1;
-
                     EzEditorPane newEditor = Window.getInstance().getEditorPanes().openFile(file);
-                    String content = FileIO.readFile(file);
-                    newEditor.setText(content);
-                    newEditor.setOpenFilePath(file.getPath());
-                    newEditor.setFileSaved(true);
+
+                    if (notOpen) {
+                        String content = FileIO.readFile(file);
+                        newEditor.setText(content);
+                        newEditor.setOpenFilePath(file.getPath());
+                        newEditor.setFileSaved(true);
+                    }
                     return true;
                 } catch (IOException ex) {
                     promptWarningDialog("Error Loading File",

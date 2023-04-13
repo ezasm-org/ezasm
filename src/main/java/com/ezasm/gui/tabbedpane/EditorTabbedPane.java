@@ -46,8 +46,8 @@ public class EditorTabbedPane extends ClosableTabbedPane {
         EzEditorPane newEditor;
         int index = indexOfFile(fileIn.getPath());
         if (index == -1) {
-            newEditor = new EzEditorPane();
-            addTab(getNewThemedEditor(), null, fileIn.getName(), "");
+            newEditor = getNewThemedEditor();
+            addTab(newEditor, null, fileIn.getName(), "");
         } else {
             newEditor = getComponentAt(index);
         }
