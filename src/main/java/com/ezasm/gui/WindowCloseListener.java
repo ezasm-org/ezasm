@@ -37,23 +37,5 @@ public class WindowCloseListener extends WindowAdapter {
         } else {
             System.exit(0);
         }
-
-        int resp = promptYesNoCancelDialog("Exiting...",
-                "Your changes have not been saved.\nWould you like to save them?");
-
-        if (resp == 0) {
-            // Chose Yes
-            if (Window.getInstance().getEditor().getOpenFilePath().equals("")) { // Anonymous file
-                saveAs();
-            } else { // Known file
-                save();
-            }
-            System.exit(0);
-        } else if (resp == 1) {
-            // Chose No
-            System.exit(0);
-        } else {
-            // Chose to Cancel the closing operation
-        }
     }
 }
