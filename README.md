@@ -2,7 +2,22 @@
 
 ### An assembly-like programming language for use in education
 
-Releases can be found at the [EzASM releases repository](https://github.com/ezasm-org/EzASM-releases). 
+## Installation
+
+The latest release can be found at the [EzASM releases repository](https://github.com/ezasm-org/EzASM-releases/releases/latest). You will have to install it manually.
+
+EzASM can also be downloaded via [homebrew](https://brew.sh/) the [EzASM tap](https://github.com/ezasm-org/homebrew-ezasm):
+
+```
+$ brew tap ezasm-org/ezasm
+$ brew install ezasm
+```
+
+or from the [AUR](https://aur.archlinux.org/packages/ezasm) for example using an AUR manager:
+
+```
+$ paru -S ezasm
+```
 
 ## Introduction
 
@@ -15,7 +30,7 @@ The user is able to either run a file containing instructions (a program) or ent
 
 [Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) is required to build EzASM.
 
-Clone this repository, either download the source from GitHub or run `git clone https://github.com/ezasm-org/EzASM.git` from the command line.
+Clone this repository, either download the source from GitHub or run `$ git clone https://github.com/ezasm-org/EzASM.git` from the command line.
 
 ### Building from source through the command line:
 
@@ -27,8 +42,8 @@ Clone this repository, either download the source from GitHub or run `git clone 
 #### Instructions
 
 Navigate to the EzASM source directory \
-Run `mvn clean compile assembly:single` will build an executable .jar file in the `target` directory \
-Run that jar file with `java -jar target/*full.jar`
+Run `$ mvn clean compile assembly:single` will build an executable .jar file in the `target` directory \
+Run that jar file with `$ java -jar target/*full.jar`
 
 ### Building using an IDE (IntelliJ IDEA):
 
@@ -50,7 +65,7 @@ Run that file with either play button that appears in the line number gutter
 
 **You will need to have built from the command line or IntelliJ to complete this** \
 Navigate to the EzASM source directory \
-Run `mvn clean test`
+Run `$ mvn clean test`
 
 ### Building packaged executables:
 
@@ -68,7 +83,7 @@ Run `mvn clean test`
 #### Instructions
 
 Navigate to the EzASM source directory \
-Run `mvn clean package` will build a variety of native executables in the `target` directory \
+Run `$ mvn clean package` will build a variety of native executables in the `target` directory \
 Options marked with an asterisk `*` will only be generated if you fulfill the requirements to install:
 being on the required operating system and having the necessary optional dependencies.
 - `EzASM-VERSION-full.jar` the distributable jar file
