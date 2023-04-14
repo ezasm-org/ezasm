@@ -14,7 +14,10 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      */
     public final ArrayList<Integer> startLineNums = new ArrayList<Integer>();
     public final ArrayList<Integer> endLineNums = new ArrayList<Integer>();
-
+    /**
+     * option to highlight the line-just-executed or the line-to-execute
+     */
+    public String LinehighlightOption = "";
     /**
      * Constructor
      *
@@ -45,7 +48,6 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -56,6 +58,10 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      */
     public void highlight(JTextComponent textComp, Simulator simulator) {
         int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
+        //Hightlight next line
+        if (LinehighlightOption.equals("Next")){
+            lineNumber+=1;
+        }
         if (simulator.getRegisters().getRegister(Registers.FID).getLong() == Simulator.MAIN_FILE_IDENTIFIER) {
             try {
                 textComp.getHighlighter().addHighlight(startLineNums.get(lineNumber), endLineNums.get(lineNumber),
@@ -84,5 +90,13 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
             }
         }
         textComp.repaint();
+    }
+
+    /**
+     * Update the option of line highlighter
+     * @param option Option of "off", "next line", "Current" for linehighter
+     */
+    public void LinehightlightSwitch(String option){
+        LinehighlightOption = option;
     }
 }
