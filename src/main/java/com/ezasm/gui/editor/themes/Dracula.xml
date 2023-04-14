@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme>
+    <name></name>
+    <background>0x282a36</background>
+    <foreground>0xf8f8f2</foreground>
+    <comment>0x6272a4</comment>
+    <selection>0x44475a</selection>
+    <cyan>0x8be9fd</cyan>
+    <green>0x50fa7b</green>
+    <orange>0xffb86c</orange>
+    <pink>0xff79c6</pink>
+    <purple>0xbd93f9</purple>
+    <red>0xff5555</red>
+    <yellow>0xf1fa8c</yellow>
+    <light>false</light>
+    <accent>
+        <background-dark></background-dark>
+        <background-darker></background-darker>
+        <background-light></background-light>
+        <background-lighter></background-lighter>
+        <foreground-dark></foreground-dark>
+        <foreground-darker></foreground-darker>
+        <foreground-light></foreground-light>
+        <foreground-lighter></foreground-lighter>
+    </accent>
+</theme>
