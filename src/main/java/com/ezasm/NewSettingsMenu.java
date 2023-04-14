@@ -1,12 +1,10 @@
 package com.ezasm;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -15,36 +13,18 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
-import com.ezasm.ConvenienceClasses.RightFlowPanel;
-import com.ezasm.ConvenienceClasses.VBoxPanel;
-
-// https://www.youtube.com/watch?v=g2vDARb7gx8
-final class NewSettingsMenu {
-	
-	static final JLabel themeLabel = new JLabel("Theme");
-	static final JComboBox<String> themeDropdown = new JComboBox<>(new String[] { "theme 1", "theme 2" });
-
-	static final JLabel fontSizeLabel = new JLabel("Font Size");
-	static final JTextField fontSizeTextField = new JTextField("fontsize");
-
-	static final JLabel speedLabel = new JLabel("Instruction Delay");
-	static final JSlider speedSlider = new JSlider(1, 100, 69);
+final class NewSettingsMenu extends JFrame {
+	private static final Insets INSETS = new Insets(5, 5, 5, 5);
+	private static final Border BORDER = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 
 	static final JButton saveButton = new JButton("Save Changes");
 	static final JButton resetToDefaultsButton = new JButton("Reset to Defaults");
 
-	static final JPanel generalTab = new JPanel();
-	static final JPanel appearanceTab = new JPanel();
-	static final JPanel executionTab = new JPanel();
-
-	static final JTabbedPane tp = new JTabbedPane(JTabbedPane.LEFT);
-
-	static final JFrame window = new JFrame("Preferences");
-
-	static GridBagConstraints constraints(int gridx, int gridy) {
+	private static GridBagConstraints quickConstraints(int gridx, int gridy) {
 		final var c = new GridBagConstraints();
-		c.insets = new Insets(5, 5, 5, 5);
+		c.insets = INSETS;
 		c.gridx = gridx;
 		c.gridy = gridy;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -52,63 +32,74 @@ final class NewSettingsMenu {
 		return c;
 	}
 
-	static void setupAppearanceTab() {
-		appearanceTab.setLayout(new GridBagLayout());
-
-		appearanceTab.add(fontSizeLabel, constraints(0, 0));
-		appearanceTab.add(fontSizeTextField, constraints(1, 0));
-		appearanceTab.add(themeLabel, constraints(0, 1));
-		appearanceTab.add(themeDropdown, constraints(1, 1));
+	private static void fillEmptyVerticalSpace(JPanel panel) {
+		final var c = new GridBagConstraints();
+		c.gridy = panel.getComponentCount();
+		c.gridwidth = 2;
+		c.weighty = 1;
+		c.fill = GridBagConstraints.BOTH;
+		panel.add(new JPanel(), c);
 	}
 
-	static void setupExecutionTab() {
-		executionTab.setLayout(new GridBagLayout());
+	private static JPanel createAppearanceTab() {
+		final var fontSizeLabel = new JLabel("Font Size");
+		final var fontSizeTextField = new JTextField("fontsize");
+		final var themeLabel = new JLabel("Theme");
+		final var themeDropdown = new JComboBox<>(new String[] { "theme 1", "theme 2" });
 
-		executionTab.add(speedLabel, constraints(0, 0));
-		executionTab.add(speedSlider, constraints(1, 0));
+		final var appearanceTab = new JPanel(new GridBagLayout());
+		appearanceTab.setBorder(BORDER);
+
+		appearanceTab.add(fontSizeLabel, quickConstraints(0, 0));
+		appearanceTab.add(fontSizeTextField, quickConstraints(1, 0));
+		appearanceTab.add(themeLabel, quickConstraints(0, 1));
+		appearanceTab.add(themeDropdown, quickConstraints(1, 1));
+
+		fillEmptyVerticalSpace(appearanceTab);
+
+		return appearanceTab;
 	}
 
-	static {
-		window.setPreferredSize(new Dimension(500, 500));
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	static JPanel createExecutionTab() {
+		final var speedLabel = new JLabel("Instruction Delay");
+		final var speedSlider = new JSlider(1, 100, 69);
+		
+		final var executionTab = new JPanel(new GridBagLayout());
+		executionTab.setBorder(BORDER);
 
-		setupAppearanceTab();
-		setupExecutionTab();
+		executionTab.add(speedLabel, quickConstraints(0, 0));
+		executionTab.add(speedSlider, quickConstraints(1, 0));
 
-		tp.add("General", generalTab);
-		tp.add("Appearance", appearanceTab);
-		tp.add("Execution", executionTab);
-		tp.setBounds(0, 0, window.getWidth(), window.getHeight());
+		fillEmptyVerticalSpace(executionTab);
 
-		tp.addMouseListener(new MouseListener() {
+		return executionTab;
+	}
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				window.pack();
-			}
+	static JTabbedPane createdTabbedPane() {
+		final var tp = new JTabbedPane(JTabbedPane.LEFT);
+		tp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		//tp.add("General", generalTab);
+		tp.add("Appearance", createAppearanceTab());
+		tp.add("Execution", createExecutionTab());
+		return tp;
+	}
 
-			@Override
-			public void mousePressed(MouseEvent e) {}
+	static JPanel createMainPanel() {
+		final var mainPanel = new JPanel(new GridBagLayout());
 
-			@Override
-			public void mouseReleased(MouseEvent e) {}
+		var c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.fill = GridBagConstraints.VERTICAL;
+		c.weighty = 1;
+		mainPanel.add(createdTabbedPane(), c);
 
-			@Override
-			public void mouseEntered(MouseEvent e) {}
+		c = new GridBagConstraints();
+		c.gridy = 1;
+		c.anchor = GridBagConstraints.EAST;
+		mainPanel.add(buttonsRow(saveButton, resetToDefaultsButton), c);
 
-			@Override
-			public void mouseExited(MouseEvent e) {}
-			
-		});
-
-		final var windowLayout = new VBoxPanel();
-		windowLayout.add(tp);
-		windowLayout.add(buttonsRow(saveButton, resetToDefaultsButton));
-
-		window.add(windowLayout);
-		window.validate();
-		window.pack();
-		window.setVisible(true);
+		return mainPanel;
 	}
 
 	private static JPanel buttonsRow(JButton... buttons) {
@@ -118,6 +109,12 @@ final class NewSettingsMenu {
 		return row;
 	}
 
-	public static void main(String[] __) {}
-
+	NewSettingsMenu() {
+		super("EzASM Settings");
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		add(createMainPanel());
+		validate();
+		pack();
+	}
 }
