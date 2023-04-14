@@ -16,7 +16,6 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
@@ -295,6 +294,11 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         textArea.setTabSize(size);
     }
 
+    /**
+     * The closing action of an editor pane.
+     *
+     * @return whether to close the editor pane GUI element.
+     */
     @Override
     public boolean close() {
         if (getFileSaved()) {

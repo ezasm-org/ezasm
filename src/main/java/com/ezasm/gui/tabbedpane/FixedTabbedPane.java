@@ -109,6 +109,11 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
         return res;
     }
 
+    /**
+     * Gets the index of the given component object. Returns -1 if the component is not a member of the tabbed pane.
+     * @param c the component to find the index of.
+     * @return the index of the given component object, or -1 if the component is not a member of the tabbed pane.
+     */
     public int indexOf(Component c) {
         return tabbedPane.indexOfComponent(c);
     }
@@ -141,11 +146,21 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
         return (JComponent) tabbedPane.getSelectedComponent();
     }
 
-    public void setActiveTab(JComponent comp) {
-        tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(comp));
+    /**
+     * Sets the active tab to the tab containing the given component.
+     *
+     * @param comp the component tab to view
+     */
+    public void setActiveTab(JComponent component) {
+        tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(component));
     }
 
-    public void setActiveTab(int idx) {
-        tabbedPane.setSelectedIndex(idx);
+    /**
+     * Sets the active tab to the given index.
+     *
+     * @param index the tab index to view.
+     */
+    public void setActiveTab(int index) {
+        tabbedPane.setSelectedIndex(index);
     }
 }

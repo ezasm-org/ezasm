@@ -10,7 +10,7 @@ import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
 
 /**
- * Builder class for closable tabs in a <code>TabbedPane</code>
+ * Builder class for closable tabs in a <code>TabbedPane</code>.
  */
 public class ClosableTabBuilder {
 
@@ -19,10 +19,20 @@ public class ClosableTabBuilder {
     private String name = ""; // empty by default
     private ClosableTabbedPane parent;
 
+    /**
+     * Constructs a closable tab builder.
+     *
+     * @param parent the parent element.
+     */
     public ClosableTabBuilder(ClosableTabbedPane parent) {
         this.parent = parent;
     }
 
+    /**
+     * Builds a closable tab based on the current configuration.
+     *
+     * @return the generated closable tab.
+     */
     public ClosableTabPanel build() {
         JLabel label = new JLabel(name);
         label.setFont(font);

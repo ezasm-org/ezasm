@@ -57,6 +57,11 @@ public class ClosableTabbedPane extends FixedTabbedPane {
         tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, closeableTabBuilder.build());
     }
 
+    /**
+     * Removes the tab at the given index.
+     *
+     * @param index the index of the component to remove.
+     */
     @Override
     public void removeTab(int index) {
         if (index < 0 || index > tabbedPane.getComponents().length) {
