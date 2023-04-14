@@ -54,6 +54,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         textArea.setCodeFoldingEnabled(false);
         textArea.getDocument().addDocumentListener(new EditorDocumentListener());
 
+        openFilePath = EditorTabbedPane.NEW_FILE_PREFIX;
         fileSaved = true;
 
         scrollPane = new RTextScrollPane(textArea);
@@ -65,7 +66,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         setLayout(new BorderLayout());
         add(scrollPane);
 
-        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
+        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), this);
 
         textArea.setFocusTraversalKeysEnabled(false);
 
@@ -241,8 +242,8 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * Highlights a given line number and clears old highlight
      */
     public void updateHighlight() {
-        removeHighlights(textArea);
-        highlighter.highlight(textArea, Window.getInstance().getSimulator());
+        removeHighlights(this);
+        highlighter.highlight(this, Window.getInstance().getSimulator());
     }
 
     /**
@@ -250,8 +251,8 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * called each program start
      */
     public void resetHighlighter() {
-        removeHighlights(textArea);
-        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
+        removeHighlights(this);
+        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), this);
     }
 
     /**
@@ -265,11 +266,11 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         Highlighter.Highlight[] highlights = highlight.getHighlights();
 
         // clear old highlights
-        removeHighlights(textArea);
+        removeHighlights(this);
 
         // init new highlighter with new color
         if (highlights.length > 0) {
-            highlighter = new LineHighlighter(editorTheme.yellow(), textArea);
+            highlighter = new LineHighlighter(editorTheme.yellow(), this);
         }
 
         // add new highlights with the new color
@@ -292,6 +293,15 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      */
     public void resizeTabSize(int size) {
         textArea.setTabSize(size);
+    }
+
+    /**
+     * Gets the internal text area.
+     *
+     * @return the internal text area.
+     */
+    public PatchedRSyntaxTextArea getTextArea() {
+        return textArea;
     }
 
     /**

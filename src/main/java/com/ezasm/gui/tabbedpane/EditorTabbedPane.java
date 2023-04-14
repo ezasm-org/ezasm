@@ -123,7 +123,10 @@ public class EditorTabbedPane extends ClosableTabbedPane {
     }
 
     public void switchToFile(String path) {
-        tabbedPane.setSelectedIndex(indexOfFile(path));
+        int index  = indexOfFile(path);
+        if (index != -1) {
+            tabbedPane.setSelectedIndex(indexOfFile(path));
+        }
     }
 
     /**

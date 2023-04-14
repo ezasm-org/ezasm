@@ -318,8 +318,8 @@ public class Simulator {
         return memory;
     }
 
-    public String getFile(int FID) {
-        return fileToIdentifier.getKey(FID);
+    public String getFile(int fid) {
+        return fileToIdentifier.getKey(fid);
     }
 
 }
