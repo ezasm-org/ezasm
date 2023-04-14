@@ -17,6 +17,9 @@ import static com.ezasm.util.FileIO.*;
  */
 public class MenuActions {
 
+    /**
+     * Creates a new, empty file in the editor.
+     */
     public static void newFile() {
         Window.getInstance().getEditorPanes().newFile();
     }

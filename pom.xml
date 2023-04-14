@@ -253,7 +253,6 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.fifesoft/rsyntaxtextarea -->
         <dependency>
             <groupId>com.fifesoft</groupId>
