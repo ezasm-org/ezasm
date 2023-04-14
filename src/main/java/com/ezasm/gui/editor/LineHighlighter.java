@@ -58,6 +58,10 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      */
     public void highlight(JTextComponent textComp, Simulator simulator) {
         int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
+        //Hightlight next line
+        if (LinehighlightOption.equals("Next")){
+            lineNumber+=1;
+        }
         if (simulator.getRegisters().getRegister(Registers.FID).getLong() == Simulator.MAIN_FILE_IDENTIFIER) {
             try {
                 textComp.getHighlighter().addHighlight(startLineNums.get(lineNumber), endLineNums.get(lineNumber),
@@ -87,7 +91,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         }
         textComp.repaint();
     }
-    
+
     /**
      * Update the option of line highlighter
      * @param option Option of "off", "next line", "Current" for linehighter
