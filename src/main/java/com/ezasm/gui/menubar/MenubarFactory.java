@@ -1,6 +1,7 @@
 package com.ezasm.gui.menubar;
 
 import com.ezasm.gui.settings.AboutPopup;
+import com.ezasm.gui.settings.NewSettingsPopup;
 import com.ezasm.gui.settings.SettingsPopup;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.util.SystemStreams;
@@ -93,7 +94,7 @@ public class MenubarFactory {
         redirectionMenu.setEnabled(state);
     }
 
-    private static final SettingsPopup SETTINGS_POPUP = new SettingsPopup();
+    //private static final NewSettingsPopup SETTINGS_POPUP = new NewSettingsPopup();
 
     /**
      * Helper action listener class to handle options in the menu.
@@ -109,7 +110,7 @@ public class MenubarFactory {
             case EXIT -> System.exit(0);
 
             // Settings
-            case CONFIG -> SETTINGS_POPUP.setVisible(true);
+            case CONFIG -> SettingsPopup.instantiate();
             case ABOUT -> AboutPopup.openPopup();
 
             // IO Direction
