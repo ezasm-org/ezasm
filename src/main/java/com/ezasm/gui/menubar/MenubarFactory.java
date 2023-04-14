@@ -110,7 +110,7 @@ public class MenubarFactory {
             case EXIT -> System.exit(0);
 
             // Settings
-            case CONFIG -> SettingsPopup.instantiate();
+            case CONFIG -> SETTINGS_POPUP.setVisible(true);
             case ABOUT -> AboutPopup.openPopup();
 
             // IO Direction
