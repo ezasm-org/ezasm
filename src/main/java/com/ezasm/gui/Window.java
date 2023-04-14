@@ -34,9 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.ListIterator;
 
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 
@@ -80,6 +77,7 @@ public class Window {
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
     private final KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+    private final KeyStroke newFileKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK);
 
     private final AutoSave autoSave = new AutoSave();
 
@@ -265,6 +263,7 @@ public class Window {
         registerKeystroke("openAction", openKeyStroke, MenuActions::load);
         registerKeystroke("loadInputAction", loadInputKeyStroke, MenuActions::selectInputFile);
         registerKeystroke("loadOutputAction", loadOutputKeyStroke, MenuActions::selectOutputFile);
+        registerKeystroke("newFileAction", newFileKeyStroke, MenuActions::newFile);
     }
 
     /**

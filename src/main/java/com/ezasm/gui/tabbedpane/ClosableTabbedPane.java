@@ -59,7 +59,7 @@ public class ClosableTabbedPane extends FixedTabbedPane {
 
     @Override
     public void removeTab(int index) {
-        if (index < 0 || index > getComponents().length) {
+        if (index < 0 || index > tabbedPane.getComponents().length) {
             return;
         }
         boolean close = true;

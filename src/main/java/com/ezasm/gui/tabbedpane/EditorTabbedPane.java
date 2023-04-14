@@ -63,6 +63,7 @@ public class EditorTabbedPane extends ClosableTabbedPane {
 
     public EzEditorPane newFile() {
         EzEditorPane newEditor = getNewThemedEditor();
+        newFileNumber++;
         addTab(newEditor, null, newEditor.getOpenFilePath(), "");
         setActiveTab(newEditor);
         return newEditor;
@@ -86,7 +87,7 @@ public class EditorTabbedPane extends ClosableTabbedPane {
 
     private static EzEditorPane getNewThemedEditor() {
         EzEditorPane newEditor = new EzEditorPane();
-        newEditor.setOpenFilePath(NEW_FILE_PREFIX + NEW_FILE_NAME + newFileNumber++ + NEW_FILE_SUFFIX);
+        newEditor.setOpenFilePath(NEW_FILE_PREFIX + NEW_FILE_NAME + newFileNumber + NEW_FILE_SUFFIX);
         newEditor.applyTheme(Window.getInstance().getConfig().getFont(), Window.getInstance().getTheme());
         return newEditor;
     }
