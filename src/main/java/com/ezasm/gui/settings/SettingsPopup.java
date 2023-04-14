@@ -10,6 +10,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -27,6 +29,7 @@ public class SettingsPopup implements IThemeable {
     private static final String THEME = "Theme";
     private static final String TABSIZE = "Tab Size";
     private static final String AUTOSAVE = "Auto Save";
+    private static final String LINEHIGHLIGHT = "Line Highlight";
     public static final String SAVE = "Save Changes";
     public static final String RESET = "Reset to Defaults";
 
@@ -39,7 +42,11 @@ public class SettingsPopup implements IThemeable {
     private JPanel grid;
     private JButton resetDefaults;
     private JButton save;
-    private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel, autoSaveLabel;
+    private JButton lineHighlight;
+    private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel, autoSaveLabel, lineHighlightLabel;
+
+    private ArrayList<String> LineHighlightOption = new ArrayList<String>(
+            Arrays.asList("OFF", "Line Executed", "Line to Execute"));
 
     public final Config config;
 
@@ -90,6 +97,7 @@ public class SettingsPopup implements IThemeable {
         EditorTheme.applyFontThemeBorderless(autoSaveButton, font, editorTheme);
         EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
         EditorTheme.applyFontThemeBorder(save, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorder(lineHighlight, font, editorTheme, buttonBorder);
         EditorTheme.applyFontThemeBorder(resetDefaults, font, editorTheme, buttonBorder);
         EditorTheme.applyFontThemeBorderless(speedLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(fontSizeLabel, font, editorTheme);
@@ -97,6 +105,7 @@ public class SettingsPopup implements IThemeable {
         EditorTheme.applyFontThemeBorderless(tabSizeLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(autoSaveLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(tabSizeSlider, font, editorTheme);
+        EditorTheme.applyFontThemeBorderless(lineHighlightLabel, font, editorTheme);
     }
 
     /**
@@ -128,6 +137,9 @@ public class SettingsPopup implements IThemeable {
         autoSaveLabel = new JLabel(AUTOSAVE);
         autoSaveButton = new AutoSaveSliderToggleButton(config.getAutoSaveSelected(), config.getAutoSaveInterval());
 
+        lineHighlightLabel = new JLabel(LINEHIGHLIGHT);
+        lineHighlight = new JButton(config.getLineHighlight());
+
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
         grid = new JPanel(gridLayout);
@@ -141,6 +153,8 @@ public class SettingsPopup implements IThemeable {
         grid.add(tabSizeSlider);
         grid.add(autoSaveLabel);
         grid.add(autoSaveButton);
+        grid.add(lineHighlightLabel);
+        grid.add(lineHighlight);
 
         save = new JButton(SAVE);
         resetDefaults = new JButton(RESET);
@@ -150,6 +164,7 @@ public class SettingsPopup implements IThemeable {
 
         resetDefaults.addActionListener(buttonActionListener);
         save.addActionListener(buttonActionListener);
+        lineHighlight.addActionListener(buttonActionListener);
 
         popup.add(grid, BorderLayout.CENTER);
 
@@ -189,6 +204,7 @@ public class SettingsPopup implements IThemeable {
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.setAutoSaveInterval(instance.autoSaveButton.getSliderValue());
                 instance.config.setAutoSaveSelected(instance.autoSaveButton.getToggleButtonStatus());
+                instance.config.setLineHighlight(instance.lineHighlight.getText());
                 instance.config.saveChanges();
                 instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
                         EditorTheme.getTheme(instance.config.getTheme()));
@@ -202,6 +218,19 @@ public class SettingsPopup implements IThemeable {
                 instance.themeInput.setSelectedIndex(0);
                 instance.autoSaveButton.setToggleButtonStatus(Boolean.parseBoolean(Config.DEFAULT_AUTO_SAVE_SELECTED));
                 instance.autoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
+                instance.lineHighlight.setText(Config.DEFAULT_LINEHIGHLIGHT);
+            }
+            if (action.startsWith("Line") || action.startsWith("OFF")) {
+                String option = instance.lineHighlight.getText();
+                int position = instance.LineHighlightOption.indexOf(option);
+                if (position == 2) {
+                    position = 0;
+                } else {
+                    position += 1;
+                }
+                option = instance.LineHighlightOption.get(position);
+                System.out.println(option);
+                instance.lineHighlight.setText(option);
             }
         }
     }
