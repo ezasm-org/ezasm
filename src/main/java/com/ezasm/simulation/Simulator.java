@@ -16,6 +16,8 @@ import com.ezasm.util.FileIO;
 import com.ezasm.util.RawData;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class Simulator {
     private final Registers registers;
     private final InstructionDispatcher instructionDispatcher;
 
-    private final Map<String, Integer> fileToIdentifier;
+    private final BidiMap<String, Integer> fileToIdentifier;
     private final Map<Integer, List<Line>> fileIdToLineArray;
     private final Map<String, Pair<Integer, Long>> labelToFileIdAndLineNumber;
     private final Deque<TransformationSequence> transforms;
@@ -53,7 +55,7 @@ public class Simulator {
         this.registers = new Registers(wordSize);
         this.instructionDispatcher = new InstructionDispatcher(this);
 
-        this.fileToIdentifier = new HashMap<>();
+        this.fileToIdentifier = new DualHashBidiMap<>();
         this.fileIdToLineArray = new HashMap<>();
         this.labelToFileIdAndLineNumber = new HashMap<>();
         this.transforms = new ArrayDeque<>();
@@ -314,6 +316,10 @@ public class Simulator {
      */
     public Memory getMemory() {
         return memory;
+    }
+
+    public String getFile(int FID) {
+        return fileToIdentifier.getKey(FID);
     }
 
 }

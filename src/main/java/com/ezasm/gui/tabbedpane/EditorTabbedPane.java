@@ -69,6 +69,10 @@ public class EditorTabbedPane extends ClosableTabbedPane {
         return newEditor;
     }
 
+    public void switchToFile(String path) {
+        tabbedPane.setSelectedIndex(indexOfFile(path));
+    }
+
     /**
      * Gets the instance's editor panes.
      *
