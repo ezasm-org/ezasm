@@ -14,7 +14,10 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      */
     public final ArrayList<Integer> startLineNums = new ArrayList<Integer>();
     public final ArrayList<Integer> endLineNums = new ArrayList<Integer>();
-
+    /**
+     * option to highlight the line-just-executed or the line-to-execute
+     */
+    public String LinehighlightOption = "";
     /**
      * Constructor
      *
@@ -45,7 +48,6 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -84,5 +86,13 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
             }
         }
         textComp.repaint();
+    }
+    
+    /**
+     * Update the option of line highlighter
+     * @param option Option of "off", "next line", "Current" for linehighter
+     */
+    public void LinehightlightSwitch(String option){
+        LinehighlightOption = option;
     }
 }
