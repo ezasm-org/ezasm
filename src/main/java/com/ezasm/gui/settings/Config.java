@@ -141,10 +141,8 @@ public class Config {
     }
 
     public void saveChanges() {
-        try {
-            FileWriter writer = new FileWriter(CONFIG_FILE);
+        try (final var writer = new FileWriter(CONFIG_FILE)) {
             props.store(writer, "");
-            writer.close();
         } catch (IOException e) {
             SystemStreams.printlnCurrentErr("Error saving settings");
         }
