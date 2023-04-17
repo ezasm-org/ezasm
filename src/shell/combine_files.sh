@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # Combines the two input files and places the resulting files at the given output.
 # This is used to create an "executable jar" file on systems with a posix-compliant shell.
 # This file will be able to be both run as an executable and a jar interchangeably.
