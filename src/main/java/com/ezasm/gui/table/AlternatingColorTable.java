@@ -66,6 +66,7 @@ public class AlternatingColorTable extends JTable implements IThemeable {
     public void applyTheme(Font font, EditorTheme editorTheme) {
         EditorTheme.applyFontTheme(this, font, editorTheme);
         EditorTheme.applyFontTheme(tableHeader, font, editorTheme);
+        setSelectionForeground(editorTheme.foreground());
         evens = editorTheme.currentLine();
         odds = editorTheme.background();
     }
