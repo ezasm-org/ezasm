@@ -1,5 +1,6 @@
 package com.ezasm.gui.editor;
 
+import com.ezasm.gui.util.PatchedRSyntaxTextArea;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.Simulator;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.locks.LockSupport;
 
 public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter {
 
@@ -52,10 +54,9 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
     /**
      * For a given text component, highlight a certain line (ignoring non program lines).
      *
-     * @param editorPane  the text component to highlight.
      * @param simulator the program simulator.
      */
-    public void highlight(EzEditorPane editorPane, Simulator simulator) {
+    public void highlight(Simulator simulator) {
         int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
         int fid = (int) simulator.getRegisters().getRegister(Registers.FID).getLong();
 
@@ -69,13 +70,13 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
             parseFileLines(Window.getInstance().getEditorPanes().getComponentAt(currentFileIndex));
         }
 
-        //Window.getInstance().getEditor().resetHighlighter(); // This doesn't work
         Window.getInstance().getEditorPanes().switchToFile(currentFile);
+        PatchedRSyntaxTextArea textArea = Window.getInstance().getEditor().getTextArea();
 
         try {
-            editorPane.getTextArea().getHighlighter().addHighlight(lineStartOffsets.get(currentFile).get(lineNumber), lineEndOffsets.get(currentFile).get(lineNumber), this);
-            editorPane.getTextArea().setCaretPosition(lineStartOffsets.get(currentFile).get(lineNumber));
-            editorPane.repaint();
+            textArea.getHighlighter().addHighlight(lineStartOffsets.get(currentFile).get(lineNumber), lineEndOffsets.get(currentFile).get(lineNumber), this);
+            textArea.setCaretPosition(lineStartOffsets.get(currentFile).get(lineNumber));
+            textArea.repaint();
         } catch (BadLocationException e) {
             e.printStackTrace();
         }

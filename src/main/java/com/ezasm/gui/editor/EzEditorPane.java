@@ -243,7 +243,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      */
     public void updateHighlight() {
         removeHighlights(this);
-        highlighter.highlight(this, Window.getInstance().getSimulator());
+        highlighter.highlight(Window.getInstance().getSimulator());
     }
 
     /**
