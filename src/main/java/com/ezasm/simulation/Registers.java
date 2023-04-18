@@ -74,22 +74,16 @@ public class Registers {
     public static final String FT9 = "FT9";
 
     // Vector registers
-    public static final String W0_0 = "W0[0]";
-    public static final String W0_1 = "W0[1]";
-    public static final String W0_2 = "W0[2]";
-    public static final String W0_3 = "W0[3]";
-    public static final String W1_0 = "W1[0]";
-    public static final String W1_1 = "W1[1]";
-    public static final String W1_2 = "W1[2]";
-    public static final String W1_3 = "W1[3]";
-    public static final String W2_0 = "W2[0]";
-    public static final String W2_1 = "W2[1]";
-    public static final String W2_2 = "W2[2]";
-    public static final String W2_3 = "W2[3]";
-    public static final String W3_0 = "W3[0]";
-    public static final String W3_1 = "W3[1]";
-    public static final String W3_2 = "W3[2]";
-    public static final String W3_3 = "W3[3]";
+    public static final String W0 = "W0";
+    public static final String W1 = "W1";
+    public static final String W2 = "W2";
+    public static final String W3 = "W3";
+    public static final String W4 = "W4";
+    public static final String W5 = "W5";
+    public static final String W6 = "W6";
+    public static final String W7 = "W7";
+    public static final String W8 = "W8";
+    public static final String W9 = "W9";
 
     public static final String LO = "LO"; // Special "LOW" register to store the lower part of a multiplication
     public static final String HI = "HI"; // Special "HIGH" register to store the higher part of a multiplication
@@ -118,10 +112,7 @@ public class Registers {
         addRegisters(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9); // Add temporary registers
         addRegisters(FS0, FS1, FS2, FS3, FS4, FS5, FS6, FS7, FS8, FS9); // Add float saved registers
         addRegisters(FT0, FT1, FT2, FT3, FT4, FT5, FT6, FT7, FT8, FT9); // Add float temporary registers
-        addRegisters(W0_0, W0_1, W0_2, W0_3); // Add vector register 0
-        addRegisters(W1_0, W1_1, W1_2, W1_3); // Add vector register 1
-        addRegisters(W2_0, W2_1, W2_2, W2_3); // Add vector register 2
-        addRegisters(W3_0, W3_1, W3_2, W3_3); // Add vector register 3
+        addRegisters(W0, W1, W2, W3, W4, W5, W6, W7); // Add vector registers
     }
 
     /**
@@ -232,7 +223,11 @@ public class Registers {
     public Registers(int wordSize) {
         registers = new Register[REGISTERS_COUNT];
         for (Integer i : registerByInt.keySet()) {
-            registers[i] = new Register(i, wordSize);
+            if (isVectorRegister(i)) {
+                registers[i] = new Register(i, wordSize * 4);
+            } else {
+                registers[i] = new Register(i, wordSize);
+            }
         }
     }
 
