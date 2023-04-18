@@ -229,8 +229,8 @@ public class SettingsPopup implements IThemeable {
                     position += 1;
                 }
                 option = instance.LineHighlightOption.get(position);
-                System.out.println(option);
                 instance.lineHighlight.setText(option);
+                instance.config.setLineHighlight(option);
             }
         }
     }

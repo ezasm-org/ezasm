@@ -18,6 +18,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      * option to highlight the line-just-executed or the line-to-execute
      */
     public String LinehighlightOption = "";
+
     /**
      * Constructor
      *
@@ -57,10 +58,13 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
      * @param simulator the program simulator.
      */
     public void highlight(JTextComponent textComp, Simulator simulator) {
+        if (LinehighlightOption.equals("OFF")) {
+            return;
+        }
         int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
-        //Hightlight next line
-        if (LinehighlightOption.equals("Next")){
-            lineNumber+=1;
+        // Hightlight next line
+        if (LinehighlightOption.equals("Line to Execute")) {
+            lineNumber += 1;
         }
         if (simulator.getRegisters().getRegister(Registers.FID).getLong() == Simulator.MAIN_FILE_IDENTIFIER) {
             try {
@@ -94,9 +98,10 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
 
     /**
      * Update the option of line highlighter
-     * @param option Option of "off", "next line", "Current" for linehighter
+     *
+     * @param option Option of "OFF", "Line Executed", "Line to Execute" for linehighter
      */
-    public void LinehightlightSwitch(String option){
+    public void LinehightlightSwitch(String option) {
         LinehighlightOption = option;
     }
 }
