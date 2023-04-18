@@ -64,7 +64,7 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
      * @param tip       the tooltip displayed when the tab is hovered on.
      */
     public void addTab(JComponent component, Icon icon, String title, String tip) {
-        addTab(component, icon, title, tip, -1);
+        addTab(component, icon, title, null, -1);
     }
 
     /**
@@ -111,6 +111,7 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
 
     /**
      * Gets the index of the given component object. Returns -1 if the component is not a member of the tabbed pane.
+     *
      * @param c the component to find the index of.
      * @return the index of the given component object, or -1 if the component is not a member of the tabbed pane.
      */
@@ -162,5 +163,11 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
      */
     public void setActiveTab(int index) {
         tabbedPane.setSelectedIndex(index);
+    }
+
+    public void setEnabled(boolean state) {
+        for (int i = 0; i < getTabCount(); i++) {
+            tabbedPane.setEnabledAt(i, state);
+        }
     }
 }

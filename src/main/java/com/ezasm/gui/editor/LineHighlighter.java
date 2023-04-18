@@ -21,7 +21,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
     /**
      * Constructs the line highlighter.
      *
-     * @param color    The color of the highlighter.
+     * @param color      The color of the highlighter.
      * @param editorPane The text component where highlights are applied should be the EditorPane.
      */
     public LineHighlighter(Color color, EzEditorPane editorPane) {
@@ -74,7 +74,8 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         PatchedRSyntaxTextArea textArea = Window.getInstance().getEditor().getTextArea();
 
         try {
-            textArea.getHighlighter().addHighlight(lineStartOffsets.get(currentFile).get(lineNumber), lineEndOffsets.get(currentFile).get(lineNumber), this);
+            textArea.getHighlighter().addHighlight(lineStartOffsets.get(currentFile).get(lineNumber),
+                    lineEndOffsets.get(currentFile).get(lineNumber), this);
             textArea.setCaretPosition(lineStartOffsets.get(currentFile).get(lineNumber));
             textArea.repaint();
         } catch (BadLocationException e) {
