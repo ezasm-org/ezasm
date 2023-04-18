@@ -227,6 +227,7 @@ public class EzEditorPane extends JPanel implements IThemeable {
      */
     public void updateHighlight() {
         removeHighlights(textArea);
+        highlighter.LinehightlightSwitch(Window.getInstance().getConfig().getLineHighlight());
         highlighter.highlight(textArea, Window.getInstance().getSimulator());
     }
 
