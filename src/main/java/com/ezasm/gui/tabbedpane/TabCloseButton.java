@@ -3,17 +3,12 @@ package com.ezasm.gui.tabbedpane;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
-import java.awt.BasicStroke;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -82,18 +77,21 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         // shift the image for pressed buttons
         if (getModel().isPressed()) {
             g2.translate(1, 1);
         }
-        g2.setStroke(new BasicStroke(2));
-        g2.setColor(editorTheme.foreground());
+        g2.setStroke(new BasicStroke(2.5f));
+        g2.setColor(editorTheme.purple());
         if (getModel().isRollover()) {
-            g2.setColor(editorTheme.yellow());
+            g2.setColor(editorTheme.cyan());
         }
-        int delta = 6;
-        g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
-        g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
+        int delta = 3;
+        g2.drawLine(delta, getHeight() / 2 + getWidth() / 2 - delta, getWidth() - delta, getHeight() / 2 - getWidth() / 2 + delta);
+        g2.drawLine(delta, getHeight() / 2 - getWidth() / 2 + delta, getWidth() - delta, getHeight() / 2 + getWidth() / 2 - delta);
         g2.dispose();
     }
 
