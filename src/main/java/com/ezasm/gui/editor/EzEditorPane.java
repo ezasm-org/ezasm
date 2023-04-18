@@ -242,7 +242,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * Highlights a given line number and clears old highlight
      */
     public void updateHighlight() {
-        removeHighlights(this);
+        removeHighlights();
         highlighter.highlight(Window.getInstance().getSimulator());
     }
 
@@ -251,7 +251,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * called each program start
      */
     public void resetHighlighter() {
-        removeHighlights(this);
+        removeHighlights();
         highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), this);
     }
 

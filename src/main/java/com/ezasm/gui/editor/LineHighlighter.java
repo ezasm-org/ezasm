@@ -99,4 +99,10 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         }
         editorPane.repaint();
     }
+
+    public static void removeHighlights() {
+        for (EzEditorPane p : Window.getInstance().getEditorPanes().getEditors()) {
+            removeHighlights(p);
+        }
+    }
 }
