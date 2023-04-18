@@ -41,6 +41,8 @@ public class MenuActions {
                     FileIO.writeFile(file, Window.getInstance().getEditor().getText());
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
                     Window.getInstance().getEditor().setFileSaved(true);
+                    Window.getInstance().getEditorPanes().setTabName(
+                            Window.getInstance().getEditorPanes().indexOfFile(file.getPath()), file.getName());
                     return true;
                 } catch (IOException e) {
                     promptWarningDialog("Error Saving File",

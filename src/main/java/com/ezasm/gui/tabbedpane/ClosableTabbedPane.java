@@ -75,4 +75,11 @@ public class ClosableTabbedPane extends FixedTabbedPane {
             super.removeTab(index);
         }
     }
+
+    public void setTabName(int i, String name) {
+        Component c = tabbedPane.getTabComponentAt(i);
+        if (c instanceof ClosableTabPanel panel) {
+            panel.setLabelText(name);
+        }
+    }
 }
