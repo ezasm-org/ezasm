@@ -207,7 +207,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     public String getOpenFilePath() {
         String out = openFilePath;
         if (openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX)) {
-            return out.substring(2);
+            return out.substring(EditorTabbedPane.NEW_FILE_PREFIX.length());
         }
         return out;
     }
@@ -230,10 +230,20 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         this.openFilePath = openFilePath;
     }
 
+    /**
+     * Get whether the file has been saved.
+     *
+     * @return true if the file has been saved, false otherwise.
+     */
     public boolean getFileSaved() {
         return this.fileSaved;
     }
 
+    /**
+     * Sets whether or not the file has been saved.
+     *
+     * @param value whether or not the file has been saved.
+     */
     public void setFileSaved(boolean value) {
         this.fileSaved = value;
     }
@@ -242,7 +252,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * Highlights a given line number and clears old highlight
      */
     public void updateHighlight() {
-        removeHighlights();
+        getTextArea().getHighlighter().removeAllHighlights();
         highlighter.highlight(Window.getInstance().getSimulator());
     }
 
@@ -251,7 +261,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * called each program start
      */
     public void resetHighlighter() {
-        removeHighlights();
+        getTextArea().getHighlighter().removeAllHighlights();
         highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), this);
     }
 
