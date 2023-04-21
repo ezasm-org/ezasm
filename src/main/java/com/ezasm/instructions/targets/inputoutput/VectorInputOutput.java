@@ -8,14 +8,15 @@ import com.ezasm.simulation.exception.SimulationStackOverflowException;
 import com.ezasm.util.RawData;
 import jdk.incubator.vector.ByteVector;
 import jdk.incubator.vector.IntVector;
+import jdk.incubator.vector.LongVector;
 import jdk.incubator.vector.VectorSpecies;
 
 import java.util.Objects;
 
 public class VectorInputOutput implements IAbstractInputOutput {
     private final int register;
+    public static final int WORD_LENGTH = 8;
 
-    private static final VectorSpecies<Byte> SPECIES = ByteVector.SPECIES_PREFERRED;
 
     /**
      * Construct the output based on the register reference number.

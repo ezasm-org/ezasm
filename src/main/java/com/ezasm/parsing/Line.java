@@ -8,6 +8,9 @@ import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.input.StringInput;
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.instructions.targets.inputoutput.VectorInputOutput;
+import com.ezasm.simulation.Register;
+import com.ezasm.simulation.Registers;
 import com.ezasm.util.RawData;
 
 import java.util.ArrayList;
@@ -61,7 +64,12 @@ public class Line {
                 this.arguments[i] = new StringInput(input);
                 this.stringImmediates.add(input);
             } else if (Lexer.isRegister(arguments[i])) {
-                this.arguments[i] = new RegisterInputOutput(arguments[i]);
+                int registerNum = Registers.getRegisterNumber(arguments[i]);
+                if (Registers.isVectorRegister(registerNum)) {
+                    this.arguments[i] = new VectorInputOutput(registerNum);
+                } else {
+                    this.arguments[i] = new RegisterInputOutput(registerNum);
+                }
             } else if (Lexer.looksLikeDereference(arguments[i])) {
                 this.arguments[i] = new DereferenceInputOutput(arguments[i]);
             } else if (Lexer.looksLikeLabelReference(arguments[i])) {

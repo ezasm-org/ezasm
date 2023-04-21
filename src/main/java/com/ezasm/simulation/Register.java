@@ -85,7 +85,7 @@ public class Register {
 
     public void setData(byte[] data) {
         if (number != 0)
-            System.arraycopy(data, 0, this.data.data(), 0, this.data.data().length);
+            System.arraycopy(data, 0, this.data.data(), 0, data.length);
     }
 
     /**

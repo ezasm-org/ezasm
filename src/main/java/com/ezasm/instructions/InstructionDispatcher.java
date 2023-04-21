@@ -33,6 +33,7 @@ public class InstructionDispatcher {
         registerInstructions(FunctionInstructions.class);
         registerInstructions(MemoryInstructions.class);
         registerInstructions(ImportInstructions.class);
+        registerInstructions(VectorInstructions.class);
     }
 
     /**
@@ -92,10 +93,13 @@ public class InstructionDispatcher {
     public static DispatchInstruction getInstruction(String name, Class<?>[] args) {
         ArrayList<DispatchInstruction> overloads = instructions.get(name);
 
+        System.out.println(Arrays.toString(args));
+
         if (overloads == null)
             return null;
 
         for (DispatchInstruction instruction : overloads) {
+            System.out.println(instruction);
             if (instruction.isCallableWith(args))
                 return instruction;
         }

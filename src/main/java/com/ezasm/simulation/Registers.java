@@ -1,5 +1,7 @@
 package com.ezasm.simulation;
 
+import com.ezasm.instructions.targets.inputoutput.VectorInputOutput;
+
 import java.util.*;
 
 /**
@@ -82,8 +84,6 @@ public class Registers {
     public static final String W5 = "W5";
     public static final String W6 = "W6";
     public static final String W7 = "W7";
-    public static final String W8 = "W8";
-    public static final String W9 = "W9";
 
     public static final String LO = "LO"; // Special "LOW" register to store the lower part of a multiplication
     public static final String HI = "HI"; // Special "HIGH" register to store the higher part of a multiplication
@@ -212,7 +212,7 @@ public class Registers {
             // TODO add appropriate exception
             throw new RuntimeException();
         }
-        return getRegisterName(register).charAt(0) == 'W';
+        return getRegisterName(register).charAt(0) == 'W' || getRegisterName(register).charAt(0) == 'w';
     }
 
     /**
@@ -224,7 +224,7 @@ public class Registers {
         registers = new Register[REGISTERS_COUNT];
         for (Integer i : registerByInt.keySet()) {
             if (isVectorRegister(i)) {
-                registers[i] = new Register(i, wordSize * 4);
+                registers[i] = new Register(i, wordSize * VectorInputOutput.WORD_LENGTH);
             } else {
                 registers[i] = new Register(i, wordSize);
             }

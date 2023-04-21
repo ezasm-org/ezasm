@@ -1,5 +1,7 @@
 package com.ezasm.instructions.implementation;
 
+import com.ezasm.instructions.targets.inputoutput.VectorInputOutput;
+import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.instructions.targets.input.IAbstractInput;
@@ -8,8 +10,13 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.Instruction;
 import com.ezasm.instructions.exception.IllegalArgumentException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.Conversion;
 import com.ezasm.util.RawData;
+import jdk.incubator.vector.IntVector;
+import jdk.incubator.vector.LongVector;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
