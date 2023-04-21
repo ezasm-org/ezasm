@@ -2,6 +2,7 @@ package com.ezasm.gui.settings;
 
 import com.ezasm.util.SystemStreams;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -89,6 +90,10 @@ public class Config {
 
     public void setFontSize(int size) {
         props.setProperty(FONT_SIZE, String.valueOf(size));
+    }
+
+    public Font getFont() {
+        return new Font(DEFAULT_FONT, Font.PLAIN, getFontSize());
     }
 
     public String getTheme() {

@@ -45,6 +45,7 @@ public class RegisterTable extends JPanel implements IThemeable {
         setMaximumSize(MAX_SIZE);
         setLayout(new BorderLayout());
         add(scrollPane);
+        table.getTableHeader().setReorderingAllowed(false);
     }
 
     /**

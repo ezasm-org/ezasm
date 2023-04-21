@@ -6,18 +6,33 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 
+import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
 
 /**
- * Builder class for closable tabs in a <code>TabbedPane</code>
+ * Builder class for closable tabs in a <code>TabbedPane</code>.
  */
 public class ClosableTabBuilder {
 
-    private Font font = new Font("mono", Font.PLAIN, 12);
+    private Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, 12);
     private EditorTheme editorTheme = EditorTheme.getTheme("Light");
     private String name = ""; // empty by default
-    private JTabbedPane parent = new JTabbedPane();
+    private ClosableTabbedPane parent;
 
+    /**
+     * Constructs a closable tab builder.
+     *
+     * @param parent the parent element.
+     */
+    public ClosableTabBuilder(ClosableTabbedPane parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Builds a closable tab based on the current configuration.
+     *
+     * @return the generated closable tab.
+     */
     public ClosableTabPanel build() {
         JLabel label = new JLabel(name);
         label.setFont(font);
@@ -64,7 +79,7 @@ public class ClosableTabBuilder {
      *
      * @param parent The TabbedPane in question
      */
-    public ClosableTabBuilder setParent(JTabbedPane parent) {
+    public ClosableTabBuilder setParent(ClosableTabbedPane parent) {
         this.parent = parent;
         return this;
     }

@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.text.Highlighter;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.menubar.MenuActions;
+import com.ezasm.gui.tabbedpane.EditorTabbedPane;
+import com.ezasm.gui.tabbedpane.JClosableComponent;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.PatchedRSyntaxTextArea;
@@ -13,17 +16,16 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
 import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
+import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
-
-public class EzEditorPane extends JPanel implements IThemeable {
+public class EzEditorPane extends JClosableComponent implements IThemeable {
 
     private final PatchedRSyntaxTextArea textArea;
 
@@ -52,6 +54,7 @@ public class EzEditorPane extends JPanel implements IThemeable {
         textArea.setCodeFoldingEnabled(false);
         textArea.getDocument().addDocumentListener(new EditorDocumentListener());
 
+        openFilePath = EditorTabbedPane.NEW_FILE_PREFIX;
         fileSaved = true;
 
         scrollPane = new RTextScrollPane(textArea);
@@ -63,7 +66,7 @@ public class EzEditorPane extends JPanel implements IThemeable {
         setLayout(new BorderLayout());
         add(scrollPane);
 
-        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
+        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), this);
 
         textArea.setFocusTraversalKeysEnabled(false);
 
@@ -202,7 +205,20 @@ public class EzEditorPane extends JPanel implements IThemeable {
      * @return the path to the file currently open in this editor.
      */
     public String getOpenFilePath() {
-        return Objects.requireNonNullElse(openFilePath, "");
+        String out = openFilePath;
+        if (openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX)) {
+            return out.substring(EditorTabbedPane.NEW_FILE_PREFIX.length());
+        }
+        return out;
+    }
+
+    /**
+     * Returns true if the file is an anonymous file, false otherwise.
+     *
+     * @return true if the file is an anonymous file, false otherwise.
+     */
+    public boolean isFileAnonymous() {
+        return openFilePath == null || openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX);
     }
 
     /**
@@ -214,10 +230,20 @@ public class EzEditorPane extends JPanel implements IThemeable {
         this.openFilePath = openFilePath;
     }
 
+    /**
+     * Get whether the file has been saved.
+     *
+     * @return true if the file has been saved, false otherwise.
+     */
     public boolean getFileSaved() {
         return this.fileSaved;
     }
 
+    /**
+     * Sets whether or not the file has been saved.
+     *
+     * @param value whether or not the file has been saved.
+     */
     public void setFileSaved(boolean value) {
         this.fileSaved = value;
     }
@@ -226,8 +252,8 @@ public class EzEditorPane extends JPanel implements IThemeable {
      * Highlights a given line number and clears old highlight
      */
     public void updateHighlight() {
-        removeHighlights(textArea);
-        highlighter.highlight(textArea, Window.getInstance().getSimulator());
+        getTextArea().getHighlighter().removeAllHighlights();
+        highlighter.highlight(Window.getInstance().getSimulator());
     }
 
     /**
@@ -235,8 +261,8 @@ public class EzEditorPane extends JPanel implements IThemeable {
      * called each program start
      */
     public void resetHighlighter() {
-        removeHighlights(textArea);
-        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), textArea);
+        getTextArea().getHighlighter().removeAllHighlights();
+        highlighter = new LineHighlighter(Window.getInstance().getTheme().yellow(), this);
     }
 
     /**
@@ -248,13 +274,11 @@ public class EzEditorPane extends JPanel implements IThemeable {
         // Store the old highlights
         Highlighter highlight = textArea.getHighlighter();
         Highlighter.Highlight[] highlights = highlight.getHighlights();
-
-        // clear old highlights
-        removeHighlights(textArea);
+        highlight.removeAllHighlights();
 
         // init new highlighter with new color
         if (highlights.length > 0) {
-            highlighter = new LineHighlighter(editorTheme.yellow(), textArea);
+            highlighter = new LineHighlighter(editorTheme.yellow(), this);
         }
 
         // add new highlights with the new color
@@ -277,5 +301,40 @@ public class EzEditorPane extends JPanel implements IThemeable {
      */
     public void resizeTabSize(int size) {
         textArea.setTabSize(size);
+    }
+
+    /**
+     * Gets the internal text area.
+     *
+     * @return the internal text area.
+     */
+    public PatchedRSyntaxTextArea getTextArea() {
+        return textArea;
+    }
+
+    /**
+     * The closing action of an editor pane.
+     *
+     * @return whether to close the editor pane GUI element.
+     */
+    @Override
+    public boolean close() {
+        if (getFileSaved()) {
+            return true;
+        }
+        if (getText().equals("") && isFileAnonymous()) {
+            return true;
+        }
+        int resp = promptYesNoCancelDialog("Closing File",
+                "You have unsaved changes in " + getOpenFilePath() + ", would you like to save them?");
+        if (resp == JOptionPane.YES_OPTION) {
+            MenuActions.save();
+            return true;
+        } else if (resp == JOptionPane.NO_OPTION) {
+            return true;
+        } else if (resp == JOptionPane.CANCEL_OPTION || resp == JOptionPane.CLOSED_OPTION) {
+            return false;
+        }
+        return false;
     }
 }
