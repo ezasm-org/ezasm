@@ -31,7 +31,7 @@ public class MenuActions {
      */
     public static boolean saveAs() {
         JFileChooser fileChooser = createFileChooser("Save", TEXT_FILE_MASK | EZ_FILE_MASK);
-        fileChooser.setSelectedFile(new File("code.ez"));
+        fileChooser.setSelectedFile(new File(Window.getInstance().getEditor().getOpenFilePath()));
         int fileChooserOption = fileChooser.showSaveDialog(null);
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
