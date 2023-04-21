@@ -39,7 +39,7 @@ public class Arguments {
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 
-        Option debugOption = new Option("d", "debug", false, "Run in debug mode. (Don't replace system.err)");
+        Option debugOption = new Option("d", "debug", false, "Run in debug mode. Output errors to the terminal instead of the integrated console.");
         options.addOption(debugOption);
         debugOption.setArgName("debug mode");
 

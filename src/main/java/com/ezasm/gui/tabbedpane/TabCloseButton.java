@@ -90,8 +90,10 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
             g2.setColor(editorTheme.cyan());
         }
         int delta = 3;
-        g2.drawLine(delta, getHeight() / 2 + getWidth() / 2 - delta, getWidth() - delta, getHeight() / 2 - getWidth() / 2 + delta);
-        g2.drawLine(delta, getHeight() / 2 - getWidth() / 2 + delta, getWidth() - delta, getHeight() / 2 + getWidth() / 2 - delta);
+        g2.drawLine(delta, getHeight() / 2 + getWidth() / 2 - delta, getWidth() - delta,
+                getHeight() / 2 - getWidth() / 2 + delta);
+        g2.drawLine(delta, getHeight() / 2 - getWidth() / 2 + delta, getWidth() - delta,
+                getHeight() / 2 + getWidth() / 2 - delta);
         g2.dispose();
     }
 
