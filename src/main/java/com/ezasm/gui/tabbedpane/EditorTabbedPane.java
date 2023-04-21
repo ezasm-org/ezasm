@@ -101,7 +101,7 @@ public class EditorTabbedPane extends ClosableTabbedPane {
         int index = indexOfFile(fileIn.getPath());
         if (index == -1) {
             newEditor = getNewThemedEditor();
-            addTab(newEditor, null, fileIn.getName(), "");
+            addTab(newEditor, null, fileIn.getName(), null);
         } else {
             newEditor = getComponentAt(index);
         }

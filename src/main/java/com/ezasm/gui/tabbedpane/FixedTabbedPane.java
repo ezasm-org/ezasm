@@ -64,7 +64,7 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
      * @param tip       the tooltip displayed when the tab is hovered on.
      */
     public void addTab(JComponent component, Icon icon, String title, String tip) {
-        addTab(component, icon, title, null, -1);
+        addTab(component, icon, title, tip, -1);
     }
 
     /**
