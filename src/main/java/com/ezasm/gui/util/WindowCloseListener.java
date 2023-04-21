@@ -1,5 +1,6 @@
-package com.ezasm.gui;
+package com.ezasm.gui.util;
 
+import com.ezasm.gui.Window;
 import com.ezasm.gui.editor.EzEditorPane;
 
 import javax.swing.*;

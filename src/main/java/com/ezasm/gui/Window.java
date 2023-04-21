@@ -12,6 +12,7 @@ import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.tabbedpane.FixedTabbedPane;
 import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
+import com.ezasm.gui.util.WindowCloseListener;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.Simulator;

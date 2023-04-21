@@ -44,8 +44,8 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     /**
      * Gets the inset for the tabbed pane.
      *
-     * @param tabPlacement  the placement (left, right, bottom, top) of the tab.
-     * @param tabIndex the tab index.
+     * @param tabPlacement the placement (left, right, bottom, top) of the tab.
+     * @param tabIndex     the tab index.
      * @return the generated insets.
      */
     @Override
@@ -56,14 +56,14 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     /**
      * Does not paint a border for the tab.
      *
-     * @param graphics      the graphics context in which to paint
-     * @param tabPlacement  the placement (left, right, bottom, top) of the tab
-     * @param tabIndex      the index of the tab with respect to other tabs
-     * @param x             the x coordinate of tab
-     * @param y             the y coordinate of tab
-     * @param w             the width of the tab
-     * @param h             the height of the tab
-     * @param isSelected    a {@code boolean} which determines whether or not the tab is selected
+     * @param graphics     the graphics context in which to paint
+     * @param tabPlacement the placement (left, right, bottom, top) of the tab
+     * @param tabIndex     the index of the tab with respect to other tabs
+     * @param x            the x coordinate of tab
+     * @param y            the y coordinate of tab
+     * @param w            the width of the tab
+     * @param h            the height of the tab
+     * @param isSelected   a {@code boolean} which determines whether or not the tab is selected
      */
     @Override
     protected void paintTabBorder(Graphics graphics, int tabPlacement, int tabIndex, int x, int y, int w, int h,
@@ -84,17 +84,18 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     /**
      * Paints the text within the tab.
      *
-     * @param g the graphics
+     * @param g            the graphics
      * @param tabPlacement the tab placement
-     * @param font the font
-     * @param metrics the font metrics
-     * @param tabIndex the tab index
-     * @param title the title
-     * @param textRect the text rectangle
-     * @param isSelected selection status
+     * @param font         the font
+     * @param metrics      the font metrics
+     * @param tabIndex     the tab index
+     * @param title        the title
+     * @param textRect     the text rectangle
+     * @param isSelected   selection status
      */
     @Override
-    protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
+    protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title,
+            Rectangle textRect, boolean isSelected) {
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setFont(font);
 
@@ -125,13 +126,13 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     /**
      * Do not paint a focus indicator.
      *
-     * @param g the graphics
+     * @param g            the graphics
      * @param tabPlacement the tab placement
-     * @param rects rectangles
-     * @param tabIndex the tab index
-     * @param iconRect the icon rectangle
-     * @param textRect the text rectangle
-     * @param isSelected selection status
+     * @param rects        rectangles
+     * @param tabIndex     the tab index
+     * @param iconRect     the icon rectangle
+     * @param textRect     the text rectangle
+     * @param isSelected   selection status
      */
     @Override
     protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
@@ -141,14 +142,14 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     /**
      * Paints the tab background based on whether the tab is selected.
      *
-     * @param g             the graphics context in which to paint
-     * @param tabPlacement  the placement (left, right, bottom, top) of the tab
-     * @param tabIndex      the index of the tab with respect to other tabs
-     * @param x             the x coordinate of tab
-     * @param y             the y coordinate of tab
-     * @param w             the width of the tab
-     * @param h             the height of the tab
-     * @param isSelected    a {@code boolean} which determines whether or not the tab is selected
+     * @param g            the graphics context in which to paint
+     * @param tabPlacement the placement (left, right, bottom, top) of the tab
+     * @param tabIndex     the index of the tab with respect to other tabs
+     * @param x            the x coordinate of tab
+     * @param y            the y coordinate of tab
+     * @param w            the width of the tab
+     * @param h            the height of the tab
+     * @param isSelected   a {@code boolean} which determines whether or not the tab is selected
      */
     @Override
     protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
