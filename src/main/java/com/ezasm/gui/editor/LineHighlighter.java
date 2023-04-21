@@ -84,24 +84,11 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
 
     /**
      * Clear a text component of all line highlights.
-     *
-     * @param editorPane the text component to clear.
      */
-    public static void removeHighlights(EzEditorPane editorPane) {
-        Highlighter highlight = editorPane.getTextArea().getHighlighter();
-        Highlighter.Highlight[] highlights = highlight.getHighlights();
-
-        for (int i = 0; i < highlights.length; i++) {
-            if (highlights[i].getPainter() instanceof LineHighlighter) {
-                highlight.removeHighlight(highlights[i]);
-            }
-        }
-        editorPane.repaint();
-    }
-
     public static void removeHighlights() {
-        for (EzEditorPane p : Window.getInstance().getEditorPanes().getEditors()) {
-            removeHighlights(p);
+        for (EzEditorPane editorPane : Window.getInstance().getEditorPanes().getEditors()) {
+            editorPane.getTextArea().getHighlighter().removeAllHighlights();
+            editorPane.repaint();
         }
     }
 }

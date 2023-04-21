@@ -264,9 +264,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         // Store the old highlights
         Highlighter highlight = textArea.getHighlighter();
         Highlighter.Highlight[] highlights = highlight.getHighlights();
-
-        // clear old highlights
-        removeHighlights();
+        highlight.removeAllHighlights();
 
         // init new highlighter with new color
         if (highlights.length > 0) {
