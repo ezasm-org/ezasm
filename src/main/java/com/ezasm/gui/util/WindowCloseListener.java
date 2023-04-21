@@ -20,10 +20,10 @@ public class WindowCloseListener extends WindowAdapter {
     public void windowClosing(WindowEvent e) {
         boolean exit = true;
         for (EzEditorPane editorPane : Window.getInstance().getEditorPanes().getEditors()) {
-            Window.getInstance().getEditorPanes().switchToFile(editorPane.getOpenFilePath());
             if (editorPane.getFileSaved() || (editorPane.getText().equals("") && editorPane.isFileAnonymous())) {
                 continue;
             }
+            Window.getInstance().getEditorPanes().switchToFile(editorPane.getOpenFilePath());
             int resp = promptYesNoCancelDialog("Exiting...", "Your changes to '" + editorPane.getOpenFilePath()
                     + "' have not been saved. Would you like to save them?");
 
