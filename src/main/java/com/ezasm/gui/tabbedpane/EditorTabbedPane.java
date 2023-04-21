@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 /**
  * Represents a tab selection of closable editor panes.
+ * <b>Only addTab <code>EzEditorPane</code>s to instances of this class</b>
  */
 public class EditorTabbedPane extends ClosableTabbedPane {
 
