@@ -24,18 +24,7 @@ public class WindowCloseListener extends WindowAdapter {
                 continue;
             }
             Window.getInstance().getEditorPanes().switchToFile(editorPane.getOpenFilePath());
-            int resp = promptYesNoCancelDialog("Exiting...", "Your changes to '" + editorPane.getOpenFilePath()
-                    + "' have not been saved. Would you like to save them?");
-
-            if (resp == JOptionPane.YES_OPTION) {
-                if (editorPane.isFileAnonymous()) {
-                    save();
-                } else {
-                    saveAs();
-                }
-            } else if (resp == JOptionPane.NO_OPTION) {
-                // Do not save, close
-            } else if (resp == JOptionPane.CANCEL_OPTION || resp == JOptionPane.CLOSED_OPTION) {
+            if (!editorPane.close()) {
                 exit = false;
                 break;
             }
