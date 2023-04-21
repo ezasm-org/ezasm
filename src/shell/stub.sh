@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # This program is not to be used as a standalone, rather concatenated with the jar file to produce a unix executable.
 
 ARGS="$@"
@@ -15,12 +15,12 @@ else
     exit 1
 fi
 
-VERSION="$(java -version 2>&1 | grep -oP 'version "?(1\.)?\K\d+')"
-if [ "$VERSION" = "" ]; then
+VERSION="$($JAVA_EXECUTABLE_CMD -version 2>&1 | head -1 | cut -d '"' -f 2 | sed -e 's/^1\.//' | cut -d '.' -f 1)"
+if [ -z "$VERSION" ]; then
   echo "Could not find Java version"
   exit 1
 elif [ "$VERSION" -lt "17" ]; then
-  echo "Java version is less than 17, please use Java 17"
+  echo "System Java version $VERSION is less than 17, please use Java version 17 or higher"
   exit 1
 fi
 
