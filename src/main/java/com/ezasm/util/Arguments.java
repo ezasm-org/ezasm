@@ -39,6 +39,11 @@ public class Arguments {
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
 
+        Option debugOption = new Option("d", "debug", false,
+                "Run in debug mode. Output errors to the terminal instead of the integrated console.");
+        options.addOption(debugOption);
+        debugOption.setArgName("debug mode");
+
         Option inputOption = new Option("i", "input", true, "A file to receive standard input from (default: none)");
         options.addOption(inputOption);
         inputOption.setArgName("input file path");
@@ -119,6 +124,11 @@ public class Arguments {
             outputpath = commandLine.getOptionValue(outputOption);
         }
 
+        boolean debugMode = false;
+        if (commandLine.hasOption(debugOption)) {
+            debugMode = true;
+        }
+
         if (commandLine.hasOption(windowlessOption)) {
             CommandLineInterface cli;
             if (filepath.equals("")) {
@@ -131,9 +141,9 @@ public class Arguments {
             cli.startSimulation();
         } else {
             if (!inputpath.equals("") || !outputpath.equals("")) {
-                Window.instantiate(sim, config, inputpath, outputpath);
+                Window.instantiate(sim, config, debugMode, inputpath, outputpath);
             } else {
-                Window.instantiate(sim, config);
+                Window.instantiate(sim, config, debugMode);
             }
         }
     }
