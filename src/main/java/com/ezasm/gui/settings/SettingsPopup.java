@@ -156,8 +156,7 @@ public class SettingsPopup implements IThemeable {
         popup.validate();
         popup.pack();
         popup.setVisible(true);
-        this.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize()),
-                EditorTheme.getTheme(config.getTheme()));
+        this.applyTheme(config.getFont(), EditorTheme.getTheme(config.getTheme()));
     }
 
     /**
@@ -190,7 +189,7 @@ public class SettingsPopup implements IThemeable {
                 instance.config.setAutoSaveInterval(instance.autoSaveButton.getSliderValue());
                 instance.config.setAutoSaveSelected(instance.autoSaveButton.getToggleButtonStatus());
                 instance.config.saveChanges();
-                instance.applyTheme(new Font(Config.DEFAULT_FONT, Font.PLAIN, instance.config.getFontSize()),
+                instance.applyTheme(Window.getInstance().getConfig().getFont(),
                         EditorTheme.getTheme(instance.config.getTheme()));
                 Window.getInstance().applyConfiguration(instance.config);
             }

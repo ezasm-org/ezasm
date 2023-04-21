@@ -7,8 +7,6 @@ import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Memory;
 import org.apache.commons.cli.*;
 
-import java.util.Arrays;
-
 /**
  * Methods to handle the program arguments and begin the program correspondingly.
  */
@@ -41,6 +39,11 @@ public class Arguments {
         Option wordSizeOption = new Option("s", "word-size", true, "The size in bytes of a word\n(4 or 8, default: 4)");
         options.addOption(wordSizeOption);
         wordSizeOption.setArgName("word size");
+
+        Option debugOption = new Option("d", "debug", false,
+                "Run in debug mode. Output errors to the terminal instead of the integrated console.");
+        options.addOption(debugOption);
+        debugOption.setArgName("debug mode");
 
         Option inputOption = new Option("i", "input", true, "A file to receive standard input from (default: none)");
         options.addOption(inputOption);
@@ -122,6 +125,11 @@ public class Arguments {
             outputpath = commandLine.getOptionValue(outputOption);
         }
 
+        boolean debugMode = false;
+        if (commandLine.hasOption(debugOption)) {
+            debugMode = true;
+        }
+
         if (commandLine.hasOption(windowlessOption)) {
             CommandLineInterface cli;
             if (filepath.equals("")) {
@@ -134,9 +142,9 @@ public class Arguments {
             cli.startSimulation();
         } else {
             if (!inputpath.equals("") || !outputpath.equals("")) {
-                Window.instantiate(sim, config, inputpath, outputpath);
+                Window.instantiate(sim, config, debugMode, inputpath, outputpath);
             } else {
-                Window.instantiate(sim, config);
+                Window.instantiate(sim, config, debugMode);
             }
             new Thread(DiscordActivity::runCore).run();
         }

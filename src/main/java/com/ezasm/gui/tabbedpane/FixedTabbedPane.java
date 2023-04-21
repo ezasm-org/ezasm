@@ -92,20 +92,6 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
     }
 
     /**
-     * Removes the given component if it is in the data structure.
-     *
-     * @param component the component to remove.
-     */
-    public void removeTab(JComponent component) {
-        for (int i = 0; i < tabbedPane.getTabCount(); ++i) {
-            if (tabbedPane.getTabComponentAt(i) == component) {
-                removeTab(i);
-                return;
-            }
-        }
-    }
-
-    /**
      * Gets the index of a tab given the title.
      *
      * @param title the title to seek for.
@@ -113,6 +99,24 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
      */
     public int indexOfTab(String title) {
         return tabbedPane.indexOfTab(title);
+    }
+
+    public Component[] getTabs() {
+        Component[] res = new Component[tabbedPane.getTabCount()];
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            res[i] = tabbedPane.getComponentAt(i);
+        }
+        return res;
+    }
+
+    /**
+     * Gets the index of the given component object. Returns -1 if the component is not a member of the tabbed pane.
+     *
+     * @param c the component to find the index of.
+     * @return the index of the given component object, or -1 if the component is not a member of the tabbed pane.
+     */
+    public int indexOf(Component c) {
+        return tabbedPane.indexOfComponent(c);
     }
 
     /**
@@ -131,7 +135,7 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
      * @return the component at the given index.
      */
     public JComponent getComponentAt(int index) {
-        return (JComponent) tabbedPane.getTabComponentAt(index);
+        return (JComponent) tabbedPane.getComponentAt(index);
     }
 
     /**
@@ -144,11 +148,26 @@ public class FixedTabbedPane extends JPanel implements IThemeable {
     }
 
     /**
-     * Gets the array of components stored in the tab pane.
+     * Sets the active tab to the tab containing the given component.
      *
-     * @return the array of components stored in the tab pane.
+     * @param comp the component tab to view
      */
-    public JComponent[] getTabComponents() {
-        return (JComponent[]) tabbedPane.getComponents();
+    public void setActiveTab(JComponent component) {
+        tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(component));
+    }
+
+    /**
+     * Sets the active tab to the given index.
+     *
+     * @param index the tab index to view.
+     */
+    public void setActiveTab(int index) {
+        tabbedPane.setSelectedIndex(index);
+    }
+
+    public void setEnabled(boolean state) {
+        for (int i = 0; i < getTabCount(); i++) {
+            tabbedPane.setEnabledAt(i, state);
+        }
     }
 }

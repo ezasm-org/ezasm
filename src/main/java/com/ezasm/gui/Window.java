@@ -4,6 +4,7 @@ import com.ezasm.gui.console.Console;
 import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.tabbedpane.EditorTabbedPane;
 import com.ezasm.gui.table.MemoryViewerPanel;
 import com.ezasm.gui.table.RegisterTable;
 import com.ezasm.gui.toolbar.SimulatorGuiActions;
@@ -11,6 +12,7 @@ import com.ezasm.gui.toolbar.ToolbarFactory;
 import com.ezasm.gui.tabbedpane.FixedTabbedPane;
 import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
+import com.ezasm.gui.util.WindowCloseListener;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.simulation.Simulator;
@@ -50,12 +52,14 @@ public class Window {
     private JPanel panel;
     private JToolBar toolbar;
     private JMenuBar menubar;
-    private EzEditorPane editor;
+    private EditorTabbedPane editors;
     private RegisterTable registerTable;
     private FixedTabbedPane tools;
 
     private Console console;
     private MemoryViewerPanel memoryViewerPanel;
+
+    private static boolean debugMode;
 
     private JSplitPane mainSplit;
     private JSplitPane toolSplit;
@@ -74,6 +78,7 @@ public class Window {
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
     private final KeyStroke loadOutputKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O,
             KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+    private final KeyStroke newFileKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK);
 
     private final AutoSave autoSave = new AutoSave();
 
@@ -101,7 +106,8 @@ public class Window {
      * @param simulator the simulator to use.
      * @param config    the program configuration.
      */
-    public static void instantiate(Simulator simulator, Config config) {
+    public static void instantiate(Simulator simulator, Config config, boolean dbg) {
+        debugMode = dbg;
         if (instance == null)
             new Window(simulator, config);
     }
@@ -115,7 +121,9 @@ public class Window {
      * @param inputFilePath  the desired file to use for the InputStream.
      * @param outputFilePath the desired file to use for the OutputStream.
      */
-    public static void instantiate(Simulator simulator, Config config, String inputFilePath, String outputFilePath) {
+    public static void instantiate(Simulator simulator, Config config, boolean dbg, String inputFilePath,
+            String outputFilePath) {
+        debugMode = dbg;
         if (instance == null) {
             new Window(simulator, config);
             instance.setFileInputStream(new File(inputFilePath));
@@ -205,8 +213,8 @@ public class Window {
         panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();
+        editors = new EditorTabbedPane();
         toolbar = ToolbarFactory.makeToolbar();
-        editor = new EzEditorPane();
         registerTable = new RegisterTable(simulator.getRegisters());
 
         console = new Console();
@@ -215,7 +223,9 @@ public class Window {
         // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
-        System.setErr(new PrintStream(console.getErrorStream()));
+        if (!debugMode) {
+            System.setErr(new PrintStream(console.getErrorStream()));
+        }
 
         memoryViewerPanel = new MemoryViewerPanel(simulator.getMemory());
 
@@ -223,7 +233,7 @@ public class Window {
         tools.addTab(console, null, "Console", "Your Console");
         tools.addTab(memoryViewerPanel, null, "Memory", "Simulator Memory");
 
-        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, registerTable);
+        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editors, registerTable);
         mainSplit.setResizeWeight(0.8);
         mainSplit.setUI(new BasicSplitPaneUI());
         mainSplit.setBorder(null);
@@ -254,6 +264,7 @@ public class Window {
         registerKeystroke("openAction", openKeyStroke, MenuActions::load);
         registerKeystroke("loadInputAction", loadInputKeyStroke, MenuActions::selectInputFile);
         registerKeystroke("loadOutputAction", loadOutputKeyStroke, MenuActions::selectOutputFile);
+        registerKeystroke("newFileAction", newFileKeyStroke, MenuActions::newFile);
     }
 
     /**
@@ -276,15 +287,17 @@ public class Window {
     public void applyConfiguration(Config config) {
         this.config = config;
         EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
-        Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, config.getFontSize());
+        Font font = config.getFont();
 
         tools.applyTheme(font, editorTheme);
         mainSplit.setBackground(editorTheme.background());
         panel.setBackground(editorTheme.background());
         registerTable.applyTheme(font, editorTheme);
         ToolbarFactory.applyTheme(font, editorTheme, toolbar);
-        editor.applyTheme(font, editorTheme);
-        editor.resizeTabSize(config.getTabSize());
+        editors.applyTheme(font, editorTheme);
+        for (EzEditorPane editor : getEditorPanes().getEditors()) {
+            editor.resizeTabSize(config.getTabSize());
+        }
         SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
 
         autoSave.toggleRunning(config.getAutoSaveSelected(), config.getAutoSaveInterval());
@@ -337,13 +350,17 @@ public class Window {
      * @return the instance's editor pane.
      */
     public EzEditorPane getEditor() {
-        return editor;
+        return editors.getSelectedComponent();
+    }
+
+    public EditorTabbedPane getEditorPanes() {
+        return editors;
     }
 
     /**
-     * Gets the instance's editor pane.
+     * Gets the instance's register table.
      *
-     * @return the instance's editor pane.
+     * @return the instance's register table.
      */
     public RegisterTable getRegisterTable() {
         return registerTable;
@@ -365,9 +382,9 @@ public class Window {
      */
     public void parseText() throws ParseException {
         simulator.resetAll();
-        updateGraphicInformation();
-        simulator.addLines(Lexer.parseLines(editor.getText()), new File(editor.getOpenFilePath()));
-        instance.editor.resetHighlighter();
+        registerTable.update();
+        simulator.addLines(Lexer.parseLines(getEditor().getText()), new File(getEditor().getOpenFilePath()));
+        instance.getEditor().resetHighlighter();
     }
 
     /**
@@ -382,7 +399,7 @@ public class Window {
         } else {
             SystemStreams.printlnCurrentOut("** Program terminated forcefully **");
         }
-        editor.resetHighlighter();
+        getEditor().resetHighlighter();
     }
 
     /**
@@ -391,7 +408,7 @@ public class Window {
      * @param content the text to set the text within the editor to.
      */
     public void setText(String content) {
-        editor.setText(content);
+        getEditor().setText(content);
     }
 
     /**
@@ -400,7 +417,7 @@ public class Window {
      * @return the text content of the text editor.
      */
     public String getText() {
-        return editor.getText();
+        return getEditor().getText();
     }
 
     /**
