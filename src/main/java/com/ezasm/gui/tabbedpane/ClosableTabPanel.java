@@ -42,4 +42,8 @@ public class ClosableTabPanel extends JPanel implements IThemeable {
         label.setForeground(editorTheme.foreground());
     }
 
+    public void setLabelText(String text) {
+        label.setText(text);
+    }
+
 }

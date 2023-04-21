@@ -59,6 +59,7 @@ public class SimulatorGuiActions {
         boolean isDone = state == State.IDLE || state == State.STOPPED;
 
         Window.getInstance().getEditor().setEditable(isDone);
+        Window.getInstance().getEditorPanes().setEnabled(state != State.RUNNING);
         MenubarFactory.setRedirectionEnable(isDone);
         startButton.setEnabled(isDone);
         stopButton.setEnabled(state == State.RUNNING);

@@ -4,6 +4,7 @@ import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 /**
@@ -18,7 +19,7 @@ public class ClosableTabbedPane extends FixedTabbedPane {
      */
     public ClosableTabbedPane() {
         super();
-        closeableTabBuilder = new ClosableTabBuilder();
+        closeableTabBuilder = new ClosableTabBuilder(this);
     }
 
     /**
@@ -52,7 +53,33 @@ public class ClosableTabbedPane extends FixedTabbedPane {
     @Override
     public void addTab(JComponent component, Icon icon, String title, String tip) {
         super.addTab(component, icon, title, tip);
-        closeableTabBuilder.setParent(tabbedPane).setTabName(title);
+        closeableTabBuilder.setParent(this).setTabName(title);
         tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, closeableTabBuilder.build());
+    }
+
+    /**
+     * Removes the tab at the given index.
+     *
+     * @param index the index of the component to remove.
+     */
+    @Override
+    public void removeTab(int index) {
+        if (index < 0 || index > tabbedPane.getComponents().length) {
+            return;
+        }
+        boolean close = true;
+        if (getComponentAt(index) instanceof JClosableComponent closable) {
+            close = closable.close();
+        }
+        if (close) {
+            super.removeTab(index);
+        }
+    }
+
+    public void setTabName(int i, String name) {
+        Component c = tabbedPane.getTabComponentAt(i);
+        if (c instanceof ClosableTabPanel panel) {
+            panel.setLabelText(name);
+        }
     }
 }

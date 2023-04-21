@@ -1,6 +1,7 @@
 package com.ezasm.gui.menubar;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.util.FileIO;
 import javax.swing.*;
 
@@ -17,13 +18,20 @@ import static com.ezasm.util.FileIO.*;
 public class MenuActions {
 
     /**
+     * Creates a new, empty file in the editor.
+     */
+    public static void newFile() {
+        Window.getInstance().getEditorPanes().newFile();
+    }
+
+    /**
      * Runs the action event for save as.
      *
      * @return true if the operation was successful, false otherwise.
      */
     public static boolean saveAs() {
         JFileChooser fileChooser = createFileChooser("Save", TEXT_FILE_MASK | EZ_FILE_MASK);
-        fileChooser.setSelectedFile(new File("code.ez"));
+        fileChooser.setSelectedFile(new File(Window.getInstance().getEditor().getOpenFilePath()));
         int fileChooserOption = fileChooser.showSaveDialog(null);
         if (fileChooserOption == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
@@ -33,6 +41,8 @@ public class MenuActions {
                     FileIO.writeFile(file, Window.getInstance().getEditor().getText());
                     Window.getInstance().getEditor().setOpenFilePath(file.getPath());
                     Window.getInstance().getEditor().setFileSaved(true);
+                    Window.getInstance().getEditorPanes().setTabName(
+                            Window.getInstance().getEditorPanes().indexOfFile(file.getPath()), file.getName());
                     return true;
                 } catch (IOException e) {
                     promptWarningDialog("Error Saving File",
@@ -78,10 +88,15 @@ public class MenuActions {
             File file = fileChooser.getSelectedFile();
             if (file != null && file.exists() && file.canRead()) {
                 try {
-                    String content = FileIO.readFile(file);
-                    Window.getInstance().getEditor().setText(content);
-                    Window.getInstance().getEditor().setOpenFilePath(file.getPath());
-                    Window.getInstance().getEditor().setFileSaved(true);
+                    boolean notOpen = Window.getInstance().getEditorPanes().indexOfFile(file.getAbsolutePath()) == -1;
+                    EzEditorPane newEditor = Window.getInstance().getEditorPanes().openFile(file);
+
+                    if (notOpen) {
+                        String content = FileIO.readFile(file);
+                        newEditor.setText(content);
+                        newEditor.setOpenFilePath(file.getPath());
+                        newEditor.setFileSaved(true);
+                    }
                     return true;
                 } catch (IOException ex) {
                     promptWarningDialog("Error Loading File",
