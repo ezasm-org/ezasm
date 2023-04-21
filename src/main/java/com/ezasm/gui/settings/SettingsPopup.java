@@ -45,8 +45,7 @@ public class SettingsPopup implements IThemeable {
     private JButton lineHighlight;
     private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel, autoSaveLabel, lineHighlightLabel;
 
-    private ArrayList<String> LineHighlightOption = new ArrayList<String>(
-            Arrays.asList("OFF", "Line Executed", "Line to Execute"));
+    private ArrayList<String> LineHighlightOption = new ArrayList<String>(Arrays.asList("OFF", "Line Executed"));
 
     public final Config config;
 
@@ -223,7 +222,7 @@ public class SettingsPopup implements IThemeable {
             if (action.startsWith("Line") || action.startsWith("OFF")) {
                 String option = instance.lineHighlight.getText();
                 int position = instance.LineHighlightOption.indexOf(option);
-                if (position == 2) {
+                if (position == 1) {
                     position = 0;
                 } else {
                     position += 1;

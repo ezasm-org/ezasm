@@ -62,10 +62,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
             return;
         }
         int lineNumber = (int) simulator.getRegisters().getRegister(Registers.PC).getLong();
-        // Hightlight next line
-        if (LinehighlightOption.equals("Line to Execute")) {
-            lineNumber += 1;
-        }
+
         if (simulator.getRegisters().getRegister(Registers.FID).getLong() == Simulator.MAIN_FILE_IDENTIFIER) {
             try {
                 textComp.getHighlighter().addHighlight(startLineNums.get(lineNumber), endLineNums.get(lineNumber),
@@ -99,7 +96,7 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
     /**
      * Update the option of line highlighter
      *
-     * @param option Option of "OFF", "Line Executed", "Line to Execute" for linehighter
+     * @param option Option of "OFF", "Line Executed" for linehighter
      */
     public void LinehightlightSwitch(String option) {
         LinehighlightOption = option;
