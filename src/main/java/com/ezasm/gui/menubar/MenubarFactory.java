@@ -17,6 +17,7 @@ import static com.ezasm.gui.menubar.MenuActions.*;
 public class MenubarFactory {
 
     // Menu options to be referenced elsewhere
+    private static final String NEW_FILE = "New File";
     private static final String LOAD = "Open File";
     private static final String SAVE = "Save";
     private static final String SAVE_AS = "Save as...";
@@ -51,6 +52,7 @@ public class MenubarFactory {
         menu.getAccessibleContext().setAccessibleDescription("Actions related to the simulation");
         menubar.add(menu);
 
+        addMenuItem(menu, NEW_FILE);
         addMenuItem(menu, LOAD);
         addMenuItem(menu, SAVE);
         addMenuItem(menu, SAVE_AS);
@@ -101,6 +103,7 @@ public class MenubarFactory {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
             // File
+            case NEW_FILE -> newFile();
             case SAVE_AS -> saveAs();
             case SAVE -> save();
             case LOAD -> load();
