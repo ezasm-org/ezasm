@@ -19,8 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import com.ezasm.gui.Window;
-//import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.EditorTheme;
+import com.ezasm.gui.util.EzSettingsTab;
 
 // Entirely static class because it does not make sense to be able to have instances of a window
 // So don't implement IThemeable, just call applyTheme on this class
@@ -30,6 +30,13 @@ public final class NewSettingsPopup {
 	private static final Border BORDER_5 = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 
 	// Quick way to get GridBagConstraints for making forms with labels and components
+	/**
+	 * Quick way to get GridBagConstraints for making forms with labels and components
+	 * 
+	 * @param gridx 
+	 * @param gridy
+	 * @return
+	 */
 	private static GridBagConstraints quickConstraints(int gridx, int gridy) {
 		final var c = new GridBagConstraints();
 		c.insets = INSETS_5;
@@ -40,6 +47,11 @@ public final class NewSettingsPopup {
 		return c;
 	}
 
+	/**
+	 * Just an empty panel to fill the space below the main components in each of the tab panels
+	 */
+	private static final JPanel emptySpace = new JPanel();
+
 	// Keeps the components above it at the top of the window, disregarding window resizing
 	private static void fillWithEmptyVerticalSpace(JPanel panel) {
 		final var c = new GridBagConstraints();
@@ -47,7 +59,7 @@ public final class NewSettingsPopup {
 		c.gridwidth = 2;
 		c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;
-		panel.add(new JPanel(), c);
+		panel.add(emptySpace, c);
 	}
 
 	// The config object
@@ -82,14 +94,11 @@ public final class NewSettingsPopup {
 	private static final JComboBox<String> themeInput = new JComboBox<>(Config.THEMES);
 
 	// Execution panel initialization and setup
-	private static final JPanel executionTab = new JPanel(new GridBagLayout());
+	private static final EzSettingsTab executionTab = new EzSettingsTab();
 	static {
 		executionTab.setBorder(BORDER_5);
-
-		executionTab.add(speedLabel, quickConstraints(0, 0));
-		executionTab.add(speedSlider, quickConstraints(1, 0));
-
-		fillWithEmptyVerticalSpace(executionTab);
+		executionTab.addMenuRow(speedLabel, speedSlider);
+		executionTab.addVerticallyStretchedEmptyPanel();
 	}
 
 	// Appearance panel initialization and setup
@@ -228,6 +237,9 @@ public final class NewSettingsPopup {
 	public static void hide() { frame.setVisible(false); }
 
 	public static void applyTheme(final Font font, final EditorTheme editorTheme) {
+		//executionTab.applyTheme(font, editorTheme);
+		editorTheme.applyTheme(executionTab);
+
 		// get colors
 		final var foreground = editorTheme.foreground();
 		final var background = editorTheme.background();
