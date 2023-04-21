@@ -11,7 +11,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.concurrent.locks.LockSupport;
 
 public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter {
 
