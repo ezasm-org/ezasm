@@ -186,7 +186,7 @@ public class Simulator {
     /**
      * Adds the given lines to the main program. Then adds those lines to the program.
      *
-     * @param lines    the lines
+     * @param lines    the lines.
      * @param mainFile the main program file.
      */
     public void addLines(List<Line> lines, File mainFile) throws ParseException {
@@ -194,6 +194,20 @@ public class Simulator {
         parent = Objects.requireNonNullElse(parent, "");
         this.executionDirectory = parent;
         fileToIdentifier.put(mainFile.getAbsolutePath(), MAIN_FILE_IDENTIFIER);
+        for (Line line : lines) {
+            addLine(line, MAIN_FILE_IDENTIFIER);
+        }
+    }
+
+    /**
+     * Adds the given lines to the main program. Then adds those lines to the program.
+     *
+     * @param lines    the lines.
+     * @param fileName the anonymous file name.
+     */
+    public void addAnonymousLines(List<Line> lines, String fileName) throws ParseException {
+        this.executionDirectory = "";
+        fileToIdentifier.put(fileName, MAIN_FILE_IDENTIFIER);
         for (Line line : lines) {
             addLine(line, MAIN_FILE_IDENTIFIER);
         }

@@ -383,7 +383,12 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         registerTable.update();
-        simulator.addLines(Lexer.parseLines(getEditor().getText()), new File(getEditor().getOpenFilePath()));
+
+        if (getEditor().isFileAnonymous()) {
+            simulator.addAnonymousLines(Lexer.parseLines(getEditor().getText()), getEditor().getOpenFilePath());
+        } else {
+            simulator.addLines(Lexer.parseLines(getEditor().getText()), new File(getEditor().getOpenFilePath()));
+        }
         instance.getEditor().resetHighlighter();
     }
 
