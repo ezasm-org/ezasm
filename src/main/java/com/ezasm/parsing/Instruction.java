@@ -1,12 +1,11 @@
 package com.ezasm.parsing;
 
-import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
  * Represents an instruction in the assembly language: a name and a function to invoke.
  */
-public record Instruction(String text, Method target) {
+public record Instruction(String text) {
 
     /**
      * Gets the instruction name String.
@@ -16,16 +15,6 @@ public record Instruction(String text, Method target) {
     @Override
     public String text() {
         return text;
-    }
-
-    /**
-     * Gets the target function to invoke.
-     *
-     * @return the target function to invoke.
-     */
-    @Override
-    public Method target() {
-        return target;
     }
 
     @Override
