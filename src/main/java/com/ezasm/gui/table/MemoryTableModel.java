@@ -46,9 +46,9 @@ class MemoryTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         try {
-            return memory.read(offset + (row * cols + col) * Memory.wordSize()).toHexString();
+            return memory.read(offset + (row * cols + col) * Memory.getWordSize()).toHexString();
         } catch (ReadOutOfBoundsException e) {
-            return RawData.emptyBytes(Memory.wordSize()).toHexString();
+            return RawData.emptyBytes(Memory.getWordSize()).toHexString();
         }
     }
 
@@ -64,6 +64,6 @@ class MemoryTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        return "+" + Long.toHexString((long) column * Memory.wordSize());
+        return "+" + Long.toHexString((long) column * Memory.getWordSize());
     }
 }

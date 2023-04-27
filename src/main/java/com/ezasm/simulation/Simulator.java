@@ -245,6 +245,7 @@ public class Simulator {
         InputOutputTransformable io = new InputOutputTransformable(this, new RegisterInputOutput(Registers.PC));
         Transformation endOfLine = io.transformation(new RawData(io.get().intValue() + 1));
         endOfLine.apply();
+        // TODO this should not happen in headless mode, it is wasteful of resources in such a case
         transforms.push(t.concatenate(new TransformationSequence(endOfLine)));
     }
 

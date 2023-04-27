@@ -70,7 +70,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         table.setIntercellSpacing(new Dimension(2, 2));
         table.setRowHeight(font.getSize() + 2);
 
-        int width = 20 + (Memory.wordSize() * 2 * font.getSize());
+        int width = 20 + (Memory.getWordSize() * 2 * font.getSize());
 
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
@@ -117,7 +117,7 @@ public class MemoryTable extends JPanel implements IThemeable {
     private void updateRowHeaders() {
         Object[] rows = new Object[ROWS];
         for (int i = 0; i < ROWS; ++i) {
-            rows[i] = (new RawData(offset + (long) i * Memory.wordSize() * COLUMNS)).toHexString();
+            rows[i] = (new RawData(offset + (long) i * Memory.getWordSize() * COLUMNS)).toHexString();
         }
         rowHeader = new JList<>(new SimpleListModel(rows));
         rowHeader.setCellRenderer(new RowHeaderRenderer(table));

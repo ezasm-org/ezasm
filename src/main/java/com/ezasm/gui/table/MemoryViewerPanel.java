@@ -26,7 +26,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     private final JPanel controls;
     private final Map<String, Integer> nameToAddress;
 
-    private final int numTableWords = MemoryTable.COLUMNS * MemoryTable.ROWS * Memory.wordSize();
+    private final int numTableWords = MemoryTable.COLUMNS * MemoryTable.ROWS * Memory.getWordSize();
 
     private JLabel seekInputLabel;
     private JSpinner seekSpinner;
@@ -72,7 +72,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         seekInputLabel = new JLabel("Memory position: ");
 
         SpinnerIntegerModel longModel = new SpinnerIntegerModel(memoryTable.getOffset(), 0,
-                memory.initialStackPointer() - numTableWords, Memory.wordSize());
+                memory.initialStackPointer() - numTableWords, Memory.getWordSize());
         seekSpinner = new JSpinner(longModel);
         JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) seekSpinner.getEditor();
         editor.getTextField().setFormatterFactory(new HexFormatterFactory());
@@ -131,7 +131,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
 
         ((JSpinner.NumberEditor) seekSpinner.getEditor()).getTextField().setCaretColor(editorTheme.foreground());
         seekSpinner.setPreferredSize(
-                new Dimension(8 + (2 * Memory.wordSize() * font.getSize()), seekSpinner.getPreferredSize().height));
+                new Dimension(8 + (2 * Memory.getWordSize() * font.getSize()), seekSpinner.getPreferredSize().height));
     }
 
     /**

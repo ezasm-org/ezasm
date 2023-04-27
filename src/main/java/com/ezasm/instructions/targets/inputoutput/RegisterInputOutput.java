@@ -56,7 +56,7 @@ public class RegisterInputOutput implements IAbstractInputOutput {
      */
     public void validateStackPointer(Simulator simulator, RawData value)
             throws MisalignedStackPointerException, SimulationStackOverflowException {
-        if (value.intValue() % Memory.wordSize() != 0) {
+        if (value.intValue() % Memory.getWordSize() != 0) {
             throw new MisalignedStackPointerException(value.intValue());
         } else if (value.intValue() <= simulator.getMemory().currentHeapPointer()) {
             throw new SimulationStackOverflowException(value.intValue());

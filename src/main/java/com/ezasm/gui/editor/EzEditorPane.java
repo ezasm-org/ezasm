@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
-import static com.ezasm.gui.editor.LineHighlighter.removeHighlights;
 import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 
 /**
