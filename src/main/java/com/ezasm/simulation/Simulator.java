@@ -29,6 +29,9 @@ import java.util.*;
  */
 public class Simulator {
 
+    /**
+     * FID of the file the user started running code from.
+     */
     public static final int MAIN_FILE_IDENTIFIER = 0;
 
     private final Memory memory;
@@ -324,6 +327,11 @@ public class Simulator {
         return memory;
     }
 
+    /**
+     * Gets a file at a given file identifier
+     *
+     * @return the file name in question
+     */
     public String getFile(int fid) {
         return fileToIdentifier.getKey(fid);
     }

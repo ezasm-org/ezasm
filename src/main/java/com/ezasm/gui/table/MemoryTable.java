@@ -36,6 +36,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         this.offset = memory.initialHeapPointer();
         table.setModel(new MemoryTableModel(memory, ROWS, COLUMNS));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getTableHeader().setReorderingAllowed(false);
 
         updateRowHeaders();
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
