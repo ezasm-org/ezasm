@@ -119,8 +119,8 @@ public class Lexer {
      * @return the number within the string.
      * @throws NumberFormatException if the given string is not a valid number.
      */
-    private static double stringToDouble(String text, int base) throws NumberFormatException { 
-        //TODO not this. Look at apache commons, maybe there's something better there? For now this works
+    private static double stringToDouble(String text, int base) throws NumberFormatException {
+        // TODO not this. Look at apache commons, maybe there's something better there? For now this works
         boolean isNegative = false;
         if (text.startsWith("-")) {
             text = text.substring(1);
