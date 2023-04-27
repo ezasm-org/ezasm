@@ -108,8 +108,9 @@ public class Window {
      */
     public static void instantiate(Simulator simulator, Config config, boolean dbg) {
         debugMode = dbg;
-        if (instance == null)
+        if (instance == null) {
             new Window(simulator, config);
+        }
     }
 
     /**
@@ -220,7 +221,6 @@ public class Window {
         console = new Console();
         setInputStream(console.getInputStream());
         setOutputStream(console.getOutputStream());
-        // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
         if (!debugMode) {
@@ -238,7 +238,8 @@ public class Window {
         mainSplit.setUI(new BasicSplitPaneUI());
         mainSplit.setBorder(null);
         toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, tools);
-        toolSplit.setResizeWeight(0.75);
+        toolSplit.setResizeWeight(1.0);
+        toolSplit.resetToPreferredSizes();
         toolSplit.setUI(new BasicSplitPaneUI());
         toolSplit.setBorder(null);
 
@@ -284,6 +285,11 @@ public class Window {
         });
     }
 
+    /**
+     * Applies the given configuration to the application.
+     *
+     * @param config the configuration to apply.
+     */
     public void applyConfiguration(Config config) {
         this.config = config;
         EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
@@ -291,6 +297,7 @@ public class Window {
 
         tools.applyTheme(font, editorTheme);
         mainSplit.setBackground(editorTheme.background());
+        toolSplit.setBackground(editorTheme.background());
         panel.setBackground(editorTheme.background());
         registerTable.applyTheme(font, editorTheme);
         ToolbarFactory.applyTheme(font, editorTheme, toolbar);
@@ -339,6 +346,9 @@ public class Window {
         return memoryViewerPanel;
     }
 
+    /**
+     * Updates graphical information based on simulation attributes.
+     */
     public void updateGraphicInformation() {
         registerTable.update();
         memoryViewerPanel.update();
@@ -353,6 +363,11 @@ public class Window {
         return editors.getSelectedComponent();
     }
 
+    /**
+     * Gets the tabbed editor pane containing the editor panes.
+     *
+     * @return the tabbed editor pane containing the editor panes.
+     */
     public EditorTabbedPane getEditorPanes() {
         return editors;
     }
@@ -405,24 +420,6 @@ public class Window {
             SystemStreams.printlnCurrentOut("** Program terminated forcefully **");
         }
         getEditor().resetHighlighter();
-    }
-
-    /**
-     * Sets the text of the editor to the given content.
-     *
-     * @param content the text to set the text within the editor to.
-     */
-    public void setText(String content) {
-        getEditor().setText(content);
-    }
-
-    /**
-     * Gets the text content of the text editor.
-     *
-     * @return the text content of the text editor.
-     */
-    public String getText() {
-        return getEditor().getText();
     }
 
     /**

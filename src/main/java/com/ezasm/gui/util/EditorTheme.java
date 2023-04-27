@@ -93,11 +93,12 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
     }
 
     /**
-     * Change a color relative to the theme's background color multiple times, if it's dark make it brighter and vice versa.
+     * Change a color relative to the theme's background color multiple times, if it's dark make it brighter and vice
+     * versa.
      *
-     * @param c the color to be modified.
+     * @param c     the color to be modified.
      * @param times how many times to do the modification.
-     * 
+     *
      * @return the new color.
      */
     public Color modifyAwayFromBackground(Color c, int times) {
@@ -119,11 +120,12 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
     }
 
     /**
-     * Change a color relative to the theme's background color multiple times, if it's dark make it darker and vice versa.
+     * Change a color relative to the theme's background color multiple times, if it's dark make it darker and vice
+     * versa.
      *
-     * @param c the color to be modified.
+     * @param c     the color to be modified.
      * @param times how many times to do the modification.
-     * 
+     *
      * @return the new color.
      */
     public Color modifyTowardsBackground(Color c, int times) {
@@ -172,8 +174,8 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
     /**
      * Applies a font and theme to the given component.
      *
-     * @param component the component to apply theming to.
-     * @param font the font to apply.
+     * @param component   the component to apply theming to.
+     * @param font        the font to apply.
      * @param editorTheme the theme to apply.
      */
     public static void applyFontTheme(JComponent component, Font font, EditorTheme editorTheme) {
@@ -184,8 +186,8 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
     /**
      * Applies a font and theme to the given component then removes its borders.
      *
-     * @param component the component to apply theming to.
-     * @param font the font to apply.
+     * @param component   the component to apply theming to.
+     * @param font        the font to apply.
      * @param editorTheme the theme to apply.
      */
     public static void applyFontThemeBorderless(JComponent component, Font font, EditorTheme editorTheme) {
@@ -196,10 +198,10 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
     /**
      * Applies a font, theme, and border to the given component.
      *
-     * @param component the component to apply theming to.
-     * @param font the font to apply.
+     * @param component   the component to apply theming to.
+     * @param font        the font to apply.
      * @param editorTheme the theme to apply.
-     * @param border the border to apply.
+     * @param border      the border to apply.
      */
     public static void applyFontThemeBorder(JComponent component, Font font, EditorTheme editorTheme, Border border) {
         editorTheme.applyThemeBorderless(component);

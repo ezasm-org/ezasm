@@ -3,12 +3,8 @@ package com.ezasm.gui.util;
 import com.ezasm.gui.Window;
 import com.ezasm.gui.editor.EzEditorPane;
 
-import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import static com.ezasm.gui.menubar.MenuActions.*;
-import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 
 public class WindowCloseListener extends WindowAdapter {
 
