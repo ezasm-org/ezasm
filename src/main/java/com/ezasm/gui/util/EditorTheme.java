@@ -15,7 +15,9 @@ import java.awt.*;
 public record EditorTheme(Color background, Color foreground, Color currentLine, Color selection, Color comment,
         Color cyan, Color green, Color orange, Color pink, Color purple, Color red, Color yellow, boolean isLight) {
 
-    // based on https://github.com/dracula/dracula-theme
+    /**
+     * A dark theme based on https://github.com/dracula/dracula-theme
+     */
     public static EditorTheme Dracula = new EditorTheme(new Color(0x282a36), // background
             new Color(0xf8f8f2), // foreground
             new Color(0x44475a), // currentLine
@@ -30,7 +32,9 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
             new Color(0xf1fa8c), // yellow
             false); // is a light theme
 
-    // based on https://github.com/endormi/vscode-2077-theme
+    /**
+     * A purple theme based on https://github.com/endormi/vscode-2077-theme
+     */
     public static EditorTheme Purple = new EditorTheme(new Color(0x030d22), // background
             new Color(0xfdfeff), // foreground
             new Color(0x310072), // currentLine
@@ -45,7 +49,9 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
             new Color(0xffff99), // yellow
             false); // is a light theme
 
-    // based on https://github.com/atom/one-light-syntax
+    /**
+     * A light theme based on https://github.com/atom/one-light-syntax
+     */
     public static EditorTheme Light = new EditorTheme(new Color(0xebf8ff), // background
             new Color(0x161b1d), // foreground
             new Color(0xc1e4f6), // currentLine
@@ -118,16 +124,38 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
         scrollbar.setUI(new EzScrollBarUI(this));
     }
 
+    /**
+     * Applies a font and theme to the given component.
+     *
+     * @param component the component to apply theming to.
+     * @param font the font to apply.
+     * @param editorTheme the theme to apply.
+     */
     public static void applyFontTheme(JComponent component, Font font, EditorTheme editorTheme) {
         editorTheme.applyTheme(component);
         component.setFont(font);
     }
 
+    /**
+     * Applies a font and theme to the given component then removes its borders.
+     *
+     * @param component the component to apply theming to.
+     * @param font the font to apply.
+     * @param editorTheme the theme to apply.
+     */
     public static void applyFontThemeBorderless(JComponent component, Font font, EditorTheme editorTheme) {
         editorTheme.applyThemeBorderless(component);
         component.setFont(font);
     }
 
+    /**
+     * Applies a font, theme, and border to the given component.
+     *
+     * @param component the component to apply theming to.
+     * @param font the font to apply.
+     * @param editorTheme the theme to apply.
+     * @param border the border to apply.
+     */
     public static void applyFontThemeBorder(JComponent component, Font font, EditorTheme editorTheme, Border border) {
         editorTheme.applyThemeBorderless(component);
         component.setBorder(border);

@@ -13,6 +13,11 @@ public class LabelReferenceInput implements IAbstractInput {
 
     private final String label;
 
+    /**
+     * Creates an input based on the given label.
+     *
+     * @param label the label to base the input on.
+     */
     public LabelReferenceInput(String label) {
         this.label = label;
     }

@@ -161,13 +161,11 @@ public class InstructionDispatcher {
      */
     public void execute(Line line) throws SimulationException {
         DispatchInstruction dispatch = getInstruction(line.getInstruction().text(), line.getArgumentTypes());
-        if (dispatch == null)
+        if (dispatch == null) {
             throw new IllegalInstructionException(line.getInstruction().text());
+        }
 
         Object object = this.instructionHandlerInstances.get(dispatch.parent());
-
-        // TODO assume loaded for now
-        assert object != null;
 
         TransformationSequence result = dispatch.invoke(object, line);
         simulator.applyTransformations(result);
