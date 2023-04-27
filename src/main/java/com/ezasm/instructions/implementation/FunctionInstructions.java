@@ -125,4 +125,16 @@ public class FunctionInstructions {
         return new TransformationSequence(t1, t2);
     }
 
+    /**
+     * Exit program naturally and does not change the exit code.
+     *
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public TransformationSequence exit() throws SimulationException {
+        InputOutputTransformable pc = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.PC));
+        Transformation t = pc.transformation(new RawData(simulator.endPC()));
+        return new TransformationSequence(t);
+    }
+
 }
