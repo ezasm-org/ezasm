@@ -294,10 +294,6 @@ public class Lexer {
      * @throws ParseException if the line could not be properly parsed.
      */
     public static Line parseLine(String line, int lineNumber) throws ParseException {
-        line = StringUtils.substringBefore(line, '#');
-
-        if (line.length() == 0)
-            return null;
         String[] tokens = tokenizeLine(line);
         if (tokens.length == 0) {
             return null;
@@ -318,28 +314,11 @@ public class Lexer {
      * @throws ParseException if any line could not be properly parsed.
      */
     public static List<Line> parseLines(String lines) throws ParseException {
-        List<String> linesRead = new ArrayList<>();
+        String[] linesRead = lines.split("\n\r?");
         List<Line> linesLexed = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
 
-        // individually read lines treating semicolons as line breaks
-        for (int i = 0; i < lines.length(); ++i) {
-            char c = lines.charAt(i);
-            if (c == '\n') {
-                linesRead.add(sb.toString());
-                sb.delete(0, sb.length());
-            } else {
-                sb.append(c);
-            }
-        }
-
-        // put any remaining characters into their own line
-        if (!sb.isEmpty()) {
-            linesRead.add(sb.toString());
-        }
-
-        for (int i = 0; i < linesRead.size(); ++i) {
-            Line lexed = parseLine(linesRead.get(i), i);
+        for (int i = 0; i < linesRead.length; ++i) {
+            Line lexed = parseLine(linesRead[i], i);
             if (lexed != null) {
                 linesLexed.add(lexed);
             }

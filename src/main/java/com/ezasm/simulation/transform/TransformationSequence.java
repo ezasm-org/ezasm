@@ -36,12 +36,9 @@ public final class TransformationSequence {
      */
     public TransformationSequence concatenate(TransformationSequence other) {
         Transformation[] newTransformations = new Transformation[transformations.length + other.transformations.length];
-        for (int i = 0; i < transformations.length; ++i) {
-            newTransformations[i] = transformations[i];
-        }
-        for (int i = 0; i < other.transformations.length; ++i) {
-            newTransformations[i + transformations.length] = other.transformations[i];
-        }
+        System.arraycopy(transformations, 0, newTransformations, 0, transformations.length);
+        System.arraycopy(other.transformations, 0, newTransformations, transformations.length,
+                other.transformations.length);
         return new TransformationSequence(newTransformations);
     }
 

@@ -161,36 +161,6 @@ public class Memory {
     }
 
     /**
-     * Allocates a certain number of bytes with a check based on stack pointer to ensure that the heap pointer does not
-     * cross the stack pointer.
-     *
-     * @param bytes the number of bytes to allocate.
-     * @param sp    the current stack pointer of the program.
-     * @return the allocated memory starting point
-     */
-    public int allocate(int bytes, int sp) throws SimulationException {
-        if (alloc + bytes > sp) {
-            throw new SimulationException(String.format(
-                    "Allocating %d bytes with $SP at %d would cause the heap to overwrite the stack", bytes, sp));
-        }
-        int address = alloc;
-        alloc = alloc + bytes;
-        return address;
-    }
-
-    /**
-     * Allocates a certain number of bytes without a check based on stack pointer.
-     *
-     * @param bytes the number of bytes to allocate.
-     * @return the allocated memory starting point.
-     */
-    public int unsafeAllocate(int bytes) {
-        int address = alloc;
-        alloc = alloc + bytes;
-        return address;
-    }
-
-    /**
      * Gets the information from the memory at a certain address.
      *
      * @param address the address to begin to read from.
