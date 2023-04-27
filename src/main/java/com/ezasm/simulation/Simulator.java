@@ -95,6 +95,11 @@ public class Simulator {
         initialize();
     }
 
+    /**
+     * Gets all lines in current file.
+     *
+     * @return list of lines in current file
+     */
     private List<Line> currentFileLines() {
         return Objects.requireNonNullElse(fileIdToLineArray.get((int) fi.getLong()), new ArrayList<>());
     }

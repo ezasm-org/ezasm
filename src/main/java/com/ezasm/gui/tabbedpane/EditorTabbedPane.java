@@ -118,7 +118,7 @@ public class EditorTabbedPane extends ClosableTabbedPane {
     public EzEditorPane newFile() {
         EzEditorPane newEditor = getNewThemedEditor();
         newFileNumber++;
-        addTab(newEditor, null, newEditor.getOpenFilePath(), "");
+        addTab(newEditor, null, newEditor.getOpenFilePath(), null);
         setActiveTab(newEditor);
         return newEditor;
     }
