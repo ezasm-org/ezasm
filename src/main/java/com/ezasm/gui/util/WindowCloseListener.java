@@ -10,12 +10,20 @@ import java.awt.event.WindowEvent;
 import static com.ezasm.gui.menubar.MenuActions.*;
 import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 
+/**
+ * A WindowAdapter used when attempting to close the application. Checks to see if files are saved.
+ */
 public class WindowCloseListener extends WindowAdapter {
 
     public WindowCloseListener() {
         super();
     }
 
+    /**
+     * Attempt to close the application. If anything needs to be saved, switch to it and prompt the user to save it.
+     *
+     * @param e the close event.
+     */
     @Override
     public void windowClosing(WindowEvent e) {
         boolean exit = true;
