@@ -67,10 +67,10 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
             true); // is a light theme
 
     /**
-     * Takes a string theme name and returns the corresponding theme object
+     * Takes a string theme name and returns the corresponding theme object.
      *
-     * @param s the theme in plain text
-     * @return the theme object
+     * @param s the theme in plain text.
+     * @return the theme object.
      */
     public static EditorTheme getTheme(String s) {
         return switch (s) {
@@ -81,10 +81,25 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
         };
     }
 
+    /**
+     * Change a color relative to the theme's background color, if it's dark make it brighter and vice versa.
+     *
+     * @param c the color to be modified.
+     *
+     * @return new color.
+     */
     public Color modifyAwayFromBackground(Color c) {
         return isLight ? c.darker() : c.brighter();
     }
 
+    /**
+     * Change a color relative to the theme's background color multiple times, if it's dark make it brighter and vice versa.
+     *
+     * @param c the color to be modified.
+     * @param times how many times to do the modification.
+     * 
+     * @return the new color.
+     */
     public Color modifyAwayFromBackground(Color c, int times) {
         for (int i = 0; i < times; ++i) {
             c = modifyAwayFromBackground(c);
@@ -92,10 +107,25 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
         return c;
     }
 
+    /**
+     * Change a color relative to the theme's background color, if it's dark make it darker and vice versa.
+     *
+     * @param c the color to be modified.
+     *
+     * @return new color.
+     */
     public Color modifyTowardsBackground(Color c) {
         return isLight ? c.brighter() : c.darker();
     }
 
+    /**
+     * Change a color relative to the theme's background color multiple times, if it's dark make it darker and vice versa.
+     *
+     * @param c the color to be modified.
+     * @param times how many times to do the modification.
+     * 
+     * @return the new color.
+     */
     public Color modifyTowardsBackground(Color c, int times) {
         for (int i = 0; i < times; ++i) {
             c = modifyAwayFromBackground(c);
@@ -103,6 +133,11 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
         return c;
     }
 
+    /**
+     * Apply a given theme to a given component.
+     *
+     * @param component the component to be themed.
+     */
     public void applyTheme(JComponent component) {
         component.setBackground(background);
         component.setForeground(foreground);
@@ -114,11 +149,21 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
         }
     }
 
+    /**
+     * Apply a given theme to a given component, but without a border.
+     *
+     * @param component the component to be themed.
+     */
     public void applyThemeBorderless(JComponent component) {
         applyTheme(component);
         component.setBorder(BorderFactory.createEmptyBorder());
     }
 
+    /**
+     * Apply a given theme to a scrollbar specifically.
+     *
+     * @param scrollbar the scrollbar to be themed.
+     */
     public void applyThemeScrollbar(JScrollBar scrollbar) {
         applyThemeBorderless(scrollbar);
         scrollbar.setUI(new EzScrollBarUI(this));

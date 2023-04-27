@@ -1,5 +1,6 @@
 package com.ezasm.simulation;
 
+import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
@@ -344,7 +345,7 @@ public class Simulator {
     /**
      * Gets a file at a given file identifier.
      *
-     * @return the file name in question.
+     * @return the file path in question.
      */
     public String getFile(int fid) {
         return fileToIdentifier.getKey(fid);
