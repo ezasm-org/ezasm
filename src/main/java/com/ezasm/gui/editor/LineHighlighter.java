@@ -81,14 +81,4 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
             e.printStackTrace();
         }
     }
-
-    /**
-     * Clear a text component of all line highlights.
-     */
-    public static void removeHighlights() {
-        for (EzEditorPane editorPane : Window.getInstance().getEditorPanes().getEditors()) {
-            editorPane.getTextArea().getHighlighter().removeAllHighlights();
-            editorPane.repaint();
-        }
-    }
 }
