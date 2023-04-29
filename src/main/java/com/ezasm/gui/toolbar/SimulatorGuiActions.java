@@ -178,14 +178,11 @@ public class SimulatorGuiActions {
      * Handles if the user requests that the state of the emulator be reset.
      */
     static void reset() {
-        killWorker();
-        awaitWorkerTermination();
-        resetStepThread();
-        setState(State.IDLE);
+        stop();
         Window.getInstance().getSimulator().resetAll();
         Window.getInstance().updateGraphicInformation();
-        Window.getInstance().getEditor().resetHighlighter();
         Window.getInstance().getRegisterTable().removeHighlightValue();
+        setState(State.IDLE);
     }
 
     /**
@@ -226,7 +223,7 @@ public class SimulatorGuiActions {
     private static void resetStepThread() {
         stepThread.shutdownNow();
         try {
-            if (!stepThread.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+            if (!stepThread.awaitTermination(50, TimeUnit.MILLISECONDS)) {
                 stepThread.kill();
             }
         } catch (InterruptedException ignored) {

@@ -45,6 +45,9 @@ public record DispatchInstruction(Class<?> parent, Method invocationTarget) {
         try {
             return (TransformationSequence) this.invocationTarget.invoke(parent, line.getArguments());
         } catch (InvocationTargetException e) {
+            if (e.getCause().getClass().equals(ThreadDeath.class)) {
+                throw new ThreadDeath();
+            }
             if (e.getTargetException() == null || e.getTargetException().getMessage() == null) {
                 e.printStackTrace();
                 throw new SimulationException("");
