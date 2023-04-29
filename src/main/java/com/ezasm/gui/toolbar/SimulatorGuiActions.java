@@ -193,8 +193,8 @@ public class SimulatorGuiActions {
      * Handles changing between states and buffering delays between instructions.
      */
     private static void simulationLoop() {
-        while (!Window.getInstance().getSimulator().isDone() && !Thread.currentThread().isInterrupted() &&
-                (state == State.RUNNING || state == State.PAUSED || state == State.STEPPING)) {
+        while (!Window.getInstance().getSimulator().isDone() && !Thread.currentThread().isInterrupted()
+                && (state == State.RUNNING || state == State.PAUSED || state == State.STEPPING)) {
             try {
                 runOneLine();
             } catch (SimulationException e) {

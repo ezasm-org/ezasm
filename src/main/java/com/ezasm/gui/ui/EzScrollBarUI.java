@@ -56,8 +56,9 @@ public class EzScrollBarUI extends BasicScrollBarUI {
 
     /**
      * Paints the scrollbar track.
-     * @param g the graphics.
-     * @param c the component.
+     *
+     * @param g           the graphics.
+     * @param c           the component.
      * @param trackBounds the track bounds.
      */
     @Override
@@ -69,8 +70,8 @@ public class EzScrollBarUI extends BasicScrollBarUI {
     /**
      * Paints the scrollbar thumb manually.
      *
-     * @param g the graphics.
-     * @param c the component.
+     * @param g           the graphics.
+     * @param c           the component.
      * @param thumbBounds the thumb bounds.
      */
     @Override

@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class WorkerThread extends ThreadPoolExecutor{
+public class WorkerThread extends ThreadPoolExecutor {
 
     private final Map<Runnable, Thread> executingThreads;
 
@@ -29,7 +29,7 @@ public class WorkerThread extends ThreadPoolExecutor{
     }
 
     public synchronized void kill() {
-        for(Thread thread : executingThreads.values()) {
+        for (Thread thread : executingThreads.values()) {
             thread.stop(); // since just interrupting would not work
         }
         executingThreads.clear();
