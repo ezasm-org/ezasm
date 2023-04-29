@@ -48,7 +48,7 @@ public class ConsoleInputStream extends InputStream {
      */
     @Override
     public int read() throws IOException {
-        while (true) {
+        while (!Thread.interrupted()) {
             try {
                 char c = buffer.charAt(bufferIndex);
                 ++bufferIndex;
@@ -57,6 +57,8 @@ public class ConsoleInputStream extends InputStream {
                 LockSupport.parkNanos(DELAY_MS * 1_000_000);
             }
         }
+        bufferIndex = 0;
+        return 0;
     }
 
     /**

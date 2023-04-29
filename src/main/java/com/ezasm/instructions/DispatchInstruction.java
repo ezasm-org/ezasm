@@ -17,36 +17,6 @@ import java.lang.reflect.Method;
 public record DispatchInstruction(Class<?> parent, Method invocationTarget) {
 
     /**
-     * Create a new dispatchable instruction based on a method with specific parameters and its parent class.
-     *
-     * @param parent           the parent class.
-     * @param invocationTarget the method for which to deduce operands for instructions and compile into a dispatchable
-     *                         instruction.
-     */
-    public DispatchInstruction {
-    }
-
-    /**
-     * Gets the parent class of the instruction (the instruction handler).
-     *
-     * @return a Class object corresponding to the parent class.
-     */
-    @Override
-    public Class<?> parent() {
-        return parent;
-    }
-
-    /**
-     * Gets the function to be invoked by this instruction.
-     *
-     * @return the function to be invoked by this instruction.
-     */
-    @Override
-    public Method invocationTarget() {
-        return invocationTarget;
-    }
-
-    /**
      * Checks if this instruction is callable with the given argument types.
      *
      * @param givenArguments the arguments the caller gave.
@@ -75,6 +45,10 @@ public record DispatchInstruction(Class<?> parent, Method invocationTarget) {
         try {
             return (TransformationSequence) this.invocationTarget.invoke(parent, line.getArguments());
         } catch (InvocationTargetException e) {
+            if (e.getTargetException() == null || e.getTargetException().getMessage() == null) {
+                e.printStackTrace();
+                throw new SimulationException("");
+            }
             throw new SimulationException(e.getTargetException().getMessage());
         } catch (IllegalAccessException | IllegalArgumentException e) {
             // TODO handle

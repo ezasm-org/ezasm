@@ -429,6 +429,7 @@ public class Window {
      */
     public void handleParseException(Exception e) {
         SystemStreams.printlnCurrentErr(e.getMessage());
+        e.printStackTrace();
     }
 
 }
