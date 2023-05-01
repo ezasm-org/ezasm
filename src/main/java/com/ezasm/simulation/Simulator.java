@@ -1,8 +1,6 @@
 package com.ezasm.simulation;
 
-import com.ezasm.gui.Window;
 import com.ezasm.instructions.InstructionDispatcher;
-import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
@@ -48,6 +46,7 @@ public class Simulator {
     private final Register pc;
     private final Register fi;
     private String executionDirectory;
+    private boolean canUndo;
 
     /**
      * Constructs a Simulator with the given word size and memory size specifications.
@@ -68,6 +67,7 @@ public class Simulator {
         this.pc = registers.getRegister(Registers.PC);
         this.fi = registers.getRegister(Registers.FID);
         this.executionDirectory = "";
+        this.canUndo = false;
 
         initialize();
     }
@@ -98,6 +98,18 @@ public class Simulator {
         labelToFileIdAndLineNumber.clear();
         transforms.clear();
         initialize();
+    }
+
+    /**
+     * Sets whether the program stores a list of all transformations done to the simulator. Setting this to true will
+     *
+     * @param canUndo
+     */
+    public void setAllowUndo(boolean canUndo) {
+        this.canUndo = canUndo;
+        if (!canUndo) {
+            transforms.clear();
+        }
     }
 
     /**
@@ -267,8 +279,10 @@ public class Simulator {
         InputOutputTransformable io = new InputOutputTransformable(this, new RegisterInputOutput(Registers.PC));
         Transformation endOfLine = io.transformation(new RawData(io.get().intValue() + 1));
         endOfLine.apply();
-        // TODO this should not happen in headless mode, it is wasteful of resources in such a case
-        transforms.push(t.concatenate(new TransformationSequence(endOfLine)));
+
+        if (canUndo) {
+            transforms.push(t.concatenate(new TransformationSequence(endOfLine)));
+        }
     }
 
     /**
@@ -278,7 +292,7 @@ public class Simulator {
      * @throws SimulationException if an error occurs in the transformation.
      */
     public boolean undoLastTransformations() throws SimulationException {
-        if (transforms.isEmpty()) {
+        if (!canUndo || transforms.isEmpty()) {
             return false;
         }
         transforms.pop().invert().apply();

@@ -85,9 +85,9 @@ public class Window {
     protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
+        this.simulator.setAllowUndo(true);
         this.config = config;
         initialize();
-
     }
 
     /**
@@ -115,7 +115,7 @@ public class Window {
 
     /**
      * Generate the singleton Window instance if it does not exist. Sets the input/output streams for our
-     * TerminalInstructions to files
+     * TerminalInstructions to files.
      *
      * @param simulator      the simulator to use.
      * @param config         the program configuration.
@@ -206,11 +206,13 @@ public class Window {
         app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         app.addWindowListener(new WindowCloseListener());
         app.setMinimumSize(new Dimension(800, 600));
+
         try {
             app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
         } catch (IOException e) {
             SystemStreams.err.println("Could not load icon");
         }
+
         panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();
