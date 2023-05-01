@@ -327,8 +327,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         int resp = promptYesNoCancelDialog("Closing File",
                 "You have unsaved changes in " + getOpenFilePath() + ", would you like to save them?");
         if (resp == JOptionPane.YES_OPTION) {
-            MenuActions.save();
-            return true;
+            return MenuActions.save();
         } else if (resp == JOptionPane.NO_OPTION) {
             return true;
         } else if (resp == JOptionPane.CANCEL_OPTION || resp == JOptionPane.CLOSED_OPTION) {
