@@ -6,6 +6,7 @@ import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
 
@@ -66,6 +67,11 @@ public class InstructionDispatcher {
         instructions.get(name).add(new DispatchInstruction(parent, method));
     }
 
+    /**
+     * Validates the given method as an instruction.
+     *
+     * @param method the instruction to validate.
+     */
     private static void validateInstruction(Method method) {
         if (!TransformationSequence.class.isAssignableFrom(method.getReturnType())) {
             throw new InstructionLoadException("Error loading instruction '" + method.getName()
@@ -156,10 +162,11 @@ public class InstructionDispatcher {
      * Execute an instruction based on a parsed line.
      *
      * @param line the parsed line.
-     * @throws InstructionDispatchException when a parsed line cannot be interpreted as a function. This could be an
-     *                                      {@link IllegalInstructionException} if the instruction is unrecognized.
+     * @throws SimulationException            when a parsed line cannot be interpreted as a function. This could be an
+     *                                        {@link IllegalInstructionException} if the instruction is unrecognized.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public void execute(Line line) throws SimulationException {
+    public void execute(Line line) throws SimulationException, SimulationInterruptedException {
         DispatchInstruction dispatch = getInstruction(line.getInstruction().text(), line.getArgumentTypes());
         if (dispatch == null) {
             throw new IllegalInstructionException(line.getInstruction().text());
@@ -168,6 +175,7 @@ public class InstructionDispatcher {
         Object object = this.instructionHandlerInstances.get(dispatch.parent());
 
         TransformationSequence result = dispatch.invoke(object, line);
+        SimulationInterruptedException.handleInterrupts();
         simulator.applyTransformations(result);
     }
 

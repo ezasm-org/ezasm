@@ -5,8 +5,8 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.util.SystemStreams;
-import com.ezasm.util.WorkerThread;
 
 import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
@@ -34,8 +34,8 @@ public class SimulatorGuiActions {
     private static final long LOOP_BUSY_WAIT_MS = 50L;
 
     private static Thread worker;
-    private static WorkerThread stepThread = new WorkerThread();
-    private static State state = State.IDLE;
+    private static ExecutorService stepThread = Executors.newSingleThreadExecutor();
+    private static volatile State state = State.IDLE;
 
     /**
      * The delay between instructions.
@@ -98,6 +98,7 @@ public class SimulatorGuiActions {
             stepThread.execute(() -> {
                 try {
                     runOneLine();
+                } catch (SimulationInterruptedException ignored) { // Expected interruption from Stop or Reset
                 } catch (SimulationException e) {
                     setState(State.STOPPED);
                     Window.getInstance().handleParseException(e);
@@ -190,10 +191,12 @@ public class SimulatorGuiActions {
      * Handles changing between states and buffering delays between instructions.
      */
     private static void simulationLoop() {
-        while (!Window.getInstance().getSimulator().isDone() && !Thread.currentThread().isInterrupted()
+        while (!Window.getInstance().getSimulator().isDone()
                 && (state == State.RUNNING || state == State.PAUSED || state == State.STEPPING)) {
             try {
                 runOneLine();
+            } catch (SimulationInterruptedException ignored) { // Expected interruption from Stop or Reset
+                break;
             } catch (SimulationException e) {
                 Window.getInstance().handleParseException(e);
                 break;
@@ -211,24 +214,28 @@ public class SimulatorGuiActions {
         Window.getInstance().handleProgramCompletion();
     }
 
-    private static void runOneLine() throws SimulationException {
+    /**
+     * Runs one line from the current simulator. Handles state changes dependent on the outcome.
+     *
+     * @throws SimulationException            if an error occurs in execution.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
+     */
+    private static void runOneLine() throws SimulationException, SimulationInterruptedException {
         Window.getInstance().getEditor().updateHighlight();
         Window.getInstance().getSimulator().executeLineFromPC();
         Window.getInstance().updateGraphicInformation();
+        SimulationInterruptedException.handleInterrupts();
         if (state == State.STEPPING) {
             setState(State.PAUSED);
         }
     }
 
+    /**
+     * Forcibly resets the step thread.
+     */
     private static void resetStepThread() {
         stepThread.shutdownNow();
-        try {
-            if (!stepThread.awaitTermination(50, TimeUnit.MILLISECONDS)) {
-                stepThread.kill();
-            }
-        } catch (InterruptedException ignored) {
-        }
-        stepThread = new WorkerThread();
+        stepThread = Executors.newSingleThreadExecutor();
     }
 
     /**

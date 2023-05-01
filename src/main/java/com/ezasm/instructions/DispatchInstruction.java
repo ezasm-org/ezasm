@@ -2,6 +2,7 @@ package com.ezasm.instructions;
 
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.simulation.transform.TransformationSequence;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,17 +41,20 @@ public record DispatchInstruction(Class<?> parent, Method invocationTarget) {
      *
      * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#parent ()}.
      * @param line   the parsed line to interpret.
+     * @throws SimulationException            if an error occurs executing the target instruction.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public TransformationSequence invoke(Object parent, Line line) throws SimulationException {
+    public TransformationSequence invoke(Object parent, Line line)
+            throws SimulationException, SimulationInterruptedException {
         try {
             return (TransformationSequence) this.invocationTarget.invoke(parent, line.getArguments());
         } catch (InvocationTargetException e) {
-            if (e.getCause().getClass().equals(ThreadDeath.class)) {
-                throw new ThreadDeath();
+            if (e.getTargetException() instanceof SimulationInterruptedException interrupt) {
+                throw interrupt;
             }
             if (e.getTargetException() == null || e.getTargetException().getMessage() == null) {
                 e.printStackTrace();
-                throw new SimulationException("");
+                throw new SimulationException("An unknown error occurred");
             }
             throw new SimulationException(e.getTargetException().getMessage());
         } catch (IllegalAccessException | IllegalArgumentException e) {

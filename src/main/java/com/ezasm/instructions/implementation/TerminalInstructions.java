@@ -4,6 +4,7 @@ import java.io.*;
 
 import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
 import com.ezasm.simulation.Memory;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.FileReadTransformable;
@@ -92,10 +93,11 @@ public class TerminalInstructions {
     }
 
     private interface DataSupplier {
-        RawData get() throws SimulationException;
+        RawData get() throws SimulationException, SimulationInterruptedException;
     }
 
-    private TransformationSequence read(DataSupplier supplier, IAbstractInputOutput output) throws SimulationException {
+    private TransformationSequence read(DataSupplier supplier, IAbstractInputOutput output)
+            throws SimulationException, SimulationInterruptedException {
         FileReadTransformable f = new FileReadTransformable(simulator, streams().getCursor());
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
         RawData data = supplier.get();
@@ -105,22 +107,26 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public TransformationSequence readi(IAbstractInputOutput output) throws SimulationException {
+    public TransformationSequence readi(IAbstractInputOutput output)
+            throws SimulationException, SimulationInterruptedException {
         return read(() -> new RawData(streams.readLong()), output);
     }
 
     @Instruction
-    public TransformationSequence readf(IAbstractInputOutput output) throws SimulationException {
+    public TransformationSequence readf(IAbstractInputOutput output)
+            throws SimulationException, SimulationInterruptedException {
         return read(() -> new RawData(streams.readDouble()), output);
     }
 
     @Instruction
-    public TransformationSequence readc(IAbstractInputOutput output) throws SimulationException {
+    public TransformationSequence readc(IAbstractInputOutput output)
+            throws SimulationException, SimulationInterruptedException {
         return read(() -> new RawData(streams.readChar()), output);
     }
 
     @Instruction
-    public TransformationSequence reads(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public TransformationSequence reads(IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException, SimulationInterruptedException {
         int address = (int) input1.get(simulator).intValue();
         int maxSize = (int) input2.get(simulator).intValue();
 
@@ -143,7 +149,8 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public TransformationSequence reads(IAbstractInput input1) throws SimulationException {
+    public TransformationSequence reads(IAbstractInput input1)
+            throws SimulationException, SimulationInterruptedException {
         int address = (int) input1.get(simulator).intValue();
 
         FileReadTransformable f = new FileReadTransformable(simulator, streams().getCursor());
@@ -165,7 +172,8 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public TransformationSequence readln(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+    public TransformationSequence readln(IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException, SimulationInterruptedException {
         int address = (int) input1.get(simulator).intValue();
         int maxSize = (int) input2.get(simulator).intValue();
 
@@ -188,7 +196,8 @@ public class TerminalInstructions {
     }
 
     @Instruction
-    public TransformationSequence readln(IAbstractInput input1) throws SimulationException {
+    public TransformationSequence readln(IAbstractInput input1)
+            throws SimulationException, SimulationInterruptedException {
         int address = (int) input1.get(simulator).intValue();
 
         FileReadTransformable f = new FileReadTransformable(simulator, streams().getCursor());

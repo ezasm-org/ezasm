@@ -48,16 +48,16 @@ public class ConsoleInputStream extends InputStream {
      */
     @Override
     public int read() throws IOException {
-        while (!Thread.interrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 char c = buffer.charAt(bufferIndex);
                 ++bufferIndex;
                 return c;
-            } catch (Exception e) {
+            } catch (StringIndexOutOfBoundsException ignored) {
                 LockSupport.parkNanos(DELAY_MS * 1_000_000);
             }
         }
-        bufferIndex = 0;
+        resetBuffer();
         return 0;
     }
 
@@ -75,7 +75,7 @@ public class ConsoleInputStream extends InputStream {
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int i = 0;
-        while (i < len) {
+        while (i < len && !Thread.currentThread().isInterrupted()) {
             try {
                 for (; i < len; ++i) {
                     b[off + i] = (byte) buffer.charAt(i + bufferIndex);

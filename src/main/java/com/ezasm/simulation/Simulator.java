@@ -10,6 +10,7 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.InvalidFileIdentifierException;
 import com.ezasm.simulation.exception.InvalidProgramCounterException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
@@ -217,9 +218,10 @@ public class Simulator {
      * Executes the given line on the simulator.
      *
      * @param line the line to execute.
-     * @throws InstructionDispatchException if there is an error executing the line.
+     * @throws SimulationException            if there is an error executing the line.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public void runLine(Line line) throws SimulationException {
+    public void runLine(Line line) throws SimulationException, SimulationInterruptedException {
         if (line.isLabel()) {
             applyTransformations(new TransformationSequence());
         } else {
@@ -230,9 +232,10 @@ public class Simulator {
     /**
      * Runs the program continuously until completion or error.
      *
-     * @throws SimulationException if there is an error executing the program.
+     * @throws SimulationException            if there is an error executing the program.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public void executeProgramFromPC() throws SimulationException {
+    public void executeProgramFromPC() throws SimulationException, SimulationInterruptedException {
         while (!isDone() && !isError()) {
             executeLineFromPC();
         }
@@ -241,9 +244,10 @@ public class Simulator {
     /**
      * Runs a single line of code from the current PC.
      *
-     * @throws SimulationException if there is an error executing the line.
+     * @throws SimulationException            if there is an error executing the line.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public void executeLineFromPC() throws SimulationException {
+    public void executeLineFromPC() throws SimulationException, SimulationInterruptedException {
         // Ensure a valid file identifier and program counter within that file
         validateFID();
         int lineNumber = validatePC();
