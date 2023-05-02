@@ -5,9 +5,8 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -29,7 +28,7 @@ public class BranchInstructionsTest {
         simulator.getRegisters().getRegister("$pc").setLong(0);
         try {
             simulator.executeProgramFromPC();
-        } catch (SimulationException e) {
+        } catch (SimulationException | SimulationInterruptedException e) {
             fail(e);
         }
 

@@ -1,7 +1,6 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
-import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
 import com.ezasm.instructions.targets.input.IAbstractInput;
