@@ -54,19 +54,19 @@ public class MenuActions {
     }
 
     /**
-     * Runs the action event for save.
+     * Saves the content of the given editor to the file pointed to by the editor.
      *
+     * @param editorPane the file to save.
      * @return true if the operation was successful, false otherwise.
      */
-    public static boolean save() {
-        File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
-
+    public static boolean save(EzEditorPane editorPane) {
+        File fileToUpdate = new File(editorPane.getOpenFilePath());
         if (!fileToUpdate.exists()) {
             return saveAs();
         } else {
             try {
-                FileIO.writeFile(fileToUpdate, Window.getInstance().getEditor().getText());
-                Window.getInstance().getEditor().setFileSaved(true);
+                FileIO.writeFile(fileToUpdate, editorPane.getText());
+                editorPane.setFileSaved(true);
                 return true;
             } catch (IOException e) {
                 promptWarningDialog("Error Saving File",
@@ -74,6 +74,15 @@ public class MenuActions {
             }
         }
         return false;
+    }
+
+    /**
+     * Runs the action event for save.
+     *
+     * @return true if the operation was successful, false otherwise.
+     */
+    public static boolean save() {
+        return save(Window.getInstance().getEditor());
     }
 
     /**

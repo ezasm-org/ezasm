@@ -1,9 +1,9 @@
 package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
 
-import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +16,7 @@ public class AutoSave {
     private SaveTask saveTask;
 
     /**
-     * Constructs the automatic file saver
+     * Constructs the automatic file saver.
      */
     public AutoSave() {
         timer = new Timer();
@@ -24,7 +24,7 @@ public class AutoSave {
     }
 
     /**
-     * Automatically called Save function to save file periodically.
+     * Automatically calls Save function to save file periodically.
      */
     public void toggleRunning(boolean start, int intervalSeconds) {
         this.timer.cancel();
@@ -39,14 +39,15 @@ public class AutoSave {
     }
 
     /**
-     * Represents a timer task for saving a file if it is not anonymous.
+     * Represents a timer task for saving all editors if they are not anonymous.
      */
     private static class SaveTask extends TimerTask {
         @Override
         public void run() {
-            File fileToUpdate = new File(Window.getInstance().getEditor().getOpenFilePath());
-            if (fileToUpdate.exists()) {
-                MenuActions.save();
+            for (EzEditorPane editorPane : Window.getInstance().getEditorPanes().getEditors()) {
+                if (!editorPane.isFileAnonymous()) {
+                    MenuActions.save(editorPane);
+                }
             }
         }
     }
