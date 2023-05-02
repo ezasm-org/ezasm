@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Utilities for operating system specific code.
  */
-public class OperatingSystemUtil {
+public class OperatingSystemUtils {
 
     /**
      * An enum representing the possible types of known or unknown operating systems.

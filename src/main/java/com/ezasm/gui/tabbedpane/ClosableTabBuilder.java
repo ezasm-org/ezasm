@@ -15,7 +15,7 @@ import com.ezasm.gui.util.EditorTheme;
 public class ClosableTabBuilder {
 
     private Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, 12);
-    private EditorTheme editorTheme = EditorTheme.getTheme("Light");
+    private EditorTheme editorTheme = EditorTheme.Light;
     private String name = ""; // empty by default
     private ClosableTabbedPane parent;
 

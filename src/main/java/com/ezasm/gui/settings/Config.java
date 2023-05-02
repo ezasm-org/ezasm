@@ -1,6 +1,7 @@
 package com.ezasm.gui.settings;
 
-import com.ezasm.util.OperatingSystemUtil;
+import com.ezasm.gui.util.EditorTheme;
+import com.ezasm.util.OperatingSystemUtils;
 import com.ezasm.util.SystemStreams;
 
 import java.awt.*;
@@ -25,7 +26,7 @@ public class Config {
     /**
      * The configuration file for EzASM
      */
-    private static final File CONFIG_FILE = new File(OperatingSystemUtil.EZASM_CONFIG_FILE);
+    private static final File CONFIG_FILE = new File(OperatingSystemUtils.EZASM_CONFIG_FILE);
 
     // All of the names of the configuration settings available to the user
     public static final String FONT_SIZE = "FONT_SIZE";
@@ -42,7 +43,7 @@ public class Config {
     public static final String DEFAULT_AUTO_SAVE_SELECTED = "false";
     public static final String DEFAULT_AUTO_SAVE_INTERVAL = "10";
     public static final String DEFAULT_SIMULATION_DELAY = "250";
-    public static final String DEFAULT_THEME = "Light";
+    public static final String DEFAULT_THEME = EditorTheme.Light.name();
     public static final String DEFAULT_FONT = "Monospaced"; // unclear if this will be allowed to change
 
     private final Map<String, String> defaultProperties = Map.ofEntries(entry(FONT_SIZE, DEFAULT_FONT_SIZE),
@@ -58,7 +59,8 @@ public class Config {
             entry(AUTO_SAVE_SELECTED, Config::getAutoSaveSelected));
 
     // Possible themes
-    private static final String[] THEME_ARRAY = { "Light", "Dark", "Purple" };
+    private static final String[] THEME_ARRAY = { EditorTheme.Light.name(), EditorTheme.Dracula.name(),
+            EditorTheme.Purple.name() };
 
     /**
      * A vector containing the types of possible themes.
@@ -118,8 +120,8 @@ public class Config {
      *
      * @return the program theme.
      */
-    public String getTheme() {
-        return props.getProperty(THEME);
+    public EditorTheme getTheme() {
+        return EditorTheme.getTheme(props.getProperty(THEME));
     }
 
     /**

@@ -294,7 +294,7 @@ public class Window {
      */
     public void applyConfiguration(Config config) {
         this.config = config;
-        EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
+        EditorTheme editorTheme = config.getTheme();
         Font font = config.getFont();
 
         tools.applyTheme(font, editorTheme);
@@ -327,7 +327,7 @@ public class Window {
      * @return the theme stored in the instance configuration.
      */
     public EditorTheme getTheme() {
-        return EditorTheme.getTheme(config.getTheme());
+        return config.getTheme();
     }
 
     /**

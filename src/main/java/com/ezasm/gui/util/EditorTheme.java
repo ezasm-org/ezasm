@@ -12,47 +12,19 @@ import java.awt.*;
 /**
  * Represents a theme for components and text in the application.
  */
-public record EditorTheme(Color background, Color foreground, Color currentLine, Color selection, Color comment,
-        Color cyan, Color green, Color orange, Color pink, Color purple, Color red, Color yellow, boolean isLight) {
+public record EditorTheme(String name, Color background, Color foreground, Color currentLine, Color selection,
+        Color comment, Color cyan, Color green, Color orange, Color pink, Color purple, Color red, Color yellow,
+        boolean isLight) {
+
+    private static final String LIGHT_NAME = "Light";
+    private static final String DARK_NAME = "Dark";
+    private static final String PURPLE_NAME = "Purple";
 
     /**
-     * A dark theme based on https://github.com/dracula/dracula-theme
+     * A light theme based on <a href="https://github.com/atom/one-light-syntax">this</a>.
      */
-    public static EditorTheme Dracula = new EditorTheme(new Color(0x282a36), // background
-            new Color(0xf8f8f2), // foreground
-            new Color(0x44475a), // currentLine
-            new Color(0x44475a), // selection
-            new Color(0x6272a4), // comment
-            new Color(0x8be9fd), // cyan
-            new Color(0x50fa7b), // green
-            new Color(0xffb86c), // orange
-            new Color(0xff79c6), // pink
-            new Color(0xbd93f9), // purple
-            new Color(0xff5555), // red
-            new Color(0xf1fa8c), // yellow
-            false); // is a light theme
-
-    /**
-     * A purple theme based on https://github.com/endormi/vscode-2077-theme
-     */
-    public static EditorTheme Purple = new EditorTheme(new Color(0x030d22), // background
-            new Color(0xfdfeff), // foreground
-            new Color(0x310072), // currentLine
-            new Color(0x35008b), // selection
-            new Color(0x6272a4), // comment
-            new Color(0x0ab2fa), // cyan
-            new Color(0x06ad00), // green
-            new Color(0xffd400), // orange
-            new Color(0xea00d9), // pink
-            new Color(0x6f46af), // purple
-            new Color(0xd92020), // red
-            new Color(0xffff99), // yellow
-            false); // is a light theme
-
-    /**
-     * A light theme based on https://github.com/atom/one-light-syntax
-     */
-    public static EditorTheme Light = new EditorTheme(new Color(0xebf8ff), // background
+    public static EditorTheme Light = new EditorTheme(LIGHT_NAME, // name
+            new Color(0xebf8ff), // background
             new Color(0x161b1d), // foreground
             new Color(0xc1e4f6), // currentLine
             new Color(0x7ea2b4), // selection
@@ -67,6 +39,42 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
             true); // is a light theme
 
     /**
+     * A dark theme based on <a href="https://github.com/dracula/dracula-theme">this</a>.
+     */
+    public static EditorTheme Dracula = new EditorTheme(DARK_NAME, // name
+            new Color(0x282a36), // background
+            new Color(0xf8f8f2), // foreground
+            new Color(0x44475a), // currentLine
+            new Color(0x44475a), // selection
+            new Color(0x6272a4), // comment
+            new Color(0x8be9fd), // cyan
+            new Color(0x50fa7b), // green
+            new Color(0xffb86c), // orange
+            new Color(0xff79c6), // pink
+            new Color(0xbd93f9), // purple
+            new Color(0xff5555), // red
+            new Color(0xf1fa8c), // yellow
+            false); // is a light theme
+
+    /**
+     * A purple theme based on <a href="https://github.com/endormi/vscode-2077-theme">this</a>.
+     */
+    public static EditorTheme Purple = new EditorTheme(PURPLE_NAME, // name
+            new Color(0x030d22), // background
+            new Color(0xfdfeff), // foreground
+            new Color(0x310072), // currentLine
+            new Color(0x35008b), // selection
+            new Color(0x6272a4), // comment
+            new Color(0x0ab2fa), // cyan
+            new Color(0x06ad00), // green
+            new Color(0xffd400), // orange
+            new Color(0xea00d9), // pink
+            new Color(0x6f46af), // purple
+            new Color(0xd92020), // red
+            new Color(0xffff99), // yellow
+            false); // is a light theme
+
+    /**
      * Takes a string theme name and returns the corresponding theme object.
      *
      * @param s the theme in plain text.
@@ -74,10 +82,10 @@ public record EditorTheme(Color background, Color foreground, Color currentLine,
      */
     public static EditorTheme getTheme(String s) {
         return switch (s) {
-        case "Dark" -> EditorTheme.Dracula;
-        case "Purple" -> EditorTheme.Purple;
-        case "Light" -> EditorTheme.Light;
-        default -> EditorTheme.Light;
+        case LIGHT_NAME -> EditorTheme.Light;
+        case DARK_NAME -> EditorTheme.Dracula;
+        case PURPLE_NAME -> EditorTheme.Purple;
+        default -> throw new RuntimeException("Theme not found");
         };
     }
 

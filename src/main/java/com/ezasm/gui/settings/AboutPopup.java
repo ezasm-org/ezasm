@@ -77,7 +77,7 @@ public class AboutPopup {
         textPane.setEditorKit(kit);
         StyleSheet style = kit.getStyleSheet();
         // Set the internal CSS for the editor pane
-        EditorTheme theme = EditorTheme.getTheme(config.getTheme());
+        EditorTheme theme = config.getTheme();
         style.addRule(String.format("p {color:#%s;}", colorCodeHex(theme.foreground())));
         style.addRule(String.format("a {color:#%s;}", colorCodeHex(theme.cyan())));
         style.addRule(String.format("html {background-color: #%s;}", colorCodeHex(theme.background())));
