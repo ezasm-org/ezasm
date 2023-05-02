@@ -117,7 +117,7 @@ public class SettingsPopup implements IThemeable {
         speedLabel = new JLabel(SIMULATION_SPEED);
 
         fontInput = new JTextField(String.valueOf(config.getFontSize()));
-        speedSlider = new JSlider(10, 1000, config.getSimSpeed());
+        speedSlider = new JSlider(10, 1000, config.getSimulationDelay());
 
         tabSizeLabel = new JLabel(TABSIZE);
         tabSizeSlider = new JSlider(1, 8, config.getTabSize());
@@ -183,7 +183,7 @@ public class SettingsPopup implements IThemeable {
                     instance.config.setAutoSaveInterval(1);
                     instance.autoSaveButton.setToggleButtonStatus(false);
                 }
-                instance.config.setSimSpeed(instance.speedSlider.getValue());
+                instance.config.setSimulationDelay(instance.speedSlider.getValue());
                 instance.config.setTabSize(instance.tabSizeSlider.getValue());
                 instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
                 instance.config.setAutoSaveInterval(instance.autoSaveButton.getSliderValue());
@@ -196,7 +196,7 @@ public class SettingsPopup implements IThemeable {
             if (action.startsWith("Reset")) {
                 instance.config.resetDefaults();
                 instance.fontInput.setText(Config.DEFAULT_FONT_SIZE);
-                instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_SPEED));
+                instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_DELAY));
                 instance.tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
                 instance.themeInput.setSelectedIndex(0);
                 instance.autoSaveButton.setToggleButtonStatus(Boolean.parseBoolean(Config.DEFAULT_AUTO_SAVE_SELECTED));

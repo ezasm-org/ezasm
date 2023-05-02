@@ -307,7 +307,7 @@ public class Window {
         for (EzEditorPane editor : getEditorPanes().getEditors()) {
             editor.resizeTabSize(config.getTabSize());
         }
-        SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
+        SimulatorGuiActions.setInstructionDelayMS(config.getSimulationDelay());
 
         autoSave.toggleRunning(config.getAutoSaveSelected(), config.getAutoSaveInterval());
     }

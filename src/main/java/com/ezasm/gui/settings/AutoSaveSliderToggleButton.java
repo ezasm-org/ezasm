@@ -44,18 +44,38 @@ public class AutoSaveSliderToggleButton extends JPanel {
         add(toggleButton, BorderLayout.WEST);
     }
 
+    /**
+     * Gets whether the toggle button is pressed.
+     *
+     * @return true if the toggle button is pressed, false otherwise.
+     */
     public boolean getToggleButtonStatus() {
         return toggleButton.isSelected();
     }
 
+    /**
+     * Sets whether the toggle button is pressed.
+     *
+     * @param status whether the toggle button displays as pressed.
+     */
     public void setToggleButtonStatus(boolean status) {
         toggleButton.setSelected(status);
     }
 
+    /**
+     * Gets the numeric value from the slider.
+     *
+     * @return the numeric value from the slider.
+     */
     public int getSliderValue() {
         return slider.getValue();
     }
 
+    /**
+     * Sets the position of the slider to the given integer.
+     *
+     * @param value the new position of the slider.
+     */
     public void setSliderValue(int value) {
         slider.setValue(value);
     }
