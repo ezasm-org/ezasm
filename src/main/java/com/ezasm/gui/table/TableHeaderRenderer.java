@@ -4,6 +4,7 @@ import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
@@ -24,6 +25,28 @@ public class TableHeaderRenderer extends DefaultTableCellRenderer implements ITh
         setBackground(table.getBackground());
         setFont(table.getFont());
         setOpaque(true);
+    }
+
+    /**
+     * Adds a border in the cell rendering step.
+     *
+     * @param table      the table rendering.
+     * @param value      the value to assign at the cell.
+     * @param isSelected whether the cell is selected.
+     * @param hasFocus   whether the cell has focus.
+     * @param row        the row of the cell.
+     * @param column     the column of the cell.
+     * @return the generated Component.
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+        JComponent component = (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+                column);
+        Border padding = BorderFactory.createEmptyBorder(1, 1, 1, 1);
+        Border outerBorder = BorderFactory.createMatteBorder(1, 1, 2, 1, table.getForeground());
+        component.setBorder(BorderFactory.createCompoundBorder(outerBorder, padding));
+        return component;
     }
 
     /**
