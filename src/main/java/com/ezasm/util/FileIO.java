@@ -65,7 +65,9 @@ public class FileIO {
     }
 
     /**
+     * Registers the given font into the graphic environment.
      *
+     * @param path the path to the font resource to register.
      */
     public static void registerFont(String path) throws IOException {
         try {
@@ -73,7 +75,7 @@ public class FileIO {
             Font loadedFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(loadedFont);
         } catch (IOException | FontFormatException e) {
-            throw new IOException("Unable to load fonts");
+            throw new IOException("Unable to register specified file as a font");
         }
     }
 
