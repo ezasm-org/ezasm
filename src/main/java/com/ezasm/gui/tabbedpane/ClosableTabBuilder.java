@@ -5,6 +5,7 @@ import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
+import javax.swing.border.EmptyBorder;
 
 import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
@@ -35,6 +36,7 @@ public class ClosableTabBuilder {
      */
     public ClosableTabPanel build() {
         JLabel label = new JLabel(name);
+        label.setBorder(new EmptyBorder(0, 0, 0, 10));
         label.setFont(font);
         label.setForeground(editorTheme.foreground());
 
