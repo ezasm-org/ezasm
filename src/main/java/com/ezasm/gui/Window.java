@@ -202,13 +202,19 @@ public class Window {
             SystemStreams.err.println("Unable to set look and feel");
         }
 
+        try {
+            FileIO.registerFont("fonts/jetbrains/JetBrainsMono-Regular.ttf");
+        } catch (IOException e) {
+            SystemStreams.err.println("Unable to load standard font");
+        }
+
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         app.addWindowListener(new WindowCloseListener());
         app.setMinimumSize(new Dimension(800, 600));
 
         try {
-            app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
+            app.setIconImage(FileIO.readImage("icons/logo/EzASM.png"));
         } catch (IOException e) {
             SystemStreams.err.println("Could not load icon");
         }

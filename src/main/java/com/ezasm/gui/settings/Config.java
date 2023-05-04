@@ -37,14 +37,14 @@ public class Config {
     public static final String AUTO_SAVE_INTERVAL = "AUTO_SAVE_INTERVAL";
     public static final String AUTO_SAVE_SELECTED = "AUTO_SAVE_SELECTED";
 
-    // All of EzASM's defaults
+    // All default settings
     public static final String DEFAULT_FONT_SIZE = "12";
     public static final String DEFAULT_TAB_SIZE = "2";
     public static final String DEFAULT_AUTO_SAVE_SELECTED = "false";
     public static final String DEFAULT_AUTO_SAVE_INTERVAL = "10";
     public static final String DEFAULT_SIMULATION_DELAY = "250";
     public static final String DEFAULT_THEME = EditorTheme.Light.name();
-    public static final String DEFAULT_FONT = "Monospaced"; // unclear if this will be allowed to change
+    public static final String DEFAULT_FONT = "JetBrains Mono"; // unclear if this will be allowed to change
 
     private final Map<String, String> defaultProperties = Map.ofEntries(entry(FONT_SIZE, DEFAULT_FONT_SIZE),
             entry(TAB_SIZE, DEFAULT_TAB_SIZE), entry(SIMULATION_DELAY, DEFAULT_SIMULATION_DELAY),
