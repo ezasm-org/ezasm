@@ -103,6 +103,11 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         JButton button = new JButton(text);
         button.addActionListener(actionListener);
 
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+        button.setBorderPainted(false);
+        button.setFocusPainted(true);
+
         switch (text) {
         case SEEK -> seekButton = button;
         case FORWARD -> forwardButton = button;
