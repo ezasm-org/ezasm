@@ -1,5 +1,7 @@
 package com.ezasm.gui.settings;
 
+import com.ezasm.gui.util.EditorTheme;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -11,8 +13,8 @@ public class AutoSaveSliderToggleButton extends JPanel {
     private final JToggleButton toggleButton;
     private final JSlider slider;
 
-    public static final String ON_TEXT = "ON";
-    public static final String OFF_TEXT = "OFF";
+    public static final String ON_TEXT = "  ON  ";
+    public static final String OFF_TEXT = "  OFF  ";
 
     /**
      * Constructs this button slider.
@@ -31,6 +33,9 @@ public class AutoSaveSliderToggleButton extends JPanel {
         add(slider, BorderLayout.CENTER);
 
         toggleButton = new JToggleButton(enabled ? ON_TEXT : OFF_TEXT);
+        toggleButton.setContentAreaFilled(false);
+        toggleButton.setOpaque(true);
+
         toggleButton.setSelected(enabled);
         toggleButton.addChangeListener(event -> {
             if (getToggleButtonStatus()) {
@@ -42,6 +47,18 @@ public class AutoSaveSliderToggleButton extends JPanel {
             }
         });
         add(toggleButton, BorderLayout.WEST);
+    }
+
+    /**
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
+     */
+    public void applyTheme(Font font, EditorTheme editorTheme) {
+        editorTheme.applyThemeButton(toggleButton, font);
+        EditorTheme.applyFontTheme(slider, font, editorTheme);
     }
 
     /**

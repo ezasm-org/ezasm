@@ -19,7 +19,14 @@ public class MemoryTable extends JPanel implements IThemeable {
     private final JScrollPane scrollPane;
     private JList<Object> rowHeader;
 
+    /**
+     * The standard number of rows for a memory table.
+     */
     public static final int ROWS = 32;
+
+    /**
+     * The standard number of columns for a memory table.
+     */
     public static final int COLUMNS = 16;
 
     private int offset;

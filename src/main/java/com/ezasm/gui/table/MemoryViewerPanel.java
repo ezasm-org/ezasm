@@ -1,6 +1,7 @@
 package com.ezasm.gui.table;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.ui.EzComboBoxUI;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.spinner.HexFormatterFactory;
 import com.ezasm.gui.util.IThemeable;
@@ -8,6 +9,7 @@ import com.ezasm.gui.util.spinner.SpinnerIntegerModel;
 import com.ezasm.simulation.Memory;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +39,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
 
     private static final MemoryViewerActionListener actionListener = new MemoryViewerActionListener();
 
-    private static final String SEEK = " Go ";
+    private static final String SEEK = "  Go  ";
     private static final String FORWARD = " ---> ";
     private static final String BACK = " <--- ";
 
@@ -102,11 +104,8 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     private void addButton(String text) {
         JButton button = new JButton(text);
         button.addActionListener(actionListener);
-
+        button.setContentAreaFilled(false);
         button.setOpaque(true);
-        button.setContentAreaFilled(true);
-        button.setBorderPainted(false);
-        button.setFocusPainted(true);
 
         switch (text) {
         case SEEK -> seekButton = button;
@@ -126,13 +125,19 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     public void applyTheme(Font font, EditorTheme editorTheme) {
         memoryTable.applyTheme(font, editorTheme);
 
+        Color buttonBackground = editorTheme.modifyAwayFromBackground(editorTheme.background());
+        Color borderColor = editorTheme.modifyAwayFromBackground(buttonBackground);
+        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor);
         EditorTheme.applyFontTheme(controls, font, editorTheme);
         EditorTheme.applyFontTheme(seekInputLabel, font, editorTheme);
-        EditorTheme.applyFontTheme(seekSpinner, font, editorTheme);
-        EditorTheme.applyFontTheme(seekComboBox, font, editorTheme);
-        EditorTheme.applyFontTheme(seekButton, font, editorTheme);
-        EditorTheme.applyFontTheme(forwardButton, font, editorTheme);
-        EditorTheme.applyFontTheme(backButton, font, editorTheme);
+        EditorTheme.applyFontThemeBorder(seekSpinner, font, editorTheme, border);
+        EditorTheme.applyFontThemeBorder(seekComboBox, font, editorTheme, border);
+
+        editorTheme.applyThemeButton(seekButton, font);
+        editorTheme.applyThemeButton(forwardButton, font);
+        editorTheme.applyThemeButton(backButton, font);
+
+        seekComboBox.setUI(new EzComboBoxUI(editorTheme));
 
         ((JSpinner.NumberEditor) seekSpinner.getEditor()).getTextField().setCaretColor(editorTheme.foreground());
         seekSpinner.setPreferredSize(

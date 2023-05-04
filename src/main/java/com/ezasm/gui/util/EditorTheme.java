@@ -2,9 +2,7 @@ package com.ezasm.gui.util;
 
 import com.ezasm.gui.ui.EzScrollBarUI;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JScrollBar;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import java.awt.*;
@@ -177,6 +175,23 @@ public record EditorTheme(String name, Color background, Color foreground, Color
     public void applyThemeScrollbar(JScrollBar scrollbar) {
         applyThemeBorderless(scrollbar);
         scrollbar.setUI(new EzScrollBarUI(this));
+    }
+
+    /**
+     * Apply a given theme to a button specifically.
+     *
+     * @param button the button to be themed.
+     * @param font   the font for the button text.
+     */
+    public void applyThemeButton(AbstractButton button, Font font) {
+        Color buttonBackgroundColor = modifyAwayFromBackground(background);
+        Color borderColor = modifyAwayFromBackground(buttonBackgroundColor);
+        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor);
+
+        button.setForeground(foreground);
+        button.setBackground(buttonBackgroundColor);
+        button.setBorder(border);
+        button.setFont(font);
     }
 
     /**

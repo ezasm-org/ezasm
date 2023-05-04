@@ -1,6 +1,7 @@
 package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
+import com.ezasm.gui.ui.EzComboBoxUI;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
@@ -78,7 +79,6 @@ public class SettingsPopup implements IThemeable {
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
         Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, editorTheme.foreground());
-        Border buttonBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, editorTheme.foreground());
         grid.setBackground(editorTheme.background());
         fontInput.setCaretColor(editorTheme.foreground());
         themeLabel.setOpaque(true);
@@ -86,17 +86,20 @@ public class SettingsPopup implements IThemeable {
         speedLabel.setOpaque(true);
         tabSizeLabel.setOpaque(true);
         EditorTheme.applyFontThemeBorderless(speedSlider, font, editorTheme);
-        EditorTheme.applyFontThemeBorderless(themeInput, font, editorTheme);
+        EditorTheme.applyFontThemeBorder(themeInput, font, editorTheme, border);
         EditorTheme.applyFontThemeBorderless(autoSaveButton, font, editorTheme);
+        autoSaveButton.applyTheme(font, editorTheme);
         EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
-        EditorTheme.applyFontThemeBorder(save, font, editorTheme, buttonBorder);
-        EditorTheme.applyFontThemeBorder(resetDefaults, font, editorTheme, buttonBorder);
+        EditorTheme.applyFontThemeBorderless(tabSizeSlider, font, editorTheme);
+        editorTheme.applyThemeButton(save, font);
+        editorTheme.applyThemeButton(resetDefaults, font);
         EditorTheme.applyFontThemeBorderless(speedLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(fontSizeLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(themeLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(tabSizeLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorderless(autoSaveLabel, font, editorTheme);
-        EditorTheme.applyFontThemeBorderless(tabSizeSlider, font, editorTheme);
+
+        themeInput.setUI(new EzComboBoxUI(editorTheme));
     }
 
     /**
@@ -111,7 +114,7 @@ public class SettingsPopup implements IThemeable {
 
         themeLabel = new JLabel(THEME);
         themeInput = new JComboBox<>(Config.THEMES);
-        themeInput.setSelectedItem(config.getTheme());
+        themeInput.setSelectedItem(config.getTheme().name());
 
         fontSizeLabel = new JLabel(FONTSIZE);
         speedLabel = new JLabel(SIMULATION_SPEED);
@@ -143,7 +146,12 @@ public class SettingsPopup implements IThemeable {
         grid.add(autoSaveButton);
 
         save = new JButton(SAVE);
+        save.setContentAreaFilled(false);
+        save.setOpaque(true);
+
         resetDefaults = new JButton(RESET);
+        resetDefaults.setContentAreaFilled(false);
+        resetDefaults.setOpaque(true);
 
         grid.add(save);
         grid.add(resetDefaults);

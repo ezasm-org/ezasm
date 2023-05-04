@@ -4,47 +4,26 @@ import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 
 import javax.swing.*;
-import javax.swing.table.JTableHeader;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 /**
- * A list cell renderer specified for rendering row headers on a given table.
+ * Column header renderer to bypass windows LAF issues.
  */
-public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object>, IThemeable {
+public class TableHeaderRenderer extends DefaultTableCellRenderer implements IThemeable {
 
     /**
      * Sets up basic information about the renderer based on the given table.
      *
      * @param table the table to take default settings from.
      */
-    public RowHeaderRenderer(JTable table) {
+    public TableHeaderRenderer(JTable table) {
         setHorizontalAlignment(CENTER);
         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
         setForeground(table.getForeground());
         setBackground(table.getBackground());
         setFont(table.getFont());
         setOpaque(true);
-    }
-
-    /**
-     * Returns a component configured for the given display options.
-     *
-     * @param list         The JList we're painting.
-     * @param value        The value returned by list.getModel().getElementAt(index).
-     * @param index        The cells index.
-     * @param isSelected   True if the specified cell was selected.
-     * @param cellHasFocus True if the specified cell has the focus.
-     * @return the configured component.
-     */
-    @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-        if (value == null) {
-            setText("");
-        } else {
-            setText(value.toString());
-        }
-        return this;
     }
 
     /**
