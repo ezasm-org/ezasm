@@ -43,9 +43,7 @@ public class TableHeaderRenderer extends DefaultTableCellRenderer implements ITh
             int row, int column) {
         JComponent component = (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
                 column);
-        Border padding = BorderFactory.createEmptyBorder(1, 1, 1, 1);
-        Border outerBorder = BorderFactory.createMatteBorder(1, 1, 2, 1, table.getForeground());
-        component.setBorder(BorderFactory.createCompoundBorder(outerBorder, padding));
+        component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
         return component;
     }
 
