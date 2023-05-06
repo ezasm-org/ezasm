@@ -7,16 +7,24 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
 /**
- * ScrollBarUI to apply to scrollbars in this application's GUI.
+ * ScrollBarUI themed UI to apply to scrollbars in this application's GUI.
  */
 public class EzScrollBarUI extends BasicScrollBarUI {
 
     private final EditorTheme editorTheme;
 
+    /**
+     * Constructs a custom scrollbar ui based on an editor theme.
+     *
+     * @param editorTheme the theme for the scrollbar.
+     */
     public EzScrollBarUI(EditorTheme editorTheme) {
         this.editorTheme = editorTheme;
     }
 
+    /**
+     * Configures the colors for the scrollbar based on the given editor theme.
+     */
     @Override
     protected void configureScrollBarColors() {
         this.trackColor = editorTheme.currentLine();
@@ -24,25 +32,50 @@ public class EzScrollBarUI extends BasicScrollBarUI {
         this.thumbDarkShadowColor = this.thumbColor;
     }
 
+    /**
+     * Creates a zero-sized button so that the decrease button does not exist.
+     *
+     * @param orientation the orientation.
+     * @return the zero-sized button.
+     */
     @Override
     protected JButton createDecreaseButton(int orientation) {
         return createZeroButton();
     }
 
+    /**
+     * Creates a zero-sized button so that the increase button does not exist.
+     *
+     * @param orientation the orientation.
+     * @return the zero-sized button.
+     */
     @Override
     protected JButton createIncreaseButton(int orientation) {
         return createZeroButton();
     }
 
+    /**
+     * Paints the scrollbar track.
+     *
+     * @param g           the graphics.
+     * @param c           the component.
+     * @param trackBounds the track bounds.
+     */
     @Override
     protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
         // Paint manually (if needed)
         super.paintTrack(g, c, trackBounds);
     }
 
+    /**
+     * Paints the scrollbar thumb manually.
+     *
+     * @param g           the graphics.
+     * @param c           the component.
+     * @param thumbBounds the thumb bounds.
+     */
     @Override
     protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
-        // Paint thumb manually
         Graphics2D g2 = (Graphics2D) g;
 
         int borderDiameter = 8, offset = 4;

@@ -8,6 +8,9 @@ import java.io.PrintStream;
  */
 public class NullOutputStream extends OutputStream {
 
+    /**
+     * It's a null print stream.
+     */
     public static final PrintStream NULL_PRINT_STREAM = new PrintStream(new NullOutputStream());
 
     /**

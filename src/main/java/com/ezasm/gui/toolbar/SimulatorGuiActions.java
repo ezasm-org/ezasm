@@ -5,8 +5,10 @@ import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.gui.menubar.MenubarFactory;
 import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.util.SystemStreams;
 
+import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.ezasm.gui.toolbar.ToolbarFactory.*;
@@ -19,10 +21,10 @@ public class SimulatorGuiActions {
     /**
      * An enumeration of all possible states of this class. IDLE: has not yet run or was just reset RUNNING: currently
      * executing code PAUSED: is not currently executing but can resume STOPPED: is stopped at the end of a program,
-     * error state, or after pressing "Stop"
+     * error state, or after pressing "Stop" STEPPING is while the code in a step is running but not yet finished.
      */
     private enum State {
-        IDLE, STOPPED, RUNNING, PAUSED
+        IDLE, STOPPED, RUNNING, PAUSED, STEPPING
     }
 
     /**
@@ -32,7 +34,8 @@ public class SimulatorGuiActions {
     private static final long LOOP_BUSY_WAIT_MS = 50L;
 
     private static Thread worker;
-    private static State state = State.IDLE;
+    private static ExecutorService stepThread = Executors.newSingleThreadExecutor();
+    private static volatile State state = State.IDLE;
 
     /**
      * The delay between instructions.
@@ -62,16 +65,12 @@ public class SimulatorGuiActions {
         Window.getInstance().getEditorPanes().setEnabled(state != State.RUNNING);
         MenubarFactory.setRedirectionEnable(isDone);
         startButton.setEnabled(isDone);
-        stopButton.setEnabled(state == State.RUNNING);
-        stepButton.setEnabled(state != State.RUNNING);
+        stopButton.setEnabled(state == State.RUNNING || state == State.STEPPING);
+        stepButton.setEnabled(state != State.RUNNING && state != State.STEPPING);
         stepBackButton.setEnabled(state == State.PAUSED || state == State.STOPPED);
         pauseButton.setEnabled(state == State.RUNNING);
         resumeButton.setEnabled(state == State.PAUSED);
         resetButton.setEnabled(state != State.IDLE);
-    }
-
-    private static void handleProgramCompletion() {
-        Window.getInstance().handleProgramCompletion();
     }
 
     /**
@@ -84,24 +83,27 @@ public class SimulatorGuiActions {
         }
         if (state == State.IDLE || state == State.STOPPED) {
             try {
+                setState(State.STEPPING);
                 Window.getInstance().parseText();
-                setState(State.PAUSED);
                 Window.getInstance().getConsole().reset();
+                resetStepThread();
                 SystemStreams.printlnCurrentOut("** Program starting **");
                 startWorker();
             } catch (ParseException e) {
                 setState(State.IDLE);
                 Window.getInstance().handleParseException(e);
             }
-        } else {
-            try {
-                Window.getInstance().getEditor().updateHighlight();
-                Window.getInstance().getSimulator().executeLineFromPC();
-                Window.getInstance().updateGraphicInformation();
-            } catch (SimulationException e) {
-                setState(State.STOPPED);
-                Window.getInstance().handleParseException(e);
-            }
+        } else if (state == State.PAUSED) {
+            setState(State.STEPPING);
+            stepThread.execute(() -> {
+                try {
+                    runOneLine();
+                } catch (SimulationInterruptedException ignored) { // Expected interruption from Stop or Reset
+                } catch (SimulationException e) {
+                    setState(State.STOPPED);
+                    Window.getInstance().handleParseException(e);
+                }
+            });
         }
     }
 
@@ -110,6 +112,7 @@ public class SimulatorGuiActions {
      */
     static void stepBack() {
         try {
+            resetStepThread();
             if (state == State.STOPPED) {
                 setState(State.PAUSED);
                 startWorker();
@@ -151,8 +154,9 @@ public class SimulatorGuiActions {
      * Handles if the user requests that the running program be forcibly stopped.
      */
     static void stop() {
-        Window.getInstance().getEditor().resetHighlighter();
         setState(State.STOPPED);
+        Window.getInstance().getEditor().resetHighlighter();
+        resetStepThread();
         killWorker();
         awaitWorkerTermination();
     }
@@ -175,13 +179,11 @@ public class SimulatorGuiActions {
      * Handles if the user requests that the state of the emulator be reset.
      */
     static void reset() {
-        killWorker();
-        awaitWorkerTermination();
-        setState(State.IDLE);
+        stop();
         Window.getInstance().getSimulator().resetAll();
         Window.getInstance().updateGraphicInformation();
-        Window.getInstance().getEditor().resetHighlighter();
         Window.getInstance().getRegisterTable().removeHighlightValue();
+        setState(State.IDLE);
     }
 
     /**
@@ -189,19 +191,19 @@ public class SimulatorGuiActions {
      * Handles changing between states and buffering delays between instructions.
      */
     private static void simulationLoop() {
-        while (!Window.getInstance().getSimulator().isDone() && (state == State.RUNNING || state == State.PAUSED)
-                && !Thread.currentThread().isInterrupted()) {
+        while (!Window.getInstance().getSimulator().isDone()
+                && (state == State.RUNNING || state == State.PAUSED || state == State.STEPPING)) {
             try {
-                Window.getInstance().getEditor().updateHighlight();
-                Window.getInstance().getSimulator().executeLineFromPC();
-                Window.getInstance().updateGraphicInformation();
+                runOneLine();
+            } catch (SimulationInterruptedException ignored) { // Expected interruption from Stop or Reset
+                break;
             } catch (SimulationException e) {
                 Window.getInstance().handleParseException(e);
                 break;
             }
             try {
                 LockSupport.parkNanos(instructionDelayMS * 1_000_000);
-                while (state == State.PAUSED) { // busy wait
+                while (state == State.PAUSED || state == State.STEPPING) { // busy wait
                     LockSupport.parkNanos(LOOP_BUSY_WAIT_MS * 1_000_000);
                 }
             } catch (Exception e) {
@@ -209,7 +211,31 @@ public class SimulatorGuiActions {
             }
         }
         setState(State.STOPPED);
-        handleProgramCompletion();
+        Window.getInstance().handleProgramCompletion();
+    }
+
+    /**
+     * Runs one line from the current simulator. Handles state changes dependent on the outcome.
+     *
+     * @throws SimulationException            if an error occurs in execution.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
+     */
+    private static void runOneLine() throws SimulationException, SimulationInterruptedException {
+        Window.getInstance().getEditor().updateHighlight();
+        Window.getInstance().getSimulator().executeLineFromPC();
+        Window.getInstance().updateGraphicInformation();
+        SimulationInterruptedException.handleInterrupts();
+        if (state == State.STEPPING) {
+            setState(State.PAUSED);
+        }
+    }
+
+    /**
+     * Forcibly resets the step thread.
+     */
+    private static void resetStepThread() {
+        stepThread.shutdownNow();
+        stepThread = Executors.newSingleThreadExecutor();
     }
 
     /**

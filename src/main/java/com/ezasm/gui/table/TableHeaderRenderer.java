@@ -4,20 +4,21 @@ import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
 
 import javax.swing.*;
-import javax.swing.table.JTableHeader;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 /**
- * A list cell renderer specified for rendering row headers on a given table.
+ * Column header renderer to bypass windows LAF issues.
  */
-public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object>, IThemeable {
+public class TableHeaderRenderer extends DefaultTableCellRenderer implements IThemeable {
 
     /**
      * Sets up basic information about the renderer based on the given table.
      *
      * @param table the table to take default settings from.
      */
-    public RowHeaderRenderer(JTable table) {
+    public TableHeaderRenderer(JTable table) {
         setHorizontalAlignment(CENTER);
         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
         setForeground(table.getForeground());
@@ -27,24 +28,23 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer<Object
     }
 
     /**
-     * Returns a component configured for the given display options.
+     * Adds a border in the cell rendering step.
      *
-     * @param list         The JList we're painting.
-     * @param value        The value returned by list.getModel().getElementAt(index).
-     * @param index        The cells index.
-     * @param isSelected   True if the specified cell was selected.
-     * @param cellHasFocus True if the specified cell has the focus.
-     * @return the configured component.
+     * @param table      the table rendering.
+     * @param value      the value to assign at the cell.
+     * @param isSelected whether the cell is selected.
+     * @param hasFocus   whether the cell has focus.
+     * @param row        the row of the cell.
+     * @param column     the column of the cell.
+     * @return the generated Component.
      */
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-        if (value == null) {
-            setText("");
-        } else {
-            setText(value.toString());
-        }
-        return this;
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+        JComponent component = (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+                column);
+        component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+        return component;
     }
 
     /**

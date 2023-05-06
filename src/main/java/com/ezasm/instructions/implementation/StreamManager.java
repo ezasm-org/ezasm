@@ -1,6 +1,7 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.util.RandomAccessFileStream;
 
 import java.io.*;
@@ -156,19 +157,24 @@ public class StreamManager {
      * then pointed at the character after the first non-whitespace character found.
      *
      * @return the first non-whitespace character found.
-     * @throws SimulationException if an error occurs reading from the stream or if it ends while seeking a char.
+     * @throws SimulationException            if an error occurs reading from the stream or if it ends while seeking a
+     *                                        char.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    private char walkChar() throws SimulationException {
+    private char walkChar() throws SimulationException, SimulationInterruptedException {
         try {
             int c;
             do {
                 c = inputStream.read();
+                SimulationInterruptedException.handleInterrupts();
                 ++cursorPosition;
             } while (Character.isWhitespace(c));
             if (c == -1) {
                 throw new SimulationException("Reached the end of file while reading");
             }
             return (char) c;
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
         }
@@ -178,14 +184,17 @@ public class StreamManager {
      * Walks te stream forward through whitespace until it reaches a string "word", then returns the string.
      *
      * @return the word string found.
-     * @throws SimulationException if an error occurs reading from the stream of if it ends while seeking a word.
+     * @throws SimulationException            if an error occurs reading from the stream of if it ends while seeking a
+     *                                        word.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    private String walkWord() throws SimulationException {
+    private String walkWord() throws SimulationException, SimulationInterruptedException {
         try {
             StringBuilder sb = new StringBuilder();
             int c;
             do {
                 c = inputStream.read();
+                SimulationInterruptedException.handleInterrupts();
                 ++cursorPosition;
             } while (Character.isWhitespace(c));
             if (c == -1) {
@@ -194,10 +203,13 @@ public class StreamManager {
             do {
                 sb.append((char) c);
                 c = inputStream.read();
+                SimulationInterruptedException.handleInterrupts();
                 ++cursorPosition;
             } while (!Character.isWhitespace(c) && c != -1);
 
             return sb.toString();
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
         }
@@ -207,14 +219,17 @@ public class StreamManager {
      * Walks te stream forward through until it reaches the end-of-line sequence, then returns the read string.
      *
      * @return the line string found.
-     * @throws SimulationException if an error occurs reading from the stream of if it ends while seeking a word.
+     * @throws SimulationException            if an error occurs reading from the stream of if it ends while seeking a
+     *                                        word.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    private String walkLine() throws SimulationException {
+    private String walkLine() throws SimulationException, SimulationInterruptedException {
         String eol = "\n";
         // the EOL delimiter is assumed to be of at least length 1
         try {
             StringBuilder sb = new StringBuilder();
             int c = inputStream.read();
+            SimulationInterruptedException.handleInterrupts();
             if (c == -1) {
                 throw new SimulationException("Reached the end of file while reading");
             } else {
@@ -222,6 +237,7 @@ public class StreamManager {
             }
             while (c != -1) {
                 c = inputStream.read();
+                SimulationInterruptedException.handleInterrupts();
                 ++cursorPosition;
                 sb.append((char) c);
 
@@ -232,6 +248,8 @@ public class StreamManager {
             }
 
             return sb.toString();
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read from input stream");
         }
@@ -241,11 +259,15 @@ public class StreamManager {
      * Reads a long from the input stream.
      *
      * @return the next non-whitespace long read from the input stream.
-     * @throws SimulationException if there was an error reading from the stream or the word read was not a long.
+     * @throws SimulationException            if there was an error reading from the stream or the word read was not a
+     *                                        long.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public long readLong() throws SimulationException {
+    public long readLong() throws SimulationException, SimulationInterruptedException {
         try {
             return Long.parseLong(walkWord());
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read long");
         }
@@ -255,11 +277,15 @@ public class StreamManager {
      * Reads a double from the input stream.
      *
      * @return the next non-whitespace double read from the input stream.
-     * @throws SimulationException if there was an error reading from the stream or the word read was not a double.
+     * @throws SimulationException            if there was an error reading from the stream or the word read was not a
+     *                                        double.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public double readDouble() throws SimulationException {
+    public double readDouble() throws SimulationException, SimulationInterruptedException {
         try {
             return Double.parseDouble(walkWord());
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read double");
         }
@@ -269,11 +295,14 @@ public class StreamManager {
      * Reads a character from the input stream.
      *
      * @return the first non-whitespace character read from the input stream.
-     * @throws SimulationException if there was an error reading from the stream.
+     * @throws SimulationException            if there was an error reading from the stream.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public char readChar() throws SimulationException {
+    public char readChar() throws SimulationException, SimulationInterruptedException {
         try {
             return walkChar();
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read character");
         }
@@ -283,11 +312,14 @@ public class StreamManager {
      * Reads a string from the input stream.
      *
      * @return the string read from the input stream.
-     * @throws SimulationException if there was an error reading from the stream.
+     * @throws SimulationException            if there was an error reading from the stream.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public String readString() throws SimulationException {
+    public String readString() throws SimulationException, SimulationInterruptedException {
         try {
             return walkWord();
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read string");
         }
@@ -297,11 +329,14 @@ public class StreamManager {
      * Reads from the input stream until it reaches the end-of-line symbol.
      *
      * @return the line read from the input stream.
-     * @throws SimulationException if there was an error reading from the stream.
+     * @throws SimulationException            if there was an error reading from the stream.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public String readLine() throws SimulationException {
+    public String readLine() throws SimulationException, SimulationInterruptedException {
         try {
             return walkLine();
+        } catch (SimulationInterruptedException e) {
+            throw e;
         } catch (Exception e) {
             throw new SimulationException("Unable to read line");
         }

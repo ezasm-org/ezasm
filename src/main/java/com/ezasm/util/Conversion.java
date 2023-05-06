@@ -3,7 +3,6 @@ package com.ezasm.util;
 import com.ezasm.simulation.Memory;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * Utility class which provides functions for converting to and from byte arrays.
@@ -17,10 +16,10 @@ public class Conversion {
      * @return the byte data representation of the long.
      */
     public static byte[] longToBytes(long data) {
-        if (Memory.wordSize() == 4) {
-            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putInt((int) data).array();
-        } else if (Memory.wordSize() == 8) {
-            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putLong(data).array();
+        if (Memory.getWordSize() == 4) {
+            return ByteBuffer.wrap(new byte[Memory.getWordSize()]).putInt((int) data).array();
+        } else if (Memory.getWordSize() == 8) {
+            return ByteBuffer.wrap(new byte[Memory.getWordSize()]).putLong(data).array();
         }
         return null;
     }
@@ -47,10 +46,10 @@ public class Conversion {
      * @return the byte data representation of the double.
      */
     public static byte[] doubleToBytes(double data) {
-        if (Memory.wordSize() == 4) {
-            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putFloat((float) data).array();
-        } else if (Memory.wordSize() == 8) {
-            return ByteBuffer.wrap(new byte[Memory.wordSize()]).putDouble(data).array();
+        if (Memory.getWordSize() == 4) {
+            return ByteBuffer.wrap(new byte[Memory.getWordSize()]).putFloat((float) data).array();
+        } else if (Memory.getWordSize() == 8) {
+            return ByteBuffer.wrap(new byte[Memory.getWordSize()]).putDouble(data).array();
         }
         return null;
     }

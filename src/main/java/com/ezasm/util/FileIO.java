@@ -56,11 +56,26 @@ public class FileIO {
      * @return the image found.
      * @throws IOException if an error occurred reading from the file.
      */
-    public static Image loadImage(String path) throws IOException {
+    public static Image readImage(String path) throws IOException {
         try {
             return new ImageIcon(Objects.requireNonNull(FileIO.class.getClassLoader().getResource(path))).getImage();
         } catch (NullPointerException e) {
             throw new IOException(String.format("Unable to load image from %s", path));
+        }
+    }
+
+    /**
+     * Registers the given font into the graphic environment.
+     *
+     * @param path the path to the font resource to register.
+     */
+    public static void registerFont(String path) throws IOException {
+        try {
+            InputStream fontStream = Objects.requireNonNull(FileIO.class.getClassLoader().getResourceAsStream(path));
+            Font loadedFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(loadedFont);
+        } catch (IOException | FontFormatException e) {
+            throw new IOException("Unable to register specified file as a font");
         }
     }
 

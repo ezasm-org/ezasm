@@ -22,7 +22,7 @@ import javax.swing.plaf.basic.BasicButtonUI;
 public class TabCloseButton extends JButton implements IThemeable, ActionListener {
     private final ClosableTabbedPane parent;
     private final String name;
-    private static final int SIZE = 17;
+    private static final int SIZE = 12;
     private EditorTheme editorTheme;
 
     /**
@@ -39,9 +39,10 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
 
         setUI(new BasicButtonUI());
         setFocusable(false);
-        setBorder(BorderFactory.createEtchedBorder());
+        setBorder(BorderFactory.createDashedBorder(getForeground()));
         setBorderPainted(false);
-        setOpaque(false);
+        setContentAreaFilled(false);
+        setOpaque(true);
         addActionListener(this);
         addMouseListener(buttonMouseListener);
         setRolloverEnabled(true);
@@ -57,6 +58,11 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
     @Override
     public void applyTheme(Font font, EditorTheme editorTheme) {
         this.editorTheme = editorTheme;
+        setBackground(editorTheme.background());
+        setForeground(editorTheme.foreground());
+        setFont(font);
+        setPreferredSize(new Dimension(font.getSize() / 2 + 4, font.getSize() / 2));
+        setBorder(BorderFactory.createDashedBorder(editorTheme.currentLine()));
     }
 
     /**
@@ -84,16 +90,22 @@ public class TabCloseButton extends JButton implements IThemeable, ActionListene
         if (getModel().isPressed()) {
             g2.translate(1, 1);
         }
-        g2.setStroke(new BasicStroke(2.5f));
+
+        float stroke = (float) (Math.log(getFont().getSize()) / Math.log(2)) / 2;
+        g2.setStroke(new BasicStroke(stroke));
+
         g2.setColor(editorTheme.purple());
         if (getModel().isRollover()) {
             g2.setColor(editorTheme.cyan());
+        } else {
+            g2.setColor(editorTheme.purple());
         }
-        int delta = 3;
-        g2.drawLine(delta, getHeight() / 2 + getWidth() / 2 - delta, getWidth() - delta,
-                getHeight() / 2 - getWidth() / 2 + delta);
-        g2.drawLine(delta, getHeight() / 2 - getWidth() / 2 + delta, getWidth() - delta,
-                getHeight() / 2 + getWidth() / 2 - delta);
+
+        int delta = (int) (stroke - 0.5);
+        int width = getWidth() - 2;
+
+        g2.drawLine(delta, getHeight() / 2 + width / 2 - delta, width - delta, getHeight() / 2 - width / 2 + delta);
+        g2.drawLine(delta, getHeight() / 2 - width / 2 + delta, width - delta, getHeight() / 2 + width / 2 - delta);
         g2.dispose();
     }
 

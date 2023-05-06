@@ -261,11 +261,17 @@ public class EzTokenMaker extends AbstractTokenMaker {
                             newStartOffset + currentTokenStart);
                     currentTokenType = Token.NULL;
                 }
+                if (c == '\\') {
+                    ++i;
+                }
             }
             case Token.LITERAL_CHAR -> {
                 if (c == '\'') {
                     addToken(text, currentTokenStart, i, Token.LITERAL_CHAR, newStartOffset + currentTokenStart);
                     currentTokenType = Token.NULL;
+                }
+                if (c == '\\') {
+                    ++i;
                 }
             }
             case REGISTER_VARIABLE -> {
