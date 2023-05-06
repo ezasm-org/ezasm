@@ -5,6 +5,7 @@ import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
+import javax.swing.border.EmptyBorder;
 
 import com.ezasm.gui.settings.Config;
 import com.ezasm.gui.util.EditorTheme;
@@ -15,7 +16,7 @@ import com.ezasm.gui.util.EditorTheme;
 public class ClosableTabBuilder {
 
     private Font font = new Font(Config.DEFAULT_FONT, Font.PLAIN, 12);
-    private EditorTheme editorTheme = EditorTheme.getTheme("Light");
+    private EditorTheme editorTheme = EditorTheme.Light;
     private String name = ""; // empty by default
     private ClosableTabbedPane parent;
 
@@ -45,9 +46,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the font for the label of the closable tab
+     * Sets the font for the label of the closable tab.
      *
-     * @param font The font in question
+     * @param font the new font.
      */
     public ClosableTabBuilder setFont(Font font) {
         this.font = font;
@@ -55,9 +56,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the theme of the closable tab
+     * Sets the theme of the closable tab.
      *
-     * @param font The theme in question
+     * @param editorTheme the new theme.
      */
     public ClosableTabBuilder setTheme(EditorTheme editorTheme) {
         this.editorTheme = editorTheme;
@@ -65,9 +66,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the name of the closable tab
+     * Sets the name of the closable tab.
      *
-     * @param name The name in question
+     * @param name the new name.
      */
     public ClosableTabBuilder setTabName(String name) {
         this.name = name;
@@ -75,9 +76,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the parent structure of the closable tab
+     * Sets the parent structure of the closable tab.
      *
-     * @param parent The TabbedPane in question
+     * @param parent the new TabbedPane.
      */
     public ClosableTabBuilder setParent(ClosableTabbedPane parent) {
         this.parent = parent;

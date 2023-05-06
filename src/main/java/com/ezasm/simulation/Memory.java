@@ -3,10 +3,7 @@ package com.ezasm.simulation;
 import com.ezasm.simulation.exception.*;
 import com.ezasm.util.RawData;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents the system memory. There will be a single and contiguous array of memory which represents both the stack
@@ -28,10 +25,6 @@ public class Memory {
     public static final int DEFAULT_WORD_SIZE = 4;
 
     private static int wordSize = DEFAULT_WORD_SIZE;
-
-    public static int wordSize() {
-        return wordSize;
-    }
 
     private final int DEFAULT_OFFSET = 0x1_0000;
     private final int STRING_OFFSET = 0x1_0000;
@@ -56,6 +49,7 @@ public class Memory {
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
+        randomizeMemory();
     }
 
     /**
@@ -73,6 +67,16 @@ public class Memory {
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
+        randomizeMemory();
+    }
+
+    /**
+     * Gets the word size to use program-wide.
+     *
+     * @return the word size to use program-wide.
+     */
+    public static int getWordSize() {
+        return wordSize;
     }
 
     /**
@@ -83,6 +87,20 @@ public class Memory {
         alloc = offsetBytes;
         stringAlloc = STRING_OFFSET * wordSize;
         stringAddressMap.clear();
+        randomizeMemory();
+    }
+
+    /**
+     * Randomize the memory so that it is not all zeroes.
+     */
+    private void randomizeMemory() {
+        Random random = new Random();
+        random.setSeed(System.nanoTime());
+        byte[] bytes = new byte[1];
+        for (int i = offsetBytes; i < memory.length; ++i) {
+            random.nextBytes(bytes);
+            memory[i] = bytes[0];
+        }
     }
 
     /**
@@ -140,36 +158,6 @@ public class Memory {
             throw new AllocationException(address, address - alloc);
         }
         alloc = address;
-    }
-
-    /**
-     * Allocates a certain number of bytes with a check based on stack pointer to ensure that the heap pointer does not
-     * cross the stack pointer.
-     *
-     * @param bytes the number of bytes to allocate.
-     * @param sp    the current stack pointer of the program.
-     * @return the allocated memory starting point
-     */
-    public int allocate(int bytes, int sp) throws SimulationException {
-        if (alloc + bytes > sp) {
-            throw new SimulationException(String.format(
-                    "Allocating %d bytes with $SP at %d would cause the heap to overwrite the stack", bytes, sp));
-        }
-        int address = alloc;
-        alloc = alloc + bytes;
-        return address;
-    }
-
-    /**
-     * Allocates a certain number of bytes without a check based on stack pointer.
-     *
-     * @param bytes the number of bytes to allocate.
-     * @return the allocated memory starting point.
-     */
-    public int unsafeAllocate(int bytes) {
-        int address = alloc;
-        alloc = alloc + bytes;
-        return address;
     }
 
     /**

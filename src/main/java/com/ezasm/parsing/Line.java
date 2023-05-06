@@ -83,7 +83,7 @@ public class Line {
                     instruction, getArgumentTypes().length));
         }
 
-        this.instruction = new Instruction(instruction, dispatchInstruction.invocationTarget());
+        this.instruction = new Instruction(instruction);
     }
 
     /**

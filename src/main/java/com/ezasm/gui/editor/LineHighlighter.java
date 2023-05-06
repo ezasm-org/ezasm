@@ -8,6 +8,7 @@ import com.ezasm.gui.Window;
 
 import javax.swing.text.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,7 +62,12 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
 
         String currentFile = simulator.getFile(fid);
         int currentFileIndex = Window.getInstance().getEditorPanes().indexOfFile(currentFile);
-        if (currentFileIndex == -1) {
+        if (currentFileIndex == -1) { // check to see if anonymous
+            File f = new File(currentFile);
+            currentFile = f.getName();
+        }
+        currentFileIndex = Window.getInstance().getEditorPanes().indexOfFile(currentFile);
+        if (currentFileIndex == -1) { // file must not exist
             return;
         }
 
@@ -79,16 +85,6 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
             textArea.repaint();
         } catch (BadLocationException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Clear a text component of all line highlights.
-     */
-    public static void removeHighlights() {
-        for (EzEditorPane editorPane : Window.getInstance().getEditorPanes().getEditors()) {
-            editorPane.getTextArea().getHighlighter().removeAllHighlights();
-            editorPane.repaint();
         }
     }
 }

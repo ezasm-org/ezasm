@@ -7,6 +7,7 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +63,7 @@ public class CommandLineInterface {
      * Constructs a CLI based ont the given Simulator for operating code from a file with redirected input and/or output
      *
      * @param simulator      the given Simulator.
-     * @param file           the file to read code from.
+     * @param path           the path to the file to read code from.
      * @param inputFilePath  the file to read the input from.
      * @param outputFilePath the file to write the output to.
      */
@@ -125,13 +126,14 @@ public class CommandLineInterface {
     private void runFromCliInput() {
         Scanner scanner = new Scanner(System.in);
         int lineNumber = 0;
-        while (scanner.hasNextLine() && !Thread.interrupted()) {
+        while (scanner.hasNextLine()) {
             try {
                 Line line = Lexer.parseLine(scanner.nextLine(), lineNumber);
                 if (line != null) {
                     simulator.runLine(line);
                 }
-            } catch (ParseException | SimulationException e) {
+                SimulationInterruptedException.handleInterrupts();
+            } catch (ParseException | SimulationException | SimulationInterruptedException e) {
                 SystemStreams.err.println(e.getMessage());
                 SystemStreams.err.flush();
                 try {
@@ -148,6 +150,7 @@ public class CommandLineInterface {
     private void runLinesFromBeginning() {
         try {
             simulator.executeProgramFromPC();
+        } catch (SimulationInterruptedException ignored) {
         } catch (SimulationException e) {
             SystemStreams.err.println(e.getMessage());
         }

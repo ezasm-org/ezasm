@@ -1,7 +1,6 @@
 package com.ezasm.simulation;
 
 import com.ezasm.instructions.InstructionDispatcher;
-import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.parsing.Lexer;
 import com.ezasm.parsing.Line;
@@ -9,6 +8,7 @@ import com.ezasm.parsing.ParseException;
 import com.ezasm.simulation.exception.InvalidFileIdentifierException;
 import com.ezasm.simulation.exception.InvalidProgramCounterException;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
@@ -29,6 +29,9 @@ import java.util.*;
  */
 public class Simulator {
 
+    /**
+     * FID of the file the user started running code from.
+     */
     public static final int MAIN_FILE_IDENTIFIER = 0;
 
     private final Memory memory;
@@ -43,6 +46,7 @@ public class Simulator {
     private final Register pc;
     private final Register fi;
     private String executionDirectory;
+    private boolean canUndo;
 
     /**
      * Constructs a Simulator with the given word size and memory size specifications.
@@ -63,6 +67,7 @@ public class Simulator {
         this.pc = registers.getRegister(Registers.PC);
         this.fi = registers.getRegister(Registers.FID);
         this.executionDirectory = "";
+        this.canUndo = false;
 
         initialize();
     }
@@ -95,6 +100,23 @@ public class Simulator {
         initialize();
     }
 
+    /**
+     * Sets whether the program stores a list of all transformations done to the simulator. Setting this to true will
+     *
+     * @param canUndo
+     */
+    public void setAllowUndo(boolean canUndo) {
+        this.canUndo = canUndo;
+        if (!canUndo) {
+            transforms.clear();
+        }
+    }
+
+    /**
+     * Gets all lines in current file.
+     *
+     * @return list of lines in current file
+     */
     private List<Line> currentFileLines() {
         return Objects.requireNonNullElse(fileIdToLineArray.get((int) fi.getLong()), new ArrayList<>());
     }
@@ -177,7 +199,7 @@ public class Simulator {
     /**
      * Adds the given lines to the main program. Then adds those lines to the program.
      *
-     * @param lines    the lines
+     * @param lines    the lines.
      * @param mainFile the main program file.
      */
     public void addLines(List<Line> lines, File mainFile) throws ParseException {
@@ -191,12 +213,27 @@ public class Simulator {
     }
 
     /**
+     * Adds the given lines to the main program. Then adds those lines to the program.
+     *
+     * @param lines    the lines.
+     * @param fileName the anonymous file name.
+     */
+    public void addAnonymousLines(List<Line> lines, String fileName) throws ParseException {
+        this.executionDirectory = "";
+        fileToIdentifier.put(fileName, MAIN_FILE_IDENTIFIER);
+        for (Line line : lines) {
+            addLine(line, MAIN_FILE_IDENTIFIER);
+        }
+    }
+
+    /**
      * Executes the given line on the simulator.
      *
      * @param line the line to execute.
-     * @throws InstructionDispatchException if there is an error executing the line.
+     * @throws SimulationException            if there is an error executing the line.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public void runLine(Line line) throws SimulationException {
+    public void runLine(Line line) throws SimulationException, SimulationInterruptedException {
         if (line.isLabel()) {
             applyTransformations(new TransformationSequence());
         } else {
@@ -207,9 +244,10 @@ public class Simulator {
     /**
      * Runs the program continuously until completion or error.
      *
-     * @throws SimulationException if there is an error executing the program.
+     * @throws SimulationException            if there is an error executing the program.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public void executeProgramFromPC() throws SimulationException {
+    public void executeProgramFromPC() throws SimulationException, SimulationInterruptedException {
         while (!isDone() && !isError()) {
             executeLineFromPC();
         }
@@ -218,9 +256,10 @@ public class Simulator {
     /**
      * Runs a single line of code from the current PC.
      *
-     * @throws SimulationException if there is an error executing the line.
+     * @throws SimulationException            if there is an error executing the line.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public void executeLineFromPC() throws SimulationException {
+    public void executeLineFromPC() throws SimulationException, SimulationInterruptedException {
         // Ensure a valid file identifier and program counter within that file
         validateFID();
         int lineNumber = validatePC();
@@ -240,7 +279,10 @@ public class Simulator {
         InputOutputTransformable io = new InputOutputTransformable(this, new RegisterInputOutput(Registers.PC));
         Transformation endOfLine = io.transformation(new RawData(io.get().intValue() + 1));
         endOfLine.apply();
-        transforms.push(t.concatenate(new TransformationSequence(endOfLine)));
+
+        if (canUndo) {
+            transforms.push(t.concatenate(new TransformationSequence(endOfLine)));
+        }
     }
 
     /**
@@ -250,7 +292,7 @@ public class Simulator {
      * @throws SimulationException if an error occurs in the transformation.
      */
     public boolean undoLastTransformations() throws SimulationException {
-        if (transforms.isEmpty()) {
+        if (!canUndo || transforms.isEmpty()) {
             return false;
         }
         transforms.pop().invert().apply();
@@ -318,6 +360,11 @@ public class Simulator {
         return memory;
     }
 
+    /**
+     * Gets a file at a given file identifier.
+     *
+     * @return the file path in question.
+     */
     public String getFile(int fid) {
         return fileToIdentifier.getKey(fid);
     }

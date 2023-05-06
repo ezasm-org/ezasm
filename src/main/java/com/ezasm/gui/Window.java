@@ -85,9 +85,9 @@ public class Window {
     protected Window(Simulator simulator, Config config) {
         instance = this;
         this.simulator = simulator;
+        this.simulator.setAllowUndo(true);
         this.config = config;
         initialize();
-
     }
 
     /**
@@ -108,13 +108,14 @@ public class Window {
      */
     public static void instantiate(Simulator simulator, Config config, boolean dbg) {
         debugMode = dbg;
-        if (instance == null)
+        if (instance == null) {
             new Window(simulator, config);
+        }
     }
 
     /**
      * Generate the singleton Window instance if it does not exist. Sets the input/output streams for our
-     * TerminalInstructions to files
+     * TerminalInstructions to files.
      *
      * @param simulator      the simulator to use.
      * @param config         the program configuration.
@@ -201,15 +202,23 @@ public class Window {
             SystemStreams.err.println("Unable to set look and feel");
         }
 
+        try {
+            FileIO.registerFont("fonts/jetbrains/JetBrainsMono-Regular.ttf");
+        } catch (IOException e) {
+            SystemStreams.err.println("Unable to load standard font");
+        }
+
         app = new JFrame("EzASM Simulator");
         app.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         app.addWindowListener(new WindowCloseListener());
         app.setMinimumSize(new Dimension(800, 600));
+
         try {
-            app.setIconImage(FileIO.loadImage("icons/logo/EzASM.png"));
+            app.setIconImage(FileIO.readImage("icons/logo/EzASM.png"));
         } catch (IOException e) {
             SystemStreams.err.println("Could not load icon");
         }
+
         panel = new JPanel();
 
         menubar = MenubarFactory.makeMenuBar();
@@ -220,7 +229,6 @@ public class Window {
         console = new Console();
         setInputStream(console.getInputStream());
         setOutputStream(console.getOutputStream());
-        // TODO maybe make this configurable to allow them to use their terminal which they ran this with if they want
         System.setIn(inputStream);
         System.setOut(new PrintStream(outputStream));
         if (!debugMode) {
@@ -238,7 +246,8 @@ public class Window {
         mainSplit.setUI(new BasicSplitPaneUI());
         mainSplit.setBorder(null);
         toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainSplit, tools);
-        toolSplit.setResizeWeight(0.75);
+        toolSplit.setResizeWeight(1.0);
+        toolSplit.resetToPreferredSizes();
         toolSplit.setUI(new BasicSplitPaneUI());
         toolSplit.setBorder(null);
 
@@ -284,13 +293,19 @@ public class Window {
         });
     }
 
+    /**
+     * Applies the given configuration to the application.
+     *
+     * @param config the configuration to apply.
+     */
     public void applyConfiguration(Config config) {
         this.config = config;
-        EditorTheme editorTheme = EditorTheme.getTheme(config.getTheme());
+        EditorTheme editorTheme = config.getTheme();
         Font font = config.getFont();
 
         tools.applyTheme(font, editorTheme);
         mainSplit.setBackground(editorTheme.background());
+        toolSplit.setBackground(editorTheme.background());
         panel.setBackground(editorTheme.background());
         registerTable.applyTheme(font, editorTheme);
         ToolbarFactory.applyTheme(font, editorTheme, toolbar);
@@ -298,7 +313,7 @@ public class Window {
         for (EzEditorPane editor : getEditorPanes().getEditors()) {
             editor.resizeTabSize(config.getTabSize());
         }
-        SimulatorGuiActions.setInstructionDelayMS(config.getSimSpeed());
+        SimulatorGuiActions.setInstructionDelayMS(config.getSimulationDelay());
 
         autoSave.toggleRunning(config.getAutoSaveSelected(), config.getAutoSaveInterval());
     }
@@ -318,7 +333,7 @@ public class Window {
      * @return the theme stored in the instance configuration.
      */
     public EditorTheme getTheme() {
-        return EditorTheme.getTheme(config.getTheme());
+        return config.getTheme();
     }
 
     /**
@@ -339,6 +354,9 @@ public class Window {
         return memoryViewerPanel;
     }
 
+    /**
+     * Updates graphical information based on simulation attributes.
+     */
     public void updateGraphicInformation() {
         registerTable.update();
         memoryViewerPanel.update();
@@ -353,6 +371,11 @@ public class Window {
         return editors.getSelectedComponent();
     }
 
+    /**
+     * Gets the tabbed editor pane containing the editor panes.
+     *
+     * @return the tabbed editor pane containing the editor panes.
+     */
     public EditorTabbedPane getEditorPanes() {
         return editors;
     }
@@ -383,7 +406,12 @@ public class Window {
     public void parseText() throws ParseException {
         simulator.resetAll();
         registerTable.update();
-        simulator.addLines(Lexer.parseLines(getEditor().getText()), new File(getEditor().getOpenFilePath()));
+
+        if (getEditor().isFileAnonymous()) {
+            simulator.addAnonymousLines(Lexer.parseLines(getEditor().getText()), getEditor().getOpenFilePath());
+        } else {
+            simulator.addLines(Lexer.parseLines(getEditor().getText()), new File(getEditor().getOpenFilePath()));
+        }
         instance.getEditor().resetHighlighter();
     }
 
@@ -400,24 +428,6 @@ public class Window {
             SystemStreams.printlnCurrentOut("** Program terminated forcefully **");
         }
         getEditor().resetHighlighter();
-    }
-
-    /**
-     * Sets the text of the editor to the given content.
-     *
-     * @param content the text to set the text within the editor to.
-     */
-    public void setText(String content) {
-        getEditor().setText(content);
-    }
-
-    /**
-     * Gets the text content of the text editor.
-     *
-     * @return the text content of the text editor.
-     */
-    public String getText() {
-        return getEditor().getText();
     }
 
     /**

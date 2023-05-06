@@ -92,7 +92,13 @@ public final class RawData {
      * @return the hexadecimal formatted string.
      */
     public String toHexString() {
-        String output = String.format("%0" + (Memory.wordSize() * 2) + 'x', intValue()).toUpperCase();
+        String output;
+        if (Memory.getWordSize() == 4) {
+            output = String.format("%0" + (Memory.getWordSize() * 2) + 'x', (int) intValue()).toUpperCase();
+        } else {
+            output = String.format("%0" + (Memory.getWordSize() * 2) + 'x', intValue()).toUpperCase();
+        }
+
         StringBuilder sb = new StringBuilder("0x");
         for (int i = 0; i < output.length(); ++i) {
             sb.append(output.charAt(i));

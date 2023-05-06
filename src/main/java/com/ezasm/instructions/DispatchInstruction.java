@@ -2,6 +2,7 @@ package com.ezasm.instructions;
 
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.exception.SimulationInterruptedException;
 import com.ezasm.simulation.transform.TransformationSequence;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,36 +16,6 @@ import java.lang.reflect.Method;
  * @param parent           The parent class of the method that corresponds to the instruction.
  */
 public record DispatchInstruction(Class<?> parent, Method invocationTarget) {
-
-    /**
-     * Create a new dispatchable instruction based on a method with specific parameters and its parent class.
-     *
-     * @param parent           the parent class.
-     * @param invocationTarget the method for which to deduce operands for instructions and compile into a dispatchable
-     *                         instruction.
-     */
-    public DispatchInstruction {
-    }
-
-    /**
-     * Gets the parent class of the instruction (the instruction handler).
-     *
-     * @return a Class object corresponding to the parent class.
-     */
-    @Override
-    public Class<?> parent() {
-        return parent;
-    }
-
-    /**
-     * Gets the function to be invoked by this instruction.
-     *
-     * @return the function to be invoked by this instruction.
-     */
-    @Override
-    public Method invocationTarget() {
-        return invocationTarget;
-    }
 
     /**
      * Checks if this instruction is callable with the given argument types.
@@ -70,11 +41,21 @@ public record DispatchInstruction(Class<?> parent, Method invocationTarget) {
      *
      * @param parent the parent instruction handler. An instance of {@link DispatchInstruction#parent ()}.
      * @param line   the parsed line to interpret.
+     * @throws SimulationException            if an error occurs executing the target instruction.
+     * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
-    public TransformationSequence invoke(Object parent, Line line) throws SimulationException {
+    public TransformationSequence invoke(Object parent, Line line)
+            throws SimulationException, SimulationInterruptedException {
         try {
             return (TransformationSequence) this.invocationTarget.invoke(parent, line.getArguments());
         } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof SimulationInterruptedException interrupt) {
+                throw interrupt;
+            }
+            if (e.getTargetException() == null || e.getTargetException().getMessage() == null) {
+                e.printStackTrace();
+                throw new SimulationException("An unknown error occurred");
+            }
             throw new SimulationException(e.getTargetException().getMessage());
         } catch (IllegalAccessException | IllegalArgumentException e) {
             // TODO handle

@@ -9,7 +9,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.text.View;
 
 /**
- * Represents the UI for a tabbed pane.
+ * Represents the themed UI for a tabbed pane.
  */
 public class EzTabbedPaneUI extends BasicTabbedPaneUI {
 
