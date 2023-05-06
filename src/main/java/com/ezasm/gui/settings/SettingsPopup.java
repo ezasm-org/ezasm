@@ -120,7 +120,7 @@ public class SettingsPopup implements IThemeable {
         speedLabel = new JLabel(SIMULATION_SPEED);
 
         fontInput = new JTextField(String.valueOf(config.getFontSize()));
-        speedSlider = new JSlider(10, 1000, config.getSimulationDelay());
+        speedSlider = new JSlider(25, 1000, config.getSimulationDelay());
 
         tabSizeLabel = new JLabel(TABSIZE);
         tabSizeSlider = new JSlider(1, 8, config.getTabSize());
