@@ -38,7 +38,7 @@ public class Config {
     public static final String AUTO_SAVE_SELECTED = "AUTO_SAVE_SELECTED";
 
     // All default settings
-    public static final String DEFAULT_FONT_SIZE = "12";
+    public static final String DEFAULT_FONT_SIZE = "16";
     public static final String DEFAULT_TAB_SIZE = "2";
     public static final String DEFAULT_AUTO_SAVE_SELECTED = "false";
     public static final String DEFAULT_AUTO_SAVE_INTERVAL = "10";

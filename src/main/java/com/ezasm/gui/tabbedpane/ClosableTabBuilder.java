@@ -36,7 +36,6 @@ public class ClosableTabBuilder {
      */
     public ClosableTabPanel build() {
         JLabel label = new JLabel(name);
-        label.setBorder(new EmptyBorder(0, 0, 0, 10));
         label.setFont(font);
         label.setForeground(editorTheme.foreground());
 
@@ -47,9 +46,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the font for the label of the closable tab
+     * Sets the font for the label of the closable tab.
      *
-     * @param font The font in question
+     * @param font the new font.
      */
     public ClosableTabBuilder setFont(Font font) {
         this.font = font;
@@ -57,9 +56,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the theme of the closable tab
+     * Sets the theme of the closable tab.
      *
-     * @param font The theme in question
+     * @param editorTheme the new theme.
      */
     public ClosableTabBuilder setTheme(EditorTheme editorTheme) {
         this.editorTheme = editorTheme;
@@ -67,9 +66,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the name of the closable tab
+     * Sets the name of the closable tab.
      *
-     * @param name The name in question
+     * @param name the new name.
      */
     public ClosableTabBuilder setTabName(String name) {
         this.name = name;
@@ -77,9 +76,9 @@ public class ClosableTabBuilder {
     }
 
     /**
-     * Sets the parent structure of the closable tab
+     * Sets the parent structure of the closable tab.
      *
-     * @param parent The TabbedPane in question
+     * @param parent the new TabbedPane.
      */
     public ClosableTabBuilder setParent(ClosableTabbedPane parent) {
         this.parent = parent;
