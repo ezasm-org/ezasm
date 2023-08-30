@@ -120,15 +120,24 @@ public class SettingsPopup implements IThemeable {
         speedLabel = new JLabel(SIMULATION_SPEED);
 
         fontInput = new JTextField(String.valueOf(config.getFontSize()));
-        speedSlider = new JSlider(10, 1000, config.getSimulationDelay());
+        if (config.getSimulationDelay() < 50 || config.getSimulationDelay() > 1000) {
+            config.setSimulationDelay(Integer.parseInt(Config.DEFAULT_SIMULATION_DELAY));
+        }
+        speedSlider = new JSlider(50, 1000, config.getSimulationDelay());
 
         tabSizeLabel = new JLabel(TABSIZE);
+        if (config.getTabSize() < 1 || config.getTabSize() > 8) {
+            config.setTabSize(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
+        }
         tabSizeSlider = new JSlider(1, 8, config.getTabSize());
         tabSizeSlider.setMajorTickSpacing(1);
         tabSizeSlider.setPaintTicks(true);
         tabSizeSlider.setPaintLabels(true);
 
         autoSaveLabel = new JLabel(AUTOSAVE);
+        if (config.getAutoSaveInterval() < 0 || config.getAutoSaveInterval() > 30) {
+            config.setAutoSaveInterval(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
+        }
         autoSaveButton = new AutoSaveSliderToggleButton(config.getAutoSaveSelected(), config.getAutoSaveInterval());
 
         GridLayout gridLayout = new GridLayout(0, 2);
