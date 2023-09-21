@@ -9,7 +9,8 @@ assignees: ''
 
 **Environment (please complete the following information):**
  - OS: [e.g. Windows 10, Arch Linux]
- - Java version [e.g. 1.17.183]
+ - Java version: [e.g. 1.17.183]
+ - Program version: [eg. 1.0.1]
 
 **Describe the bug**
 A clear and concise description of what the bug is.
