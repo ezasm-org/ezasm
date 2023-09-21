@@ -3,7 +3,6 @@ package com.ezasm.gui.console;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.NullOutputStream;
-import com.ezasm.util.SystemStreams;
 
 import javax.swing.*;
 import javax.swing.text.*;
