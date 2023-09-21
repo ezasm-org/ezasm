@@ -3,6 +3,7 @@ package com.ezasm.gui.console;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.NullOutputStream;
+import com.ezasm.util.SystemStreams;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -79,6 +80,11 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
      * @return Gets the string remaining after the fixed text.
      */
     private String getRemainingString() {
+        // Handle issue with instructions on Windows
+        // TODO use a better workaround that doesnt involve setting the text
+        if (getText().contains("\r")) {
+            setText(getText().replace("\r", ""));
+        }
         try {
             return getText(fixedTextEnd, getText().length() - fixedTextEnd + 1);
         } catch (BadLocationException ignored) {
@@ -135,6 +141,7 @@ public class ConsoleTextArea extends JTextPane implements IThemeable {
                 if (pos >= fixedTextEnd && e.getKeyCode() == '\n') {
                     // Legal newline character entered, save previously given text as final input
                     String toBuffer = getRemainingString();
+                    toBuffer = toBuffer.replace("\r", "");
                     console.writeTextToInputStream(toBuffer);
                     fixedTextEnd += toBuffer.length();
                 }
