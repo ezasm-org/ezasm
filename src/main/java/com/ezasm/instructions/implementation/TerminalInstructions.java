@@ -132,12 +132,6 @@ public class TerminalInstructions {
         int address = (int) input1.get(simulator).intValue();
         int maxSize = (int) input2.get(simulator).intValue();
 
-        if(maxSize==10) {
-            System.out.print(maxSize+" was size of array allocated");
-        }
-        if(maxSize==11){
-            //System.out.println(maxSize+" was size of array allocated");
-        }
         FileReadTransformable f = new FileReadTransformable(simulator, streams().getCursor());
         String string = streams.readString();
         /*
@@ -151,25 +145,42 @@ public class TerminalInstructions {
             System.out.print((int)string.charAt(i)+", ");
         }
         System.out.print("  <<<<  ");
+        */
 
-         */
-        //At this point in time, there is no NUll terminator at the end of the string
+        if(string.length()>=maxSize){
+            int size = min(maxSize, string.length());
 
-        int size = min(maxSize, string.length());
+            Transformation[] transformations = new Transformation[size + 1];
+            transformations[0] = f.transformation(new RawData(streams().getCursor()));
 
-        //if s.length is below max size, all of it should be read in
-        Transformation[] transformations = new Transformation[size + 1];
-        transformations[0] = f.transformation(new RawData(streams().getCursor()));
-
-        for (int i = 0; i < size; ++i) {
+            for (int i = 1; i < size; ++i) {
+                MemoryTransformable m = new MemoryTransformable(simulator, address);
+                transformations[i] = m.transformation(new RawData(string.charAt(i-1)));
+                address = address + Memory.getWordSize();
+            }
             MemoryTransformable m = new MemoryTransformable(simulator, address);
-            transformations[i+1] = m.transformation(new RawData(string.charAt(i)));
-            address = address + Memory.getWordSize();
-        }
-        MemoryTransformable m = new MemoryTransformable(simulator, address);
-        transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
+            transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
 
-        return new TransformationSequence(transformations);
+            return new TransformationSequence(transformations);
+        }//case where input >= size
+        else{
+
+            int size = min(maxSize, string.length());
+
+            Transformation[] transformations = new Transformation[size + 1];
+            transformations[0] = f.transformation(new RawData(streams().getCursor()));
+
+            for (int i = 0; i < size; ++i) {
+                MemoryTransformable m = new MemoryTransformable(simulator, address);
+                transformations[i] = m.transformation(new RawData(string.charAt(i)));
+                address = address + Memory.getWordSize();
+            }
+            MemoryTransformable m = new MemoryTransformable(simulator, address);
+            transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
+
+            return new TransformationSequence(transformations);
+        }// input < max size
+
     }
 
     @Instruction
