@@ -63,6 +63,7 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
+        System.out.println("prints(2)");
         int address = (int) input1.get(simulator).intValue();
         int index = 0;
         int maxSize = (int) input2.get(simulator).intValue();
