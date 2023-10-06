@@ -63,7 +63,6 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence prints(IAbstractInput input1, IAbstractInput input2) throws SimulationException {
-        System.out.println("prints(2)");
         int address = (int) input1.get(simulator).intValue();
         int index = 0;
         int maxSize = (int) input2.get(simulator).intValue();
@@ -80,7 +79,6 @@ public class TerminalInstructions {
 
     @Instruction
     public TransformationSequence prints(IAbstractInput input1) throws SimulationException {
-        //System.out.print("prints(3)");
         int address = (int) input1.get(simulator).intValue();
         int index = 0;
         long current = simulator.getMemory().read(address).intValue();
@@ -134,18 +132,6 @@ public class TerminalInstructions {
 
         FileReadTransformable f = new FileReadTransformable(simulator, streams().getCursor());
         String string = streams.readString();
-        /*
-        System.out.print("String test: ");
-        for(int i =0; i<string.length(); i++){
-            System.out.print(string.charAt(i));
-        }
-        System.out.println("   <<<   ");
-        System.out.print("ASCII test >>> ");
-        for(int i=0; i<string.length(); i++){
-            System.out.print((int)string.charAt(i)+", ");
-        }
-        System.out.print("  <<<<  ");
-        */
 
         if(string.length()>=maxSize){
             int size = min(maxSize, string.length());
@@ -164,7 +150,6 @@ public class TerminalInstructions {
             return new TransformationSequence(transformations);
         }//case where input >= size
         else{
-
             int size = min(maxSize, string.length());
 
             Transformation[] transformations = new Transformation[size + 1];
@@ -179,7 +164,7 @@ public class TerminalInstructions {
             transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
 
             return new TransformationSequence(transformations);
-        }// input < max size
+        }// case where input < max size
 
     }
 
