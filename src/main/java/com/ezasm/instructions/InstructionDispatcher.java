@@ -1,14 +1,21 @@
 package com.ezasm.instructions;
 
 import com.ezasm.instructions.implementation.*;
+import com.ezasm.instructions.targets.IAbstractTarget;
+import com.ezasm.instructions.targets.input.ImmediateInput;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.Simulator;
 import com.ezasm.instructions.exception.InstructionLoadException;
 import com.ezasm.instructions.exception.IllegalInstructionException;
 import com.ezasm.instructions.exception.InstructionDispatchException;
 import com.ezasm.parsing.Line;
 import com.ezasm.simulation.exception.SimulationInterruptedException;
+import com.ezasm.simulation.transform.Transformation;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
+import com.ezasm.util.RawData;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -167,7 +174,9 @@ public class InstructionDispatcher {
      * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
     public void execute(Line line) throws SimulationException, SimulationInterruptedException {
+        System.out.println("executing: "+line.getInstruction().text());
         DispatchInstruction dispatch = getInstruction(line.getInstruction().text(), line.getArgumentTypes());
+
         if (dispatch == null) {
             throw new IllegalInstructionException(line.getInstruction().text());
         }
@@ -177,6 +186,77 @@ public class InstructionDispatcher {
         TransformationSequence result = dispatch.invoke(object, line);
         SimulationInterruptedException.handleInterrupts();
         simulator.applyTransformations(result);
+        if(line.getInstruction().text().equals("mul")){
+            /*
+            System.out.println("multin time");
+
+
+            Object object2 = this.instructionHandlerInstances.get(dispatch.parent());
+
+            Line line2=new Line(line);
+            RegisterInputOutput l= new RegisterInputOutput("LO");
+            line2.setArgument(l,0);
+
+            TransformationSequence result2 = dispatch.invoke(object2, line2);
+            SimulationInterruptedException.handleInterrupts();
+            simulator.applyTransformations(result2); //so as this does another thing, it counts as two instructions, and will skip others
+            InputOutputTransformable io = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.PC));
+            Transformation endOfLine = io.transformation(new RawData(io.get().intValue() - 1) );
+            endOfLine.apply();
+
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+            Object object3 = this.instructionHandlerInstances.get(dispatch.parent());
+            //ex line :     mul $t0 4 3
+            //line arg 0-> $t0
+            //     arg 1-> 4
+            //     arg 2-> 3
+            Line line3=new Line(line);
+            RegisterInputOutput h= new RegisterInputOutput("HI");
+            line3.setArgument(h,0);
+
+            TransformationSequence result3 = dispatch.invoke(object3, line3);
+            SimulationInterruptedException.handleInterrupts();
+            simulator.applyTransformations(result3); //so as this does another thing, it counts as two instructions, and will skip others
+            endOfLine.apply();
+
+            */
+        }
+        if(line.getInstruction().text().equals("div")){
+
+            {
+                Object object2 = this.instructionHandlerInstances.get(dispatch.parent());
+
+                Line line2 = new Line(line);
+                RegisterInputOutput l = new RegisterInputOutput("LO");
+                line2.setArgument(l, 0);
+
+                TransformationSequence result2 = dispatch.invoke(object2, line2);
+                SimulationInterruptedException.handleInterrupts();
+                simulator.applyTransformations(result2); //so as this does another thing, it counts as two instructions, and will skip others
+                InputOutputTransformable io = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.PC));
+                Transformation endOfLine = io.transformation(new RawData(io.get().intValue() - 1));
+                endOfLine.apply();
+            } //LO
+            {
+                //change div to mod and out register to hi
+
+                //ex line :      div $t0 4 3
+                //instruction -> div
+                // line arg 0 -> $t0
+                //      arg 1 -> 4
+                //      arg 2 -> 3
+                Line line3 = new Line("mod",line);
+                RegisterInputOutput h = new RegisterInputOutput("HI");
+                line3.setArgument(h, 0);
+                this.execute((line3));
+
+                InputOutputTransformable io = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.PC));
+                Transformation endOfLine = io.transformation(new RawData(io.get().intValue() - 1));
+                endOfLine.apply();
+            }
+
+        }
     }
 
 }

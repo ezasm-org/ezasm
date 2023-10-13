@@ -3,6 +3,7 @@ package com.ezasm.parsing;
 import com.ezasm.instructions.DispatchInstruction;
 import com.ezasm.instructions.InstructionDispatcher;
 import com.ezasm.instructions.targets.IAbstractTarget;
+import com.ezasm.instructions.targets.input.IAbstractInput;
 import com.ezasm.instructions.targets.input.ImmediateInput;
 import com.ezasm.instructions.targets.input.LabelReferenceInput;
 import com.ezasm.instructions.targets.input.StringInput;
@@ -86,6 +87,34 @@ public class Line {
         this.instruction = new Instruction(instruction);
     }
 
+
+    /**
+     * Creates another line that is a copy, not a reference of the input
+     * TODO: Make safe
+     *
+     * @param old the thing we will be copying
+     */
+    public Line(Line old){
+        this.instruction=old.getInstruction();
+        this.arguments=old.getArguments();
+        this.label=old.getLabel();
+        this.stringImmediates=old.getStringImmediates();
+    }
+
+    /**
+     * Copies an instruction's arguments, but changes the function being applied
+     * TODO: Make safe
+     *
+     * @param instr the new instruction type
+     * @param old the old line, which this function takes the rest of its data from
+     */
+    public Line(String instr, Line old){
+        this.instruction = new Instruction(instr);
+        this.arguments=old.getArguments();
+        this.label=old.getLabel();
+        this.stringImmediates=old.getStringImmediates();
+
+    }
     /**
      * Gets the instruction token of this line.
      *
@@ -110,6 +139,10 @@ public class Line {
         return types;
     }
 
+
+    public void setArgument(IAbstractTarget iat, int pos){
+        arguments[pos]=iat;
+    }
     /**
      * Gets the "right-hand side" tokens of this line.
      *

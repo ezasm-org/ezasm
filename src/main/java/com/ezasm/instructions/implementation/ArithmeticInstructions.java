@@ -1,5 +1,6 @@
 package com.ezasm.instructions.implementation;
 
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.instructions.targets.input.IAbstractInput;
@@ -116,6 +117,8 @@ public class ArithmeticInstructions {
         if (input2.get(simulator).intValue() == 0) {
             throw new IllegalArgumentException(-1);
         }
+        //arithmetic((a, b) -> a / b, lo, input1, input2); find some way to just replace that with lo
+        //I could monkey brain for loop but I doubt that's 'good' coding
         return arithmetic((a, b) -> a / b, output, input1, input2);
     }
 
