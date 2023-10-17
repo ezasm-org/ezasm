@@ -1,6 +1,7 @@
 package com.ezasm.instructions.implementation;
 
 import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.Registers;
 import com.ezasm.simulation.transform.TransformationSequence;
 import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.instructions.targets.input.IAbstractInput;
@@ -100,8 +101,18 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence mul(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        return arithmetic((a, b) -> a * b, output, input1, input2);
+        RegisterInputOutput l= new RegisterInputOutput(Registers.LO);
+        RegisterInputOutput h= new RegisterInputOutput(Registers.HI);
+
+        TransformationSequence t= new TransformationSequence();
+        t=t.concatenate(arithmetic((a, b) -> (long)a * b, output, input1, input2));
+        t=t.concatenate(arithmetic((a, b) -> {long c=a; long d=b; long e = c*d; return e % 4294967296L;}, l, input1, input2));
+        t=t.concatenate(arithmetic((a, b) -> {long c=a; long d=b; long e = c*d; return e / 4294967296L;}, h, input1, input2));
+
+        return t;
     }
+
+
 
     /**
      * The standard divide operation.
@@ -117,9 +128,17 @@ public class ArithmeticInstructions {
         if (input2.get(simulator).intValue() == 0) {
             throw new IllegalArgumentException(-1);
         }
-        //arithmetic((a, b) -> a / b, lo, input1, input2); find some way to just replace that with lo
-        //I could monkey brain for loop but I doubt that's 'good' coding
-        return arithmetic((a, b) -> a / b, output, input1, input2);
+        RegisterInputOutput l= new RegisterInputOutput(Registers.LO);
+        RegisterInputOutput h= new RegisterInputOutput(Registers.HI);
+
+        TransformationSequence t= new TransformationSequence();
+        TransformationSequence target= (arithmetic((a, b) -> a / b, output, input1, input2));
+
+        t=t.concatenate(target);
+        t=t.concatenate(arithmetic( (a,b) -> a / b, l     , input1,input2 ));
+        t=t.concatenate(arithmetic( (a,b) -> a % b, h     , input1,input2 ));
+
+        return t;
     }
 
     /**
