@@ -220,7 +220,7 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence sll(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        return arithmetic((a, b) -> a << b, output, input1, input2);
+        return arithmetic((a, b) -> {return b>0 ? a << b:  a >> -b;}, output, input1, input2);
     }
 
     /**
@@ -234,7 +234,22 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence srl(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        return arithmetic((a, b) -> a >> b, output, input1, input2);
+        return arithmetic((a, b) -> {return b>0 ? a >> b:  a << -b;}, output, input1, input2);
+    }
+
+    /**
+     * The standard "shift right arithmetic" operation.
+     *
+     * @param output the output of the operation.
+     * @param input1 the left-hand side of the sra operation.
+     * @param input2 the right-hand side of the sra operation.
+     * @throws SimulationException if there is an error in accessing the simulation.
+     */
+    @Instruction
+    public TransformationSequence sra(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
+            throws SimulationException {
+        //booleanExpression ? expression1 : expression2
+        return arithmetic((a, b) -> {return b>0 ? a >> b:  a << -b;}, output, input1, input2);
     }
 
     /**

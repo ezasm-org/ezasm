@@ -174,7 +174,6 @@ public class InstructionDispatcher {
      * @throws SimulationInterruptedException if an interrupt occurs while executing.
      */
     public void execute(Line line) throws SimulationException, SimulationInterruptedException {
-        System.out.println("executing: "+line.getInstruction().text());
         DispatchInstruction dispatch = getInstruction(line.getInstruction().text(), line.getArgumentTypes());
 
         if (dispatch == null) {
