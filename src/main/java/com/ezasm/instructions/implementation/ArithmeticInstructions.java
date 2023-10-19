@@ -220,7 +220,7 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence sll(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        return arithmetic((a, b) -> {int c= Math.toIntExact(a); int d=c>>>-b; return b>0 ? a << b: ((long) d);}, output, input1, input2);
+        return arithmetic((a, b) -> {return b>0 ? a << b: ((long) (Math.toIntExact(a) >>> -b));}, output, input1, input2);
     }
 
     /**
@@ -234,7 +234,7 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence srl(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        return arithmetic((a, b) -> {int c= Math.toIntExact(a); int d=c>>>b; return b>0 ? ((long)d) : a << -b;}, output, input1, input2);
+        return arithmetic((a, b) -> {return (b > 0) ? ((long) (Math.toIntExact(a) >>> b)) : (a << -b);}, output, input1, input2);
     }
 
     /**
