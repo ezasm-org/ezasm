@@ -133,7 +133,7 @@ public class TerminalInstructions {
         FileReadTransformable f = new FileReadTransformable(simulator, streams().getCursor());
         String string = streams.readString();
 
-        if(string.length()>=maxSize){
+        if (string.length() >= maxSize) {
             int size = min(maxSize, string.length());
 
             Transformation[] transformations = new Transformation[size + 1];
@@ -141,15 +141,15 @@ public class TerminalInstructions {
 
             for (int i = 1; i < size; ++i) {
                 MemoryTransformable m = new MemoryTransformable(simulator, address);
-                transformations[i] = m.transformation(new RawData(string.charAt(i-1)));
+                transformations[i] = m.transformation(new RawData(string.charAt(i - 1)));
                 address = address + Memory.getWordSize();
             }
             MemoryTransformable m = new MemoryTransformable(simulator, address);
             transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
 
             return new TransformationSequence(transformations);
-        }//case where input >= size
-        else{
+        } // case where input >= size
+        else {
             int size = min(maxSize, string.length());
 
             Transformation[] transformations = new Transformation[size + 1];
@@ -164,7 +164,7 @@ public class TerminalInstructions {
             transformations[transformations.length - 1] = m.transformation(new RawData('\0'));
 
             return new TransformationSequence(transformations);
-        }// case where input < max size
+        } // case where input < max size
 
     }
 

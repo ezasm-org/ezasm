@@ -101,18 +101,26 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence mul(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        RegisterInputOutput l= new RegisterInputOutput(Registers.LO);
-        RegisterInputOutput h= new RegisterInputOutput(Registers.HI);
+        RegisterInputOutput l = new RegisterInputOutput(Registers.LO);
+        RegisterInputOutput h = new RegisterInputOutput(Registers.HI);
 
-        TransformationSequence t= new TransformationSequence();
-        t=t.concatenate(arithmetic((a, b) -> (long)a * b, output, input1, input2));
-        t=t.concatenate(arithmetic((a, b) -> {long c=a; long d=b; long e = c*d; return e % 4294967296L;}, l, input1, input2));
-        t=t.concatenate(arithmetic((a, b) -> {long c=a; long d=b; long e = c*d; return e / 4294967296L;}, h, input1, input2));
+        TransformationSequence t = new TransformationSequence();
+        t = t.concatenate(arithmetic((a, b) -> (long) a * b, output, input1, input2));
+        t = t.concatenate(arithmetic((a, b) -> {
+            long c = a;
+            long d = b;
+            long e = c * d;
+            return e % 4294967296L;
+        }, l, input1, input2));
+        t = t.concatenate(arithmetic((a, b) -> {
+            long c = a;
+            long d = b;
+            long e = c * d;
+            return e / 4294967296L;
+        }, h, input1, input2));
 
         return t;
     }
-
-
 
     /**
      * The standard divide operation.
@@ -128,15 +136,15 @@ public class ArithmeticInstructions {
         if (input2.get(simulator).intValue() == 0) {
             throw new IllegalArgumentException(-1);
         }
-        RegisterInputOutput l= new RegisterInputOutput(Registers.LO);
-        RegisterInputOutput h= new RegisterInputOutput(Registers.HI);
+        RegisterInputOutput l = new RegisterInputOutput(Registers.LO);
+        RegisterInputOutput h = new RegisterInputOutput(Registers.HI);
 
-        TransformationSequence t= new TransformationSequence();
-        TransformationSequence target= (arithmetic((a, b) -> a / b, output, input1, input2));
+        TransformationSequence t = new TransformationSequence();
+        TransformationSequence target = (arithmetic((a, b) -> a / b, output, input1, input2));
 
-        t=t.concatenate(target);
-        t=t.concatenate(arithmetic( (a,b) -> a / b, l     , input1,input2 ));
-        t=t.concatenate(arithmetic( (a,b) -> a % b, h     , input1,input2 ));
+        t = t.concatenate(target);
+        t = t.concatenate(arithmetic((a, b) -> a / b, l, input1, input2));
+        t = t.concatenate(arithmetic((a, b) -> a % b, h, input1, input2));
 
         return t;
     }
@@ -220,7 +228,9 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence sll(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        return arithmetic((a, b) -> {return b>0 ? a << b: ((long) (Math.toIntExact(a) >>> -b));}, output, input1, input2);
+        return arithmetic((a, b) -> {
+            return b > 0 ? a << b : ((long) (Math.toIntExact(a) >>> -b));
+        }, output, input1, input2);
     }
 
     /**
@@ -234,11 +244,13 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence srl(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        return arithmetic((a, b) -> {return (b > 0) ? ((long) (Math.toIntExact(a) >>> b)) : (a << -b);}, output, input1, input2);
+        return arithmetic((a, b) -> {
+            return (b > 0) ? ((long) (Math.toIntExact(a) >>> b)) : (a << -b);
+        }, output, input1, input2);
     }
 
     /**
-     * The standard "shift right arithmetic" operation.
+     * The standard shift right arithmetic operation.
      *
      * @param output the output of the operation.
      * @param input1 the left-hand side of the sra operation.
@@ -248,8 +260,10 @@ public class ArithmeticInstructions {
     @Instruction
     public TransformationSequence sra(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
-        //booleanExpression ? expression1 : expression2
-        return arithmetic((a, b) -> {return b>0 ? a >> b:  a << -b;}, output, input1, input2);
+        // booleanExpression ? expression1 : expression2
+        return arithmetic((a, b) -> {
+            return b > 0 ? a >> b : a << -b;
+        }, output, input1, input2);
     }
 
     /**

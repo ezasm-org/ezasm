@@ -111,10 +111,10 @@ public class Line {
         return types;
     }
 
-
-    public void setArgument(IAbstractTarget iat, int pos){
-        arguments[pos]=iat;
+    public void setArgument(IAbstractTarget iat, int pos) {
+        arguments[pos] = iat;
     }
+
     /**
      * Gets the "right-hand side" tokens of this line.
      *
