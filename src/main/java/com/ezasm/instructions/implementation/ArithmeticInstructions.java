@@ -108,15 +108,11 @@ public class ArithmeticInstructions {
         TransformationSequence t = new TransformationSequence();
         t = t.concatenate(arithmetic((a, b) -> (long) a * b, output, input1, input2));
         t = t.concatenate(arithmetic((a, b) -> {
-            long c = a;
-            long d = b;
-            long e = c * d;
+            long e = (long) a * (long) b;
             return e % 4294967296L;
         }, l, input1, input2));
         t = t.concatenate(arithmetic((a, b) -> {
-            long c = a;
-            long d = b;
-            long e = c * d;
+            long e = (long)a * (long)b;
             return e / 4294967296L;
         }, h, input1, input2));
 
@@ -268,7 +264,9 @@ public class ArithmeticInstructions {
             throws SimulationException {
         // booleanExpression ? expression1 : expression2
         return arithmetic((a, b) -> {
-            return b > 0 ? a >> Math.min(b,Memory.getWordSize()*8L-1) : a << Math.min(-b,Memory.getWordSize()*8L-1);
+            return (Math.abs(b)>=Memory.getWordSize()*8L) ? ( (a>0 || b<0)?0L:-1L   ) :( (b > 0) ? a >>b : a << -b );
+            //return b > 0 ? a >> Math.min(b,Memory.getWordSize()*8L-1) : a << Math.min(-b,Memory.getWordSize()*8L-1);
+            //first check if |b|>31 -> 0
         }, output, input1, input2);
     }
 
