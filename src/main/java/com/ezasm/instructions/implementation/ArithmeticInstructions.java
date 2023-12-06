@@ -112,7 +112,7 @@ public class ArithmeticInstructions {
             return e % 4294967296L;
         }, l, input1, input2));
         t = t.concatenate(arithmetic((a, b) -> {
-            long e = (long)a * (long)b;
+            long e = (long) a * (long) b;
             return e / 4294967296L;
         }, h, input1, input2));
 
@@ -226,9 +226,12 @@ public class ArithmeticInstructions {
     public TransformationSequence sll(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
         return arithmetic((a, b) -> {
-            return (Math.abs(b)>=Memory.getWordSize()*8L) ? 0L : b > 0 ? (long) Math.toIntExact(a) << b : (long) (Math.toIntExact(a)>>>-b);
-            //return (b > 0) ? ((long) Math.toIntExact(a) << Math.min(Memory.getWordSize()*8L-1,b)) : ( (-b>31) ?  (long)0 : (long) (Math.toIntExact(a)>>>-b));
-            //return (b > 0) ? ((long) Math.toIntExact(a) << Math.min(63,b)) : ( (-b>31) ?  (long)0 : (long) (Math.toIntExact(a)>>>-b));
+            return (Math.abs(b) >= Memory.getWordSize() * 8L) ? 0L
+                    : b > 0 ? (long) Math.toIntExact(a) << b : (long) (Math.toIntExact(a) >>> -b);
+            // return (b > 0) ? ((long) Math.toIntExact(a) << Math.min(Memory.getWordSize()*8L-1,b)) : ( (-b>31) ?
+            // (long)0 : (long) (Math.toIntExact(a)>>>-b));
+            // return (b > 0) ? ((long) Math.toIntExact(a) << Math.min(63,b)) : ( (-b>31) ? (long)0 : (long)
+            // (Math.toIntExact(a)>>>-b));
         }, output, input1, input2);
     }
 
@@ -244,13 +247,17 @@ public class ArithmeticInstructions {
     public TransformationSequence srl(IAbstractInputOutput output, IAbstractInput input1, IAbstractInput input2)
             throws SimulationException {
         return arithmetic((a, b) -> {
-            return (Math.abs(b) >= Memory.getWordSize()*8L) ? 0L : ((b > 0) ? (long) (Math.toIntExact(a) >>> b) : ((long) Math.toIntExact(a) << -b));
-            //return (b > 0) ? ((b>31) ? ((long) (0)) : ((long) (Math.toIntExact(a) >>> b)) ): ( ((long) Math.toIntExact(a) << Math.min(-b,Memory.getWordSize()*8L-1)));
-            //return (b > 0) ? ((long) (Math.toIntExact(a) >>> Math.min(31,b))) : ( ((long) Math.toIntExact(a) << Math.min(-b,63)));
+            return (Math.abs(b) >= Memory.getWordSize() * 8L) ? 0L
+                    : ((b > 0) ? (long) (Math.toIntExact(a) >>> b) : ((long) Math.toIntExact(a) << -b));
+            // return (b > 0) ? ((b>31) ? ((long) (0)) : ((long) (Math.toIntExact(a) >>> b)) ): ( ((long)
+            // Math.toIntExact(a) << Math.min(-b,Memory.getWordSize()*8L-1)));
+            // return (b > 0) ? ((long) (Math.toIntExact(a) >>> Math.min(31,b))) : ( ((long) Math.toIntExact(a) <<
+            // Math.min(-b,63)));
         }, output, input1, input2);
     }
-    //this makes it stop at 63, which will not eilimate the last value given a is negative
-    //also the internal java logic does mod 32 instead of 64 on the srl
+
+    // this makes it stop at 63, which will not eilimate the last value given a is negative
+    // also the internal java logic does mod 32 instead of 64 on the srl
     /**
      * The standard shift right arithmetic operation.
      *
@@ -264,9 +271,10 @@ public class ArithmeticInstructions {
             throws SimulationException {
         // booleanExpression ? expression1 : expression2
         return arithmetic((a, b) -> {
-            return (Math.abs(b)>=Memory.getWordSize()*8L) ? ( (a>0 || b<0)?0L:-1L   ) :( (b > 0) ? a >>b : a << -b );
-            //return b > 0 ? a >> Math.min(b,Memory.getWordSize()*8L-1) : a << Math.min(-b,Memory.getWordSize()*8L-1);
-            //first check if |b|>31 -> 0
+            return (Math.abs(b) >= Memory.getWordSize() * 8L) ? ((a > 0 || b < 0) ? 0L : -1L)
+                    : ((b > 0) ? a >> b : a << -b);
+            // return b > 0 ? a >> Math.min(b,Memory.getWordSize()*8L-1) : a << Math.min(-b,Memory.getWordSize()*8L-1);
+            // first check if |b|>31 -> 0
         }, output, input1, input2);
     }
 

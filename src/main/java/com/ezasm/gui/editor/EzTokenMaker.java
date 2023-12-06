@@ -38,8 +38,8 @@ public class EzTokenMaker extends AbstractTokenMaker {
     }
 
     /**
-     * Process the text segment to identify keywords and reserved words defined in getWordsToHighlight().
-     * TODO: things will randomly break - it seems to end here on the "stack of issues", at least for the files within EzASM
+     * Process the text segment to identify keywords and reserved words defined in getWordsToHighlight(). TODO: things
+     * will randomly break - it seems to end here on the "stack of issues", at least for the files within EzASM
      *
      * @param segment     the text segment.
      * @param start       the starting index position.
@@ -49,8 +49,8 @@ public class EzTokenMaker extends AbstractTokenMaker {
      */
     @Override
     public void addToken(Segment segment, int start, int end, int tokenType, int startOffset) {
-        if(this.currentToken==null && this.firstToken!=null){
-            return;
+        if (this.currentToken == null && this.firstToken != null) {
+            // return;
         }
         // This assumes all keywords, etc. were parsed as "identifiers."
         if (tokenType == Token.IDENTIFIER) {
@@ -59,7 +59,10 @@ public class EzTokenMaker extends AbstractTokenMaker {
                 tokenType = value;
             }
         }
-        super.addToken(segment.array, start, end, tokenType, startOffset,false);//TODO: fix null pointer exception
+        if (this.currentToken == null) {
+            // System.out.println("cry");
+        }
+        super.addToken(segment.array, start, end, tokenType, startOffset, false);// TODO: fix null pointer exception
     }
 
     /**
@@ -95,7 +98,7 @@ public class EzTokenMaker extends AbstractTokenMaker {
         expectHexadecimal = false;
         expectBinary = false;
         hasDecimalPoint = false;
-
+        // addNullToken();
         for (int i = offset; i < end; ++i) {
 
             char c = array[i];
@@ -179,7 +182,8 @@ public class EzTokenMaker extends AbstractTokenMaker {
             case Token.IDENTIFIER -> {
                 switch (c) {
                 case ' ', '\t', ',' -> {
-                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);//something here
+                    addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);// something
+                                                                                                                   // here
                     currentTokenStart = i;
                     currentTokenType = Token.WHITESPACE;
                 }
@@ -342,13 +346,14 @@ public class EzTokenMaker extends AbstractTokenMaker {
             } // End of switch (currentTokenType).
         }
 
-        if (currentTokenType != Token.NULL /*&& firstToken!=null && currentToken!=null*/ ){//I've added additional guards? to ensure it doesnt null
+        if (currentTokenType != Token.NULL /* && firstToken!=null && currentToken!=null */ ) {// I've added additional
+                                                                                              // guards? to ensure it
+                                                                                              // doesnt null
             addToken(text, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
         }
-        if(firstToken==null || currentToken!= null) {
-            addNullToken();
-        }
-
+        // if(firstToken==null || currentToken!= null) {
+        addNullToken();
+        // }
 
         // Return the first token in our linked list.
         return firstToken;
