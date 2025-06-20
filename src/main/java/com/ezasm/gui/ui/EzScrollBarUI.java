@@ -93,7 +93,7 @@ public class EzScrollBarUI extends BasicScrollBarUI {
     @Override
     protected Dimension getMinimumThumbSize() {
 
-        return new Dimension(15, 15);
+        return new Dimension(20, 20);
     }
 
 

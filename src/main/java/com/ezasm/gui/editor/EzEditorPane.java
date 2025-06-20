@@ -2,6 +2,8 @@ package com.ezasm.gui.editor;
 
 import javax.swing.*;
 import javax.swing.text.Highlighter;
+import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.menubar.MenuActions;
@@ -21,6 +23,8 @@ import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
 import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 
+import javax.swing.undo.UndoManager;
+
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
@@ -38,7 +42,17 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
     Autocomplete autoComplete;
     private static final String COMMIT_ACTION = "commit";
-
+    //Undo manager
+    private UndoManager undoManager = new UndoManager();
+    private String savedTextSnapshot = "";
+    /**
+     * Gets the undo manager associated with this editor.
+     *
+     * @return the UndoManager
+     */
+    public UndoManager getUndoManager() {
+        return undoManager;
+    }
     /**
      * Creates a text edit field using RSyntaxTextArea features.
      */
@@ -48,10 +62,11 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         ((AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance()).putMapping(EZASM_TOKEN_MAKER_NAME,
                 EzTokenMaker.class.getName());
         textArea = new PatchedRSyntaxTextArea();
+        textArea.getDocument().addUndoableEditListener(undoManager);
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);
         textArea.setCodeFoldingEnabled(false);
-        textArea.getDocument().addDocumentListener(new EditorDocumentListener());
+        textArea.getDocument().addDocumentListener(new EditorDocumentListener(this));
 
         openFilePath = EditorTabbedPane.NEW_FILE_PREFIX;
         fileSaved = true;
@@ -75,6 +90,43 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
 
         textArea.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
         textArea.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
+        // Set up Undo and redo actions
+        textArea.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
+        textArea.getActionMap().put("Undo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canUndo()) {
+                    undoManager.undo();
+                    checkIfDirty();
+                } else {
+                    UIManager.getLookAndFeel().provideErrorFeedback(textArea); // beep
+                }
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return undoManager.canUndo();
+            }
+        });
+
+        // Set up Redo action (Ctrl+Y)
+        textArea.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");
+        textArea.getActionMap().put("Redo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canRedo()) {
+                    undoManager.redo();
+                    checkIfDirty();
+                } else {
+                    UIManager.getLookAndFeel().provideErrorFeedback(textArea); // beep
+                }
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return undoManager.canRedo();
+            }
+        });
 
     }
 
@@ -196,6 +248,8 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     public void setText(String content) {
         textArea.setText(content);
         textArea.setCaretPosition(0);
+        undoManager.discardAllEdits();
+        markSavedState();
     }
 
     /**
@@ -245,6 +299,22 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      */
     public void setFileSaved(boolean value) {
         this.fileSaved = value;
+    }
+    /**
+     * this functions helps Marks the current text content as the saved state.
+     * the function helps determines whether the file has been modified since last save.
+     */
+    public void markSavedState() {
+        this.savedTextSnapshot = getText();
+        setFileSaved(true);
+    }
+    /**
+     * The function checks if the current text content differs from the last saved state.
+     * If it does, marks the file as unsaved. Otherwise, marks it as saved.
+     */
+    public void checkIfDirty() {
+        boolean isDirty = !getText().equals(savedTextSnapshot);
+        setFileSaved(!isDirty);
     }
 
     /**
