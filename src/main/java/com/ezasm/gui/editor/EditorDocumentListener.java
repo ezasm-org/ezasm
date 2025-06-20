@@ -36,3 +36,4 @@ public class EditorDocumentListener implements DocumentListener {
 
     private void updateSavedState() {Window.getInstance().getEditor().setFileSaved(false);}
 }
+

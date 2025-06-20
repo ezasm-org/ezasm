@@ -406,3 +406,4 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         return false;
     }
 }
+
