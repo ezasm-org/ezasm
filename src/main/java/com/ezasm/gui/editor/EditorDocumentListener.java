@@ -20,18 +20,21 @@ public class EditorDocumentListener implements DocumentListener {
     public void insertUpdate(DocumentEvent e) {
         editorPane.checkIfDirty();
         updateSavedState();
+        editorPane.updateUndoRedoState();
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
         editorPane.checkIfDirty();
         updateSavedState();
+        editorPane.updateUndoRedoState();
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
         editorPane.checkIfDirty();
         updateSavedState();
+        editorPane.updateUndoRedoState();
     }
 
     private void updateSavedState() {Window.getInstance().getEditor().setFileSaved(false);}

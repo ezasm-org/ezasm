@@ -1,6 +1,7 @@
 package com.ezasm.gui.editor;
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Highlighter;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
@@ -90,16 +91,16 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
 
         textArea.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
         textArea.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
-        // Set up Undo and redo actions
+        //keyboard shortcut for UNDO/REDO
         textArea.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
+        textArea.setPopupMenu(createCustomPopupMenu());
         textArea.getActionMap().put("Undo", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (undoManager.canUndo()) {
                     undoManager.undo();
                     checkIfDirty();
-                } else {
-                    UIManager.getLookAndFeel().provideErrorFeedback(textArea); // beep
+                    updateUndoRedoState();
                 }
             }
 
@@ -109,7 +110,6 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
             }
         });
 
-        // Set up Redo action (Ctrl+Y)
         textArea.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");
         textArea.getActionMap().put("Redo", new AbstractAction() {
             @Override
@@ -117,8 +117,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
                 if (undoManager.canRedo()) {
                     undoManager.redo();
                     checkIfDirty();
-                } else {
-                    UIManager.getLookAndFeel().provideErrorFeedback(textArea); // beep
+                    updateUndoRedoState();
                 }
             }
 
@@ -129,6 +128,65 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         });
 
     }
+
+    //keeping track of when I can undo and redo
+    /**
+     * Updates the enabled state of the Undo and Redo actions
+     */
+    public void updateUndoRedoState() {
+        Action undoAction = textArea.getActionMap().get("Undo");
+        Action redoAction = textArea.getActionMap().get("Redo");
+
+        if (undoAction != null) {
+            undoAction.setEnabled(undoManager.canUndo());
+        }
+        if (redoAction != null) {
+            redoAction.setEnabled(undoManager.canRedo());
+        }
+    }
+
+    //create our own pop-up menu
+    /**
+     * Creates and returns a custom right-click popup menu for the text editor.
+     */
+    private JPopupMenu createCustomPopupMenu() {
+        JPopupMenu menu = new JPopupMenu();
+
+        JMenuItem undoItem = new JMenuItem("Undo");
+        undoItem.addActionListener(e -> {
+            if (undoManager.canUndo()) {
+                undoManager.undo();
+                checkIfDirty();
+                updateUndoRedoState();
+            }
+        });
+        undoItem.setEnabled(undoManager.canUndo());
+        menu.add(undoItem);
+
+        JMenuItem redoItem = new JMenuItem("Redo");
+        redoItem.addActionListener(e -> {
+            if (undoManager.canRedo()) {
+                undoManager.redo();
+                checkIfDirty();
+                updateUndoRedoState();
+            }
+        });
+        redoItem.setEnabled(undoManager.canRedo());
+        menu.add(redoItem);
+
+
+        menu.addSeparator();
+        menu.add(new JMenuItem("Copy")).addActionListener(e -> textArea.getActionMap().get(DefaultEditorKit.copyAction).actionPerformed(new ActionEvent(textArea, ActionEvent.ACTION_PERFORMED, null)));
+        menu.add(new JMenuItem("Paste")).addActionListener(e -> textArea.getActionMap().get(DefaultEditorKit.pasteAction).actionPerformed(new ActionEvent(textArea, ActionEvent.ACTION_PERFORMED, null)));
+        menu.add(new JMenuItem("Cut")).addActionListener(e -> textArea.getActionMap().get(DefaultEditorKit.cutAction).actionPerformed(new ActionEvent(textArea, ActionEvent.ACTION_PERFORMED, null)));
+        menu.addSeparator();
+        JMenuItem selectAll = new JMenuItem("Select All");
+        selectAll.addActionListener(e -> textArea.selectAll());
+        menu.add(selectAll);
+        return menu;
+    }
+
+
 
     /**
      * Themes the syntax text area according to the given font and theme.
