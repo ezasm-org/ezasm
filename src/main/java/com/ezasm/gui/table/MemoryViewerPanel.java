@@ -58,6 +58,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
                 put("Initial Stack", memory.initialStackPointer() - numTableWords);
                 put("Initial Heap", memory.initialHeapPointer());
                 put("Text Section", memory.initialTextPointer());
+                put("Byte Converter", memory.initialTextPointer());
             }
         };
 
