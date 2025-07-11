@@ -11,7 +11,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -142,7 +142,7 @@ public class SettingsPopup implements IThemeable {
 
         GridLayout gridLayout = new GridLayout(0, 2);
         gridLayout.setVgap(20);
-        grid = new JPanel(gridLayout);
+        /*grid = new JPanel(gridLayout);
         grid.add(fontSizeLabel);
         grid.add(fontInput);
         grid.add(speedLabel);
@@ -168,7 +168,28 @@ public class SettingsPopup implements IThemeable {
         resetDefaults.addActionListener(buttonActionListener);
         save.addActionListener(buttonActionListener);
 
-        popup.add(grid, BorderLayout.CENTER);
+        popup.add(grid, BorderLayout.CENTER);*/
+        JTabbedPane tabbedPane = new JTabbedPane();
+        List<PreferencesEditor> editors = List.of(
+                new ConfigurationPreferencesEditor(config),
+                new AboutPreferencesEditor()
+        );
+
+        for (PreferencesEditor editor : editors) {
+            tabbedPane.addTab(editor.getTitle(), null, editor.getUI(), editor.getTitle());
+            tabbedPane.setMnemonicAt(tabbedPane.getTabCount() - 1, editor.getMnemonic());
+        }
+
+// Add Save/Reset buttons below tabs
+        JPanel buttonPanel = new JPanel();
+        save = new JButton(SAVE);
+        resetDefaults = new JButton(RESET);
+        buttonPanel.add(save);
+        buttonPanel.add(resetDefaults);
+
+// Combine tab and buttons
+        popup.add(tabbedPane, BorderLayout.CENTER);
+        popup.add(buttonPanel, BorderLayout.SOUTH);
 
         popup.validate();
         popup.pack();
