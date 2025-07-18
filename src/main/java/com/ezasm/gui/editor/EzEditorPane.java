@@ -333,6 +333,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      *
      * @return the path to the file currently open in this editor.
      */
+
     public String getOpenFilePath() {
         String out = openFilePath;
         if (openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX)) {
