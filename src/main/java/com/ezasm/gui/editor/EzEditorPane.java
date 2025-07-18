@@ -46,6 +46,8 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     //Undo manager
     private UndoManager undoManager = new UndoManager();
     private String savedTextSnapshot = "";
+    private JMenuItem undoMenuItem;
+    private JMenuItem redoMenuItem;
     /**
      * Gets the undo manager associated with this editor.
      *
@@ -143,6 +145,13 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         if (redoAction != null) {
             redoAction.setEnabled(undoManager.canRedo());
         }
+
+        if (undoMenuItem != null) {
+            undoMenuItem.setEnabled(undoManager.canUndo());
+        }
+        if (redoMenuItem != null) {
+            redoMenuItem.setEnabled(undoManager.canRedo());
+        }
     }
 
     //create our own pop-up menu
@@ -152,37 +161,46 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     private JPopupMenu createCustomPopupMenu() {
         JPopupMenu menu = new JPopupMenu();
 
-        JMenuItem undoItem = new JMenuItem("Undo");
-        undoItem.addActionListener(e -> {
+        undoMenuItem = new JMenuItem("Undo");
+        undoMenuItem.addActionListener(e -> {
             if (undoManager.canUndo()) {
                 undoManager.undo();
                 checkIfDirty();
                 updateUndoRedoState();
             }
         });
-        undoItem.setEnabled(undoManager.canUndo());
-        menu.add(undoItem);
+        menu.add(undoMenuItem);
 
-        JMenuItem redoItem = new JMenuItem("Redo");
-        redoItem.addActionListener(e -> {
+        redoMenuItem = new JMenuItem("Redo");
+        redoMenuItem.addActionListener(e -> {
             if (undoManager.canRedo()) {
                 undoManager.redo();
                 checkIfDirty();
                 updateUndoRedoState();
             }
         });
-        redoItem.setEnabled(undoManager.canRedo());
-        menu.add(redoItem);
-
+        menu.add(redoMenuItem);
 
         menu.addSeparator();
-        menu.add(new JMenuItem("Copy")).addActionListener(e -> textArea.getActionMap().get(DefaultEditorKit.copyAction).actionPerformed(new ActionEvent(textArea, ActionEvent.ACTION_PERFORMED, null)));
-        menu.add(new JMenuItem("Paste")).addActionListener(e -> textArea.getActionMap().get(DefaultEditorKit.pasteAction).actionPerformed(new ActionEvent(textArea, ActionEvent.ACTION_PERFORMED, null)));
-        menu.add(new JMenuItem("Cut")).addActionListener(e -> textArea.getActionMap().get(DefaultEditorKit.cutAction).actionPerformed(new ActionEvent(textArea, ActionEvent.ACTION_PERFORMED, null)));
+
+        JMenuItem copy = new JMenuItem("Copy");
+        copy.addActionListener(e -> textArea.copy());
+        menu.add(copy);
+
+        JMenuItem paste = new JMenuItem("Paste");
+        paste.addActionListener(e -> textArea.paste());
+        menu.add(paste);
+
+        JMenuItem cut = new JMenuItem("Cut");
+        cut.addActionListener(e -> textArea.cut());
+        menu.add(cut);
+
         menu.addSeparator();
+
         JMenuItem selectAll = new JMenuItem("Select All");
         selectAll.addActionListener(e -> textArea.selectAll());
         menu.add(selectAll);
+
         return menu;
     }
 
