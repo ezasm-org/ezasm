@@ -32,6 +32,11 @@ public class MemoryTable extends JPanel implements IThemeable {
     private int offset;
 
     /**
+     * Table's default initialization uses a word memory display
+     */
+    private MemoryFormatStrategy strategy = new ByteFormatStrategy();
+
+    /**
      * Constructs a memory table with a default offset at the initial heap pointer.
      *
      * @param memory the memory to view.
@@ -41,7 +46,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         this.table = new AlternatingColorTable(EditorTheme.Light);
         this.scrollPane = new JScrollPane(table);
         this.offset = memory.initialHeapPointer();
-        table.setModel(new MemoryTableModel(memory, ROWS, COLUMNS));
+        table.setModel(new MemoryTableModel(memory, ROWS, COLUMNS, strategy));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.getTableHeader().setReorderingAllowed(false);
 
@@ -119,6 +124,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         SwingUtilities.invokeLater(table::updateUI);
     }
 
+    //TODO: delegate updateRowHeaders() to strategies
     /**
      * Updates the row headers based on any potential change in memory viewer offset.
      */
@@ -132,5 +138,11 @@ public class MemoryTable extends JPanel implements IThemeable {
         rowHeader.setFixedCellWidth(table.getColumnModel().getColumn(0).getWidth());
         rowHeader.setFixedCellHeight(table.getRowHeight());
         scrollPane.setRowHeaderView(rowHeader);
+    }
+
+    public void setStrategy(MemoryFormatStrategy strat){
+        this.strategy = strat;
+        ((MemoryTableModel) table.getModel()).setStrategy(strategy);
+        update();
     }
 }

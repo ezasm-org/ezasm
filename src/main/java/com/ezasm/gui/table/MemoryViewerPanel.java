@@ -13,8 +13,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Vector;
 
 /**
@@ -53,12 +53,12 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         this.memory = memory;
         this.memoryTable = new MemoryTable(memory);
         this.controls = new JPanel();
-        this.nameToAddress = new TreeMap<>() {
+        this.nameToAddress = new LinkedHashMap<>() {
             {
                 put("Initial Stack", memory.initialStackPointer() - numTableWords);
                 put("Initial Heap", memory.initialHeapPointer());
                 put("Text Section", memory.initialTextPointer());
-                put("Byte Converter", memory.initialTextPointer());
+                put("Byte Converter", memory.initialTextPointer()); //TODO: adujst this to accurate memory pointer
             }
         };
 
