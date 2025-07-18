@@ -1,9 +1,11 @@
 package com.ezasm.gui.settings;
+import com.ezasm.gui.util.EditorTheme;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 public class ConfigurationPreferencesEditor implements PreferencesEditor {
-
+    private final Config config;
     private JPanel panel;
     private JTextField fontInput;
     private JSlider speedSlider, tabSizeSlider;
@@ -11,6 +13,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor {
     private JComboBox<String> themeInput;
 
     public ConfigurationPreferencesEditor(Config config) {
+        this.config=config;
         panel = new JPanel(new GridLayout(0, 2, 5, 20));
         fontInput = new JTextField(String.valueOf(config.getFontSize()));
         speedSlider = new JSlider(50, 1000, config.getSimulationDelay());
@@ -26,6 +29,9 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor {
         panel.add(new JLabel("Auto Save")); panel.add(autoSaveButton);
     }
 
+    public void applyTheme(EditorTheme theme) {
+        panel.setBackground(theme.background());
+    }
     @Override public JComponent getUI() {
         return panel;
     }
@@ -39,10 +45,27 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor {
     }
 
     @Override public void savePreferences() {
-        // Save logic here using your config instance
+
+        try {
+            config.setFontSize(Integer.parseInt(fontInput.getText()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Invalid font size.");
+        }
+        config.setSimulationDelay(speedSlider.getValue());
+        config.setTabSize(tabSizeSlider.getValue());
+        config.setTheme(themeInput.getSelectedItem().toString());
+        config.setAutoSaveInterval(autoSaveButton.getSliderValue());
+        config.setAutoSaveSelected(autoSaveButton.getToggleButtonStatus());
+        config.saveChanges();
     }
 
     @Override public void matchGuiToDefaultPreferences() {
         // Set values back to defaults
+        fontInput.setText(Config.DEFAULT_FONT_SIZE);
+        speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_DELAY));
+        tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
+        themeInput.setSelectedIndex(0);
+        autoSaveButton.setToggleButtonStatus(Boolean.parseBoolean(Config.DEFAULT_AUTO_SAVE_SELECTED));
+        autoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
     }
 }
