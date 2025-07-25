@@ -23,30 +23,27 @@ public class AutoSaveSliderToggleButton extends JPanel {
      * @param intervalSeconds the initial interval for the slider.
      */
     public AutoSaveSliderToggleButton(boolean enabled, int intervalSeconds) {
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         slider = new JSlider(0, 30, intervalSeconds);
         slider.setMajorTickSpacing(5);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
-        slider.setVisible(enabled);
-        add(slider, BorderLayout.CENTER);
 
         toggleButton = new JToggleButton(enabled ? ON_TEXT : OFF_TEXT);
         toggleButton.setContentAreaFilled(false);
         toggleButton.setOpaque(true);
-
         toggleButton.setSelected(enabled);
+
         toggleButton.addChangeListener(event -> {
-            if (getToggleButtonStatus()) {
-                toggleButton.setText(ON_TEXT);
-                slider.setVisible(true);
-            } else {
-                toggleButton.setText(OFF_TEXT);
-                slider.setVisible(false);
-            }
+            boolean selected = toggleButton.isSelected();
+            toggleButton.setText(selected ? ON_TEXT : OFF_TEXT);
+            updateSliderVisibility(selected);
         });
-        add(toggleButton, BorderLayout.WEST);
+
+        add(toggleButton);
+        add(slider);
+        updateSliderVisibility(enabled);
     }
 
     /**
@@ -57,6 +54,9 @@ public class AutoSaveSliderToggleButton extends JPanel {
      * @param editorTheme the theme to apply.
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
+        setBackground(editorTheme.background());
+        setForeground(editorTheme.foreground());
+
         editorTheme.applyThemeButton(toggleButton, font);
         EditorTheme.applyFontTheme(slider, font, editorTheme);
     }
@@ -77,6 +77,21 @@ public class AutoSaveSliderToggleButton extends JPanel {
      */
     public void setToggleButtonStatus(boolean status) {
         toggleButton.setSelected(status);
+        updateSliderVisibility(status);
+    }
+    /**
+     * Updates the visibility of the slider component based on the toggle state.
+     * Also updates the toggle button's label and refreshes the layout.
+     *
+     * @param showSlider {@code true} to make the slider visible, {@code false} to hide it
+     */
+    private void updateSliderVisibility(boolean showSlider) {
+        toggleButton.setText(showSlider ? ON_TEXT : OFF_TEXT);
+
+        slider.setVisible(showSlider);
+
+        revalidate();
+        repaint();
     }
 
     /**

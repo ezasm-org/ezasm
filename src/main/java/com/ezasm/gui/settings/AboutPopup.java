@@ -105,7 +105,12 @@ public class AboutPopup {
             scrollPane.setBorder(null);
             return scrollPane;
         }
-
+    /**
+     * Converts a {@link Color} object to a 6-digit hexadecimal color code.
+     *
+     * @param color the color to convert
+     * @return the 6-digit hex string (e.g., "ffffff" for white)
+     */
     private static String colorCodeHex(Color color) {
         return String.format("%06x", color.getRGB() & 0xFFFFFF);
     }

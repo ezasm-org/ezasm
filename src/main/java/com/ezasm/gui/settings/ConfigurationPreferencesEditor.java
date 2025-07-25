@@ -1,17 +1,30 @@
 package com.ezasm.gui.settings;
+import com.ezasm.gui.ui.EzComboBoxUI;
 import com.ezasm.gui.util.EditorTheme;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-public class ConfigurationPreferencesEditor implements PreferencesEditor {
+import com.ezasm.gui.util.IThemeable;
+/**
+ * Provides a GUI panel for editing user-configurable preferences such as font size,
+ * simulation delay, tab size, theme selection, and auto-save behavior.
+ * This class implements both {@link PreferencesEditor} and {@link IThemeable} to
+ * support configuration management and dynamic theme application.
+ */
+public class ConfigurationPreferencesEditor implements PreferencesEditor, IThemeable {
     private final Config config;
     private JPanel panel;
     private JTextField fontInput;
     private JSlider speedSlider, tabSizeSlider;
     private AutoSaveSliderToggleButton autoSaveButton;
     private JComboBox<String> themeInput;
-
+    /**
+     * Constructs a configuration editor panel using the given config instance.
+     * Populates the panel with inputs initialized to current configuration values.
+     *
+     * @param config the configuration object to edit and update
+     */
     public ConfigurationPreferencesEditor(Config config) {
         this.config=config;
         panel = new JPanel(new GridLayout(0, 2, 5, 20));
@@ -29,21 +42,35 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor {
         panel.add(new JLabel("Auto Save")); panel.add(autoSaveButton);
     }
 
-    public void applyTheme(EditorTheme theme) {
-        panel.setBackground(theme.background());
-    }
+
+    /**
+     * Returns the root UI component for this editor so it can be embedded in other dialogs.
+     *
+     * @return the editor panel component
+     */
     @Override public JComponent getUI() {
         return panel;
     }
-
+    /**
+     * Returns the name of this configuration section.
+     *
+     * @return the section title ("Configuration")
+     */
     @Override public String getTitle() {
         return "Configuration";
     }
-
+    /**
+     * Returns the keyboard mnemonic associated with this preferences tab.
+     *
+     * @return the key code for 'C' (used as mnemonic)
+     */
     @Override public int getMnemonic() {
         return KeyEvent.VK_C;
     }
-
+    /**
+     * Applies user inputs to the configuration object and persists changes.
+     * Invalid font sizes will trigger a warning dialog but not crash the app.
+     */
     @Override public void savePreferences() {
 
         try {
@@ -58,7 +85,9 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor {
         config.setAutoSaveSelected(autoSaveButton.getToggleButtonStatus());
         config.saveChanges();
     }
-
+    /**
+     * Resets all controls in the GUI to reflect default configuration values.
+     */
     @Override public void matchGuiToDefaultPreferences() {
         // Set values back to defaults
         fontInput.setText(Config.DEFAULT_FONT_SIZE);
@@ -68,4 +97,63 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor {
         autoSaveButton.setToggleButtonStatus(Boolean.parseBoolean(Config.DEFAULT_AUTO_SAVE_SELECTED));
         autoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
     }
+
+    /**
+     * Applies a visual theme and font to the entire editor panel, including
+     * labels, sliders, combo boxes, and custom components like the auto-save control.
+     *
+     * @param font  the font to apply
+     * @param theme the visual theme to apply
+     */
+    @Override
+    public void applyTheme(Font font, EditorTheme theme) {
+        panel.setBackground(theme.background());
+        panel.setForeground(theme.foreground());
+        panel.setFont(font);
+
+        applyTo(fontInput, theme, font);
+        applyTo(speedSlider, theme, font);
+        applyTo(tabSizeSlider, theme, font);
+        applyTo(themeInput, theme, font);
+        autoSaveButton.applyTheme(font, theme);
+
+
+        for (Component c : panel.getComponents()) {
+            if (c instanceof JLabel label) {
+                label.setForeground(theme.foreground());
+                label.setBackground(theme.background());
+                label.setFont(font);
+            } else if (c instanceof JButton button) {
+                button.setFont(font);
+                button.setForeground(theme.foreground());
+                button.setBackground(theme.background());
+                button.setBorder(BorderFactory.createLineBorder(theme.foreground()));
+            }
+        }
+
+
+    }
+    /**
+     * Applies theme and font styling to a generic component.
+     * Special handling is done for combo boxes and buttons.
+     *
+     * @param comp  the component to apply theme and font to
+     * @param theme the theme to apply
+     * @param font  the font to apply
+     */
+    private void applyTo(JComponent comp, EditorTheme theme, Font font) {
+        comp.setFont(font);
+        comp.setBackground(theme.background());
+        comp.setForeground(theme.foreground());
+
+        if (comp instanceof AbstractButton btn) {
+            theme.applyThemeButton(btn, font);
+        }
+
+        if (comp instanceof JComboBox<?> box) {
+            box.setUI(new EzComboBoxUI(theme)); // <-- your custom UI!
+        }
+    }
+
+
 }
