@@ -315,7 +315,14 @@ public class Window {
         }
         SimulatorGuiActions.setInstructionDelayMS(config.getSimulationDelay());
 
-        autoSave.toggleRunning(config.getAutoSaveSelected(), config.getAutoSaveInterval());
+        boolean autosaveEnabled = config.getAutoSaveSelected();
+        int interval = Math.max(1, config.getAutoSaveInterval());
+
+        try {
+            autoSave.toggleRunning(autosaveEnabled, interval);
+        } catch (IllegalArgumentException e) {
+            System.err.println("[Warning] AutoSave failed to start: " + e.getMessage());
+        }
     }
 
     /**

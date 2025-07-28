@@ -27,6 +27,9 @@ public class AutoSave {
      * Automatically calls Save function to save file periodically.
      */
     public void toggleRunning(boolean start, int intervalSeconds) {
+        if (intervalSeconds <= 0) {
+            throw new IllegalArgumentException("Interval must be greater than 0 seconds.");
+        }
         this.timer.cancel();
         this.timer = new Timer();
         this.saveTask.cancel();
