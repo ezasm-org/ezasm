@@ -112,6 +112,9 @@ public class SettingsPopup implements IThemeable {
             popup.revalidate();
             popup.repaint();
         }
+        if (AboutPopup.isPopupOpen()) {
+            AboutPopup.refreshPopup();
+        }
     }
 
     /**

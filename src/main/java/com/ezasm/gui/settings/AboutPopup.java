@@ -114,5 +114,29 @@ public class AboutPopup {
     private static String colorCodeHex(Color color) {
         return String.format("%06x", color.getRGB() & 0xFFFFFF);
     }
+    /**
+     * Checks whether the About popup window is currently open.
+     *
+     * @return {@code true} if the About popup exists and is open; {@code false} otherwise
+     */
+    public static boolean isPopupOpen() {
+        return popup != null;
+    }
+    /**
+     * Refreshes the content of the About popup window to reflect the current configuration,
+     * such as theme and font size. This method is safe to call only if {@link #isPopupOpen()}
+     * returns {@code true}.
+     * It clears the current content pane and re-adds a newly generated About panel, then
+     * revalidates and repaints the popup window to apply the updated styles.
+     */
+    public static void refreshPopup() {
+        if (popup != null) {
+            popup.getContentPane().removeAll();
+            popup.add(getAboutPanel());
+            popup.revalidate();
+            popup.repaint();
+        }
+    }
+
 
 }
