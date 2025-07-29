@@ -254,7 +254,11 @@ public class Window {
         app.setJMenuBar(menubar);
         panel.setLayout(new BorderLayout());
         panel.add(toolbar, BorderLayout.PAGE_START);
-        panel.add(toolSplit, BorderLayout.CENTER);
+        JPanel paddedCenterPanel = new JPanel(new BorderLayout());
+        paddedCenterPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // top, left, bottom, right padding
+        paddedCenterPanel.add(toolSplit, BorderLayout.CENTER);
+
+        panel.add(paddedCenterPanel, BorderLayout.CENTER);
 
         ToolbarFactory.setButtonsEnabled(true);
 

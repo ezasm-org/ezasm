@@ -325,6 +325,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         textArea.setText(content);
         textArea.setCaretPosition(0);
         undoManager.discardAllEdits();
+        updateUndoRedoState();
         markSavedState();
     }
 
@@ -384,6 +385,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     public void markSavedState() {
         this.savedTextSnapshot = getText();
         setFileSaved(true);
+        updateUndoRedoState();
     }
     /**
      * The function checks if the current text content differs from the last saved state.
