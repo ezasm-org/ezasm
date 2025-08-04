@@ -18,6 +18,7 @@ public class MemoryTable extends JPanel implements IThemeable {
     private final AlternatingColorTable table;
     private final JScrollPane scrollPane;
     private JList<Object> rowHeader;
+    private JList<Object> colHeader;
 
     /**
      * The standard number of rows for a memory table.
@@ -31,11 +32,13 @@ public class MemoryTable extends JPanel implements IThemeable {
 
     private int offset;
 
+    private int fontSize;
+
     /**
      * Table's default initialization uses a word memory display
      */
-    private MemoryFormatStrategy strategy = new ByteFormatStrategy();
-
+    private MemoryFormatStrategy strategy = new WordFormatStrategy();
+    private boolean byteView = false;
     /**
      * Constructs a memory table with a default offset at the initial heap pointer.
      *
@@ -51,6 +54,8 @@ public class MemoryTable extends JPanel implements IThemeable {
         table.getTableHeader().setReorderingAllowed(false);
 
         updateRowHeaders();
+        updateColHeaders();
+        scrollPane.setColumnHeaderView(table.getTableHeader());
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setWheelScrollingEnabled(true);
@@ -80,10 +85,13 @@ public class MemoryTable extends JPanel implements IThemeable {
         rowHeader.setBackground(editorTheme.currentLine());
         rowHeader.setForeground(editorTheme.foreground());
 
-        table.setIntercellSpacing(new Dimension(2, 2));
-        table.setRowHeight(font.getSize() + 2);
+        fontSize = font.getSize();
 
-        int width = 20 + (Memory.getWordSize() * 2 * font.getSize());
+        table.setIntercellSpacing(new Dimension(2, 2));
+        table.setRowHeight(fontSize + 2);
+
+        int width = 20 + (strategy.getDisplaySize() * 2 * fontSize);
+        //display size is either 1 when displaying bytes, or 4 when displaying words
 
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
@@ -92,7 +100,7 @@ public class MemoryTable extends JPanel implements IThemeable {
             table.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
         }
 
-        rowHeader.setFixedCellWidth(width);
+        rowHeader.setFixedCellWidth(20 + (Memory.getWordSize() * 2 * fontSize));
         rowHeader.setFixedCellHeight(table.getRowHeight());
     }
 
@@ -121,23 +129,49 @@ public class MemoryTable extends JPanel implements IThemeable {
      */
     public void update() {
         SwingUtilities.invokeLater(this::updateRowHeaders);
+        SwingUtilities.invokeLater(this::updateColHeaders);
         SwingUtilities.invokeLater(table::updateUI);
     }
 
-    //TODO: delegate updateRowHeaders() to strategies
     /**
      * Updates the row headers based on any potential change in memory viewer offset.
      */
     private void updateRowHeaders() {
         Object[] rows = new Object[ROWS];
         for (int i = 0; i < ROWS; ++i) {
-            rows[i] = (new RawData(offset + (long) i * Memory.getWordSize() * COLUMNS)).toHexString();
+            rows[i] = (new RawData(offset + (long) i * strategy.getDisplaySize() * COLUMNS)).toHexString();
         }
         rowHeader = new JList<>(new SimpleListModel(rows));
         rowHeader.setCellRenderer(new RowHeaderRenderer(table));
-        rowHeader.setFixedCellWidth(table.getColumnModel().getColumn(0).getWidth());
+        rowHeader.setFixedCellWidth(20 + (Memory.getWordSize() * 2 * fontSize));
         rowHeader.setFixedCellHeight(table.getRowHeight());
         scrollPane.setRowHeaderView(rowHeader);
+    }
+    /**
+     * Updates the col headers and col width based on any potential change in viewing strategy.
+     */
+    private void updateColHeaders(){
+        int width = 20 + (strategy.getDisplaySize() * 2 * fontSize);
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setHeaderValue( ((MemoryTableModel) table.getModel()).getColumnName(i));
+            table.getColumnModel().getColumn(i).setPreferredWidth(width);
+            table.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
+        }
+
+    }
+
+
+    public void switchStrategy(){
+        if(byteView){
+            setStrategy(new WordFormatStrategy());
+            byteView = false;
+        }else{
+            setStrategy(new ByteFormatStrategy());
+            byteView = true;
+        }
     }
 
     public void setStrategy(MemoryFormatStrategy strat){

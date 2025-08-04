@@ -5,6 +5,13 @@ import com.ezasm.util.RawData;
 
 public class WordFormatStrategy implements MemoryFormatStrategy {
 
+    int displaySize = Memory.getWordSize();
+
+    @Override
+    public int getDisplaySize(){
+        return displaySize;
+    }
+
     @Override
     public Object getValueAt(Memory memory, int row, int cols, int col, int offset){
         try {

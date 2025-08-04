@@ -5,7 +5,13 @@ import com.ezasm.util.RawData;
 
 public class ByteFormatStrategy implements MemoryFormatStrategy {
 
-    boolean littleEndian = true;
+    boolean littleEndian = false;
+    int displaySize = 1;
+
+    @Override
+    public int getDisplaySize(){
+        return displaySize;
+    }
 
     @Override
     public Object getValueAt(Memory memory, int row, int cols, int col, int offset) {
