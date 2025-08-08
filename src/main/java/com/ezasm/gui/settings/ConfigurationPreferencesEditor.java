@@ -5,6 +5,8 @@ import com.ezasm.gui.util.EditorTheme;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
+
 import com.ezasm.gui.util.IThemeable;
 /**
  * Provides a GUI panel for editing user-configurable preferences such as font size,
@@ -80,7 +82,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         }
         config.setSimulationDelay(speedSlider.getValue());
         config.setTabSize(tabSizeSlider.getValue());
-        config.setTheme(themeInput.getSelectedItem().toString());
+        config.setTheme(Objects.requireNonNull(themeInput.getSelectedItem()).toString());
         config.setAutoSaveInterval(autoSaveButton.getSliderValue());
         config.setAutoSaveSelected(autoSaveButton.getToggleButtonStatus());
         config.saveChanges();

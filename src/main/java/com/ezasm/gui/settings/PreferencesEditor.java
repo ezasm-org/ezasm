@@ -9,7 +9,7 @@ import javax.swing.JComponent;
  */
 public interface PreferencesEditor {
     /**
-     * Returns the root UI component of the preferences editor.
+     * Returns the root UI component of the preferences' editor.
      * This component can be embedded in a tab or dialog.
      *
      * @return the editor's UI panel or container

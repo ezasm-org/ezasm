@@ -1,16 +1,12 @@
 package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
-import com.ezasm.gui.ui.EzComboBoxUI;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.event.KeyEvent;
 
 
@@ -21,12 +17,12 @@ import java.awt.event.KeyEvent;
 public class SettingsPopup implements IThemeable {
     private JTabbedPane tabbedPane;
     private static SettingsPopup instance;
-    private List<PreferencesEditor> editors; // 🔧 CHANGED: moved into field for reuse
+    private List<PreferencesEditor> editors;
     public final Config config;
 
-    private ConfigurationPreferencesEditor configEditor;
+
     private JFrame popup;
-    private JButton save, resetDefaults;
+
     private static final String SAVE = "Save Changes";
     private static final String RESET = "Reset to Defaults";
 
@@ -86,7 +82,6 @@ public class SettingsPopup implements IThemeable {
      * @param editorTheme  the visual theme (background, foreground, etc.)
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
-        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, editorTheme.foreground());
 
         for (PreferencesEditor editor : editors) {
             if (editor instanceof IThemeable themeableEditor) {
@@ -122,6 +117,8 @@ public class SettingsPopup implements IThemeable {
      */
 
     private void initialize() {
+        ConfigurationPreferencesEditor configEditor;
+        JButton save, resetDefaults;
         popup = new JFrame("EzASM Settings");
         popup.setLayout(new BorderLayout());
         popup.setMinimumSize(new Dimension(500, 300));
