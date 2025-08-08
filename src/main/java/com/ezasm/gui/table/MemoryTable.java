@@ -20,6 +20,16 @@ public class MemoryTable extends JPanel implements IThemeable {
     private JList<Object> rowHeader;
     private JList<Object> colHeader;
 
+    private final JScrollPane rightScrollPane;
+    private final AlternatingColorTable rightTable;
+    private JPanel tableContainer;  // new
+
+    /**
+     * Table's default initialization uses a word memory display
+     */
+    private MemoryFormatStrategy strategy = new WordFormatStrategy();
+    private boolean byteView = false;
+
     /**
      * The standard number of rows for a memory table.
      */
@@ -34,11 +44,6 @@ public class MemoryTable extends JPanel implements IThemeable {
 
     private int fontSize;
 
-    /**
-     * Table's default initialization uses a word memory display
-     */
-    private MemoryFormatStrategy strategy = new WordFormatStrategy();
-    private boolean byteView = false;
     /**
      * Constructs a memory table with a default offset at the initial heap pointer.
      *
@@ -60,8 +65,26 @@ public class MemoryTable extends JPanel implements IThemeable {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setWheelScrollingEnabled(true);
 
+        // Set up the right (optional) table
+        rightTable = new AlternatingColorTable(EditorTheme.Light);  // you can set a different model here
+        rightScrollPane = new JScrollPane(rightTable);
+        rightTable.setModel(new DecodingTableModel(memory, ROWS, COLUMNS));
+        rightScrollPane.setVisible(false); // hidden initially
+
+        // Create container and add both
+        tableContainer = new JPanel();
+        tableContainer.setLayout(new BoxLayout(tableContainer, BoxLayout.X_AXIS));
+        tableContainer.add(scrollPane);
+        tableContainer.add(rightScrollPane);
+
+        // Set layout and add
         setLayout(new BorderLayout());
-        add(scrollPane);
+        add(tableContainer, BorderLayout.CENTER);
+        /*
+        *setLayout(new BorderLayout());
+        *add(scrollPane);
+        */
+
     }
 
     /**
@@ -102,6 +125,25 @@ public class MemoryTable extends JPanel implements IThemeable {
 
         rowHeader.setFixedCellWidth(20 + (Memory.getWordSize() * 2 * fontSize));
         rowHeader.setFixedCellHeight(table.getRowHeight());
+
+        // === Apply theme to rightScrollPane and rightTable ===
+        if (rightScrollPane != null) {
+            rightScrollPane.setBackground(editorTheme.currentLine());
+            rightScrollPane.getViewport().setBackground(editorTheme.currentLine());
+            editorTheme.applyThemeScrollbar(rightScrollPane.getVerticalScrollBar());
+            editorTheme.applyThemeScrollbar(rightScrollPane.getHorizontalScrollBar());
+
+            if (rightTable != null) {
+                rightTable.applyTheme(font, editorTheme);
+                rightTable.setCellSelectionEnabled(false);
+                rightTable.setRowHeight(fontSize + 2);
+                rightTable.setIntercellSpacing(new Dimension(2, 2));
+                for (int i = 0; i < 16; ++i) {
+                    rightTable.getColumnModel().getColumn(i).setPreferredWidth(width);
+                    rightTable.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
+                }
+            }
+        }
     }
 
     /**
@@ -112,6 +154,7 @@ public class MemoryTable extends JPanel implements IThemeable {
     public void setOffset(int offset) {
         this.offset = offset;
         ((MemoryTableModel) table.getModel()).setOffset(offset);
+        ((DecodingTableModel) rightTable.getModel()).setOffset(offset);
         update();
     }
 
@@ -131,6 +174,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         SwingUtilities.invokeLater(this::updateRowHeaders);
         SwingUtilities.invokeLater(this::updateColHeaders);
         SwingUtilities.invokeLater(table::updateUI);
+        SwingUtilities.invokeLater(rightTable::updateUI);
     }
 
     /**
@@ -177,6 +221,9 @@ public class MemoryTable extends JPanel implements IThemeable {
     public void setStrategy(MemoryFormatStrategy strat){
         this.strategy = strat;
         ((MemoryTableModel) table.getModel()).setStrategy(strategy);
+        rightScrollPane.setVisible(!byteView);
+        tableContainer.revalidate();
+        tableContainer.repaint();
         update();
     }
 }

@@ -36,14 +36,14 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     private JButton seekButton;
     private JButton forwardButton;
     private JButton backButton;
-    private JButton byteButton;
+    private JButton decodeButton;
 
     private static final MemoryViewerActionListener actionListener = new MemoryViewerActionListener();
 
     private static final String SEEK = "  Go  ";
     private static final String FORWARD = " ---> ";
     private static final String BACK = " <--- ";
-    private static final String BYTE = " BYTE ";
+    private static final String DECODE = " DECODE ";
 
     /**
      * Constructs a memory viewer panel bested on a given memory.
@@ -92,7 +92,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         addButton(SEEK);
         addButton(FORWARD);
         addButton(BACK);
-        addButton(BYTE);
+        addButton(DECODE);
 
         controls.add(seekInputLabel);
         controls.add(seekSpinner);
@@ -100,7 +100,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         controls.add(seekButton);
         controls.add(backButton);
         controls.add(forwardButton);
-        controls.add(byteButton);
+        controls.add(decodeButton);
         controls.setOpaque(true);
     }
 
@@ -115,7 +115,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         case SEEK -> seekButton = button;
         case FORWARD -> forwardButton = button;
         case BACK -> backButton = button;
-        case BYTE -> byteButton = button;
+        case DECODE -> decodeButton = button;
         }
     }
 
@@ -141,7 +141,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         editorTheme.applyThemeButton(seekButton, font);
         editorTheme.applyThemeButton(forwardButton, font);
         editorTheme.applyThemeButton(backButton, font);
-        editorTheme.applyThemeButton(byteButton, font);
+        editorTheme.applyThemeButton(decodeButton, font);
 
         seekComboBox.setUI(new EzComboBoxUI(editorTheme));
 
@@ -192,7 +192,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     }
 
 
-    private void byteView() {
+    private void decode(){
         memoryTable.switchStrategy();
     }
 
@@ -216,7 +216,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
             case SEEK -> Window.getInstance().getMemoryControlPanel().seek();
             case FORWARD -> Window.getInstance().getMemoryControlPanel().forward();
             case BACK -> Window.getInstance().getMemoryControlPanel().back();
-            case BYTE -> Window.getInstance().getMemoryControlPanel().byteView();
+            case DECODE -> Window.getInstance().getMemoryControlPanel().decode();
             }
         }
     }

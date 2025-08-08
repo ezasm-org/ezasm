@@ -78,11 +78,6 @@ class MemoryTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         return strategy.getValueAt(memory, row, cols, col, offset);
-        /*try {
-            return memory.read(offset + (row * cols + col) * Memory.getWordSize()).toHexString();
-        } catch (ReadOutOfBoundsException e) {
-            return RawData.emptyBytes(Memory.getWordSize()).toHexString();
-        }*/
     }
 
     /**
