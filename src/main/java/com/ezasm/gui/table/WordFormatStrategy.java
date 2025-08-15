@@ -15,14 +15,14 @@ public class WordFormatStrategy implements MemoryFormatStrategy {
     @Override
     public Object getValueAt(Memory memory, int row, int cols, int col, int offset){
         try {
-            return memory.read(offset + (row * cols + col) * Memory.getWordSize()).toHexString();
+            return memory.read(offset + (row * cols + col) * displaySize).toHexString();
         } catch (ReadOutOfBoundsException e) {
-            return RawData.emptyBytes(Memory.getWordSize()).toHexString();
+            return RawData.emptyBytes(displaySize).toHexString();
         }
     }
 
     @Override
     public String getColumnName(int column) {
-        return "+" + Long.toHexString((long) column * Memory.getWordSize());
+        return "+" + Long.toHexString((long) column * displaySize);
     }
 }

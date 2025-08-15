@@ -28,7 +28,7 @@ public class MemoryTable extends JPanel implements IThemeable {
      * Table's default initialization uses a word memory display
      */
     private MemoryFormatStrategy strategy = new WordFormatStrategy();
-    private boolean byteView = false;
+    private boolean decodeView = false;
 
     /**
      * The standard number of rows for a memory table.
@@ -69,6 +69,10 @@ public class MemoryTable extends JPanel implements IThemeable {
         rightTable = new AlternatingColorTable(EditorTheme.Light);  // you can set a different model here
         rightScrollPane = new JScrollPane(rightTable);
         rightTable.setModel(new DecodingTableModel(memory, ROWS, COLUMNS));
+        rightTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        rightScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        rightScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        rightScrollPane.setWheelScrollingEnabled(true);
         rightScrollPane.setVisible(false); // hidden initially
 
         // Create container and add both
@@ -138,7 +142,7 @@ public class MemoryTable extends JPanel implements IThemeable {
                 rightTable.setCellSelectionEnabled(false);
                 rightTable.setRowHeight(fontSize + 2);
                 rightTable.setIntercellSpacing(new Dimension(2, 2));
-                for (int i = 0; i < 16; ++i) {
+                for (int i = 0; i < rightTable.getColumnCount(); ++i) {
                     rightTable.getColumnModel().getColumn(i).setPreferredWidth(width);
                     rightTable.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
                 }
@@ -208,20 +212,15 @@ public class MemoryTable extends JPanel implements IThemeable {
     }
 
 
-    public void switchStrategy(){
-        if(byteView){
-            setStrategy(new WordFormatStrategy());
-            byteView = false;
-        }else{
-            setStrategy(new ByteFormatStrategy());
-            byteView = true;
-        }
+    public void switchDecodeMode(String mode){
+        ((DecodingTableModel) rightTable.getModel()).setDecodeMode(mode);
+        tableContainer.revalidate();
+        tableContainer.repaint();
     }
 
-    public void setStrategy(MemoryFormatStrategy strat){
-        this.strategy = strat;
-        ((MemoryTableModel) table.getModel()).setStrategy(strategy);
-        rightScrollPane.setVisible(!byteView);
+    public void toggleDecoding(){
+        decodeView = !decodeView;
+        rightScrollPane.setVisible(decodeView);
         tableContainer.revalidate();
         tableContainer.repaint();
         update();
