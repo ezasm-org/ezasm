@@ -20,14 +20,18 @@ public class MemoryTable extends JPanel implements IThemeable {
     private JList<Object> rowHeader;
     private JList<Object> colHeader;
 
-    private final JScrollPane rightScrollPane;
-    private final AlternatingColorTable rightTable;
+    private final JScrollPane decodeScrollPane;
+    private final AlternatingColorTable decodeTable;
     private JPanel tableContainer;  // new
 
     /**
      * Table's default initialization uses a word memory display
      */
     private MemoryFormatStrategy strategy = new WordFormatStrategy();
+
+    /**
+     * Tracks the state of visiblity for decoding table
+     */
     private boolean decodeView = false;
 
     /**
@@ -65,21 +69,21 @@ public class MemoryTable extends JPanel implements IThemeable {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setWheelScrollingEnabled(true);
 
-        // Set up the right (optional) table
-        rightTable = new AlternatingColorTable(EditorTheme.Light);  // you can set a different model here
-        rightScrollPane = new JScrollPane(rightTable);
-        rightTable.setModel(new DecodingTableModel(memory, ROWS, COLUMNS));
-        rightTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        rightScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        rightScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        rightScrollPane.setWheelScrollingEnabled(true);
-        rightScrollPane.setVisible(false); // hidden initially
+        // Set up the right (decode) table
+        decodeTable = new AlternatingColorTable(EditorTheme.Light);  // you can set a different model here
+        decodeScrollPane = new JScrollPane(decodeTable);
+        decodeTable.setModel(new DecodingTableModel(memory, ROWS, COLUMNS));
+        decodeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        decodeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        decodeScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        decodeScrollPane.setWheelScrollingEnabled(true);
+        decodeScrollPane.setVisible(false); // hidden initially
 
         // Create container and add both
         tableContainer = new JPanel();
         tableContainer.setLayout(new BoxLayout(tableContainer, BoxLayout.X_AXIS));
         tableContainer.add(scrollPane);
-        tableContainer.add(rightScrollPane);
+        tableContainer.add(decodeScrollPane);
 
         // Set layout and add
         setLayout(new BorderLayout());
@@ -130,21 +134,21 @@ public class MemoryTable extends JPanel implements IThemeable {
         rowHeader.setFixedCellWidth(20 + (Memory.getWordSize() * 2 * fontSize));
         rowHeader.setFixedCellHeight(table.getRowHeight());
 
-        // === Apply theme to rightScrollPane and rightTable ===
-        if (rightScrollPane != null) {
-            rightScrollPane.setBackground(editorTheme.currentLine());
-            rightScrollPane.getViewport().setBackground(editorTheme.currentLine());
-            editorTheme.applyThemeScrollbar(rightScrollPane.getVerticalScrollBar());
-            editorTheme.applyThemeScrollbar(rightScrollPane.getHorizontalScrollBar());
+        // === Apply theme to rightScrollPane and decodeTable ===
+        if (decodeScrollPane != null) {
+            decodeScrollPane.setBackground(editorTheme.currentLine());
+            decodeScrollPane.getViewport().setBackground(editorTheme.currentLine());
+            editorTheme.applyThemeScrollbar(decodeScrollPane.getVerticalScrollBar());
+            editorTheme.applyThemeScrollbar(decodeScrollPane.getHorizontalScrollBar());
 
-            if (rightTable != null) {
-                rightTable.applyTheme(font, editorTheme);
-                rightTable.setCellSelectionEnabled(false);
-                rightTable.setRowHeight(fontSize + 2);
-                rightTable.setIntercellSpacing(new Dimension(2, 2));
-                for (int i = 0; i < rightTable.getColumnCount(); ++i) {
-                    rightTable.getColumnModel().getColumn(i).setPreferredWidth(width);
-                    rightTable.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
+            if (decodeTable != null) {
+                decodeTable.applyTheme(font, editorTheme);
+                decodeTable.setCellSelectionEnabled(false);
+                decodeTable.setRowHeight(fontSize + 2);
+                decodeTable.setIntercellSpacing(new Dimension(2, 2));
+                for (int i = 0; i < decodeTable.getColumnCount(); ++i) {
+                    decodeTable.getColumnModel().getColumn(i).setPreferredWidth(width);
+                    decodeTable.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
                 }
             }
         }
@@ -158,7 +162,7 @@ public class MemoryTable extends JPanel implements IThemeable {
     public void setOffset(int offset) {
         this.offset = offset;
         ((MemoryTableModel) table.getModel()).setOffset(offset);
-        ((DecodingTableModel) rightTable.getModel()).setOffset(offset);
+        ((DecodingTableModel) decodeTable.getModel()).setOffset(offset);
         update();
     }
 
@@ -178,7 +182,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         SwingUtilities.invokeLater(this::updateRowHeaders);
         SwingUtilities.invokeLater(this::updateColHeaders);
         SwingUtilities.invokeLater(table::updateUI);
-        SwingUtilities.invokeLater(rightTable::updateUI);
+        SwingUtilities.invokeLater(decodeTable::updateUI);
     }
 
     /**
@@ -211,16 +215,23 @@ public class MemoryTable extends JPanel implements IThemeable {
 
     }
 
-
+    /**
+     * Updates the decoding tables display mode to show memory decoded as that type
+     *
+     * @param mode either "Ascii", "Int", or "Float". otherwise, table will display hexcode memory like the memory table
+     */
     public void switchDecodeMode(String mode){
-        ((DecodingTableModel) rightTable.getModel()).setDecodeMode(mode);
+        ((DecodingTableModel) decodeTable.getModel()).setDecodeMode(mode);
         tableContainer.revalidate();
         tableContainer.repaint();
     }
 
+    /**
+     * Toggles decoding table between visible and not visible
+     */
     public void toggleDecoding(){
         decodeView = !decodeView;
-        rightScrollPane.setVisible(decodeView);
+        decodeScrollPane.setVisible(decodeView);
         tableContainer.revalidate();
         tableContainer.repaint();
         update();

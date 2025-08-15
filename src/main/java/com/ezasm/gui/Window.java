@@ -237,12 +237,10 @@ public class Window {
 
         memoryViewerPanel = new MemoryViewerPanel(simulator.getMemory());
 
-        //Console bytes = new Console(); //TODO: change to implementaion of byte descriptor instead of console
 
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
         tools.addTab(memoryViewerPanel, null, "Memory", "Simulator Memory");
-        //tools.addTab(bytes, null, "Bytes", "Data Breakdown");
 
         mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editors, registerTable);
         mainSplit.setResizeWeight(0.8);

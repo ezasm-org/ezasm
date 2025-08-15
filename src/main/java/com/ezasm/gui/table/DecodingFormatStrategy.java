@@ -12,6 +12,13 @@ public class DecodingFormatStrategy implements MemoryFormatStrategy {
     private String ASCII = "Ascii";
     private String mode = ASCII;
 
+
+    /**
+     * Sets the decoding mode for this strategy. The mode determines how raw memory values
+     * are interpreted and displayed (e.g., as ints, floats, ASCII characters).
+     *
+     * @param mode the decoding mode to apply.
+     */
     public void setMode(String mode){
         this.mode = mode;
         if(mode.equals(ASCII)){
@@ -20,12 +27,27 @@ public class DecodingFormatStrategy implements MemoryFormatStrategy {
             displaySize = Memory.getWordSize();
         }
     }
-
+    /**
+     * Returns the display size for this format strategy in bytes.
+     *
+     * @return the number of bytes each displayed value occupies.
+     */
     @Override
     public int getDisplaySize(){
         return displaySize;
     }
 
+
+    /**
+     * Gets the memory display string for a specified cell.
+     *
+     * @param memory the memory table to get values from
+     * @param row the row of the cell in question.
+     * @param cols the number of columns in the table
+     * @param col the column of the cell in question.
+     * @param offset the offset from within the memory at which the memory table will display
+     * @return the value of memory that the word stored represents.
+     */
     @Override
     public Object getValueAt(Memory memory, int row, int cols, int col, int offset){
         try {
@@ -46,6 +68,12 @@ public class DecodingFormatStrategy implements MemoryFormatStrategy {
         }
     }
 
+    /**
+     * Gets the name of the column to be used in a header.
+     *
+     * @param column the column number to find the name of.
+     * @return the name of the given column.
+     */
     @Override
     public String getColumnName(int column) {
         return "+" + Long.toHexString((long) column * displaySize);

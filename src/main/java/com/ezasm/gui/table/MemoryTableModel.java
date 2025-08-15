@@ -34,7 +34,11 @@ class MemoryTableModel extends AbstractTableModel {
         this.strategy = strat;
     }
 
-    //TODO: add specs for new implementations.
+    /**
+     * Changes viewing strategy to strat
+     *
+     * @param strat
+     */
     public void setStrategy(MemoryFormatStrategy strat){
         this.strategy = strat;
     }

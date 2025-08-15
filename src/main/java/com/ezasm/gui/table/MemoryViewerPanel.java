@@ -208,7 +208,9 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         }
     }
 
-
+    /**
+     * Toggles decoding table on and off
+     */
     private void decode(){
         memoryTable.switchDecodeMode((String) decodeComboBox.getSelectedItem());
         memoryTable.toggleDecoding();
