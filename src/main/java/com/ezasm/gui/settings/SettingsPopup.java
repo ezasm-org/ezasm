@@ -1,48 +1,31 @@
 package com.ezasm.gui.settings;
 
 import com.ezasm.gui.Window;
-import com.ezasm.gui.ui.EzComboBoxUI;
 import com.ezasm.gui.util.IThemeable;
 import com.ezasm.gui.util.EditorTheme;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+import java.awt.*;
+import java.util.List;
 import javax.swing.*;
-import javax.swing.border.Border;
+import java.awt.event.KeyEvent;
+
 
 /**
  * The GUI settings popup. There can only be one of these instantiated at a time to avoid confusion. Allows the user to
  * configure and save their preferences about program operations.
  */
 public class SettingsPopup implements IThemeable {
-
+    private JTabbedPane tabbedPane;
     private static SettingsPopup instance;
+    private List<PreferencesEditor> editors;
+    public final Config config;
 
-    private static final String FONTSIZE = "Font Size";
-    private static final String SIMULATION_SPEED = "Instruction Delay";
-    private static final String THEME = "Theme";
-    private static final String TABSIZE = "Tab Size";
-    private static final String AUTOSAVE = "Auto Save";
-    public static final String SAVE = "Save Changes";
-    public static final String RESET = "Reset to Defaults";
 
     private JFrame popup;
-    private JSlider speedSlider;
-    private JSlider tabSizeSlider;
-    private AutoSaveSliderToggleButton autoSaveButton;
-    private JTextField fontInput;
-    private JComboBox<String> themeInput;
-    private JPanel grid;
-    private JButton resetDefaults;
-    private JButton save;
-    private JLabel speedLabel, fontSizeLabel, themeLabel, tabSizeLabel, autoSaveLabel;
 
-    public final Config config;
+    private static final String SAVE = "Save Changes";
+    private static final String RESET = "Reset to Defaults";
+
 
     /**
      * Constructs a new singleton instance of the settings popup.
@@ -69,155 +52,132 @@ public class SettingsPopup implements IThemeable {
         if (instance == null || !instance.popup.isVisible())
             new SettingsPopup();
     }
+    /**
+     * Recursively applies the given font and color theme to the specified component and all of its child components.
+     *      @param comp  the component to apply the theme to
+     *      @param font  the font to apply
+     *      @param theme the visual theme colors to apply
+     */
+    private void applyThemeRecursively(Component comp, Font font, EditorTheme theme) {
+        if (comp instanceof JComponent jc) {
+            jc.setFont(font);
+            jc.setBackground(theme.background());
+            jc.setForeground(theme.foreground());
+            if (jc instanceof JLabel || jc instanceof JButton || jc instanceof JPanel) {
+                jc.setOpaque(true);
+            }
+        }
+
+        if (comp instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                applyThemeRecursively(child, font, theme);
+            }
+        }
+    }
 
     /**
      * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
      * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
-     *
-     * @param font        the font to apply.
-     * @param editorTheme the theme to apply.
+     * @param font         the font to use throughout the dialog
+     * @param editorTheme  the visual theme (background, foreground, etc.)
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
-        Border border = BorderFactory.createMatteBorder(1, 1, 1, 1, editorTheme.foreground());
-        grid.setBackground(editorTheme.background());
-        fontInput.setCaretColor(editorTheme.foreground());
-        themeLabel.setOpaque(true);
-        fontSizeLabel.setOpaque(true);
-        speedLabel.setOpaque(true);
-        tabSizeLabel.setOpaque(true);
-        EditorTheme.applyFontThemeBorderless(speedSlider, font, editorTheme);
-        EditorTheme.applyFontThemeBorder(themeInput, font, editorTheme, border);
-        EditorTheme.applyFontThemeBorderless(autoSaveButton, font, editorTheme);
-        autoSaveButton.applyTheme(font, editorTheme);
-        EditorTheme.applyFontThemeBorder(fontInput, font, editorTheme, border);
-        EditorTheme.applyFontThemeBorderless(tabSizeSlider, font, editorTheme);
-        editorTheme.applyThemeButton(save, font);
-        editorTheme.applyThemeButton(resetDefaults, font);
-        EditorTheme.applyFontThemeBorderless(speedLabel, font, editorTheme);
-        EditorTheme.applyFontThemeBorderless(fontSizeLabel, font, editorTheme);
-        EditorTheme.applyFontThemeBorderless(themeLabel, font, editorTheme);
-        EditorTheme.applyFontThemeBorderless(tabSizeLabel, font, editorTheme);
-        EditorTheme.applyFontThemeBorderless(autoSaveLabel, font, editorTheme);
 
-        themeInput.setUI(new EzComboBoxUI(editorTheme));
+        for (PreferencesEditor editor : editors) {
+            if (editor instanceof IThemeable themeableEditor) {
+                themeableEditor.applyTheme(font, editorTheme);
+            } else if (editor.getUI() != null) {
+                applyThemeRecursively(editor.getUI(), font, editorTheme);
+            }
+        }
+
+        int aboutIndex = tabbedPane.indexOfTab("About");
+        if (aboutIndex != -1) {
+            JComponent newAboutPanel = AboutPopup.getAboutPanel();
+            tabbedPane.setComponentAt(aboutIndex, newAboutPanel); // 🔄 swap in-place, no full remove
+            newAboutPanel.revalidate();
+            newAboutPanel.repaint();
+        }
+
+
+        if (popup != null) {
+            popup.getContentPane().setBackground(editorTheme.background());
+            popup.getContentPane().setForeground(editorTheme.foreground());
+            popup.setFont(font);
+            popup.revalidate();
+            popup.repaint();
+        }
+        if (AboutPopup.isPopupOpen()) {
+            AboutPopup.refreshPopup();
+        }
     }
 
     /**
      * Constructs the GUI elements of the settings popup.
      */
+
     private void initialize() {
-        ButtonActionListener buttonActionListener = new ButtonActionListener();
+        ConfigurationPreferencesEditor configEditor;
+        JButton save, resetDefaults;
         popup = new JFrame("EzASM Settings");
         popup.setLayout(new BorderLayout());
         popup.setMinimumSize(new Dimension(500, 300));
         popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        themeLabel = new JLabel(THEME);
-        themeInput = new JComboBox<>(Config.THEMES);
-        themeInput.setSelectedItem(config.getTheme().name());
+        // Create consistent editors (NO duplicates)
+        configEditor = new ConfigurationPreferencesEditor(config);
+        editors = List.of(configEditor); // only config editor
 
-        fontSizeLabel = new JLabel(FONTSIZE);
-        speedLabel = new JLabel(SIMULATION_SPEED);
+        this.tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Configuration", configEditor.getUI());
+        tabbedPane.setMnemonicAt(0, configEditor.getMnemonic());
 
-        fontInput = new JTextField(String.valueOf(config.getFontSize()));
-        if (config.getSimulationDelay() < 50 || config.getSimulationDelay() > 1000) {
-            config.setSimulationDelay(Integer.parseInt(Config.DEFAULT_SIMULATION_DELAY));
-        }
-        speedSlider = new JSlider(50, 1000, config.getSimulationDelay());
+        // Add About tab using AboutPopup panel
+        JComponent aboutPanel = AboutPopup.getAboutPanel();
+        tabbedPane.addTab("About", aboutPanel);
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_A);
 
-        tabSizeLabel = new JLabel(TABSIZE);
-        if (config.getTabSize() < 1 || config.getTabSize() > 8) {
-            config.setTabSize(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
-        }
-        tabSizeSlider = new JSlider(1, 8, config.getTabSize());
-        tabSizeSlider.setMajorTickSpacing(1);
-        tabSizeSlider.setPaintTicks(true);
-        tabSizeSlider.setPaintLabels(true);
 
-        autoSaveLabel = new JLabel(AUTOSAVE);
-        if (config.getAutoSaveInterval() < 0 || config.getAutoSaveInterval() > 30) {
-            config.setAutoSaveInterval(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
-        }
-        autoSaveButton = new AutoSaveSliderToggleButton(config.getAutoSaveSelected(), config.getAutoSaveInterval());
 
-        GridLayout gridLayout = new GridLayout(0, 2);
-        gridLayout.setVgap(20);
-        grid = new JPanel(gridLayout);
-        grid.add(fontSizeLabel);
-        grid.add(fontInput);
-        grid.add(speedLabel);
-        grid.add(speedSlider);
-        grid.add(themeLabel);
-        grid.add(themeInput);
-        grid.add(tabSizeLabel);
-        grid.add(tabSizeSlider);
-        grid.add(autoSaveLabel);
-        grid.add(autoSaveButton);
-
+        // Save/Reset buttons
         save = new JButton(SAVE);
-        save.setContentAreaFilled(false);
-        save.setOpaque(true);
-
         resetDefaults = new JButton(RESET);
-        resetDefaults.setContentAreaFilled(false);
-        resetDefaults.setOpaque(true);
 
-        grid.add(save);
-        grid.add(resetDefaults);
+        save.addActionListener(e -> {
+            for (PreferencesEditor editor : editors) {
+                editor.savePreferences();
+            }
+            applyTheme(config.getFont(), config.getTheme());
+            Window.getInstance().applyConfiguration(config);
+            Window.getInstance().getEditor().applyTheme(config.getFont(), config.getTheme());
 
-        resetDefaults.addActionListener(buttonActionListener);
-        save.addActionListener(buttonActionListener);
+        });
 
-        popup.add(grid, BorderLayout.CENTER);
+        resetDefaults.addActionListener(e -> {
+            for (PreferencesEditor editor : editors) {
+                editor.matchGuiToDefaultPreferences();
+            }
+        });
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(save);
+        buttonPanel.add(resetDefaults);
+
+
+
+        popup.add(tabbedPane, BorderLayout.CENTER);
+        popup.add(buttonPanel, BorderLayout.SOUTH);
 
         popup.validate();
         popup.pack();
-        popup.setVisible(true);
+
+
         this.applyTheme(config.getFont(), config.getTheme());
+
+        popup.setVisible(true);
+
     }
 
-    /**
-     * Action listener helper class for settings operations buttons.
-     */
-    private static class ButtonActionListener implements ActionListener {
 
-        public ButtonActionListener() {
-            super();
-        }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String action = e.getActionCommand();
-            SettingsPopup instance = SettingsPopup.getInstance();
-            if (action.startsWith("Save")) {
-                try {
-                    instance.config.setFontSize(Integer.parseInt(instance.fontInput.getText()));
-                } catch (NumberFormatException er) {
-                    JOptionPane.showMessageDialog(new JFrame(), "Bad format for font size, please input a number");
-                    return;
-                }
-                if (instance.autoSaveButton.getSliderValue() == 0) {
-                    instance.config.setAutoSaveInterval(1);
-                    instance.autoSaveButton.setToggleButtonStatus(false);
-                }
-                instance.config.setSimulationDelay(instance.speedSlider.getValue());
-                instance.config.setTabSize(instance.tabSizeSlider.getValue());
-                instance.config.setTheme(instance.themeInput.getSelectedItem().toString());
-                instance.config.setAutoSaveInterval(instance.autoSaveButton.getSliderValue());
-                instance.config.setAutoSaveSelected(instance.autoSaveButton.getToggleButtonStatus());
-                instance.config.saveChanges();
-                instance.applyTheme(Window.getInstance().getConfig().getFont(), instance.config.getTheme());
-                Window.getInstance().applyConfiguration(instance.config);
-            }
-            if (action.startsWith("Reset")) {
-                instance.config.resetDefaults();
-                instance.fontInput.setText(Config.DEFAULT_FONT_SIZE);
-                instance.speedSlider.setValue(Integer.parseInt(Config.DEFAULT_SIMULATION_DELAY));
-                instance.tabSizeSlider.setValue(Integer.parseInt(Config.DEFAULT_TAB_SIZE));
-                instance.themeInput.setSelectedIndex(0);
-                instance.autoSaveButton.setToggleButtonStatus(Boolean.parseBoolean(Config.DEFAULT_AUTO_SAVE_SELECTED));
-                instance.autoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
-            }
-        }
-    }
 }

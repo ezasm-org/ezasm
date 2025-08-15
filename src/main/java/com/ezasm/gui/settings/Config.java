@@ -65,7 +65,7 @@ public class Config {
     /**
      * A vector containing the types of possible themes.
      */
-    public static final Vector<String> THEMES = new Vector<String>(Arrays.asList(THEME_ARRAY));
+    public static final Vector<String> THEMES = new Vector<>(Arrays.asList(THEME_ARRAY));
 
     private Properties props = new Properties();
 

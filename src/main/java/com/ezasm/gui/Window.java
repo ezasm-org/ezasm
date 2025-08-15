@@ -255,7 +255,11 @@ public class Window {
         app.setJMenuBar(menubar);
         panel.setLayout(new BorderLayout());
         panel.add(toolbar, BorderLayout.PAGE_START);
-        panel.add(toolSplit, BorderLayout.CENTER);
+        JPanel paddedCenterPanel = new JPanel(new BorderLayout());
+        paddedCenterPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // top, left, bottom, right padding
+        paddedCenterPanel.add(toolSplit, BorderLayout.CENTER);
+
+        panel.add(paddedCenterPanel, BorderLayout.CENTER);
 
         ToolbarFactory.setButtonsEnabled(true);
 
@@ -316,7 +320,14 @@ public class Window {
         }
         SimulatorGuiActions.setInstructionDelayMS(config.getSimulationDelay());
 
-        autoSave.toggleRunning(config.getAutoSaveSelected(), config.getAutoSaveInterval());
+        boolean autosaveEnabled = config.getAutoSaveSelected();
+        int interval = Math.max(1, config.getAutoSaveInterval());
+
+        try {
+            autoSave.toggleRunning(autosaveEnabled, interval);
+        } catch (IllegalArgumentException e) {
+            System.err.println("[Warning] AutoSave failed to start: " + e.getMessage());
+        }
     }
 
     /**
@@ -441,3 +452,4 @@ public class Window {
     }
 
 }
+
