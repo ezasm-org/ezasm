@@ -11,14 +11,14 @@ import java.awt.*;
 
 /**
  * Represents a view of the memory. This view begins at the given offset which by default is the initial heap pointer.
- * Each row displays the values from memory for (offset + (row * columns + column) * word size.
+ * Each row displays the values from memory for (offset + (row * columns + column) * word size).
  */
 public class MemoryTable extends JPanel implements IThemeable {
 
     private final AlternatingColorTable table;
     private final JScrollPane scrollPane;
     private JList<Object> rowHeader;
-    private JList<Object> colHeader;
+
 
     private final JScrollPane decodeScrollPane;
     private final AlternatingColorTable decodeTable;
@@ -30,7 +30,7 @@ public class MemoryTable extends JPanel implements IThemeable {
     private MemoryFormatStrategy strategy = new WordFormatStrategy();
 
     /**
-     * Tracks the state of visiblity for decoding table
+     * Tracks the state of visibility for decoding table
      */
     private boolean decodeView = false;
 
@@ -208,7 +208,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
 
         for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setHeaderValue( ((MemoryTableModel) table.getModel()).getColumnName(i));
+            table.getColumnModel().getColumn(i).setHeaderValue(table.getModel().getColumnName(i));
             table.getColumnModel().getColumn(i).setPreferredWidth(width);
             table.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
         }
@@ -218,7 +218,7 @@ public class MemoryTable extends JPanel implements IThemeable {
     /**
      * Updates the decoding tables display mode to show memory decoded as that type
      *
-     * @param mode either "Ascii", "Int", or "Float". otherwise, table will display hexcode memory like the memory table
+     * @param mode either "Ascii", "Int", or "Float". otherwise, table will display hex string memory like the memory table
      */
     public void switchDecodeMode(String mode){
         ((DecodingTableModel) decodeTable.getModel()).setDecodeMode(mode);

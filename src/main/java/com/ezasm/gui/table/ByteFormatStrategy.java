@@ -45,7 +45,7 @@ public class ByteFormatStrategy implements MemoryFormatStrategy {
      */
     @Override
     public String getColumnName(int column) {
-        return "+" + Long.toHexString((long) column);
+        return "+" + Long.toHexString(column);
     }
 }
 

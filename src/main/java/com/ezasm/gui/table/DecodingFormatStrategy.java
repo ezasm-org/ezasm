@@ -7,9 +7,9 @@ import java.nio.*;
 public class DecodingFormatStrategy implements MemoryFormatStrategy {
 
     private int displaySize = Memory.getWordSize();
-    private String INT = "Int";
-    private String FLOAT = "Float";
-    private String ASCII = "Ascii";
+    private final String INT = "Int";
+    private final String FLOAT = "Float";
+    private final String ASCII = "Ascii";
     private String mode = ASCII;
 
 
@@ -52,16 +52,19 @@ public class DecodingFormatStrategy implements MemoryFormatStrategy {
     public Object getValueAt(Memory memory, int row, int cols, int col, int offset){
         try {
             byte[] curWord = memory.read(offset + (row * cols + col) * displaySize).data();
-            if(mode.equals(ASCII)) {
-                return (char) curWord[3];
-            }else if(mode.equals(FLOAT)){
-                float val = ByteBuffer.wrap(curWord).order(ByteOrder.BIG_ENDIAN).getFloat();
-                return val;
-            }else if(mode.equals(INT)){
-                int val = ByteBuffer.wrap(curWord).order(ByteOrder.BIG_ENDIAN).getInt();
-                return val;
-            }else{
-                return memory.read(offset + (row * cols + col) * displaySize).toHexString();
+            switch (mode) {
+                case ASCII -> {
+                    return (char) curWord[3];
+                }
+                case FLOAT -> {
+                    return ByteBuffer.wrap(curWord).order(ByteOrder.BIG_ENDIAN).getFloat();
+                }
+                case INT -> {
+                    return ByteBuffer.wrap(curWord).order(ByteOrder.BIG_ENDIAN).getInt();
+                }
+                default -> {
+                    return memory.read(offset + (row * cols + col) * displaySize).toHexString();
+                }
             }
         } catch (ReadOutOfBoundsException e) {
             return RawData.emptyBytes(displaySize).toHexString();
