@@ -3,4 +3,4 @@ add $t1 0 1
 add $t2 $t1 $t0
 add $t0 $t1 0
 add $t1 $t2 0
-sub $pc $pc 3
+sub $pc $pc 4
