@@ -108,7 +108,7 @@ class DecodingTableModel extends AbstractTableModel {
         return strategy.getColumnName(column);
     }
 
-    public void setDecodeMode(String mode){
+    public void setDecodeMode(String mode) {
         strategy.setMode(mode);
     }
 }

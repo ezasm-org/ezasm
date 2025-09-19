@@ -154,7 +154,6 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             component.setBorder(BorderFactory.createLineBorder(foreground));
         }
 
-
         if (component instanceof JButton button) {
             button.setOpaque(true);
             button.setBorderPainted(true);

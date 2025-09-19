@@ -19,10 +19,9 @@ public class MemoryTable extends JPanel implements IThemeable {
     private final JScrollPane scrollPane;
     private JList<Object> rowHeader;
 
-
     private final JScrollPane decodeScrollPane;
     private final AlternatingColorTable decodeTable;
-    private JPanel tableContainer;  // new
+    private JPanel tableContainer; // new
 
     /**
      * Table's default initialization uses a word memory display
@@ -70,7 +69,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         scrollPane.setWheelScrollingEnabled(true);
 
         // Set up the right (decode) table
-        decodeTable = new AlternatingColorTable(EditorTheme.Light);  // you can set a different model here
+        decodeTable = new AlternatingColorTable(EditorTheme.Light); // you can set a different model here
         decodeScrollPane = new JScrollPane(decodeTable);
         decodeTable.setModel(new DecodingTableModel(memory, ROWS, COLUMNS));
         decodeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -89,9 +88,8 @@ public class MemoryTable extends JPanel implements IThemeable {
         setLayout(new BorderLayout());
         add(tableContainer, BorderLayout.CENTER);
         /*
-        *setLayout(new BorderLayout());
-        *add(scrollPane);
-        */
+         * setLayout(new BorderLayout()); add(scrollPane);
+         */
 
     }
 
@@ -122,7 +120,7 @@ public class MemoryTable extends JPanel implements IThemeable {
         table.setRowHeight(fontSize + 2);
 
         int width = 20 + (strategy.getDisplaySize() * 2 * fontSize);
-        //display size is either 1 when displaying bytes, or 4 when displaying words
+        // display size is either 1 when displaying bytes, or 4 when displaying words
 
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
@@ -199,10 +197,11 @@ public class MemoryTable extends JPanel implements IThemeable {
         rowHeader.setFixedCellHeight(table.getRowHeight());
         scrollPane.setRowHeaderView(rowHeader);
     }
+
     /**
      * Updates the col headers and col width based on any potential change in viewing strategy.
      */
-    private void updateColHeaders(){
+    private void updateColHeaders() {
         int width = 20 + (strategy.getDisplaySize() * 2 * fontSize);
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
@@ -218,9 +217,10 @@ public class MemoryTable extends JPanel implements IThemeable {
     /**
      * Updates the decoding tables display mode to show memory decoded as that type
      *
-     * @param mode either "Ascii", "Int", or "Float". otherwise, table will display hex string memory like the memory table
+     * @param mode either "Ascii", "Int", or "Float". otherwise, table will display hex string memory like the memory
+     *             table
      */
-    public void switchDecodeMode(String mode){
+    public void switchDecodeMode(String mode) {
         ((DecodingTableModel) decodeTable.getModel()).setDecodeMode(mode);
         tableContainer.revalidate();
         tableContainer.repaint();
@@ -229,7 +229,7 @@ public class MemoryTable extends JPanel implements IThemeable {
     /**
      * Toggles decoding table between visible and not visible
      */
-    public void toggleDecoding(){
+    public void toggleDecoding() {
         decodeView = !decodeView;
         decodeScrollPane.setVisible(decodeView);
         tableContainer.revalidate();

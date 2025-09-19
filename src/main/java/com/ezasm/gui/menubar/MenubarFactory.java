@@ -62,11 +62,11 @@ public class MenubarFactory {
         /*
          * SETTINGS
          */
-        /*menu = new JMenu("Settings");
-        menu.getAccessibleContext().setAccessibleDescription("Popups related to settings");
-        menubar.add(menu);
-        addMenuItem(menu, CONFIG);
-        addMenuItem(menu, ABOUT);*/
+        /*
+         * menu = new JMenu("Settings");
+         * menu.getAccessibleContext().setAccessibleDescription("Popups related to settings"); menubar.add(menu);
+         * addMenuItem(menu, CONFIG); addMenuItem(menu, ABOUT);
+         */
         JMenuItem settingsItem = new JMenuItem("Settings");
         settingsItem.addActionListener(e -> SettingsPopup.instantiate());
         menubar.add(settingsItem);

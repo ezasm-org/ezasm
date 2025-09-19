@@ -79,9 +79,10 @@ public class AutoSaveSliderToggleButton extends JPanel {
         toggleButton.setSelected(status);
         updateSliderVisibility(status);
     }
+
     /**
-     * Updates the visibility of the slider component based on the toggle state.
-     * Also updates the toggle button's label and refreshes the layout.
+     * Updates the visibility of the slider component based on the toggle state. Also updates the toggle button's label
+     * and refreshes the layout.
      *
      * @param showSlider {@code true} to make the slider visible, {@code false} to hide it
      */

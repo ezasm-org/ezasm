@@ -39,7 +39,7 @@ class MemoryTableModel extends AbstractTableModel {
      *
      * @param strat the strategy to switch to
      */
-    public void setStrategy(MemoryFormatStrategy strat){
+    public void setStrategy(MemoryFormatStrategy strat) {
         this.strategy = strat;
     }
 

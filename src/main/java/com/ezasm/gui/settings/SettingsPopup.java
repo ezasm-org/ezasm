@@ -9,7 +9,6 @@ import java.util.List;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-
 /**
  * The GUI settings popup. There can only be one of these instantiated at a time to avoid confusion. Allows the user to
  * configure and save their preferences about program operations.
@@ -20,12 +19,10 @@ public class SettingsPopup implements IThemeable {
     private List<PreferencesEditor> editors;
     public final Config config;
 
-
     private JFrame popup;
 
     private static final String SAVE = "Save Changes";
     private static final String RESET = "Reset to Defaults";
-
 
     /**
      * Constructs a new singleton instance of the settings popup.
@@ -52,11 +49,13 @@ public class SettingsPopup implements IThemeable {
         if (instance == null || !instance.popup.isVisible())
             new SettingsPopup();
     }
+
     /**
      * Recursively applies the given font and color theme to the specified component and all of its child components.
-     *      @param comp  the component to apply the theme to
-     *      @param font  the font to apply
-     *      @param theme the visual theme colors to apply
+     *
+     * @param comp  the component to apply the theme to
+     * @param font  the font to apply
+     * @param theme the visual theme colors to apply
      */
     private void applyThemeRecursively(Component comp, Font font, EditorTheme theme) {
         if (comp instanceof JComponent jc) {
@@ -78,8 +77,9 @@ public class SettingsPopup implements IThemeable {
     /**
      * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
      * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so.
-     * @param font         the font to use throughout the dialog
-     * @param editorTheme  the visual theme (background, foreground, etc.)
+     *
+     * @param font        the font to use throughout the dialog
+     * @param editorTheme the visual theme (background, foreground, etc.)
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
 
@@ -98,7 +98,6 @@ public class SettingsPopup implements IThemeable {
             newAboutPanel.revalidate();
             newAboutPanel.repaint();
         }
-
 
         if (popup != null) {
             popup.getContentPane().setBackground(editorTheme.background());
@@ -137,8 +136,6 @@ public class SettingsPopup implements IThemeable {
         tabbedPane.addTab("About", aboutPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_A);
 
-
-
         // Save/Reset buttons
         save = new JButton(SAVE);
         resetDefaults = new JButton(RESET);
@@ -163,21 +160,16 @@ public class SettingsPopup implements IThemeable {
         buttonPanel.add(save);
         buttonPanel.add(resetDefaults);
 
-
-
         popup.add(tabbedPane, BorderLayout.CENTER);
         popup.add(buttonPanel, BorderLayout.SOUTH);
 
         popup.validate();
         popup.pack();
 
-
         this.applyTheme(config.getFont(), config.getTheme());
 
         popup.setVisible(true);
 
     }
-
-
 
 }

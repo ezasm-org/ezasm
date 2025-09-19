@@ -7,9 +7,10 @@ import javax.swing.event.DocumentListener;
 
 public class EditorDocumentListener implements DocumentListener {
     private final EzEditorPane editorPane;
+
     /**
-     * Constructs an EditorDocumentListener that monitors changes to the document
-     * and updates the saved state tracking in the associated editor.
+     * Constructs an EditorDocumentListener that monitors changes to the document and updates the saved state tracking
+     * in the associated editor.
      *
      * @param editorPane the editor pane to monitor for changes.
      */
@@ -28,6 +29,7 @@ public class EditorDocumentListener implements DocumentListener {
         updateSavedState();
         editorPane.updateUndoRedoState();
     }
+
     /**
      * Invoked when text is removed from the document.
      *
@@ -39,6 +41,7 @@ public class EditorDocumentListener implements DocumentListener {
         updateSavedState();
         editorPane.updateUndoRedoState();
     }
+
     /**
      * Invoked when a document attribute or style change occurs.
      *
@@ -52,9 +55,9 @@ public class EditorDocumentListener implements DocumentListener {
     }
 
     /**
-     * Sets the editor's global saved state to false (unsaved),
-     * indicating that the current buffer has been modified.
+     * Sets the editor's global saved state to false (unsaved), indicating that the current buffer has been modified.
      */
-    private void updateSavedState() {Window.getInstance().getEditor().setFileSaved(false);}
+    private void updateSavedState() {
+        Window.getInstance().getEditor().setFileSaved(false);
+    }
 }
-

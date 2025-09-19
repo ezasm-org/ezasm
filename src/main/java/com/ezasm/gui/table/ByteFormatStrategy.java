@@ -1,4 +1,5 @@
 package com.ezasm.gui.table;
+
 import com.ezasm.simulation.Memory;
 import com.ezasm.simulation.exception.ReadOutOfBoundsException;
 import com.ezasm.util.RawData;
@@ -13,7 +14,7 @@ public class ByteFormatStrategy implements MemoryFormatStrategy {
      * @return the number of bytes each displayed value occupies.
      */
     @Override
-    public int getDisplaySize(){
+    public int getDisplaySize() {
         return displaySize;
     }
 
@@ -21,9 +22,9 @@ public class ByteFormatStrategy implements MemoryFormatStrategy {
      * Gets the memory display string for a specified cell.
      *
      * @param memory the memory table to get values from
-     * @param row the row of the cell in question.
-     * @param cols the number of columns in the table
-     * @param col the column of the cell in question.
+     * @param row    the row of the cell in question.
+     * @param cols   the number of columns in the table
+     * @param col    the column of the cell in question.
      * @param offset the offset from within the memory at which the memory table will display
      * @return a byte contained in the corresponding memory.
      */
@@ -48,4 +49,3 @@ public class ByteFormatStrategy implements MemoryFormatStrategy {
         return "+" + Long.toHexString(column);
     }
 }
-

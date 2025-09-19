@@ -237,7 +237,6 @@ public class Window {
 
         memoryViewerPanel = new MemoryViewerPanel(simulator.getMemory());
 
-
         tools = new FixedTabbedPane();
         tools.addTab(console, null, "Console", "Your Console");
         tools.addTab(memoryViewerPanel, null, "Memory", "Simulator Memory");
@@ -256,7 +255,8 @@ public class Window {
         panel.setLayout(new BorderLayout());
         panel.add(toolbar, BorderLayout.PAGE_START);
         JPanel paddedCenterPanel = new JPanel(new BorderLayout());
-        paddedCenterPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // top, left, bottom, right padding
+        paddedCenterPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // top, left, bottom, right
+                                                                                      // padding
         paddedCenterPanel.add(toolSplit, BorderLayout.CENTER);
 
         panel.add(paddedCenterPanel, BorderLayout.CENTER);
@@ -452,4 +452,3 @@ public class Window {
     }
 
 }
-

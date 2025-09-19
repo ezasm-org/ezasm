@@ -47,64 +47,67 @@ public class AboutPopup {
             }
         });
     }
-        /**
-         * Returns the About panel as a reusable component for tabs.
-         *
-         * @return a scrollable HTML panel showing about info
-         */
-        public static JComponent getAboutPanel() {
-            Config config = Window.getInstance().getConfig();
-            EditorTheme theme = config.getTheme();
 
-            String text = String.format("""
-            <html>
-                <p>%s</p>
-                <p>%s</p>
-                <p>Version: %s</p>
-                <p>User manual:
-                    <a href="https://github.com/ezasm-org/EzASM/wiki">https://github.com/ezasm-org/EzASM/wiki</a>
-                </p>
-                <p>Source code and README:
-                    <a href="https://github.com/ezasm-org/EzASM">https://github.com/ezasm-org/EzASM</a>
-                </p>
-                <p>License for source code and JAR:
-                    <a href="https://github.com/ezasm-org/EzASM/blob/main/LICENSE">MIT License</a>
-                </p>
-                <p>License for binary executables (.exe, .zip, etc.):
-                    <a href="https://github.com/ezasm-org/EzASM-releases/blob/main/LICENSE">GPLv3 License</a>
-                </p>
-                <p>Copyright (c) 2022-%s Trevor Brunette</p>
-            </html>
-            """, MavenProperties.NAME, MavenProperties.DESCRIPTION, MavenProperties.VERSION, Year.now().getValue());
+    /**
+     * Returns the About panel as a reusable component for tabs.
+     *
+     * @return a scrollable HTML panel showing about info
+     */
+    public static JComponent getAboutPanel() {
+        Config config = Window.getInstance().getConfig();
+        EditorTheme theme = config.getTheme();
 
-            JEditorPane textPane = new JEditorPane();
-            HTMLEditorKit kit = new HTMLEditorKit();
-            textPane.setEditorKit(kit);
+        String text = String.format("""
+                <html>
+                    <p>%s</p>
+                    <p>%s</p>
+                    <p>Version: %s</p>
+                    <p>User manual:
+                        <a href="https://github.com/ezasm-org/EzASM/wiki">https://github.com/ezasm-org/EzASM/wiki</a>
+                    </p>
+                    <p>Source code and README:
+                        <a href="https://github.com/ezasm-org/EzASM">https://github.com/ezasm-org/EzASM</a>
+                    </p>
+                    <p>License for source code and JAR:
+                        <a href="https://github.com/ezasm-org/EzASM/blob/main/LICENSE">MIT License</a>
+                    </p>
+                    <p>License for binary executables (.exe, .zip, etc.):
+                        <a href="https://github.com/ezasm-org/EzASM-releases/blob/main/LICENSE">GPLv3 License</a>
+                    </p>
+                    <p>Copyright (c) 2022-%s Trevor Brunette</p>
+                </html>
+                """, MavenProperties.NAME, MavenProperties.DESCRIPTION, MavenProperties.VERSION, Year.now().getValue());
 
-            StyleSheet style = kit.getStyleSheet();
-            style.addRule(String.format("p {color:#%s;}", colorCodeHex(theme.foreground())));
-            style.addRule(String.format("a {color:#%s;}", colorCodeHex(theme.cyan())));
-            style.addRule(String.format("html {background-color: #%s;}", colorCodeHex(theme.background())));
-            style.setBaseFontSize(config.getFontSize());
+        JEditorPane textPane = new JEditorPane();
+        HTMLEditorKit kit = new HTMLEditorKit();
+        textPane.setEditorKit(kit);
 
-            textPane.setText(text);
-            textPane.setBackground(theme.background());
-            textPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            textPane.setOpaque(true);
-            textPane.setEditable(false);
+        StyleSheet style = kit.getStyleSheet();
+        style.addRule(String.format("p {color:#%s;}", colorCodeHex(theme.foreground())));
+        style.addRule(String.format("a {color:#%s;}", colorCodeHex(theme.cyan())));
+        style.addRule(String.format("html {background-color: #%s;}", colorCodeHex(theme.background())));
+        style.setBaseFontSize(config.getFontSize());
 
-            textPane.addHyperlinkListener(e -> {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    try {
-                        Desktop.getDesktop().browse(e.getURL().toURI());
-                    } catch (Exception ignored) {}
+        textPane.setText(text);
+        textPane.setBackground(theme.background());
+        textPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        textPane.setOpaque(true);
+        textPane.setEditable(false);
+
+        textPane.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                try {
+                    Desktop.getDesktop().browse(e.getURL().toURI());
+                } catch (Exception ignored) {
                 }
-            });
+            }
+        });
 
-            JScrollPane scrollPane = new JScrollPane(textPane);
-            scrollPane.setBorder(null);
-            return scrollPane;
-        }
+        JScrollPane scrollPane = new JScrollPane(textPane);
+        scrollPane.setBorder(null);
+        return scrollPane;
+    }
+
     /**
      * Converts a {@link Color} object to a 6-digit hexadecimal color code.
      *
@@ -114,6 +117,7 @@ public class AboutPopup {
     private static String colorCodeHex(Color color) {
         return String.format("%06x", color.getRGB() & 0xFFFFFF);
     }
+
     /**
      * Checks whether the About popup window is currently open.
      *
@@ -122,12 +126,12 @@ public class AboutPopup {
     public static boolean isPopupOpen() {
         return popup != null;
     }
+
     /**
-     * Refreshes the content of the About popup window to reflect the current configuration,
-     * such as theme and font size. This method is safe to call only if {@link #isPopupOpen()}
-     * returns {@code true}.
-     * It clears the current content pane and re-adds a newly generated About panel, then
-     * revalidates and repaints the popup window to apply the updated styles.
+     * Refreshes the content of the About popup window to reflect the current configuration, such as theme and font
+     * size. This method is safe to call only if {@link #isPopupOpen()} returns {@code true}. It clears the current
+     * content pane and re-adds a newly generated About panel, then revalidates and repaints the popup window to apply
+     * the updated styles.
      */
     public static void refreshPopup() {
         if (popup != null) {
@@ -137,6 +141,5 @@ public class AboutPopup {
             popup.repaint();
         }
     }
-
 
 }

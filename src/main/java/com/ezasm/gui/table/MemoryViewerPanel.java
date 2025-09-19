@@ -64,11 +64,13 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
                 put("Text Section", memory.initialTextPointer());
             }
         };
-        this.decodeOptions = new Vector<>(){{
-            add("Ascii");
-            add("Int");
-            add("Float");
-        }};
+        this.decodeOptions = new Vector<>() {
+            {
+                add("Ascii");
+                add("Int");
+                add("Float");
+            }
+        };
 
         initializeControls();
         setLayout(new BorderLayout());
@@ -211,7 +213,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     /**
      * Toggles decoding table on and off
      */
-    private void decode(){
+    private void decode() {
         memoryTable.switchDecodeMode((String) decodeComboBox.getSelectedItem());
         memoryTable.toggleDecoding();
     }
