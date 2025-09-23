@@ -92,6 +92,14 @@ public class EzTokenMaker extends AbstractTokenMaker {
         expectBinary = false;
         hasDecimalPoint = false;
 
+        resetTokenList();
+
+        if (count == 0) {
+            addToken(text, 0, 0, Token.WHITESPACE, startOffset);
+            addNullToken();
+            return firstToken;
+        }
+
         for (int i = offset; i < end; ++i) {
 
             char c = array[i];
@@ -341,7 +349,9 @@ public class EzTokenMaker extends AbstractTokenMaker {
         if (currentTokenType != Token.NULL) {
             addToken(text, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
         }
-        addNullToken();
+        if (currentToken != null) {
+            addNullToken();
+        }
 
         // Return the first token in our linked list.
         return firstToken;

@@ -13,8 +13,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Vector;
 
 /**
@@ -27,6 +27,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     private final MemoryTable memoryTable;
     private final JPanel controls;
     private final Map<String, Integer> nameToAddress;
+    private final Vector<String> decodeOptions;
 
     private final int numTableWords = MemoryTable.COLUMNS * MemoryTable.ROWS * Memory.getWordSize();
 
@@ -36,12 +37,15 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     private JButton seekButton;
     private JButton forwardButton;
     private JButton backButton;
+    private JButton decodeButton;
+    private JComboBox<String> decodeComboBox;
 
     private static final MemoryViewerActionListener actionListener = new MemoryViewerActionListener();
 
     private static final String SEEK = "  Go  ";
     private static final String FORWARD = " ---> ";
     private static final String BACK = " <--- ";
+    private static final String DECODE = " DECODE ";
 
     /**
      * Constructs a memory viewer panel bested on a given memory.
@@ -53,11 +57,18 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         this.memory = memory;
         this.memoryTable = new MemoryTable(memory);
         this.controls = new JPanel();
-        this.nameToAddress = new TreeMap<>() {
+        this.nameToAddress = new LinkedHashMap<>() {
             {
                 put("Initial Stack", memory.initialStackPointer() - numTableWords);
                 put("Initial Heap", memory.initialHeapPointer());
                 put("Text Section", memory.initialTextPointer());
+            }
+        };
+        this.decodeOptions = new Vector<>() {
+            {
+                add("Ascii");
+                add("Int");
+                add("Float");
             }
         };
 
@@ -87,9 +98,17 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
             }
         });
 
+        decodeComboBox = new JComboBox<>(decodeOptions);
+        decodeComboBox.addActionListener((actionEvent) -> {
+            if (actionEvent.getActionCommand().equals("comboBoxChanged")) {
+                memoryTable.switchDecodeMode((String) decodeComboBox.getSelectedItem());
+            }
+        });
+
         addButton(SEEK);
         addButton(FORWARD);
         addButton(BACK);
+        addButton(DECODE);
 
         controls.add(seekInputLabel);
         controls.add(seekSpinner);
@@ -97,6 +116,8 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         controls.add(seekButton);
         controls.add(backButton);
         controls.add(forwardButton);
+        controls.add(decodeButton);
+        controls.add(decodeComboBox);
         controls.setOpaque(true);
     }
 
@@ -111,6 +132,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         case SEEK -> seekButton = button;
         case FORWARD -> forwardButton = button;
         case BACK -> backButton = button;
+        case DECODE -> decodeButton = button;
         }
     }
 
@@ -132,12 +154,15 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
         EditorTheme.applyFontTheme(seekInputLabel, font, editorTheme);
         EditorTheme.applyFontThemeBorder(seekSpinner, font, editorTheme, border);
         EditorTheme.applyFontThemeBorder(seekComboBox, font, editorTheme, border);
+        EditorTheme.applyFontThemeBorder(decodeComboBox, font, editorTheme, border);
 
         editorTheme.applyThemeButton(seekButton, font);
         editorTheme.applyThemeButton(forwardButton, font);
         editorTheme.applyThemeButton(backButton, font);
+        editorTheme.applyThemeButton(decodeButton, font);
 
         seekComboBox.setUI(new EzComboBoxUI(editorTheme));
+        decodeComboBox.setUI(new EzComboBoxUI(editorTheme));
 
         ((JSpinner.NumberEditor) seekSpinner.getEditor()).getTextField().setCaretColor(editorTheme.foreground());
         seekSpinner.setPreferredSize(
@@ -186,6 +211,14 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
     }
 
     /**
+     * Toggles decoding table on and off
+     */
+    private void decode() {
+        memoryTable.switchDecodeMode((String) decodeComboBox.getSelectedItem());
+        memoryTable.toggleDecoding();
+    }
+
+    /**
      * Determines if the address is within the viewable range.
      *
      * @param address the address to check.
@@ -205,6 +238,7 @@ public class MemoryViewerPanel extends JPanel implements IThemeable {
             case SEEK -> Window.getInstance().getMemoryControlPanel().seek();
             case FORWARD -> Window.getInstance().getMemoryControlPanel().forward();
             case BACK -> Window.getInstance().getMemoryControlPanel().back();
+            case DECODE -> Window.getInstance().getMemoryControlPanel().decode();
             }
         }
     }

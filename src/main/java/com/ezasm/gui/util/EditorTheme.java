@@ -149,7 +149,17 @@ public record EditorTheme(String name, Color background, Color foreground, Color
     public void applyTheme(JComponent component) {
         component.setBackground(background);
         component.setForeground(foreground);
+        component.setOpaque(true);
+        if (component instanceof JPanel || component instanceof JLabel) {
+            component.setBorder(BorderFactory.createLineBorder(foreground));
+        }
 
+        if (component instanceof JButton button) {
+            button.setOpaque(true);
+            button.setBorderPainted(true);
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(true);
+        }
         for (Component child : component.getComponents()) {
             if (!(child instanceof IThemeable) && child instanceof JComponent jcomponent) {
                 applyTheme(jcomponent);
@@ -231,4 +241,5 @@ public record EditorTheme(String name, Color background, Color foreground, Color
         component.setBorder(border);
         component.setFont(font);
     }
+
 }

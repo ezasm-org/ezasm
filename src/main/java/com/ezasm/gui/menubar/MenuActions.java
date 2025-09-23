@@ -11,6 +11,7 @@ import java.io.IOException;
 import static com.ezasm.gui.util.DialogFactory.promptOverwriteDialog;
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
 import static com.ezasm.util.FileIO.*;
+import javax.swing.undo.UndoManager;
 
 /**
  * Action functions for the menubar actions like Save, Save As, Open, New, etc.
@@ -67,6 +68,7 @@ public class MenuActions {
             try {
                 FileIO.writeFile(fileToUpdate, editorPane.getText());
                 editorPane.setFileSaved(true);
+                editorPane.markSavedState();
                 return true;
             } catch (IOException e) {
                 promptWarningDialog("Error Saving File",
@@ -103,8 +105,10 @@ public class MenuActions {
                     if (notOpen) {
                         String content = FileIO.readFile(file);
                         newEditor.setText(content);
+                        newEditor.getUndoManager().discardAllEdits();
                         newEditor.setOpenFilePath(file.getPath());
-                        newEditor.setFileSaved(true);
+                        newEditor.markSavedState();
+
                     }
                     return true;
                 } catch (IOException ex) {
