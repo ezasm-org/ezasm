@@ -1,0 +1,291 @@
+################################################################################
+# Homework 3: Matrix-matrix multiplication
+# CSCI-2500 Spring 2023
+################################################################################
+# Main segment
+################################################################################
+main:
+
+  # Read in a matrix 1 of some NxM size
+  # Return in $r0 - N
+  # Return in $r1 - M
+  # Return in $r2 - base address of matrix
+  jal mm_read
+  
+  # save matrix 1 values
+  move $s0, $r0
+  move $s1, $r1
+  move $s2, $r2
+
+  # Setup arguments and print out matrix 1
+  move $a0, $s0
+  move $a1, $s1
+  move $a2, $s2
+  jal mm_print
+
+  # Read in matrix 2 of some NxM size
+  jal mm_read
+
+  # save matrix 2 values
+  move $s3, $r0
+  move $s4, $r1
+  move $s5, $r2
+
+  # Setup arguments and print out matrix 2
+  move $a0, $s3
+  move $a1, $s4
+  move $a2, $s5
+  jal mm_print
+
+  # Setup arguments and call mm_mult
+  # Note: 5 arguments, so we need to use stack
+  # Note: num cols matrix 1 == num rows matrix 2
+  move $a0, $s0    # num rows matrix1
+  move $a1, $s1    # num cols matrix1
+  move $a2, $s2    # address of matrix 1
+  push $s4         # num cols matrix2
+  push $s5         # address of matrix 2
+  jal mm_mult
+  add $sp $sp 8   # deallocate $s4 and $s5 from the stack
+
+  # print the result
+  move $a0, $s0 
+  move $a1, $s4
+  move $a2, $r0
+  jal mm_print
+
+	# return to caller
+  move $r0 0
+  exit 0
+
+################################################################################
+# mm_read: Read in a NxM matrix from standard input
+# Note: You will be calling mm_alloc from this function, so you'll need to save 
+#       $ra on the stack. Also, you'll be returning 3 values back to main, one
+#       value (the matrix base address), will need to be saved on the stack.
+#       Matrix format is:
+#         First line:  N = num rows
+#         Second line: M = num cols
+#         Subsequent lines contain one value each, filling each row in turn
+#         (same format as hw01, except N,M on separate lines)  
+# Input:
+#   None
+# Return:
+#   r0 = N
+#   r1 = M
+#   r2 = base address of matrix
+################################################################################
+mm_read:
+  # save return address and any saved registers on the stack, if necessary
+  # get N
+  readi $t0
+  push $t0
+
+  # get M
+  readi $t1
+  push $t1
+  
+  # Setup arguments and call mm_alloc - v0 is returned as base address
+  move $a0, $t0
+  move $a1, $t1
+  jal mm_alloc
+  move $t0, $r0 # load the pointer into $t0
+  move $t9, $t0 # make a copy of the pointer in $t9 to return
+  
+  pop $t2
+  pop $t1
+
+  mul $t3, $t1, $t2 # fihd the number of ints to read
+  move $t4, 0 # set the counter for the loop
+  # do nested loops to read in values
+  
+read_loop:
+  # read one number into the array
+  readi 0($t0)
+  
+  # update the loop variables
+  add $t0, $t0, 4 # array offset
+  add $t4, $t4, 1 # counter
+  bne $t3, $t4, read_loop # end condition
+  
+  # setup return values
+  move $r0, $t1 # set $r0 to N
+  move $r1, $t2 # set $r1 to M
+  move $r2, $t9 # set $r2 to array pointer
+  
+  # Note: third return value goes on the stack *after* restoration below  
+  # restore stack, ra, and any saved registers, if necessary
+  
+  # return to main
+  return
+
+################################################################################
+# mm_alloc: Allocate an NxM matrix
+# Note: You can just allocate a single array of length N*M.
+# Input:
+#   a0 = N
+#   a1 = M
+# Return:
+#   r0 = base address of allocated space
+################################################################################
+mm_alloc:
+  # save return address and any saved registers on the stack, if necessary
+  # not modified
+  # Allocate sufficient space
+  mul $t0, $a0, $a1 # obtain the number of words we need to store
+  sll $t0, $t0, 2 # multiply the number by 4 to get the number of bytes
+  alloc $r0, $t0
+  
+  # set return value
+  #r0 is already equal to the return address
+  
+  # restore stack, ra, and any saved registers, if necessary
+  # not modified
+  # return to main
+  return
+
+################################################################################
+# mm_print: Output the formatted contents of NxM matrix
+# Note: Within a row, separate each value by tab
+#       End each row with a newline
+# Input:
+#   a0 = N
+#   a1 = M
+#   a2 = base pointer
+# Return:
+#   None
+################################################################################
+mm_print:
+  # save return address and any saved registers on the stack, if necessary
+  # not modified
+  # do nested loops to print out values
+  
+  move $t0, $a0 # N
+  move $t1, $a1 # M
+  move $t2, $a2 # base address
+  # $t3 is for modified address storage
+  move $t4, 0 # the row
+  move $t5, 0 # the col
+  
+  
+print_row:
+  move $t5, 0 # reset the col to 0
+  print_col:
+    
+    mul $t3, $t1, $t4
+    add $t3, $t3, $t5
+    sll $t3, $t3, 2 # multiply it by 4 to represent the number of bytes
+    
+    add $t3, $t2, $t3 # add the base address to the index
+    printi 0($t3) # print the current number
+    printc '\t' # print a tab character
+    
+    add $t5, $t5, 1
+    bne $t1, $t5, print_col
+
+  # print newline
+  printc '\n'
+  
+  add $t4, $t4, 1
+  bne $t0, $t4, print_row
+  
+  # restore stack, ra, and any saved registers, if necessary
+  # not modified
+  # return to main
+  return
+
+################################################################################
+# mm_mult: Perform the actual NxM matrix multiplication
+# Input:
+#   a0 = N for matrix 1
+#   a1 = M for matrix 1 <-> N for matrix 2
+#   a2 = base address for matrix 1
+#   a3 = M for matrix 2
+#   0($sp) = base address for matrix 2
+# Return:
+#   r0 = base address for result matrix
+################################################################################
+mm_mult:
+
+  # save return address and any saved registers on the stack, if necessary
+  # set up and call mm_alloc for result matrix
+  # offset starting at 8 to account for the stored $ra
+  move $t0, 8($sp) # ptr to matrix 2
+  move $t1, 12($sp),# M2
+  
+  sub $sp, $sp, 20
+
+  move 12($sp), $a0 # save N1
+  move 4($sp),  $a1 # save M1/N2
+  move 8($sp),  $a2 # save ptr: matrix 1
+  move 0($sp),  $t1 # save M2
+  move 16($sp), $t0 # save ptr: matrix 2
+  
+  move $a0, $a0 # put N1 in $a0
+  move $a1, $t1 # put M2 in $a1
+  jal mm_alloc
+  
+  # final $a0-a2 values
+  move $a0, 0($sp) # set $a0 to N1
+  move $a1, 4($sp) # set $a1 to N2/M1
+  move $a2, 12($sp) # set $a2 to M2
+  
+  move $t7, 8($sp) # $t7 is matrix1
+  move $t8, 16($sp) # $t8 is matrix2
+  move $t9, $r0 # $t9 is the result matrix
+  
+  add $sp, $sp, 20 # free the memory from the stack
+  # three nested loops for matrix-matrix multiplication
+
+  # $t0 will refer to the address of the array we are currently looking in
+  move $t1, 0 # the row we are on, 0 to N1
+  move $t2, 0 # the col we are on, 0 to M2
+  move $t3, 0 # the row/col we summing from
+  move $t4, 0 # the current sum 
+  # $t5 will be used to store loaded variables
+  # $t6 will be used to store loaded variables
+loop_rows:
+  move $t2, 0 # the col we are on from matrix2, 0 to M2
+  loop_cols:
+    move $t3, 0 # the row/col we summing from
+    move $t4, 0 # the sum
+      loop_inner:
+      # get the index on the first array
+      mul $t0, $t1, $a1 # multiply the row by the number of cols ($a1)
+      add $t0, $t0, $t3 # add x
+      sll $t0, $t0, 2 # multiply by 4 to get the number of bytes to shift
+      
+      add $t0, $t7, $t0 # add the offset to the address
+      move $t5, 0($t0) # put the first number into $t5
+      
+      # get the index of the second array
+      mul $t0, $t3, $a0 # multiply x by the number of cols ($a0)
+      add $t0, $t0, $t2 # add the col
+      sll $t0, $t0, 2 # multiply by 4 to get the number of bytes to shift
+      
+      add $t0, $t8, $t0 # add the offset to the address
+      move $t6, 0($t0) # put the second number into $t6
+      mul $t5, $t5, $t6 # multiply the numbers together and store it in $t5
+      add $t4, $t4, $t5 # add the new muliplied number to the sum
+      
+      add $t3, $t3, 1
+      bne $a1, $t3, loop_inner
+    # put the sum into the new matrix
+    mul $t0, $t1, $a0
+    add $t0, $t2, $t0
+    sll $t0, $t0, 2 # multiply by 4 to get the number of bytes to shift
+    
+    add $t0, $t9, $t0 # add the offset to the address
+    move 0($t0), $t4 # put the sum number into its location
+      
+    add $t2, $t2, 1
+    bne $a0, $t2, loop_cols
+    
+  add $t1, $t1, 1
+  bne $a2, $t1, loop_rows
+
+  # set return value
+  move $r0, $t9
+  # restore stack, ra, and any saved registers, if necessary
+  # return to main
+  return

@@ -1,7 +1,10 @@
 package com.ezasm.gui.editor;
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Highlighter;
+import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
 
 import com.ezasm.gui.Window;
 import com.ezasm.gui.menubar.MenuActions;
@@ -21,6 +24,8 @@ import static com.ezasm.gui.util.EditorTheme.applyFontThemeBorderless;
 
 import static com.ezasm.gui.util.DialogFactory.promptYesNoCancelDialog;
 
+import javax.swing.undo.UndoManager;
+
 /**
  * The editor pane within the GUI. Allows the user to type code or edit loaded code.
  */
@@ -38,6 +43,20 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     private static final Dimension MAX_SIZE = new Dimension(600, 2000);
     Autocomplete autoComplete;
     private static final String COMMIT_ACTION = "commit";
+    // Undo manager
+    private UndoManager undoManager = new UndoManager();
+    private String savedTextSnapshot = "";
+    private JMenuItem undoMenuItem;
+    private JMenuItem redoMenuItem;
+
+    /**
+     * Gets the undo manager associated with this editor.
+     *
+     * @return the UndoManager
+     */
+    public UndoManager getUndoManager() {
+        return undoManager;
+    }
 
     /**
      * Creates a text edit field using RSyntaxTextArea features.
@@ -48,10 +67,11 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         ((AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance()).putMapping(EZASM_TOKEN_MAKER_NAME,
                 EzTokenMaker.class.getName());
         textArea = new PatchedRSyntaxTextArea();
+        textArea.getDocument().addUndoableEditListener(undoManager);
         textArea.setSyntaxEditingStyle(EZASM_TOKEN_MAKER_NAME);
         textArea.setTabSize(2);
         textArea.setCodeFoldingEnabled(false);
-        textArea.getDocument().addDocumentListener(new EditorDocumentListener());
+        textArea.getDocument().addDocumentListener(new EditorDocumentListener(this));
 
         openFilePath = EditorTabbedPane.NEW_FILE_PREFIX;
         fileSaved = true;
@@ -75,7 +95,115 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
 
         textArea.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
         textArea.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
+        // keyboard shortcut for UNDO/REDO
+        textArea.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
+        textArea.setPopupMenu(createCustomPopupMenu());
+        textArea.getActionMap().put("Undo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canUndo()) {
+                    undoManager.undo();
+                    checkIfDirty();
+                    updateUndoRedoState();
+                }
+            }
 
+            @Override
+            public boolean isEnabled() {
+                return undoManager.canUndo();
+            }
+        });
+
+        textArea.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");
+        textArea.getActionMap().put("Redo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canRedo()) {
+                    undoManager.redo();
+                    checkIfDirty();
+                    updateUndoRedoState();
+                }
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return undoManager.canRedo();
+            }
+        });
+
+    }
+
+    // keeping track of when I can undo and redo
+    /**
+     * Updates the enabled state of the Undo and Redo actions
+     */
+    public void updateUndoRedoState() {
+        Action undoAction = textArea.getActionMap().get("Undo");
+        Action redoAction = textArea.getActionMap().get("Redo");
+
+        if (undoAction != null) {
+            undoAction.setEnabled(undoManager.canUndo());
+        }
+        if (redoAction != null) {
+            redoAction.setEnabled(undoManager.canRedo());
+        }
+
+        if (undoMenuItem != null) {
+            undoMenuItem.setEnabled(undoManager.canUndo());
+        }
+        if (redoMenuItem != null) {
+            redoMenuItem.setEnabled(undoManager.canRedo());
+        }
+    }
+
+    // create our own pop-up menu
+    /**
+     * Creates and returns a custom right-click popup menu for the text editor.
+     */
+    private JPopupMenu createCustomPopupMenu() {
+        JPopupMenu menu = new JPopupMenu();
+
+        undoMenuItem = new JMenuItem("Undo");
+        undoMenuItem.addActionListener(e -> {
+            if (undoManager.canUndo()) {
+                undoManager.undo();
+                checkIfDirty();
+                updateUndoRedoState();
+            }
+        });
+        menu.add(undoMenuItem);
+
+        redoMenuItem = new JMenuItem("Redo");
+        redoMenuItem.addActionListener(e -> {
+            if (undoManager.canRedo()) {
+                undoManager.redo();
+                checkIfDirty();
+                updateUndoRedoState();
+            }
+        });
+        menu.add(redoMenuItem);
+
+        menu.addSeparator();
+
+        JMenuItem copy = new JMenuItem("Copy");
+        copy.addActionListener(e -> textArea.copy());
+        menu.add(copy);
+
+        JMenuItem paste = new JMenuItem("Paste");
+        paste.addActionListener(e -> textArea.paste());
+        menu.add(paste);
+
+        JMenuItem cut = new JMenuItem("Cut");
+        cut.addActionListener(e -> textArea.cut());
+        menu.add(cut);
+
+        menu.addSeparator();
+
+        JMenuItem selectAll = new JMenuItem("Select All");
+        selectAll.addActionListener(e -> textArea.selectAll());
+        menu.add(selectAll);
+
+        return menu;
     }
 
     /**
@@ -196,6 +324,9 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     public void setText(String content) {
         textArea.setText(content);
         textArea.setCaretPosition(0);
+        undoManager.discardAllEdits();
+        updateUndoRedoState();
+        markSavedState();
     }
 
     /**
@@ -203,6 +334,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      *
      * @return the path to the file currently open in this editor.
      */
+
     public String getOpenFilePath() {
         String out = openFilePath;
         if (openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX)) {
@@ -245,6 +377,25 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      */
     public void setFileSaved(boolean value) {
         this.fileSaved = value;
+    }
+
+    /**
+     * this functions helps Marks the current text content as the saved state. the function helps determines whether the
+     * file has been modified since last save.
+     */
+    public void markSavedState() {
+        this.savedTextSnapshot = getText();
+        setFileSaved(true);
+        updateUndoRedoState();
+    }
+
+    /**
+     * The function checks if the current text content differs from the last saved state. If it does, marks the file as
+     * unsaved. Otherwise, marks it as saved.
+     */
+    public void checkIfDirty() {
+        boolean isDirty = !getText().equals(savedTextSnapshot);
+        setFileSaved(!isDirty);
     }
 
     /**

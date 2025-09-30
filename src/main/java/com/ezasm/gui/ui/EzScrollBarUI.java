@@ -87,6 +87,17 @@ public class EzScrollBarUI extends BasicScrollBarUI {
     }
 
     /**
+     *
+     *
+     * Enforce a minimum size of 20 pixels for both vertical and horizontal scrollbars
+     */
+    @Override
+    protected Dimension getMinimumThumbSize() {
+
+        return new Dimension(20, 20);
+    }
+
+    /**
      * Create a button of zero size to remove the up/down arrow buttons on the scroll bar.
      *
      * @return the zero-size button.

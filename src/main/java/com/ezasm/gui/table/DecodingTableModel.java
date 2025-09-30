@@ -7,15 +7,15 @@ import com.ezasm.util.RawData;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Helper model class to inform the MemoryTable's TableModel of how to construct and read from itself.
+ * Helper model class to inform the DecodingTable's TableModel of how to construct and read from itself.
  */
-class MemoryTableModel extends AbstractTableModel {
+class DecodingTableModel extends AbstractTableModel {
 
     private final Memory memory;
     private int offset;
     private int rows;
     private int cols;
-    private MemoryFormatStrategy strategy;
+    private MemoryFormatStrategy strategy = new DecodingFormatStrategy();
 
     /**
      * Models a table based a memory.
@@ -23,24 +23,13 @@ class MemoryTableModel extends AbstractTableModel {
      * @param memory  the memory to base the table model off.
      * @param rows    the number of rows to include.
      * @param columns the number of columns to include.
-     * @param strat   the viewing strategy being used.
      */
-    public MemoryTableModel(Memory memory, int rows, int columns, MemoryFormatStrategy strat) {
+    public DecodingTableModel(Memory memory, int rows, int columns) {
         super();
         this.memory = memory;
         this.rows = rows;
         this.cols = columns;
         this.offset = memory.currentHeapPointer();
-        this.strategy = strat;
-    }
-
-    /**
-     * Changes viewing strategy to strat
-     *
-     * @param strat the strategy to switch to
-     */
-    public void setStrategy(MemoryFormatStrategy strat) {
-        this.strategy = strat;
     }
 
     /**
@@ -117,5 +106,9 @@ class MemoryTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int column) {
         return strategy.getColumnName(column);
+    }
+
+    public void setDecodeMode(String mode) {
+        strategy.setMode(mode);
     }
 }
