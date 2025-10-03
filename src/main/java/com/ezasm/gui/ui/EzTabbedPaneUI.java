@@ -1,12 +1,19 @@
 package com.ezasm.gui.ui;
 
-import com.ezasm.gui.util.EditorTheme;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.text.View;
+
+import com.ezasm.gui.util.EditorTheme;
 
 /**
  * Represents the themed UI for a tabbed pane.
@@ -159,6 +166,6 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
         } else {
             g.setColor(unselectedBackground);
         }
-        g.fillRect(x, y, w, h);
+        g.fillRoundRect(x, y, w, h, 6, 6);
     }
 }

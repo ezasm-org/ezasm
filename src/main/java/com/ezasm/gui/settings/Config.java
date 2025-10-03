@@ -1,22 +1,20 @@
 package com.ezasm.gui.settings;
 
-import com.ezasm.gui.util.EditorTheme;
-import com.ezasm.util.OperatingSystemUtils;
-import com.ezasm.util.SystemStreams;
-
-import java.awt.*;
+import java.awt.Font;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Properties;
-import java.util.Vector;
-
-import static java.util.Map.entry;
-
 import java.util.Arrays;
 import java.util.Map;
+import static java.util.Map.entry;
+import java.util.Properties;
+import java.util.Vector;
 import java.util.function.Function;
+
+import com.ezasm.gui.util.EditorTheme;
+import com.ezasm.util.OperatingSystemUtils;
+import com.ezasm.util.SystemStreams;
 
 /**
  * Represents the configuration of the program. Stores the configuration persistently at the given path.
@@ -44,7 +42,7 @@ public class Config {
     public static final String DEFAULT_AUTO_SAVE_INTERVAL = "10";
     public static final String DEFAULT_SIMULATION_DELAY = "250";
     public static final String DEFAULT_THEME = EditorTheme.Light.name();
-    public static final String DEFAULT_FONT = "JetBrains Mono"; // unclear if this will be allowed to change
+    public static final String DEFAULT_FONT = "Noto Sans Mono"; // unclear if this will be allowed to change
 
     private final Map<String, String> defaultProperties = Map.ofEntries(entry(FONT_SIZE, DEFAULT_FONT_SIZE),
             entry(TAB_SIZE, DEFAULT_TAB_SIZE), entry(SIMULATION_DELAY, DEFAULT_SIMULATION_DELAY),
