@@ -212,6 +212,7 @@
                                     <bundleJre>true</bundleJre>
                                     <generateInstaller>true</generateInstaller>
                                     <administratorRequired>false</administratorRequired>
+                                    <assetsDir>${project.basedir}/src/main/resources/javapackager</assetsDir>
                                     <linuxConfig>
                                         <pngFile>${project.basedir}/src/main/resources/icons/logo/EzASM.png</pngFile>
                                         <categories>
