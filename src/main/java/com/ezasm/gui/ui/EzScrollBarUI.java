@@ -1,10 +1,16 @@
 package com.ezasm.gui.ui;
 
-import com.ezasm.gui.util.EditorTheme;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import java.awt.*;
+
+import com.ezasm.gui.util.EditorTheme;
 
 /**
  * ScrollBarUI themed UI to apply to scrollbars in this application's GUI.
