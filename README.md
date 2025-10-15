@@ -46,14 +46,7 @@ $ brew install ezasm
 
 [Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) and  [Maven](https://maven.apache.org/install.html) are required to build EzASM.
 
-You can use one the following Maven install commands for your OS/distribution: 
-
-#### macOS: 
-```
-    $ brew install maven
-    $ sdk install maven
-    $ sudo port install maven3
-```
+You can use any one of the following Maven install commands for your OS/distribution: 
 
 #### Linux:
 ```
@@ -62,7 +55,15 @@ You can use one the following Maven install commands for your OS/distribution:
     $ sudo yum install maven
 ```
 
+#### macOS: 
+```
+    $ brew install maven
+    $ sdk install maven
+    $ sudo port install maven3
+```
+
 #### Windows:
+Requires [Chocolatey](https://chocolatey.org/install) or [Scoop](https://scoop.sh/)
 ```
     $ choco install maven
     $ scoop install main/maven
@@ -81,6 +82,8 @@ You can confirm that maven has been installed using `mvn -v`
 
 Navigate to and open the EzASM project root directory
 Navigate to the project's Main.java file `(\ezasm\src\main\java\com\ezasm\Main.java)`
+
+*Note: In VSCode, you will have to open an Ubuntu terminal 
 
 ### Testing
 
