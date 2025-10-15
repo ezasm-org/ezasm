@@ -8,7 +8,26 @@ The goal of this project is to create a small-instruction-set programming langua
 
 The user is able to either run a file containing instructions (a program) or enter instructions line by line. The results of these instructions would be resultant on the GUI would list the state of all of the registers, the past/current/upcoming instructions, and the program memory.
 
-## Installation
+<details open>
+<summary><h2 style="display:inline-block">Running EzASM</h2></summary>
+
+[Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+is required to run EzASM.
+
+You can use a package manager to install Java.
+
+#### Linux (Ubuntu or Debian-based):
+```
+$ sudo apt install openjdk-17-jdk
+```
+
+Once you have installed Java, you can either install EzASM or build it yourself to run it.
+
+</details>
+
+
+<details>
+<summary><h2 style="display:inline-block">Installation</h2></summary>
 
 The latest release can be found at the [EzASM releases repository](https://github.com/ezasm-org/EzASM-releases/releases/latest) to install it manually.
 
@@ -19,11 +38,15 @@ $ brew tap ezasm-org/ezasm
 $ brew install ezasm
 ```
 
-## Building 
+</details>
+
+
+<details>
+<summary><h2 style="display:inline-block">Building</h2></summary>
 
 [Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) and  [Maven](https://maven.apache.org/install.html) are required to build EzASM.
 
-You can use the following Maven install commands for your OS/distribution: 
+You can use one the following Maven install commands for your OS/distribution: 
 
 #### macOS: 
 ```
@@ -49,10 +72,10 @@ You can confirm that maven has been installed using `mvn -v`
 
 ### To build EzASM from the command line:
 
-- clone the EzASM repository locally `$ git clone https://github.com/ezasm-org/EzASM.git`
-- navigate to the repository's root directory `$ cd /ezasm`
-- run this command to build the project using Maven:`$ mvn clean compile assembly:single`
-- run this command to run your build:`$ java -jar target/*full.jar`
+- Clone this repository locally: `$ git clone https://github.com/ezasm-org/EzASM.git`
+- Navigate to your clone's root directory using the `cd` command
+- Build the project using Maven: `$ mvn clean compile assembly:single`
+- Run your build: `$ java -jar target/*full.jar`
 
 ### To run EzASM from IDE:
 
@@ -74,8 +97,16 @@ Run `$ mvn clean package` will build a variety of native executables in the `tar
 Options marked with an asterisk `*` will only be generated if you fulfill the requirements to install:
 being on the required operating system and having the necessary optional dependencies.
 
+</details>
 
-#### The appendix can be found [here](https://github.com/ezasm-org/EzASM/wiki/Instruction-Set)
-#### A guide to the syntax of the language can be found [here](https://github.com/ezasm-org/EzASM/wiki/Syntax)
-#### Implementation and structure details can be found [here](https://github.com/ezasm-org/EzASM/wiki/Structure)
+
+<details>
+<summary><h2 style="display:inline-block">Learn More</h2></summary>
+
+#### An appendix of EzASM's commands can be found [here](https://github.com/ezasm-org/EzASM/wiki/Instruction-Set)
+#### A guide to the syntax of EzASM's language can be found [here](https://github.com/ezasm-org/EzASM/wiki/Syntax)
+#### EzASM Implementation and structure details can be found [here](https://github.com/ezasm-org/EzASM/wiki/Structure)
+
+</details>
+
 
