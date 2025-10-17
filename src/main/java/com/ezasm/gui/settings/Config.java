@@ -37,6 +37,10 @@ public class Config {
     public static final String AUTO_SAVE_INTERVAL = "AUTO_SAVE_INTERVAL";
     public static final String AUTO_SAVE_SELECTED = "AUTO_SAVE_SELECTED";
 
+    // Font size limits
+    public static final String MIN_FONT_SIZE = "10"; // very small sizes make it difficult to set font size again
+    public static final String MAX_FONT_SIZE = "60"; // very large sizes may prevent UI from loading
+
     // All default settings
     public static final String DEFAULT_FONT_SIZE = "16";
     public static final String DEFAULT_TAB_SIZE = "2";
@@ -103,6 +107,9 @@ public class Config {
      * @param size the program font size.
      */
     public void setFontSize(int size) {
+        int minSize = Integer.parseInt(MIN_FONT_SIZE);
+        int maxSize = Integer.parseInt(MAX_FONT_SIZE);
+        size = Math.min(maxSize, Math.max(minSize, size));
         props.setProperty(FONT_SIZE, String.valueOf(size));
     }
 
