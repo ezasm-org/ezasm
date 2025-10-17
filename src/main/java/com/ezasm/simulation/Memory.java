@@ -1,9 +1,12 @@
 package com.ezasm.simulation;
 
+import com.ezasm.gui.settings.Config;
 import com.ezasm.simulation.exception.*;
 import com.ezasm.util.RawData;
 
 import java.util.*;
+
+import org.apache.commons.lang3.ObjectUtils.Null;
 
 /**
  * Represents the system memory. There will be a single and contiguous array of memory which represents both the stack
@@ -13,7 +16,7 @@ import java.util.*;
  * float size).
  */
 public class Memory {
-
+    private Config config;
     /**
      * The default number of words possible to store in the system.
      */
@@ -36,20 +39,28 @@ public class Memory {
     private int alloc;
     private int stringAlloc;
 
+    /**
+     * Determines whether memory values are randomized or zeroed out when memory is reset
+     */
+    private boolean randomizeOnReset;
+
     private final Map<String, RawData> stringAddressMap;
 
     /**
      * Constructs memory with the default parameters.
      */
     public Memory() {
+        this.config = new Config();
         this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
         this.disallowedBytes = wordSize * DEFAULT_OFFSET;
         this.memorySize = offsetBytes + DEFAULT_MEMORY_WORDS * wordSize;
         this.memory = new byte[memorySize];
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
+        this.randomizeOnReset = this.config.getMemoryRandomizeOnReset();
+        System.out.println("Memory instantiated, randomizeOnReset = " + this.randomizeOnReset);
         this.stringAddressMap = new HashMap<>();
-        randomizeMemory();
+        resetMemory();
     }
 
     /**
@@ -59,6 +70,7 @@ public class Memory {
      * @param memorySize the memory size in words.
      */
     public Memory(int wordSize, int memorySize) {
+        this.config = new Config();
         Memory.wordSize = wordSize;
         this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
         this.disallowedBytes = wordSize * DEFAULT_OFFSET;
@@ -66,8 +78,10 @@ public class Memory {
         this.memory = new byte[this.memorySize];
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
+        this.randomizeOnReset = this.config.getMemoryRandomizeOnReset();
+        System.out.println("Memory instantiated, randomizeOnReset = " + this.randomizeOnReset);
         this.stringAddressMap = new HashMap<>();
-        randomizeMemory();
+        resetMemory();
     }
 
     /**
@@ -83,23 +97,36 @@ public class Memory {
      * Resets the memory by setting all values to zero and returning the allocation pointer to zero.
      */
     public void reset() {
-        Arrays.fill(memory, (byte) 0);
+        try {
+            randomizeOnReset = config.getMemoryRandomizeOnReset();
+            System.out.println("Memory reset, setting randomizeOnReset value = " + randomizeOnReset);
+            System.out.println("FOR REFERENCE: font = " + config.getFontSize());
+        } catch (Exception e) {
+            System.out.println("config not defined" + e.getMessage());
+        }
         alloc = offsetBytes;
         stringAlloc = STRING_OFFSET * wordSize;
         stringAddressMap.clear();
-        randomizeMemory();
+        resetMemory();
     }
 
     /**
      * Randomize the memory so that it is not all zeroes.
      */
-    private void randomizeMemory() {
-        Random random = new Random();
-        random.setSeed(System.nanoTime());
-        byte[] bytes = new byte[1];
-        for (int i = offsetBytes; i < memory.length; ++i) {
-            random.nextBytes(bytes);
-            memory[i] = bytes[0];
+    private void resetMemory() {
+        // resetting randomizes each byte of memory
+        if (randomizeOnReset) {
+            byte[] bytes = new byte[1];
+            Random random = new Random();
+            random.setSeed(System.nanoTime());
+            for (int i = offsetBytes; i < memory.length; ++i) {
+                random.nextBytes(bytes);
+                memory[i] = bytes[0];
+            }
+        }
+        // resetting sets each byte of memory to 0
+        else {
+            Arrays.fill(memory, (byte) 0);
         }
     }
 

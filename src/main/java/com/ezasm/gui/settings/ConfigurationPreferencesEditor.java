@@ -12,8 +12,8 @@ import com.ezasm.gui.util.IThemeable;
 
 /**
  * Provides a GUI panel for editing user-configurable preferences such as font size, simulation delay, tab size, theme
- * selection, and auto-save behavior. This class implements both {@link PreferencesEditor} and {@link IThemeable} to
- * support configuration management and dynamic theme application.
+ * selection, auto-save and memory randomize-on-reset behavior. This class implements both {@link PreferencesEditor} and
+ * {@link IThemeable} to support configuration management and dynamic theme application.
  */
 public class ConfigurationPreferencesEditor implements PreferencesEditor, IThemeable {
     private final Config config;
@@ -21,6 +21,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
     private JTextField fontInput;
     private JSlider speedSlider, tabSizeSlider;
     private AutoSaveSliderToggleButton autoSaveButton;
+    private MemoryRandomizeOnResetButton memoryRandomizeOnResetButton;
     private JComboBox<String> themeInput;
 
     /**
@@ -36,6 +37,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         speedSlider = new JSlider(50, 1000, config.getSimulationDelay());
         tabSizeSlider = new JSlider(1, 8, config.getTabSize());
         autoSaveButton = new AutoSaveSliderToggleButton(config.getAutoSaveSelected(), config.getAutoSaveInterval());
+        memoryRandomizeOnResetButton = new MemoryRandomizeOnResetButton(config.getMemoryRandomizeOnReset());
         themeInput = new JComboBox<>(Config.THEMES);
         themeInput.setSelectedItem(config.getTheme().name());
 
@@ -49,6 +51,8 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         panel.add(tabSizeSlider);
         panel.add(new JLabel("Auto Save"));
         panel.add(autoSaveButton);
+        panel.add(new JLabel("Randomize Memory"));
+        panel.add(memoryRandomizeOnResetButton);
     }
 
     /**
@@ -90,6 +94,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
 
         try {
             config.setFontSize(Integer.parseInt(fontInput.getText()));
+            fontInput.setText(String.valueOf(config.getFontSize()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Invalid font size.");
         }
@@ -98,6 +103,11 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         config.setTheme(Objects.requireNonNull(themeInput.getSelectedItem()).toString());
         config.setAutoSaveInterval(autoSaveButton.getSliderValue());
         config.setAutoSaveSelected(autoSaveButton.getToggleButtonStatus());
+        // does memory randomization setting have to be inverted from its button?
+        config.setMemoryRandomizeOnReset(memoryRandomizeOnResetButton.isSelected());
+        System.out.println("memoryRandomizeOnResetButton.isSelected() = " + memoryRandomizeOnResetButton.isSelected()
+                + ", config.getMemoryRandomizeOnReset() = " + config.getMemoryRandomizeOnReset());
+        System.out.println("FOR REFERENCE: font size = " + config.getFontSize());
         config.saveChanges();
     }
 
@@ -113,6 +123,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         themeInput.setSelectedIndex(0);
         autoSaveButton.setToggleButtonStatus(Boolean.parseBoolean(Config.DEFAULT_AUTO_SAVE_SELECTED));
         autoSaveButton.setSliderValue(Integer.parseInt(Config.DEFAULT_AUTO_SAVE_INTERVAL));
+        memoryRandomizeOnResetButton.setSelected(Boolean.parseBoolean(Config.DEFAULT_MEMORY_RANDOMIZE_ON_RESET));
     }
 
     /**
@@ -133,6 +144,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         applyTo(tabSizeSlider, theme, font);
         applyTo(themeInput, theme, font);
         autoSaveButton.applyTheme(font, theme);
+        applyTo(memoryRandomizeOnResetButton, theme, font);
 
         for (Component c : panel.getComponents()) {
             if (c instanceof JLabel label) {
