@@ -11,8 +11,7 @@ The user is able to either run a file containing instructions (a program) or ent
 <details open>
 <summary><h2 style="display:inline-block">Running EzASM</h2></summary>
 
-[Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-is required to run EzASM.
+If you want to run EzASM using a JAR you need [Java SDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html). There are releases that are not JAR files on ezasm-org/ezasm-releases.
 
 You can use a package manager to install Java.
 
