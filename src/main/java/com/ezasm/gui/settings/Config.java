@@ -227,6 +227,7 @@ public class Config {
      * @return true if memory randomization is enabled, false otherwise.
      */
     public boolean getMemoryRandomizeOnReset() {
+        props = readProperties();
         return Boolean.parseBoolean(props.getProperty(MEMORY_RANDOMIZE_ON_RESET));
     }
 
@@ -237,6 +238,7 @@ public class Config {
      */
     public void setMemoryRandomizeOnReset(boolean enabled) {
         props.setProperty(MEMORY_RANDOMIZE_ON_RESET, String.valueOf(enabled));
+        saveChanges();
     }
 
     /**
