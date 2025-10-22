@@ -1,11 +1,6 @@
 package com.ezasm.gui.settings;
 
-import com.ezasm.gui.util.EditorTheme;
-
-import java.awt.event.ItemEvent;
-
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * A toggle button to represent whether memory is randomized or zeroed out on resets.

@@ -6,8 +6,6 @@ import com.ezasm.util.RawData;
 
 import java.util.*;
 
-import org.apache.commons.lang3.ObjectUtils.Null;
-
 /**
  * Represents the system memory. There will be a single and contiguous array of memory which represents both the stack
  * and heap with the stack growing downward and the heap growing upward. Implements an "offset" for the address spacing
@@ -39,11 +37,6 @@ public class Memory {
     private int alloc;
     private int stringAlloc;
 
-    /**
-     * Determines whether memory values are randomized or zeroed out when memory is reset
-     */
-    private boolean randomizeOnReset;
-
     private final Map<String, RawData> stringAddressMap;
 
     /**
@@ -57,8 +50,6 @@ public class Memory {
         this.memory = new byte[memorySize];
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
-        this.randomizeOnReset = this.config.getMemoryRandomizeOnReset();
-        System.out.println("Memory instantiated, randomizeOnReset = " + this.randomizeOnReset);
         this.stringAddressMap = new HashMap<>();
         resetMemory();
     }
@@ -78,8 +69,6 @@ public class Memory {
         this.memory = new byte[this.memorySize];
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
-        this.randomizeOnReset = this.config.getMemoryRandomizeOnReset();
-        System.out.println("Memory instantiated, randomizeOnReset = " + this.randomizeOnReset);
         this.stringAddressMap = new HashMap<>();
         resetMemory();
     }
@@ -97,13 +86,6 @@ public class Memory {
      * Resets the memory by setting all values to zero and returning the allocation pointer to zero.
      */
     public void reset() {
-        try {
-            randomizeOnReset = config.getMemoryRandomizeOnReset();
-            System.out.println("Memory reset, setting randomizeOnReset value = " + randomizeOnReset);
-            System.out.println("FOR REFERENCE: font = " + config.getFontSize());
-        } catch (Exception e) {
-            System.out.println("config not defined" + e.getMessage());
-        }
         alloc = offsetBytes;
         stringAlloc = STRING_OFFSET * wordSize;
         stringAddressMap.clear();
@@ -111,11 +93,11 @@ public class Memory {
     }
 
     /**
-     * Randomize the memory so that it is not all zeroes.
+     * Reset the memory to either be randomized or be all zeroes, depending on the config setting.
      */
     private void resetMemory() {
         // resetting randomizes each byte of memory
-        if (randomizeOnReset) {
+        if (config.getMemoryRandomizeOnReset()) {
             byte[] bytes = new byte[1];
             Random random = new Random();
             random.setSeed(System.nanoTime());

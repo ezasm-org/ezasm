@@ -85,8 +85,6 @@ public class Config {
         if (CONFIG_FILE.exists()) {
             props = readProperties();
             validateConfig();
-            System.out
-                    .println("Config class made, config file exists: " + props.getProperty(MEMORY_RANDOMIZE_ON_RESET));
         } else {
             props.setProperty(FONT_SIZE, DEFAULT_FONT_SIZE);
             props.setProperty(SIMULATION_DELAY, DEFAULT_SIMULATION_DELAY);
@@ -96,8 +94,6 @@ public class Config {
             props.setProperty(AUTO_SAVE_SELECTED, DEFAULT_AUTO_SAVE_SELECTED);
             props.setProperty(MEMORY_RANDOMIZE_ON_RESET, DEFAULT_MEMORY_RANDOMIZE_ON_RESET);
             saveChanges();
-            System.out.println(
-                    "Config class made, config file doesn't exist: " + props.getProperty(MEMORY_RANDOMIZE_ON_RESET));
         }
     }
 
@@ -222,7 +218,8 @@ public class Config {
     }
 
     /**
-     * Gets whether memory randomization on reset is enabled.
+     * Gets whether memory randomization on reset is enabled. Reads from the config file to access the most up-to-date
+     * settings.
      *
      * @return true if memory randomization is enabled, false otherwise.
      */
@@ -232,7 +229,8 @@ public class Config {
     }
 
     /**
-     * Sets the status of memory randomization being enabled.
+     * Sets the status of memory randomization being enabled. Also saves this change immediately to the config file to
+     * be accessed later.
      *
      * @param enabled the status of memory randomization being enabled.
      */
@@ -262,7 +260,6 @@ public class Config {
             CONFIG_FILE.getParentFile().mkdirs();
             FileWriter writer = new FileWriter(CONFIG_FILE);
             props.store(writer, "");
-            System.out.println("Configs saved, randomize on reset = " + props.getProperty(MEMORY_RANDOMIZE_ON_RESET));
             writer.close();
         } catch (IOException e) {
             SystemStreams.printlnCurrentErr("Error saving settings");

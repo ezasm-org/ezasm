@@ -105,9 +105,6 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         config.setAutoSaveSelected(autoSaveButton.getToggleButtonStatus());
         // does memory randomization setting have to be inverted from its button?
         config.setMemoryRandomizeOnReset(memoryRandomizeOnResetButton.isSelected());
-        System.out.println("memoryRandomizeOnResetButton.isSelected() = " + memoryRandomizeOnResetButton.isSelected()
-                + ", config.getMemoryRandomizeOnReset() = " + config.getMemoryRandomizeOnReset());
-        System.out.println("FOR REFERENCE: font size = " + config.getFontSize());
         config.saveChanges();
     }
 
