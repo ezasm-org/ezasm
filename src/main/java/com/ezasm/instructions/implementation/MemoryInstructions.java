@@ -106,7 +106,7 @@ public class MemoryInstructions {
      * Increments heap pointer by input bytes and returns a pointer to the old hp.
      *
      * @param output the place to store the start of the alloc'd memory
-     * @param input the number of bytes of memory
+     * @param input  the number of bytes of memory
      * @throws SimulationException if the heap overlaps the stack
      */
     @Instruction
@@ -115,6 +115,38 @@ public class MemoryInstructions {
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
         Transformation t1 = new Transformation(h, h.get(),
                 new RawData(h.get().intValue() + input.get(simulator).intValue()));
+        Transformation t2 = io.transformation(t1.from());
+        return new TransformationSequence(t1, t2);
+    }
+
+    /**
+     * Allocation but tracks how many allocations it's made
+     *
+     * @param output the place to store the start of alloc'd memory
+     * @param input the number of bytes of memory
+     * @throws SimulationException
+     */
+    @Instruction
+    public TransformationSequence malloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
+        // iterate over freeList, if block large enough, allocate
+
+        /*long requestedBytes = input.get(simulator).intValue();
+        Integer reusableAddr = null;
+        for (var block : memory.getFreeList().entrySet()) {
+
+        }*/
+        HeapPointerTransformable h = new HeapPointerTransformable(simulator);
+        InputOutputTransformable io = new InputOutputTransformable(simulator, output);
+
+        long currHP = h.get().intValue();
+        long size = input.get(simulator).intValue();
+        long newHP = currHP + size;
+
+        simulator.getMemory().getAllocations().put(currHP, size);
+        System.out.printf("Allocated %d blocks.\n", simulator.getMemory().getAllocations().size());
+
+        Transformation t1 = new Transformation(h, h.get(),
+                new RawData(currHP + size));
         Transformation t2 = io.transformation(t1.from());
         return new TransformationSequence(t1, t2);
     }

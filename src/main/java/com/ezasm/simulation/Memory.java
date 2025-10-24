@@ -38,6 +38,8 @@ public class Memory {
 
     private final Map<String, RawData> stringAddressMap;
 
+    private final Map<Long, Long> allocationsMap;
+
     /**
      * Constructs memory with the default parameters.
      */
@@ -49,6 +51,7 @@ public class Memory {
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
+        this.allocationsMap = new HashMap<>();
         randomizeMemory();
     }
 
@@ -67,6 +70,7 @@ public class Memory {
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
+        this.allocationsMap = new HashMap<>();
         randomizeMemory();
     }
 
@@ -88,6 +92,7 @@ public class Memory {
         stringAlloc = STRING_OFFSET * wordSize;
         stringAddressMap.clear();
         randomizeMemory();
+        this.allocationsMap.clear();
     }
 
     /**
@@ -147,6 +152,13 @@ public class Memory {
     public int currentHeapPointer() {
         return alloc;
     }
+
+    /**
+     * Gets the currently allocated heap memory
+     *
+     * @return the currently allocations map
+     */
+    public Map<Long, Long> getAllocations() { return allocationsMap; }
 
     /**
      * Sets the current heap pointer of the memory.
