@@ -102,6 +102,13 @@ public class MemoryInstructions {
         return new TransformationSequence(io.transformation(input.get(simulator)));
     }
 
+    /**
+     * Increments heap pointer by input bytes and returns a pointer to the old hp.
+     *
+     * @param output the place to store the start of the alloc'd memory
+     * @param input the number of bytes of memory
+     * @throws SimulationException if the heap overlaps the stack
+     */
     @Instruction
     public TransformationSequence alloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
         HeapPointerTransformable h = new HeapPointerTransformable(simulator);
@@ -117,5 +124,4 @@ public class MemoryInstructions {
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
         return new TransformationSequence(io.transformation(input.get(simulator)));
     }
-
 }
