@@ -173,7 +173,7 @@
                                     <generateInstaller>true</generateInstaller>
                                     <administratorRequired>false</administratorRequired>
                                     <generateInstaller>true</generateInstaller>
-                                    <assetsDir>${project.basedir}/src/main/resources/javapackager/linux/startup.sh.vtl</assetsDir>
+                                    <assetsDir>${project.basedir}/src/main/resources/javapackager</assetsDir>
                                     <macConfig>
                                         <icnsFile>${project.basedir}/src/main/resources/icons/logo/EzASM.icns</icnsFile>
                                         <codesignApp>false</codesignApp>
