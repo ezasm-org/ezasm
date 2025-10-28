@@ -36,12 +36,18 @@ public class Config {
     public static final String FONT_FAMILY = "FONT_FAMILY";
     public static final String AUTO_SAVE_INTERVAL = "AUTO_SAVE_INTERVAL";
     public static final String AUTO_SAVE_SELECTED = "AUTO_SAVE_SELECTED";
+    public static final String MEMORY_RANDOMIZE_ON_RESET = "MEMORY_RANDOMIZE_ON_RESET";
+
+    // Font size limits
+    public static final String MIN_FONT_SIZE = "10"; // very small sizes make it difficult to set font size again
+    public static final String MAX_FONT_SIZE = "60"; // very large sizes may prevent UI from loading
 
     // All default settings
     public static final String DEFAULT_FONT_SIZE = "16";
     public static final String DEFAULT_TAB_SIZE = "2";
     public static final String DEFAULT_AUTO_SAVE_SELECTED = "false";
     public static final String DEFAULT_AUTO_SAVE_INTERVAL = "10";
+    public static final String DEFAULT_MEMORY_RANDOMIZE_ON_RESET = "true";
     public static final String DEFAULT_SIMULATION_DELAY = "250";
     public static final String DEFAULT_THEME = EditorTheme.Light.name();
     public static final String DEFAULT_FONT = "JetBrains Mono"; // unclear if this will be allowed to change
@@ -50,13 +56,15 @@ public class Config {
             entry(TAB_SIZE, DEFAULT_TAB_SIZE), entry(SIMULATION_DELAY, DEFAULT_SIMULATION_DELAY),
             entry(THEME, DEFAULT_THEME), entry(FONT_FAMILY, DEFAULT_FONT),
             entry(AUTO_SAVE_INTERVAL, DEFAULT_AUTO_SAVE_INTERVAL),
-            entry(AUTO_SAVE_SELECTED, DEFAULT_AUTO_SAVE_SELECTED));
+            entry(AUTO_SAVE_SELECTED, DEFAULT_AUTO_SAVE_SELECTED),
+            entry(MEMORY_RANDOMIZE_ON_RESET, DEFAULT_MEMORY_RANDOMIZE_ON_RESET));
 
     private final Map<String, Function<Config, Object>> propertyGetters = Map.ofEntries(
             entry(FONT_SIZE, Config::getFontSize), entry(TAB_SIZE, Config::getTabSize),
             entry(SIMULATION_DELAY, Config::getSimulationDelay), entry(THEME, Config::getTheme),
             entry(FONT_FAMILY, Config::getFont), entry(AUTO_SAVE_INTERVAL, Config::getAutoSaveInterval),
-            entry(AUTO_SAVE_SELECTED, Config::getAutoSaveSelected));
+            entry(AUTO_SAVE_SELECTED, Config::getAutoSaveSelected),
+            entry(MEMORY_RANDOMIZE_ON_RESET, Config::getMemoryRandomizeOnReset));
 
     // Possible themes
     private static final String[] THEME_ARRAY = { EditorTheme.Light.name(), EditorTheme.Dracula.name(),
@@ -84,6 +92,7 @@ public class Config {
             props.setProperty(TAB_SIZE, DEFAULT_TAB_SIZE);
             props.setProperty(AUTO_SAVE_INTERVAL, DEFAULT_AUTO_SAVE_INTERVAL);
             props.setProperty(AUTO_SAVE_SELECTED, DEFAULT_AUTO_SAVE_SELECTED);
+            props.setProperty(MEMORY_RANDOMIZE_ON_RESET, DEFAULT_MEMORY_RANDOMIZE_ON_RESET);
             saveChanges();
         }
     }
@@ -103,6 +112,9 @@ public class Config {
      * @param size the program font size.
      */
     public void setFontSize(int size) {
+        int minSize = Integer.parseInt(MIN_FONT_SIZE);
+        int maxSize = Integer.parseInt(MAX_FONT_SIZE);
+        size = Math.min(maxSize, Math.max(minSize, size));
         props.setProperty(FONT_SIZE, String.valueOf(size));
     }
 
@@ -206,6 +218,28 @@ public class Config {
     }
 
     /**
+     * Gets whether memory randomization on reset is enabled. Reads from the config file to access the most up-to-date
+     * settings.
+     *
+     * @return true if memory randomization is enabled, false otherwise.
+     */
+    public boolean getMemoryRandomizeOnReset() {
+        props = readProperties();
+        return Boolean.parseBoolean(props.getProperty(MEMORY_RANDOMIZE_ON_RESET));
+    }
+
+    /**
+     * Sets the status of memory randomization being enabled. Also saves this change immediately to the config file to
+     * be accessed later.
+     *
+     * @param enabled the status of memory randomization being enabled.
+     */
+    public void setMemoryRandomizeOnReset(boolean enabled) {
+        props.setProperty(MEMORY_RANDOMIZE_ON_RESET, String.valueOf(enabled));
+        saveChanges();
+    }
+
+    /**
      * Resets all settings in this configuration to their default values.
      */
     public void resetDefaults() {
@@ -215,6 +249,7 @@ public class Config {
         this.setTabSize(Integer.parseInt(DEFAULT_TAB_SIZE));
         this.setAutoSaveInterval(Integer.parseInt(DEFAULT_AUTO_SAVE_INTERVAL));
         this.setAutoSaveSelected(false);
+        this.setMemoryRandomizeOnReset(Boolean.parseBoolean(DEFAULT_MEMORY_RANDOMIZE_ON_RESET));
     }
 
     /**
