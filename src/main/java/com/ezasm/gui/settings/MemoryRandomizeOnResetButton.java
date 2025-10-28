@@ -16,8 +16,6 @@ public class MemoryRandomizeOnResetButton extends JToggleButton {
      * @param status the initial state of the button.
      */
     public MemoryRandomizeOnResetButton(boolean status) {
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
         this.setContentAreaFilled(false);
         this.setOpaque(true);
         this.setSelected(status);

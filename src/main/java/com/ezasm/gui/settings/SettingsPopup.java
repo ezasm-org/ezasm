@@ -120,7 +120,7 @@ public class SettingsPopup implements IThemeable {
         JButton save, resetDefaults;
         popup = new JFrame("EzASM Settings");
         popup.setLayout(new BorderLayout());
-        popup.setMinimumSize(new Dimension(500, 300));
+        popup.setMinimumSize(new Dimension(500, 500));
         popup.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Create consistent editors (NO duplicates)
