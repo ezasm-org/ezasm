@@ -278,7 +278,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Applies the proper theming to the editor area.
+     * Applies the proper theming to the editor area, and bolds instruction keywords.
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
         themeSyntaxTextArea(font, editorTheme);
@@ -287,6 +287,13 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         recolorHighlights(editorTheme);
+
+        SyntaxScheme scheme = textArea.getSyntaxScheme();
+        Style instr = scheme.getStyle(Token.RESERVED_WORD);
+        Font base = instr.font != null ? instr.font : textArea.getFont();
+        instr.font = base.deriveFont(Font.BOLD);
+
+        textArea.setSyntaxScheme(scheme);
     }
 
     /**
