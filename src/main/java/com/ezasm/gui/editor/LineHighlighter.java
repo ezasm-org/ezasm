@@ -78,13 +78,30 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         Window.getInstance().getEditorPanes().switchToFile(currentFile);
         PatchedRSyntaxTextArea textArea = Window.getInstance().getEditor().getTextArea();
 
-        try {
-            textArea.getHighlighter().addHighlight(lineStartOffsets.get(currentFile).get(lineNumber),
-                    lineEndOffsets.get(currentFile).get(lineNumber), this);
-            textArea.setCaretPosition(lineStartOffsets.get(currentFile).get(lineNumber));
-            textArea.repaint();
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        final String fileForEDT = currentFile;
+        final int lineForEDT = lineNumber;
+        final PatchedRSyntaxTextArea textAreaForEDT = textArea;
+
+        
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            synchronized (this) {
+                try {
+                    int start = lineStartOffsets.get(fileForEDT).get(lineForEDT);
+                    int end = lineEndOffsets.get(fileForEDT).get(lineForEDT);
+                    // sanity checks
+                    if (start < 0 || end < 0 || start > end)
+                        return;
+                    textAreaForEDT.getHighlighter().addHighlight(start, end, this);
+                    if (textAreaForEDT.getCaret() != null) {
+                        textAreaForEDT.setCaretPosition(start);
+                    }
+                    textAreaForEDT.repaint();
+                } catch (BadLocationException ex) {
+                    // Log the location info for debugging and print stack trace
+                    System.out.println("BadLocationException at file=" + fileForEDT + " lineNumber=" + lineForEDT);
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 }
