@@ -14,6 +14,8 @@ import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.simulation.transform.transformable.MemoryTransformable;
 import com.ezasm.util.RawData;
 
+import java.util.Map;
+
 /**
  * An implementation of memory manipulation instructions for the simulation.
  */
@@ -128,13 +130,15 @@ public class MemoryInstructions {
      */
     @Instruction
     public TransformationSequence malloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
-        // iterate over freeList, if block large enough, allocate
+        // iterate over free list, if block large enough, allocate (add to allocations, coallesce)
 
-        /*long requestedBytes = input.get(simulator).intValue();
+        /*
+        long requestedBytes = input.get(simulator).intValue();
         Integer reusableAddr = null;
         for (var block : memory.getFreeList().entrySet()) {
 
-        }*/
+        }
+        */
         HeapPointerTransformable h = new HeapPointerTransformable(simulator);
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
 
@@ -143,12 +147,35 @@ public class MemoryInstructions {
         long newHP = currHP + size;
 
         simulator.getMemory().getAllocations().put(currHP, size);
-        System.out.printf("Allocated %d blocks.\n", simulator.getMemory().getAllocations().size());
+        Long addr = simulator.getMemory().getAllocations().get(currHP);
+        System.out.printf("Currently %d blocks allocated.\n",
+                simulator.getMemory().getAllocations().size());
 
         Transformation t1 = new Transformation(h, h.get(),
                 new RawData(currHP + size));
         Transformation t2 = io.transformation(t1.from());
         return new TransformationSequence(t1, t2);
+    }
+
+
+    /**
+     *
+     *
+     * @param input
+     * @return
+     * @throws SimulationException
+     */
+    @Instruction
+    public TransformationSequence free(IAbstractInputOutput input) throws SimulationException {
+        Map<Long, Long> allocations = simulator.getMemory().getAllocations();
+        long addr = input.get(simulator).intValue();
+        Long size = allocations.remove(addr);
+
+        if (size == null) throw new SimulationException("Invalid free");
+
+        System.out.printf("freeing %d...\n", addr);
+        simulator.getMemory().addToFreeList(addr, size);
+        return new TransformationSequence();
     }
 
     @Instruction

@@ -38,7 +38,8 @@ public class Memory {
 
     private final Map<String, RawData> stringAddressMap;
 
-    private final Map<Long, Long> allocationsMap;
+    private final Map<Long, Long> allocationsMap; // map the starting address of a alloc'd block to it's size
+    private final List<Block> freeList;
 
     /**
      * Constructs memory with the default parameters.
@@ -52,6 +53,7 @@ public class Memory {
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
         this.allocationsMap = new HashMap<>();
+        this.freeList = new ArrayList<>();
         randomizeMemory();
     }
 
@@ -71,6 +73,7 @@ public class Memory {
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
         this.allocationsMap = new HashMap<>();
+        this.freeList = new ArrayList<>();
         randomizeMemory();
     }
 
@@ -159,6 +162,24 @@ public class Memory {
      * @return the currently allocations map
      */
     public Map<Long, Long> getAllocations() { return allocationsMap; }
+
+    /**
+     * Gets the list of free blocks of memory up to heap pointer
+     *
+     * @return the list of blocks
+     */
+    public List<Block> getFreeList() { return freeList; }
+
+    /**
+     * Simple insertion of a new block into free list
+     *   TODO implement smarter coalesce to minimize fragmentation
+     *
+     * @param addr the base address of an alloc'd block
+     * @param size the size of the alloc'd block
+     */
+    public void addToFreeList(long addr, long size) {
+        freeList.add(new Block(addr, size));
+    }
 
     /**
      * Sets the current heap pointer of the memory.
