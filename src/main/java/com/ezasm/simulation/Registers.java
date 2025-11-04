@@ -15,6 +15,7 @@ public class Registers {
     public static final String ZERO = "ZERO"; // The number zero
     public static final String PID = "PID"; // Program identifier
     public static final String FID = "FID"; // File Identifier
+    public static final String FD = "FD"; // File Descriptor
     public static final String PC = "PC"; // Program counter
     public static final String SP = "SP"; // Stack pointer
     public static final String RA = "RA"; // Return address
@@ -94,7 +95,7 @@ public class Registers {
     private static void initialize() {
         registerByString = new HashMap<>();
         registerByInt = new HashMap<>();
-        addRegisters(ZERO, PID, FID, PC, SP, RA, A0, A1, A2, R0, R1, R2); // Add base registers
+        addRegisters(ZERO, PID, FID, FD, PC, SP, RA, A0, A1, A2, R0, R1, R2); // Add base registers
         addRegisters(LO, HI); // Add special registers
         addRegisters(S0, S1, S2, S3, S4, S5, S6, S7, S8, S9); // Add saved registers
         addRegisters(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9); // Add temporary registers

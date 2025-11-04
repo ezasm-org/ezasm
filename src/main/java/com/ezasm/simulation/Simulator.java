@@ -21,6 +21,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.io.File;
 import java.io.IOException;
+import com.ezasm.util.RandomAccessFileStream;
 import java.util.*;
 
 /**
@@ -45,6 +46,9 @@ public class Simulator {
 
     private final Register pc;
     private final Register fi;
+    // File descriptor table for runtime file IO (maps fd -> RandomAccessFileStream)
+    private final Map<Integer, RandomAccessFileStream> fdTable;
+    private int nextFd;
     private String executionDirectory;
     private boolean canUndo;
 
@@ -68,6 +72,8 @@ public class Simulator {
         this.fi = registers.getRegister(Registers.FID);
         this.executionDirectory = "";
         this.canUndo = false;
+        this.fdTable = new HashMap<>();
+        this.nextFd = 3; // reserve 0-2 for stdin/out/err if desired
 
         initialize();
     }
@@ -367,6 +373,45 @@ public class Simulator {
      */
     public String getFile(int fid) {
         return fileToIdentifier.getKey(fid);
+    }
+
+    /**
+     * Opens a file for reading and returns a file descriptor integer. The file path is resolved relative to the
+     * simulator's execution directory when appropriate.
+     *
+     * @param path the path to the file to open (may be relative to the execution directory).
+     * @return the allocated file descriptor integer.
+     * @throws SimulationException if the file cannot be opened.
+     */
+    public int openFile(String path) throws SimulationException {
+        String absoluteFilePath = executionDirectory.isEmpty() ? path : executionDirectory + File.separator + path;
+        File file = new File(absoluteFilePath);
+        try {
+            RandomAccessFileStream raf = new RandomAccessFileStream(file);
+            int fd = nextFd++;
+            fdTable.put(fd, raf);
+            return fd;
+        } catch (IOException e) {
+            throw new SimulationException(String.format("Unable to open file '%s': %s", path, e.getMessage()));
+        }
+    }
+
+    /**
+     * Closes the given file descriptor.
+     *
+     * @param fd the file descriptor to close.
+     * @throws SimulationException if the fd is invalid or closing fails.
+     */
+    public void closeFile(int fd) throws SimulationException {
+        RandomAccessFileStream raf = fdTable.remove(fd);
+        if (raf == null) {
+            throw new SimulationException(String.format("Invalid file descriptor %d", fd));
+        }
+        try {
+            raf.close();
+        } catch (IOException e) {
+            throw new SimulationException(String.format("Unable to close file descriptor %d: %s", fd, e.getMessage()));
+        }
     }
 
 }
