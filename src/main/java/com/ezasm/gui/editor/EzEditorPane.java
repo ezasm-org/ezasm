@@ -3,7 +3,7 @@ package com.ezasm.gui.editor;
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Highlighter;
-import javax.swing.AbstractAction;
+
 import java.awt.event.ActionEvent;
 
 import com.ezasm.gui.Window;
@@ -17,6 +17,7 @@ import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -349,7 +350,17 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * @return true if the file is an anonymous file, false otherwise.
      */
     public boolean isFileAnonymous() {
-        return openFilePath == null || openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX);
+        if (openFilePath == null || openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX)) {
+            return true;
+        }
+        // file isn't anonymous, but does it still exist? (it may have been deleted)
+        File fileToUpdate = new File(getOpenFilePath());
+        if (!fileToUpdate.exists()) {
+            // anonymize file because it doesn't exist anymore (stop autosaving until it's manually saved again)
+            openFilePath = EditorTabbedPane.NEW_FILE_PREFIX + openFilePath;
+            return true;
+        }
+        return false;
     }
 
     /**
