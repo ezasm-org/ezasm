@@ -12,6 +12,7 @@ import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.simulation.Memory;
 import com.ezasm.util.RawData;
 
+// no direct File import needed; simulator handles file resolution
 /**
  * Implements file descriptor based instructions such as open and close.
  */
@@ -68,6 +69,41 @@ public class FileIOInstructions {
         InputOutputTransformable fdio = new InputOutputTransformable(simulator, new RegisterInputOutput(Registers.FD));
         Transformation t = fdio.transformation(new RawData(0));
         return new TransformationSequence(t);
+    }
+
+    /**
+     * Write a null-terminated string from memory into a new file. The instruction takes two pointers: the address of
+     * the filename string and the address of the data string. The file will be created/overwritten with the data.
+     *
+     * @param filenamePtr pointer to null-terminated filename string in memory
+     * @param dataPtr     pointer to null-terminated data string in memory
+     * @return empty transformation sequence (side-effect performed immediately)
+     * @throws SimulationException on memory or IO error
+     */
+    @Instruction
+    public TransformationSequence write(IAbstractInput filenamePtr, IAbstractInput dataPtr) throws SimulationException {
+        int fnameAddr = (int) filenamePtr.get(simulator).intValue();
+        StringBuilder fname = new StringBuilder();
+        int idx = 0;
+        long cur = simulator.getMemory().read(fnameAddr).intValue();
+        while (cur != 0) {
+            fname.append((char) cur);
+            idx++;
+            cur = simulator.getMemory().read(fnameAddr + idx * Memory.getWordSize()).intValue();
+        }
+
+        int dataAddr = (int) dataPtr.get(simulator).intValue();
+        StringBuilder data = new StringBuilder();
+        idx = 0;
+        cur = simulator.getMemory().read(dataAddr).intValue();
+        while (cur != 0) {
+            data.append((char) cur);
+            idx++;
+            cur = simulator.getMemory().read(dataAddr + idx * Memory.getWordSize()).intValue();
+        }
+
+        simulator.writeFile(fname.toString(), data.toString());
+        return new TransformationSequence();
     }
 
 }

@@ -414,4 +414,20 @@ public class Simulator {
         }
     }
 
+    /**
+     * Writes the given content to a file. Path resolution is relative to the simulator execution directory.
+     *
+     * @param path    the desired file path (relative or absolute)
+     * @param content the contents to write into the file
+     * @throws SimulationException if an IO error occurs
+     */
+    public void writeFile(String path, String content) throws SimulationException {
+        String absoluteFilePath = executionDirectory.isEmpty() ? path : executionDirectory + File.separator + path;
+        try {
+            FileIO.writeFile(new File(absoluteFilePath), content);
+        } catch (IOException e) {
+            throw new SimulationException(String.format("Unable to write file '%s': %s", path, e.getMessage()));
+        }
+    }
+
 }
