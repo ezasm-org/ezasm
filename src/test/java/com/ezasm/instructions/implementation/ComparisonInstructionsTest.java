@@ -42,6 +42,7 @@ public class ComparisonInstructionsTest {
             simulator.addLine(new Line("add", new String[] { "$t0", "$t0", "2" }));
             simulator.addLine(new Line("add", new String[] { "$t1", "$t1", "2" }));
             simulator.addLine(new Line("sle", new String[] { "$t2", "$t0", "$t1" }));
+            // create new tests for less than
         } catch (ParseException e) {
             fail(e);
         }
@@ -84,6 +85,7 @@ public class ComparisonInstructionsTest {
             simulator.addLine(new Line("add", new String[] { "$t0", "$t0", "2" }));
             simulator.addLine(new Line("add", new String[] { "$t1", "$t1", "2" }));
             simulator.addLine(new Line("sge", new String[] { "$t2", "$t0", "$t1" }));
+            // create test for greater than
         } catch (ParseException e) {
             fail(e);
         }
