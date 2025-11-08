@@ -47,15 +47,20 @@ class ConversionTest {
         byte[] data1 = Conversion.doubleToBytes(double1);
         byte[] data2 = Conversion.doubleToBytes(double2);
         byte[] data3 = Conversion.doubleToBytes(double3);
-        for (byte b : data1)
-            assertEquals(0, b);
+
+        assertEquals(double1, Conversion.bytesToDouble(data1));
+        assertEquals(double2, Conversion.bytesToDouble(data2));
+        assertEquals(1.23456792E8, Conversion.bytesToDouble(data3));
     }
 
     @Test
     void bytesToDouble() {
-        double data1 = Conversion.bytesToDouble(byte1);
-        double data2 = Conversion.bytesToDouble(byte2);
-        double data3 = Conversion.bytesToDouble(byte3);
-        assertEquals(double1, data1);
+        double value1 = Conversion.bytesToDouble(Conversion.doubleToBytes(double1));
+        double value2 = Conversion.bytesToDouble(Conversion.doubleToBytes(double2));
+        double value3 = Conversion.bytesToDouble(Conversion.doubleToBytes(double3));
+
+        assertEquals(double1, value1);
+        assertEquals(double2, value2);
+        assertEquals(1.23456792E8, value3);
     }
 }
