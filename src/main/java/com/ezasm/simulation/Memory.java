@@ -171,6 +171,33 @@ public class Memory {
     public List<Block> getFreeList() { return freeList; }
 
     /**
+     * Gets (the first) free address in the free list that is at least min bytes
+     *  and updates the
+     *
+     * @param min the number of bytes needed
+     * @return Block of size
+     */
+    public Long getFreeBlock(long min) {
+        for (Iterator<Block> it = freeList.iterator(); it.hasNext();) {
+            Block block = it.next();
+            if (block.size >= min) {
+                long addr = block.addr;
+                if (block.size == min) {
+                    // no left-over space
+                    it.remove();
+                } else {
+                    // (block.size - min) bytes starting at (block.addr + min) left after allocation
+                    block.size -= min;
+                    block.addr += min;
+                    System.out.println(block.size + " bytes starting at " + block.addr + " remaining");
+                }
+                return addr;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Simple insertion of a new block into free list
      *   TODO implement smarter coalesce to minimize fragmentation
      *

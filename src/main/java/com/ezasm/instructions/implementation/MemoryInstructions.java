@@ -14,6 +14,7 @@ import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.simulation.transform.transformable.MemoryTransformable;
 import com.ezasm.util.RawData;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -116,8 +117,8 @@ public class MemoryInstructions {
         HeapPointerTransformable h = new HeapPointerTransformable(simulator);
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
         Transformation t1 = new Transformation(h, h.get(),
-                new RawData(h.get().intValue() + input.get(simulator).intValue()));
-        Transformation t2 = io.transformation(t1.from());
+                new RawData(h.get().intValue() + input.get(simulator).intValue())); // increment the heap pointer
+        Transformation t2 = io.transformation(t1.from()); // store address in register
         return new TransformationSequence(t1, t2);
     }
 
@@ -130,31 +131,33 @@ public class MemoryInstructions {
      */
     @Instruction
     public TransformationSequence malloc(IAbstractInputOutput output, IAbstractInput input) throws SimulationException {
-        // iterate over free list, if block large enough, allocate (add to allocations, coallesce)
-
-        /*
-        long requestedBytes = input.get(simulator).intValue();
-        Integer reusableAddr = null;
-        for (var block : memory.getFreeList().entrySet()) {
-
-        }
-        */
         HeapPointerTransformable h = new HeapPointerTransformable(simulator);
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
 
+        Map<Long, Long> alloc = simulator.getMemory().getAllocations();
+        List<Block> free = simulator.getMemory().getFreeList();
+
         long currHP = h.get().intValue();
         long size = input.get(simulator).intValue();
-        long newHP = currHP + size;
 
-        simulator.getMemory().getAllocations().put(currHP, size);
-        Long addr = simulator.getMemory().getAllocations().get(currHP);
-        System.out.printf("Currently %d blocks allocated.\n",
-                simulator.getMemory().getAllocations().size());
+        Long prior = simulator.getMemory().getFreeBlock(size);
 
-        Transformation t1 = new Transformation(h, h.get(),
-                new RawData(currHP + size));
-        Transformation t2 = io.transformation(t1.from());
-        return new TransformationSequence(t1, t2);
+        if (prior != null) {
+            // don't update heap pointer, just store prior in register and update alloc
+            // note prior is a long, but RawData expects an int
+            System.out.println(prior + " was found for " + input + "!");
+            Transformation t2 = io.transformation(new RawData(prior)); // store address in register
+            return new TransformationSequence(t2);
+        } else {
+            // standard alloc (should standard alloc even exist?)
+            // like this does everything it does but better
+            // also if you cross-call them you'll end up with a mess
+            alloc.put(currHP, size);
+            Transformation t1 = new Transformation(h, h.get(),
+                    new RawData(h.get().intValue() + input.get(simulator).intValue())); // increment the heap pointer
+            Transformation t2 = io.transformation(t1.from()); // store address in register
+            return new TransformationSequence(t1, t2);
+        }
     }
 
 
