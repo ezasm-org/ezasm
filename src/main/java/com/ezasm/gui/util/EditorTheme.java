@@ -36,12 +36,12 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             new Color(0x7ea2b4), // selection
             new Color(0x383a42), // comment
             new Color(0x004E9D), // cyan
-            new Color(0x28a626), // green //need to change
-            new Color(0xB28822), // orange //need to change
+            new Color(0x1F811D), // green
+            new Color(0xAD5A00), // orange
             new Color(0x8c329a), // pink
-            new Color(0xd548d3), // purple //need to change
-            new Color(0xd92020), // red
-            new Color(0xfffb0f), // yellow //need to change
+            new Color(0x9604C7), // purple
+            new Color(0xC70D05), // red
+            new Color(0xFFEC1A), // yellow
             true); // is a light theme
 
     /**
@@ -75,8 +75,8 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             new Color(0x06ad00), // green
             new Color(0xffd400), // orange
             new Color(0xea00d9), // pink
-            new Color(0x6f46af), // purple //need to change
-            new Color(0xd92020), // red //need to change
+            new Color(0x9778C9), // purple
+            new Color(0xF40D00), // red
             new Color(0xffff99), // yellow
             false); // is a light theme
 
