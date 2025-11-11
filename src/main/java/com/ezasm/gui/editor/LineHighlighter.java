@@ -82,7 +82,6 @@ public class LineHighlighter extends DefaultHighlighter.DefaultHighlightPainter 
         final int lineForEDT = lineNumber;
         final PatchedRSyntaxTextArea textAreaForEDT = textArea;
 
-        
         javax.swing.SwingUtilities.invokeLater(() -> {
             synchronized (this) {
                 try {
