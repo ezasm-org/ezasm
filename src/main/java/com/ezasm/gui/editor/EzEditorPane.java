@@ -3,7 +3,7 @@ package com.ezasm.gui.editor;
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Highlighter;
-import javax.swing.AbstractAction;
+
 import java.awt.event.ActionEvent;
 
 import com.ezasm.gui.Window;
@@ -17,6 +17,7 @@ import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -278,7 +279,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Applies the proper theming to the editor area.
+     * Applies the proper theming to the editor area, and bolds instruction keywords.
      */
     public void applyTheme(Font font, EditorTheme editorTheme) {
         themeSyntaxTextArea(font, editorTheme);
@@ -287,6 +288,13 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
         editorTheme.applyThemeScrollbar(scrollPane.getHorizontalScrollBar());
         editorTheme.applyThemeScrollbar(scrollPane.getVerticalScrollBar());
         recolorHighlights(editorTheme);
+
+        SyntaxScheme scheme = textArea.getSyntaxScheme();
+        Style instr = scheme.getStyle(Token.RESERVED_WORD);
+        Font base = instr.font != null ? instr.font : textArea.getFont();
+        instr.font = base.deriveFont(Font.BOLD);
+
+        textArea.setSyntaxScheme(scheme);
     }
 
     /**
@@ -349,7 +357,17 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
      * @return true if the file is an anonymous file, false otherwise.
      */
     public boolean isFileAnonymous() {
-        return openFilePath == null || openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX);
+        if (openFilePath == null || openFilePath.startsWith(EditorTabbedPane.NEW_FILE_PREFIX)) {
+            return true;
+        }
+        // file isn't anonymous, but does it still exist? (it may have been deleted)
+        File fileToUpdate = new File(getOpenFilePath());
+        if (!fileToUpdate.exists()) {
+            // anonymize file because it doesn't exist anymore (stop autosaving until it's manually saved again)
+            openFilePath = EditorTabbedPane.NEW_FILE_PREFIX + openFilePath;
+            return true;
+        }
+        return false;
     }
 
     /**
