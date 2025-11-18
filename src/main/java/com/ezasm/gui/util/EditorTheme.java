@@ -35,13 +35,13 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             new Color(0xc1e4f6), // currentLine
             new Color(0x7ea2b4), // selection
             new Color(0x383a42), // comment
-            new Color(0x004E9D), // cyan
-            new Color(0x1F811D), // green
-            new Color(0xAD5A00), // orange
-            new Color(0x8c329a), // pink
-            new Color(0x9604C7), // purple
-            new Color(0xC70D05), // red
-            new Color(0xFFEC1A), // yellow
+            new Color(0x004E9D), // cyan , used for reserved word tokens
+            new Color(0x1F811D), // green , used for char and sting literal tokens
+            new Color(0xAD5A00), // orange , used for number literal tokens
+            new Color(0x8c329a), // pink , used for variable (register) tokens
+            new Color(0x9604C7), // purple , used for X button to close out documents
+            new Color(0xC70D05), // red , used for error tokens, error stream, and active registers
+            new Color(0xFFEC1A), // yellow , used for text/register highlighter
             true); // is a light theme
 
     /**
