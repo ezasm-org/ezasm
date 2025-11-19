@@ -30,6 +30,17 @@ public class OperatingSystemUtils {
     public static final String EZASM_CONFIG_FILE = EZASM_CONFIG + File.separator + "config.properties";
 
     /**
+     * The path to the themes folder based on the operating system of the host machine e.g., ~/.config/ezasm/themes .
+     */
+    public static final String EZASM_THEMES = getConfigPathByOS() + File.separator + "ezasm" + File.separator
+            + "themes";
+
+    // /**
+    // * The path to the configuration file for ezasm based on the operating system of the host machine.
+    // */
+    // public static final String EZASM_CONFIG_FILE = EZASM_CONFIG + File.separator + "config.properties";
+
+    /**
      * Gets the configuration path based on the operating system.
      *
      * @return the configuration path for this machine.

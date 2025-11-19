@@ -1,0 +1,16 @@
+{
+    "name" : "Purple",
+    "background" : "0x030d22",
+    "foreground" : "0xfdfeff",
+    "currentLine" : "0x310072",
+    "selection" : "0x35008b",
+    "comment" : "0x6272a4",
+    "cyan" : "0x0ab2fa",
+    "green" : "0x06ad00",
+    "orange" : "0xffd400",
+    "pink" : "0xea00d9",
+    "purple" : "0x9778C9",
+    "red" : "0xF40D00",
+    "yellow" : "0xffff99",
+    "isLight" : false
+}

@@ -1,5 +1,15 @@
 package com.ezasm.gui.util;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
+import org.json.JSONObject;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -14,6 +24,8 @@ import javax.swing.JScrollBar;
 import javax.swing.border.Border;
 
 import com.ezasm.gui.ui.EzScrollBarUI;
+import com.ezasm.util.OperatingSystemUtils;
+import com.ezasm.util.SystemStreams;
 
 /**
  * Represents a theme for components and text in the application.
@@ -79,6 +91,73 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             new Color(0xF40D00), // red
             new Color(0xffff99), // yellow
             false); // is a light theme
+
+    /**
+     * The themes folder within EzASM's config directory
+     */
+    private static final File THEMES_DIRECTORY = new File(OperatingSystemUtils.EZASM_THEMES);
+
+    // Possible themes
+    private static final String[] DEFAULT_THEMES = { EditorTheme.Light.name(), EditorTheme.Dracula.name(),
+            EditorTheme.Purple.name() };
+
+    // plan:
+    // one function to load default themes to the themes config folder le if they don't exist
+    // array that contains all the current themes within the themes config folder
+    // AND function to update this array
+    // function to read json file from themes config folder into a themes object to send around
+    // settings in ConfigurationPreferencesEditor will request a copy of the themes array
+    // to display all current theme jsons available
+
+    /**
+     * Loads the theme JSONs from within the themes directory into EditorTheme objects.
+     */
+    public static void loadThemes() {
+        System.out.println(EditorTheme.THEMES_DIRECTORY);
+        if (EditorTheme.THEMES_DIRECTORY != null) {
+            return;
+        }
+        try {
+            EditorTheme.THEMES_DIRECTORY.mkdirs();
+            for (String name : DEFAULT_THEMES) {
+                System.out.println(EditorTheme.THEMES_DIRECTORY + " " + name);
+                File THEME_FILE = new File(EditorTheme.THEMES_DIRECTORY, name);
+                FileWriter writer = new FileWriter(THEME_FILE);
+                //use Files.copy after this
+                //Files.copy(file1.toPath(), file2.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+        } catch (IOException e) {
+            SystemStreams.printlnCurrentErr("Error loading themes");
+        }
+    }
+
+    // File[] themeFiles = THEMES_DIRECTORY.listFiles();
+    // if (themeFiles != null) {
+    // try {
+    // for (File themeFile : themeFiles) {
+    // JSONObject themeJSON = new JSONObject(new FileReader(themeFile));
+    // System.out.println(themeJSON);
+    // }
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    // } else {
+    // throw new RuntimeException("Theme directory not found");
+    // }
+
+    // /**
+    // * Saves the changes to the ezasm configuration folder.
+    // */
+    // public void saveChanges() {
+    // try {
+    // CONFIG_FILE.getParentFile().mkdirs();
+    // FileWriter writer = new FileWriter(CONFIG_FILE);
+    // props.store(writer, "");
+    // writer.close();
+    // } catch (IOException e) {
+    // SystemStreams.printlnCurrentErr("Error saving settings");
+    // }
+    // }
 
     /**
      * Takes a string theme name and returns the corresponding theme object.

@@ -1,0 +1,16 @@
+{
+    "name" : "Dark",
+    "background" : "0x282a36",
+    "foreground" : "0xf8f8f2",
+    "currentLine" : "0x44475a",
+    "selection" : "0x44475a",
+    "comment" : "0x6272a4",
+    "cyan" : "0x8be9fd",
+    "green" : "0x50fa7b",
+    "orange" : "0xffb86c",
+    "pink" : "0xff79c6",
+    "purple" : "0xbd93f9",
+    "red" : "0xff5555",
+    "yellow" : "0xf1fa8c",
+    "isLight" : false
+}
