@@ -21,10 +21,24 @@ public class AlternatingHighlightTable extends AlternatingColorTable implements 
     private Color changedTextColor;
     private final Set<Integer> flashingRows = new HashSet<>();
 
+
+    /**
+     * Constructs a JTable where the color alternates based on whether the line number is even or odd given a theme.
+     *
+     * @param editorTheme the theme to select colors from.
+     */
     public AlternatingHighlightTable(EditorTheme theme) {
         super(theme);
     }
 
+    /**
+     * Gets the data necessary to render the cell, then returns the prepared cell's component.
+     *
+     * @param renderer the <code>TableCellRenderer</code> to prepare.
+     * @param row      the row of the cell to render, where 0 is the first row.
+     * @param column   the column of the cell to render, where 0 is the first column.
+     * @return the cell component specified.
+     */
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         Component component = super.prepareRenderer(renderer, row, column);
@@ -39,6 +53,14 @@ public class AlternatingHighlightTable extends AlternatingColorTable implements 
         return component;
     }
 
+    /**
+     * Applies the given theme and font to the component itself, the tabbed pane, and all subcomponents of the tabbed
+     * pane. If the components are IThemable, uses their IThemable#applyTheme method to do so. Also, if a subcomponent
+     * should be highlighted, the appropriate theme colors are applied and the table is refreshed.
+     *
+     * @param font        the font to apply.
+     * @param editorTheme the theme to apply.
+     */
     @Override
     public void applyTheme(Font font, EditorTheme theme) {
         super.applyTheme(font, theme);
@@ -48,16 +70,30 @@ public class AlternatingHighlightTable extends AlternatingColorTable implements 
         repaint();
     }
 
+    /**
+     * Adds the given row to the subcomponents that should be highlighted
+     *
+     * @param row        a row to be highlighted
+     */
     public void flashRow(int row) {
         flashingRows.add(row);
         repaint(getCellRect(row, 0, true));
     }
 
+     /**
+     * Removes the given row from the subcomponents that should be highlighted
+     *
+     * @param row        a row to be unhighlighted
+     */
     public void clearFlash(int row) {
         flashingRows.remove(row);
         repaint(getCellRect(row, 0, true));
     }
 
+     /**
+     * After all steps have occurred, all highlighted rows are unhighlighted
+     *
+     */
     public void clearAllFlashes() {
         flashingRows.clear();
         repaint();
