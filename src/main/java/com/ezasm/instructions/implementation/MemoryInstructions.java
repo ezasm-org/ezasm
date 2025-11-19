@@ -14,8 +14,8 @@ import com.ezasm.simulation.transform.transformable.InputOutputTransformable;
 import com.ezasm.simulation.transform.transformable.MemoryTransformable;
 import com.ezasm.util.RawData;
 
-import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * An implementation of memory manipulation instructions for the simulation.
@@ -123,7 +123,7 @@ public class MemoryInstructions {
     }
 
     /**
-     * Allocation but tracks how many allocations it's made
+     * Dynamically allocates heap memory updating hp as needed
      *
      * @param output the place to store the start of alloc'd memory
      * @param input the number of bytes of memory
@@ -135,38 +135,41 @@ public class MemoryInstructions {
         InputOutputTransformable io = new InputOutputTransformable(simulator, output);
 
         Map<Long, Long> alloc = simulator.getMemory().getAllocations();
-        List<Block> free = simulator.getMemory().getFreeList();
+        TreeSet<Block> free = simulator.getMemory().getFreeList();
 
         long currHP = h.get().intValue();
         long size = input.get(simulator).intValue();
+        Block prior = simulator.getMemory().getFreeBlock(size);
 
-        Long prior = simulator.getMemory().getFreeBlock(size);
-
-        if (prior != null) {
+        if (prior != null && prior.size >= size) {
             // don't update heap pointer, just store prior in register and update alloc
             // note prior is a long, but RawData expects an int
-            System.out.println(prior + " was found for " + input + "!");
-            Transformation t2 = io.transformation(new RawData(prior)); // store address in register
+            alloc.put(prior.addr, size);
+            Transformation t2 = io.transformation(new RawData(prior.addr)); // store address in register
             return new TransformationSequence(t2);
+        } else if (prior != null) {
+            // result from free list wasn't enough, increment hp by difference
+            alloc.put(prior.addr, size);
+            long difference = size - prior.size;
+            Transformation t1 = new Transformation(h, h.get(),
+                    new RawData(h.get().intValue() + difference)); // incr hp by diff
+            Transformation t2 = io.transformation(new RawData(prior.addr)); // store addr in register
+            return new TransformationSequence(t1, t2);
         } else {
-            // standard alloc (should standard alloc even exist?)
-            // like this does everything it does but better
-            // also if you cross-call them you'll end up with a mess
+            // standard alloc (should separate alloc even exist?)
             alloc.put(currHP, size);
             Transformation t1 = new Transformation(h, h.get(),
-                    new RawData(h.get().intValue() + input.get(simulator).intValue())); // increment the heap pointer
+                    new RawData(h.get().intValue() + size)); // increment the heap pointer
             Transformation t2 = io.transformation(t1.from()); // store address in register
             return new TransformationSequence(t1, t2);
         }
     }
 
-
     /**
+     * Free memory allocated at a given address
      *
-     *
-     * @param input
-     * @return
-     * @throws SimulationException
+     * @param input the register whose memory address we'd like to free
+     * @throws SimulationException if the register doesn't hold an alloc'd address
      */
     @Instruction
     public TransformationSequence free(IAbstractInputOutput input) throws SimulationException {
@@ -176,7 +179,6 @@ public class MemoryInstructions {
 
         if (size == null) throw new SimulationException("Invalid free");
 
-        System.out.printf("freeing %d...\n", addr);
         simulator.getMemory().addToFreeList(addr, size);
         return new TransformationSequence();
     }
