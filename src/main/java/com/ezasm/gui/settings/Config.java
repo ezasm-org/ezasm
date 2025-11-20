@@ -93,7 +93,7 @@ public class Config {
             props.setProperty(MEMORY_RANDOMIZE_ON_RESET, DEFAULT_MEMORY_RANDOMIZE_ON_RESET);
             saveChanges();
         }
-        EditorTheme.loadThemes();
+        EditorTheme.loadDefaultThemes();
     }
 
     /**

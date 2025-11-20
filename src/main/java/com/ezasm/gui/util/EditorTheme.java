@@ -1,8 +1,7 @@
 package com.ezasm.gui.util;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -98,8 +97,7 @@ public record EditorTheme(String name, Color background, Color foreground, Color
     private static final File THEMES_DIRECTORY = new File(OperatingSystemUtils.EZASM_THEMES);
 
     // Possible themes
-    private static final String[] DEFAULT_THEMES = { EditorTheme.Light.name(), EditorTheme.Dracula.name(),
-            EditorTheme.Purple.name() };
+    private static final String[] DEFAULT_THEME_NAMES = { "Light", "Dark", "Purple" };
 
     // plan:
     // one function to load default themes to the themes config folder le if they don't exist
@@ -110,21 +108,23 @@ public record EditorTheme(String name, Color background, Color foreground, Color
     // to display all current theme jsons available
 
     /**
-     * Loads the theme JSONs from within the themes directory into EditorTheme objects.
+     * Loads default theme JSONs into a theme folder within the user's config directory,
+     * but only if that folder doesn't exist yet (first time opening app/folder was deleted).
      */
-    public static void loadThemes() {
+    public static void loadDefaultThemes() {
         System.out.println(EditorTheme.THEMES_DIRECTORY);
-        if (EditorTheme.THEMES_DIRECTORY != null) {
+        if (EditorTheme.THEMES_DIRECTORY.exists()) {
             return;
         }
         try {
+            // initialize a new themes directory within the user's EzASM config folder
             EditorTheme.THEMES_DIRECTORY.mkdirs();
-            for (String name : DEFAULT_THEMES) {
-                System.out.println(EditorTheme.THEMES_DIRECTORY + " " + name);
-                File THEME_FILE = new File(EditorTheme.THEMES_DIRECTORY, name);
-                FileWriter writer = new FileWriter(THEME_FILE);
-                //use Files.copy after this
-                //Files.copy(file1.toPath(), file2.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            // find each default theme in the theme resources directory and copy it to the user's theme config directory
+            for (String themeName : EditorTheme.DEFAULT_THEME_NAMES) {
+                InputStream defaultThemeInputStream = EditorTheme.class.getClassLoader()
+                        .getResourceAsStream("themes/" + themeName + ".json");
+                File newThemeDestination = new File(EditorTheme.THEMES_DIRECTORY, themeName);
+                Files.copy(defaultThemeInputStream, newThemeDestination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             SystemStreams.printlnCurrentErr("Error loading themes");
