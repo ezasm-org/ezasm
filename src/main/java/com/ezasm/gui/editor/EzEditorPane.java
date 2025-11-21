@@ -60,10 +60,10 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Creates a text edit field using RSyntaxTextArea features.
-     * Initializes syntax highlighting for EzASM, configures undo/redo managers, and sets up autocomplete.
-     * Establishes keyboard shortcuts for common operations (Ctrl+Z for undo, Ctrl+Y for redo, TAB for autocomplete).
-     * Sets up document listeners to track changes and maintain file dirty state.
+     * Creates a text edit field using RSyntaxTextArea features. Initializes syntax highlighting for EzASM, configures
+     * undo/redo managers, and sets up autocomplete. Establishes keyboard shortcuts for common operations (Ctrl+Z for
+     * undo, Ctrl+Y for redo, TAB for autocomplete). Sets up document listeners to track changes and maintain file dirty
+     * state.
      */
     public EzEditorPane() {
         super();
@@ -138,9 +138,9 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Updates the enabled state of the Undo and Redo actions based on the undo manager's current state.
-     * This method synchronizes both the keyboard action and menu item states, ensuring that undo/redo
-     * are only enabled when there are changes available to undo or redo in the history stack.
+     * Updates the enabled state of the Undo and Redo actions based on the undo manager's current state. This method
+     * synchronizes both the keyboard action and menu item states, ensuring that undo/redo are only enabled when there
+     * are changes available to undo or redo in the history stack.
      */
     public void updateUndoRedoState() {
         Action undoAction = textArea.getActionMap().get("Undo");
@@ -163,10 +163,10 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
 
     // create our own pop-up menu
     /**
-     * Creates and returns a custom right-click popup menu for the text editor.
-     * The popup menu includes Undo, Redo, Copy, Paste, Cut, and Select All options.
-     * Undo and Redo items have their enabled state managed dynamically based on the undo manager state.
-     * 
+     * Creates and returns a custom right-click popup menu for the text editor. The popup menu includes Undo, Redo,
+     * Copy, Paste, Cut, and Select All options. Undo and Redo items have their enabled state managed dynamically based
+     * on the undo manager state.
+     *
      * @return a JPopupMenu configured with standard text editing operations.
      */
     private JPopupMenu createCustomPopupMenu() {
@@ -216,11 +216,11 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Themes the syntax text area according to the given font and theme.
-     * Applies colors for background, selection, line numbers, and individual token types (keywords, strings, comments, etc.).
-     * Loads a base theme from IDEA's theme and overrides specific colors based on the provided EditorTheme.
-     * 
-     * @param font          the font to apply to all text elements.
+     * Themes the syntax text area according to the given font and theme. Applies colors for background, selection, line
+     * numbers, and individual token types (keywords, strings, comments, etc.). Loads a base theme from IDEA's theme and
+     * overrides specific colors based on the provided EditorTheme.
+     *
+     * @param font           the font to apply to all text elements.
      * @param newEditorTheme the EditorTheme containing color definitions for different UI components and token types.
      */
     private void themeSyntaxTextArea(Font font, EditorTheme newEditorTheme) {
@@ -292,11 +292,10 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Applies the proper theming to the editor area, and bolds instruction keywords.
-     * This method coordinates theming across the text area, scrollpane, and scrollbars.
-     * It applies syntax highlighting colors, sets fonts for all token types, and ensures 
-     * instruction keywords (reserved words) appear in bold.
-     * 
+     * Applies the proper theming to the editor area, and bolds instruction keywords. This method coordinates theming
+     * across the text area, scrollpane, and scrollbars. It applies syntax highlighting colors, sets fonts for all token
+     * types, and ensures instruction keywords (reserved words) appear in bold.
+     *
      * @param font        the font to apply throughout the editor.
      * @param editorTheme the theme containing all color and style definitions.
      */
@@ -419,9 +418,8 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
 
     /**
      * this functions helps Marks the current text content as the saved state. the function helps determines whether the
-     * file has been modified since last save.
-     * This creates a snapshot of the current text that serves as the baseline for dirty-checking.
-     * Resets the file-saved flag to true and updates undo/redo button states.
+     * file has been modified since last save. This creates a snapshot of the current text that serves as the baseline
+     * for dirty-checking. Resets the file-saved flag to true and updates undo/redo button states.
      */
     public void markSavedState() {
         this.savedTextSnapshot = getText();
@@ -431,8 +429,8 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
 
     /**
      * The function checks if the current text content differs from the last saved state. If it does, marks the file as
-     * unsaved. Otherwise, marks it as saved.
-     * This method is used to detect if undo/redo operations have brought the text back to a saved state.
+     * unsaved. Otherwise, marks it as saved. This method is used to detect if undo/redo operations have brought the
+     * text back to a saved state.
      */
     public void checkIfDirty() {
         boolean isDirty = !getText().equals(savedTextSnapshot);
@@ -440,9 +438,8 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Highlights a given line number and clears old highlight.
-     * Updates the visual line highlight to reflect the current execution line from the simulator.
-     * Removes all previous highlights before applying the new one.
+     * Highlights a given line number and clears old highlight. Updates the visual line highlight to reflect the current
+     * execution line from the simulator. Removes all previous highlights before applying the new one.
      */
     public void updateHighlight() {
         getTextArea().getHighlighter().removeAllHighlights();
@@ -450,9 +447,9 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Reset a highlighter by removing all highlights and reinit-ing with a new color. Resets line counts. 
-     * Should be called each program start to ensure a clean state with the current theme's highlight color.
-     * Also clears the execution history tracked by the line highlighter.
+     * Reset a highlighter by removing all highlights and reinit-ing with a new color. Resets line counts. Should be
+     * called each program start to ensure a clean state with the current theme's highlight color. Also clears the
+     * execution history tracked by the line highlighter.
      */
     public void resetHighlighter() {
         getTextArea().getHighlighter().removeAllHighlights();
@@ -460,9 +457,9 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Recolor the current highlight in accordance with the provided theme.
-     * Preserves existing highlights by storing their positions and reapplying them with the new highlighter color.
-     * This allows the editor to maintain visual consistency across theme changes.
+     * Recolor the current highlight in accordance with the provided theme. Preserves existing highlights by storing
+     * their positions and reapplying them with the new highlighter color. This allows the editor to maintain visual
+     * consistency across theme changes.
      *
      * @param editorTheme the theme to recolor to
      */
@@ -491,8 +488,7 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * Set tab size from the setting changes.
-     * Updates the tab width (in spaces) used throughout the editor.
+     * Set tab size from the setting changes. Updates the tab width (in spaces) used throughout the editor.
      *
      * @param size the size of tab to change to
      */
@@ -510,11 +506,9 @@ public class EzEditorPane extends JClosableComponent implements IThemeable {
     }
 
     /**
-     * The closing action of an editor pane.
-     * Prompts the user to save unsaved changes before closing the editor.
-     * Handles three cases: (1) if the file is already saved, close immediately; 
-     * (2) if the file is anonymous and empty, close without prompting; 
-     * (3) otherwise, show a dialog asking to save, discard, or cancel.
+     * The closing action of an editor pane. Prompts the user to save unsaved changes before closing the editor. Handles
+     * three cases: (1) if the file is already saved, close immediately; (2) if the file is anonymous and empty, close
+     * without prompting; (3) otherwise, show a dialog asking to save, discard, or cancel.
      *
      * @return whether to close the editor pane GUI element.
      */

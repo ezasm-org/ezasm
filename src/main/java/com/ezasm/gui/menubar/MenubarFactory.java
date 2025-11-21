@@ -1,18 +1,27 @@
 package com.ezasm.gui.menubar;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
+import static com.ezasm.gui.menubar.MenuActions.load;
+import static com.ezasm.gui.menubar.MenuActions.newFile;
+import static com.ezasm.gui.menubar.MenuActions.save;
+import static com.ezasm.gui.menubar.MenuActions.saveAs;
+import static com.ezasm.gui.menubar.MenuActions.selectInputFile;
+import static com.ezasm.gui.menubar.MenuActions.selectOutputFile;
 import com.ezasm.gui.settings.AboutPopup;
 import com.ezasm.gui.settings.SettingsPopup;
 import com.ezasm.instructions.implementation.TerminalInstructions;
 import com.ezasm.util.SystemStreams;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import static com.ezasm.gui.menubar.MenuActions.*;
-
 /**
- * A factory which generates a menu bar to add to the application.
+ * A factory which generates and manages the application's menu bar. Provides a singleton menu bar with File operations
+ * (new, open, save, exit), Settings access, and IO redirection controls. Uses a centralized action listener to handle
+ * all menu item events via a switch statement mapping command names to actions.
  */
 public class MenubarFactory {
 
@@ -35,9 +44,12 @@ public class MenubarFactory {
     private static JMenu redirectionMenu;
 
     /**
-     * Generate the menu bar if it does not already exist and initialize its menus and menu items.
+     * Generate the menu bar if it does not already exist and initialize its menus and menu items. Creates a singleton
+     * menu bar with three main menu groups: (1) File menu - new file, open, save, save-as, exit operations (2) Settings
+     * menu - direct link to settings and theme configuration (3) IO Direction menu - input/output stream redirection
+     * and reset options
      *
-     * @return the generated or existing menu bar.
+     * @return the generated or existing menu bar (singleton pattern).
      */
     public static JMenuBar makeMenuBar() {
         if (menubar != null)
@@ -86,22 +98,41 @@ public class MenubarFactory {
         return menubar;
     }
 
-    // Helper method to automate tasks I complete for every menu item (action
-    // listener, color, register)
+    /**
+     * Helper method to automate common setup tasks for each menu item. Standardizes menu item creation by automatically
+     * attaching the shared action listener and adding the item to the specified menu.
+     *
+     * @param menu the JMenu to which the item will be added.
+     * @param name the display name and action command for the menu item.
+     */
     private static void addMenuItem(JMenu menu, String name) {
         JMenuItem item = new JMenuItem(name);
         item.addActionListener(actionListener);
         menu.add(item);
     }
 
+    /**
+     * Enables or disables the entire IO Direction menu. Used to prevent input/output redirection operations when
+     * simulation is not in an appropriate state.
+     *
+     * @param state true to enable the redirection menu, false to disable.
+     */
     public static void setRedirectionEnable(boolean state) {
         redirectionMenu.setEnabled(state);
     }
 
     /**
-     * Helper action listener class to handle options in the menu.
+     * Centralized action listener for all menu items in the menu bar. Dispatches menu actions to corresponding handler
+     * methods in MenuActions based on the action command. Handles file operations (new, open, save, exit), settings
+     * access, IO redirection, and error reporting.
      */
     private static class MenuActionListener implements ActionListener {
+        /**
+         * Handles menu item actions by dispatching to appropriate handler methods. Performs switch on the action
+         * command to route to file operations, settings, IO redirection, or error handling.
+         *
+         * @param e the ActionEvent triggered by a menu item click.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {

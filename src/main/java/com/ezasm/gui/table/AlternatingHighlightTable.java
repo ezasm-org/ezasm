@@ -91,7 +91,7 @@ public class AlternatingHighlightTable extends AlternatingColorTable implements 
     }
 
      /**
-     * After all steps have occurred, all highlighted rows are unhighlighted
+     * After all steps have finished, clears all highlighted rolws
      *
      */
     public void clearAllFlashes() {
