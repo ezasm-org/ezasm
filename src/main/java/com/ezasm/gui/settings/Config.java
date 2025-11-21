@@ -65,7 +65,7 @@ public class Config {
             entry(MEMORY_RANDOMIZE_ON_RESET, Config::getMemoryRandomizeOnReset));
 
     // Possible themes
-    private static final String[] THEME_ARRAY = { EditorTheme.Light.name(), EditorTheme.Dracula.name(),
+    private static final String[] THEME_ARRAY = { EditorTheme.Light.name(), EditorTheme.Dark.name(),
             EditorTheme.Purple.name() };
 
     /**
@@ -93,7 +93,6 @@ public class Config {
             props.setProperty(MEMORY_RANDOMIZE_ON_RESET, DEFAULT_MEMORY_RANDOMIZE_ON_RESET);
             saveChanges();
         }
-        EditorTheme.loadDefaultThemes();
     }
 
     /**

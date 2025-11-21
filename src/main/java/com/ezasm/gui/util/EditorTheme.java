@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 
+import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -33,86 +34,34 @@ public record EditorTheme(String name, Color background, Color foreground, Color
         Color comment, Color cyan, Color green, Color orange, Color pink, Color purple, Color red, Color yellow,
         boolean isLight) {
 
-    private static final String LIGHT_NAME = "Light";
-    private static final String DARK_NAME = "Dark";
-    private static final String PURPLE_NAME = "Purple";
-
-    /**
-     * A light theme based on <a href="https://github.com/atom/one-light-syntax">this</a>.
-     */
-    public static EditorTheme Light = new EditorTheme(LIGHT_NAME, // name
-            new Color(0xebf8ff), // background
-            new Color(0x161b1d), // foreground
-            new Color(0xc1e4f6), // currentLine
-            new Color(0x7ea2b4), // selection
-            new Color(0x383a42), // comment
-            new Color(0x004E9D), // cyan , used for reserved word tokens
-            new Color(0x1F811D), // green , used for char and sting literal tokens
-            new Color(0xAD5A00), // orange , used for number literal tokens
-            new Color(0x8c329a), // pink , used for variable (register) tokens
-            new Color(0x9604C7), // purple , used for X button to close out documents
-            new Color(0xC70D05), // red , used for error tokens, error stream, and active registers
-            new Color(0xFFEC1A), // yellow , used for text/register highlighter
-            true); // is a light theme
-
-    /**
-     * A dark theme based on <a href="https://github.com/dracula/dracula-theme">this</a>.
-     */
-    public static EditorTheme Dracula = new EditorTheme(DARK_NAME, // name
-            new Color(0x282a36), // background
-            new Color(0xf8f8f2), // foreground
-            new Color(0x44475a), // currentLine
-            new Color(0x44475a), // selection
-            new Color(0x6272a4), // comment
-            new Color(0x8be9fd), // cyan
-            new Color(0x50fa7b), // green
-            new Color(0xffb86c), // orange
-            new Color(0xff79c6), // pink
-            new Color(0xbd93f9), // purple
-            new Color(0xff5555), // red
-            new Color(0xf1fa8c), // yellow
-            false); // is a light theme
-
-    /**
-     * A purple theme based on <a href="https://github.com/endormi/vscode-2077-theme">this</a>.
-     */
-    public static EditorTheme Purple = new EditorTheme(PURPLE_NAME, // name
-            new Color(0x030d22), // background
-            new Color(0xfdfeff), // foreground
-            new Color(0x310072), // currentLine
-            new Color(0x35008b), // selection
-            new Color(0x6272a4), // comment
-            new Color(0x0ab2fa), // cyan
-            new Color(0x06ad00), // green
-            new Color(0xffd400), // orange
-            new Color(0xea00d9), // pink
-            new Color(0x9778C9), // purple
-            new Color(0xF40D00), // red
-            new Color(0xffff99), // yellow
-            false); // is a light theme
-
-    /**
-     * The themes folder within EzASM's config directory
-     */
+    // The themes folder within EzASM's config directory, in the user's file system
     private static final File THEMES_DIRECTORY = new File(OperatingSystemUtils.EZASM_THEMES);
 
-    // Possible themes
+    /**
+     * theme values within JSON resources/themes folder are inspired by: 
+     * light theme, https://github.com/atom/one-light-syntax, 
+     * dark theme, https://github.com/dracula/dracula-theme, 
+     * purple theme, https://github.com/endormi/vscode-2077-theme
+     */
     private static final String[] DEFAULT_THEME_NAMES = { "Light", "Dark", "Purple" };
 
-    // plan:
-    // one function to load default themes to the themes config folder le if they don't exist
-    // array that contains all the current themes within the themes config folder
-    // AND function to update this array
-    // function to read json file from themes config folder into a themes object to send around
-    // settings in ConfigurationPreferencesEditor will request a copy of the themes array
-    // to display all current theme jsons available
+    public static EditorTheme Light, Dark, Purple;
+
+    // default themes are retrieved at the start of runtime
+    static {
+        loadDefaultThemes();
+        Light = getTheme("Light");
+        Dark = getTheme("Dark");
+        Purple = getTheme("Purple");
+    }
+
+    // TODO: ConfigurationPreferencesEditor needs to display accurate list of available themes
 
     /**
-     * Loads default theme JSONs into a theme folder within the user's config directory,
-     * but only if that folder doesn't exist yet (first time opening app/folder was deleted).
+     * Loads default theme JSONs into a theme folder within the user's config directory, but only if that folder doesn't
+     * exist yet (first time opening app/folder was deleted).
      */
     public static void loadDefaultThemes() {
-        System.out.println(EditorTheme.THEMES_DIRECTORY);
         if (EditorTheme.THEMES_DIRECTORY.exists()) {
             return;
         }
@@ -131,47 +80,49 @@ public record EditorTheme(String name, Color background, Color foreground, Color
         }
     }
 
-    // File[] themeFiles = THEMES_DIRECTORY.listFiles();
-    // if (themeFiles != null) {
-    // try {
-    // for (File themeFile : themeFiles) {
-    // JSONObject themeJSON = new JSONObject(new FileReader(themeFile));
-    // System.out.println(themeJSON);
-    // }
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // } else {
-    // throw new RuntimeException("Theme directory not found");
-    // }
-
-    // /**
-    // * Saves the changes to the ezasm configuration folder.
-    // */
-    // public void saveChanges() {
-    // try {
-    // CONFIG_FILE.getParentFile().mkdirs();
-    // FileWriter writer = new FileWriter(CONFIG_FILE);
-    // props.store(writer, "");
-    // writer.close();
-    // } catch (IOException e) {
-    // SystemStreams.printlnCurrentErr("Error saving settings");
-    // }
-    // }
+    /**
+     * Accepts a string and returns a Color whose value is that of the string
+     *
+     * @param s A string (representing a hexadecimal value)
+     * @return A Color whose value is that of the input string
+     */
+    private static Color StringToColor(String s) {
+        return new Color(Integer.parseInt(s, 16));
+    }
 
     /**
-     * Takes a string theme name and returns the corresponding theme object.
+     * Generates and returns an EditorTheme object based on an input JSONObject input
+     *
+     * @param json The JSONObject to convert into an EditorTheme
+     * @return the generated EditorTheme
+     */
+    private static EditorTheme JSONObjectToEditorTheme(JSONObject json) {
+        return new EditorTheme(json.getString("name"), StringToColor(json.getString("background")),
+                StringToColor(json.getString("foreground")), StringToColor(json.getString("currentLine")),
+                StringToColor(json.getString("selection")), StringToColor(json.getString("comment")),
+                StringToColor(json.getString("cyan")), StringToColor(json.getString("green")),
+                StringToColor(json.getString("orange")), StringToColor(json.getString("pink")),
+                StringToColor(json.getString("purple")), StringToColor(json.getString("red")),
+                StringToColor(json.getString("yellow")), json.getBoolean("isLight"));
+    }
+
+    /**
+     * Takes a string theme name and returns the corresponding theme object from within the user's config/themes folder.
      *
      * @param s the theme in plain text.
      * @return the theme object.
      */
     public static EditorTheme getTheme(String s) {
-        return switch (s) {
-        case LIGHT_NAME -> EditorTheme.Light;
-        case DARK_NAME -> EditorTheme.Dracula;
-        case PURPLE_NAME -> EditorTheme.Purple;
-        default -> throw new RuntimeException("Theme not found");
-        };
+        if (!(new File(EditorTheme.THEMES_DIRECTORY, s).exists())) {
+            throw new RuntimeException("Theme \"" + s + "\" not found");
+        }
+        try {
+            String themeString = Files.readString(Path.of(EditorTheme.THEMES_DIRECTORY.toString(), s));
+            JSONObject json = new JSONObject(themeString);
+            return JSONObjectToEditorTheme(json);
+        } catch (Exception e) {
+            throw new RuntimeException("Theme \"" + s + "\" could not be retrieved");
+        }
     }
 
     /**
