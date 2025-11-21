@@ -1,11 +1,19 @@
 package com.ezasm.gui.util;
 
-import com.ezasm.gui.ui.EzScrollBarUI;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.border.Border;
 
-import java.awt.*;
+import com.ezasm.gui.ui.EzScrollBarUI;
 
 /**
  * Represents a theme for components and text in the application.
@@ -28,12 +36,12 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             new Color(0x7ea2b4), // selection
             new Color(0x383a42), // comment
             new Color(0x004E9D), // cyan
-            new Color(0x28a626), // green
-            new Color(0xB28822), // orange
+            new Color(0x1F811D), // green
+            new Color(0xAD5A00), // orange
             new Color(0x8c329a), // pink
-            new Color(0xd548d3), // purple
-            new Color(0xd92020), // red
-            new Color(0xfffb0f), // yellow
+            new Color(0x9604C7), // purple
+            new Color(0xC70D05), // red
+            new Color(0xFFEC1A), // yellow
             true); // is a light theme
 
     /**
@@ -67,8 +75,8 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             new Color(0x06ad00), // green
             new Color(0xffd400), // orange
             new Color(0xea00d9), // pink
-            new Color(0x6f46af), // purple
-            new Color(0xd92020), // red
+            new Color(0x9778C9), // purple
+            new Color(0xF40D00), // red
             new Color(0xffff99), // yellow
             false); // is a light theme
 

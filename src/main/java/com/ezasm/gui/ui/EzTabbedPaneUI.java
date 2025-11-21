@@ -1,12 +1,22 @@
 package com.ezasm.gui.ui;
 
-import com.ezasm.gui.util.EditorTheme;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.text.View;
+
+import com.ezasm.gui.util.EditorTheme;
 
 /**
  * Represents the themed UI for a tabbed pane.
@@ -17,6 +27,7 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     private Color foreground;
     private Color unselectedBackground;
     private Color selectedBackground;
+    private int hoveredTab = -1;
 
     /**
      * Constructs a themed tabbed pane UI.
@@ -26,6 +37,41 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     public EzTabbedPaneUI(EditorTheme editorTheme) {
         super();
         this.editorTheme = editorTheme;
+    }
+
+    /**
+     * Installs the listeners for hover tracking.
+     */
+    @Override
+    protected void installListeners() {
+        super.installListeners();
+
+        tabPane.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                if (tabPane == null || !tabPane.isDisplayable())
+                    return;
+
+                int index;
+                index = tabForCoordinate(tabPane, e.getX(), e.getY());
+
+                if (index != hoveredTab) {
+                    hoveredTab = index;
+                    tabPane.repaint();
+                }
+            }
+        });
+
+        tabPane.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (hoveredTab != -1) {
+                    hoveredTab = -1;
+                    if (tabPane != null)
+                        tabPane.repaint();
+                }
+            }
+        });
     }
 
     /**
@@ -154,11 +200,13 @@ public class EzTabbedPaneUI extends BasicTabbedPaneUI {
     @Override
     protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
             boolean isSelected) {
-        if (isSelected) {
+
+        if (isSelected || tabIndex == hoveredTab) {
             g.setColor(selectedBackground);
         } else {
             g.setColor(unselectedBackground);
         }
-        g.fillRect(x, y, w, h);
+
+        g.fillRoundRect(x + 2, y + 2, w - 4, h - 4, 10, 10);
     }
 }

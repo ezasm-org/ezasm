@@ -1,32 +1,8 @@
 package com.ezasm.gui;
 
-import com.ezasm.gui.console.Console;
-import com.ezasm.gui.editor.EzEditorPane;
-import com.ezasm.gui.menubar.MenuActions;
-import com.ezasm.gui.menubar.MenubarFactory;
-import com.ezasm.gui.tabbedpane.EditorTabbedPane;
-import com.ezasm.gui.table.MemoryViewerPanel;
-import com.ezasm.gui.table.RegisterTable;
-import com.ezasm.gui.toolbar.SimulatorGuiActions;
-import com.ezasm.gui.toolbar.ToolbarFactory;
-import com.ezasm.gui.tabbedpane.FixedTabbedPane;
-import com.ezasm.gui.settings.Config;
-import com.ezasm.gui.util.EditorTheme;
-import com.ezasm.gui.util.WindowCloseListener;
-import com.ezasm.instructions.implementation.TerminalInstructions;
-import com.ezasm.parsing.Lexer;
-import com.ezasm.simulation.Simulator;
-import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.Registers;
-import com.ezasm.util.FileIO;
-import com.ezasm.util.RandomAccessFileStream;
-import com.ezasm.util.SystemStreams;
-import com.ezasm.gui.settings.AutoSave;
-
-import javax.swing.*;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -36,7 +12,43 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
+
+import com.ezasm.gui.console.Console;
+import com.ezasm.gui.editor.EzEditorPane;
+import com.ezasm.gui.menubar.MenuActions;
+import com.ezasm.gui.menubar.MenubarFactory;
+import com.ezasm.gui.settings.AutoSave;
+import com.ezasm.gui.settings.Config;
+import com.ezasm.gui.tabbedpane.EditorTabbedPane;
+import com.ezasm.gui.tabbedpane.FixedTabbedPane;
+import com.ezasm.gui.table.MemoryViewerPanel;
+import com.ezasm.gui.table.RegisterTable;
+import com.ezasm.gui.toolbar.SimulatorGuiActions;
+import com.ezasm.gui.toolbar.ToolbarFactory;
 import static com.ezasm.gui.util.DialogFactory.promptWarningDialog;
+import com.ezasm.gui.util.EditorTheme;
+import com.ezasm.gui.util.WindowCloseListener;
+import com.ezasm.instructions.implementation.TerminalInstructions;
+import com.ezasm.parsing.Lexer;
+import com.ezasm.parsing.ParseException;
+import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.Simulator;
+import com.ezasm.util.FileIO;
+import com.ezasm.util.RandomAccessFileStream;
+import com.ezasm.util.SystemStreams;
 
 /**
  * The main graphical user interface of the program. A singleton which holds all the necessary GUI components and one
@@ -203,7 +215,7 @@ public class Window {
         }
 
         try {
-            FileIO.registerFont("fonts/jetbrains/JetBrainsMono-Regular.ttf");
+            FileIO.registerFont("fonts/Noto_Sans_Mono/NotoSansMono-VariableFont_wdth,wght.ttf");
         } catch (IOException e) {
             SystemStreams.err.println("Unable to load standard font");
         }
