@@ -1,0 +1,77 @@
+# Process Pipe Example
+# Demonstrates exec, readfd, and writefd instructions for external process communication
+
+# Execute an external program (e.g., Python script or shell command)
+# exec returns two FDs: $t0 = stdin (write to process), $t1 = stdout (read from process)
+
+# Push command string "python echo_server.py" onto stack (null-terminated)
+push 0
+push 'y'
+push 'p'
+push '.'
+push 'r'
+push 'e'
+push 'v'
+push 'r'
+push 'e'
+push 's'
+push '_'
+push 'o'
+push 'h'
+push 'c'
+push 'e'
+push ' '
+push 'n'
+push 'o'
+push 'h'
+push 't'
+push 'y'
+push 'p'
+add $s0 $sp 0  # save command pointer in $s0
+
+# Execute the external process
+exec $s0       # $t0 = stdin fd, $t1 = stdout fd
+
+# Write data to process stdin
+# Push message "Hello, Process!\n" onto stack
+push 0
+push '\n'
+push '!'
+push 's'
+push 's'
+push 'e'
+push 'c'
+push 'o'
+push 'r'
+push 'P'
+push ' '
+push ','
+push 'o'
+push 'l'
+push 'l'
+push 'e'
+push 'H'
+add $s1 $sp 0  # save message pointer in $s1
+
+# Calculate message length (16 bytes including newline, excluding null)
+add $s2 0 16
+
+# Write message to process stdin
+writefd $t0 $s1 $s2
+
+# Read response from process stdout
+# Allocate buffer in memory for reading response
+add $s3 $sp 0  # buffer address
+add $s4 0 256  # max bytes to read
+
+# Read from process stdout
+readfd $t1 $s3 $s4  # reads up to 256 bytes, returns bytes read in $r0
+
+# Close the file descriptors
+add $fd $t0 0
+close          # close stdin
+add $fd $t1 0
+close          # close stdout
+
+# At this point, $r0 contains number of bytes read
+# and $s3 points to the buffer containing the response
