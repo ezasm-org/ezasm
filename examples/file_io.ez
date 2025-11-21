@@ -1,0 +1,46 @@
+# File I/O Example
+# Demonstrates open, write, and close instructions
+
+# Write "Hello, File!\n" to output.txt using write instruction
+# write takes two arguments: pointer to filename, pointer to data
+
+# Push filename string "output.txt" onto stack (null-terminated)
+push 0
+push 't'
+push 'x'
+push 't'
+push '.'
+push 't'
+push 'u'
+push 'p'
+push 't'
+push 'u'
+push 'o'
+add $t0 $sp 0  # save filename pointer in $t0
+
+# Push data string "Hello, File!\n" onto stack (null-terminated)
+push 0
+push '\n'
+push '!'
+push 'e'
+push 'l'
+push 'i'
+push 'F'
+push ' '
+push ','
+push 'o'
+push 'l'
+push 'l'
+push 'e'
+push 'H'
+add $t1 $sp 0  # save data pointer in $t1
+
+# Write data to file
+write $t0 $t1
+
+# Example using open and close
+# Open the file we just created
+open $t0      # opens "output.txt", stores FD in $fd register
+
+# Close the file descriptor
+close         # closes file in $fd register, sets $fd to 0
