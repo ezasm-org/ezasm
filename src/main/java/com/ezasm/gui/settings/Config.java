@@ -65,13 +65,13 @@ public class Config {
             entry(MEMORY_RANDOMIZE_ON_RESET, Config::getMemoryRandomizeOnReset));
 
     // Possible themes
-    private static final String[] THEME_ARRAY = { EditorTheme.Light.name(), EditorTheme.Dark.name(),
-            EditorTheme.Purple.name() };
+    // private static final String[] THEME_ARRAY = { EditorTheme.Light.name(), EditorTheme.Dark.name(),
+    // EditorTheme.Purple.name() };
 
-    /**
-     * A vector containing the types of possible themes.
-     */
-    public static final Vector<String> THEMES = new Vector<>(Arrays.asList(THEME_ARRAY));
+    // /**
+    // * A vector containing the types of possible themes.
+    // */
+    // public static final Vector<String> THEMES = new Vector<>(Arrays.asList(THEME_ARRAY));
 
     private Properties props = new Properties();
 

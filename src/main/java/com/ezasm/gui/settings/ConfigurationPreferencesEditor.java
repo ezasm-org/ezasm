@@ -6,7 +6,9 @@ import com.ezasm.gui.util.EditorTheme;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Vector;
 
 import com.ezasm.gui.util.IThemeable;
 
@@ -38,7 +40,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         tabSizeSlider = new JSlider(1, 8, config.getTabSize());
         autoSaveButton = new AutoSaveSliderToggleButton(config.getAutoSaveSelected(), config.getAutoSaveInterval());
         memoryRandomizeOnResetButton = new MemoryRandomizeOnResetButton(config.getMemoryRandomizeOnReset());
-        themeInput = new JComboBox<>(Config.THEMES);
+        themeInput = new JComboBox<>(new Vector<>(Arrays.asList(EditorTheme.getThemeNames())));
         themeInput.setSelectedItem(config.getTheme().name());
 
         panel.add(new JLabel("Font Size"));

@@ -10,6 +10,8 @@ import java.nio.file.StandardCopyOption;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -38,24 +40,20 @@ public record EditorTheme(String name, Color background, Color foreground, Color
     private static final File THEMES_DIRECTORY = new File(OperatingSystemUtils.EZASM_THEMES);
 
     /**
-     * theme values within JSON resources/themes folder are inspired by: 
-     * light theme, https://github.com/atom/one-light-syntax, 
-     * dark theme, https://github.com/dracula/dracula-theme, 
-     * purple theme, https://github.com/endormi/vscode-2077-theme
+     * theme values within JSON resources/themes folder are inspired by: light theme,
+     * https://github.com/atom/one-light-syntax, dark theme, https://github.com/dracula/dracula-theme, purple theme,
+     * https://github.com/endormi/vscode-2077-theme
      */
-    private static final String[] DEFAULT_THEME_NAMES = { "Light", "Dark", "Purple" };
-
-    public static EditorTheme Light, Dark, Purple;
+    private static String[] DEFAULT_THEME_NAMES = { "Light", "Dark", "Purple" };
 
     // default themes are retrieved at the start of runtime
+    public static EditorTheme Light, Dark, Purple;
     static {
         loadDefaultThemes();
         Light = getTheme("Light");
         Dark = getTheme("Dark");
         Purple = getTheme("Purple");
     }
-
-    // TODO: ConfigurationPreferencesEditor needs to display accurate list of available themes
 
     /**
      * Loads default theme JSONs into a theme folder within the user's config directory, but only if that folder doesn't
@@ -72,7 +70,7 @@ public record EditorTheme(String name, Color background, Color foreground, Color
             for (String themeName : EditorTheme.DEFAULT_THEME_NAMES) {
                 InputStream defaultThemeInputStream = EditorTheme.class.getClassLoader()
                         .getResourceAsStream("themes/" + themeName + ".json");
-                File newThemeDestination = new File(EditorTheme.THEMES_DIRECTORY, themeName);
+                File newThemeDestination = new File(EditorTheme.THEMES_DIRECTORY, themeName + ".json");
                 Files.copy(defaultThemeInputStream, newThemeDestination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
@@ -113,16 +111,33 @@ public record EditorTheme(String name, Color background, Color foreground, Color
      * @return the theme object.
      */
     public static EditorTheme getTheme(String s) {
-        if (!(new File(EditorTheme.THEMES_DIRECTORY, s).exists())) {
+        if (!(new File(EditorTheme.THEMES_DIRECTORY, s + ".json").exists())) {
             throw new RuntimeException("Theme \"" + s + "\" not found");
         }
         try {
-            String themeString = Files.readString(Path.of(EditorTheme.THEMES_DIRECTORY.toString(), s));
+            String themeString = Files.readString(Path.of(EditorTheme.THEMES_DIRECTORY.toString(), s + ".json"));
             JSONObject json = new JSONObject(themeString);
             return JSONObjectToEditorTheme(json);
         } catch (Exception e) {
             throw new RuntimeException("Theme \"" + s + "\" could not be retrieved");
         }
+    }
+
+    /**
+     * Returns a list of the available themes in the user's config/themes folder
+     *
+     * @return a string array of available themes names
+     */
+    public static String[] getThemeNames() {
+        // make a list of all the json files
+        File[] themeFiles = THEMES_DIRECTORY.listFiles((dir, name) -> name.endsWith(".json"));
+        if (themeFiles == null) {
+            return new String[0];
+        }
+        // return an array of the names of all these files
+        return Arrays.stream(themeFiles).map((file) -> file.getName().replaceFirst("[.][^.]+$", ""))
+                .toArray(String[]::new);
+
     }
 
     /**
