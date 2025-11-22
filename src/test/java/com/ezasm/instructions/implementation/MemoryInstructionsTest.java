@@ -38,15 +38,11 @@ public class MemoryInstructionsTest {
         IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
         IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
 
-        // alloc 2
         long before = sim.getRegisters().getRegister("t0").getLong();
         memoryInstructions.malloc(register, immediateTwo).apply();
-        // free
         memoryInstructions.free(register);
-        // alloc 4
         memoryInstructions.malloc(register, immediateFour).apply();
         long after = sim.getRegisters().getRegister("t0").getLong();
-        // check ?
         System.out.println(before + sim.getMemory().initialHeapPointer());
         System.out.println(after);
         assertEquals(before + sim.getMemory().initialHeapPointer(), after);
@@ -84,7 +80,6 @@ public class MemoryInstructionsTest {
         Simulator sim = new Simulator(8, 16);
         MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
         IAbstractInputOutput register = new RegisterInputOutput("t0");
-        IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
         IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
 
         long before = sim.getRegisters().getRegister("t0").getLong();
@@ -96,9 +91,6 @@ public class MemoryInstructionsTest {
         memoryInstructions.malloc(register, immediateFour).apply();
         long afterSecond = sim.getRegisters().getRegister("t0").getLong();
         assertEquals(after + 4, afterSecond);
-
-        //memoryInstructions.free(register).apply();
-        //long postFreeBefore = sim.getRegisters().getRegister
     }
 
     @Test
