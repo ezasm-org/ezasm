@@ -190,7 +190,6 @@ public class Memory {
                     // (block.size - min) bytes starting at (block.addr + min) left after allocation
                     block.size -= need;
                     block.addr += need;
-                    System.out.println(block.size + " bytes starting at " + block.addr + " remaining");
                 }
                 return block;
             }
