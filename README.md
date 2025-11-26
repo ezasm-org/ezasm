@@ -106,7 +106,7 @@ being on the required operating system and having the necessary optional depende
 <details>
 <summary><h2 style="display:inline-block">Learn More</h2></summary>
 
-#### An appendix of EzASM's commands can be found [here](https://github.com/ezasm-org/EzASM/wiki/Instruction-Set)
+#### An appendix of EzASM's instructions can be found [here](https://github.com/ezasm-org/EzASM/wiki/Instruction-Set)
 #### A guide to the syntax of EzASM's language can be found [here](https://github.com/ezasm-org/EzASM/wiki/Syntax)
 #### EzASM Implementation and structure details can be found [here](https://github.com/ezasm-org/EzASM/wiki/Structure)
 
