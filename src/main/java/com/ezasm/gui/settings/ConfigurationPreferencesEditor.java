@@ -40,6 +40,7 @@ public class ConfigurationPreferencesEditor implements PreferencesEditor, ITheme
         tabSizeSlider = new JSlider(1, 8, config.getTabSize());
         autoSaveButton = new AutoSaveSliderToggleButton(config.getAutoSaveSelected(), config.getAutoSaveInterval());
         memoryRandomizeOnResetButton = new MemoryRandomizeOnResetButton(config.getMemoryRandomizeOnReset());
+        EditorTheme.loadDefaultThemes();
         themeInput = new JComboBox<>(new Vector<>(Arrays.asList(EditorTheme.getThemeNames())));
         themeInput.setSelectedItem(config.getTheme().name());
 

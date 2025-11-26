@@ -60,18 +60,21 @@ public record EditorTheme(String name, Color background, Color foreground, Color
      * exist yet (first time opening app/folder was deleted).
      */
     public static void loadDefaultThemes() {
-        if (EditorTheme.THEMES_DIRECTORY.exists()) {
-            return;
+        if (!EditorTheme.THEMES_DIRECTORY.exists()) {
+            // initialize a new themes directory within the user's EzASM config folder, if it doesn't exist
+            EditorTheme.THEMES_DIRECTORY.mkdirs();
         }
         try {
-            // initialize a new themes directory within the user's EzASM config folder
-            EditorTheme.THEMES_DIRECTORY.mkdirs();
             // find each default theme in the theme resources directory and copy it to the user's theme config directory
             for (String themeName : EditorTheme.DEFAULT_THEME_NAMES) {
                 InputStream defaultThemeInputStream = EditorTheme.class.getClassLoader()
                         .getResourceAsStream("themes/" + themeName + ".json");
                 File newThemeDestination = new File(EditorTheme.THEMES_DIRECTORY, themeName + ".json");
-                Files.copy(defaultThemeInputStream, newThemeDestination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                // don't replace it this default theme if it already exists (user may have customized it)
+                if (!newThemeDestination.exists()) {
+                    Files.copy(defaultThemeInputStream, newThemeDestination.toPath(),
+                            StandardCopyOption.REPLACE_EXISTING);
+                }
             }
         } catch (IOException e) {
             SystemStreams.printlnCurrentErr("Error loading themes");
