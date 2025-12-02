@@ -191,7 +191,7 @@ public class Memory {
                     block.size -= need;
                     block.addr += need;
                 }
-                return block;
+                return new Block(addr, need);
             }
         }
         // check last element, if it's up against the hp, return it
