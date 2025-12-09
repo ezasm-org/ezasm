@@ -29,6 +29,7 @@ public class InstructionDispatcher {
         registerInstructions(ArithmeticInstructions.class);
         registerInstructions(FloatArithmeticInstructions.class);
         registerInstructions(TerminalInstructions.class);
+        registerInstructions(FileIOInstructions.class);
         registerInstructions(BranchInstructions.class);
         registerInstructions(ComparisonInstructions.class);
         registerInstructions(FunctionInstructions.class);

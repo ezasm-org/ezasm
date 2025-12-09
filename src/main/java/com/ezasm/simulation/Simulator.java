@@ -21,6 +21,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.io.File;
 import java.io.IOException;
+import com.ezasm.util.*;
 import java.util.*;
 
 /**
@@ -45,6 +46,11 @@ public class Simulator {
 
     private final Register pc;
     private final Register fi;
+    // File descriptor table for runtime file IO (maps fd -> FileDescriptor: files and process pipes)
+    private final Map<Integer, FileDescriptor> fdTable;
+    // Process table to track running external processes
+    private final Map<Integer, ProcessPipe> processTable;
+    private int nextFd;
     private String executionDirectory;
     private boolean canUndo;
 
@@ -68,6 +74,9 @@ public class Simulator {
         this.fi = registers.getRegister(Registers.FID);
         this.executionDirectory = "";
         this.canUndo = false;
+        this.fdTable = new HashMap<>();
+        this.processTable = new HashMap<>();
+        this.nextFd = 3; // reserve 0-2 for stdin/out/err if desired
 
         initialize();
     }
@@ -367,6 +376,161 @@ public class Simulator {
      */
     public String getFile(int fid) {
         return fileToIdentifier.getKey(fid);
+    }
+
+    /**
+     * Opens a file for reading and returns a file descriptor integer. The file path is resolved relative to the
+     * simulator's execution directory when appropriate.
+     *
+     * @param path the path to the file to open (may be relative to the execution directory).
+     * @return the allocated file descriptor integer.
+     * @throws SimulationException if the file cannot be opened.
+     */
+    public int openFile(String path) throws SimulationException {
+        String absoluteFilePath = executionDirectory.isEmpty() ? path : executionDirectory + File.separator + path;
+        File file = new File(absoluteFilePath);
+        try {
+            RandomAccessFileStream raf = new RandomAccessFileStream(file);
+            FileStreamDescriptor descriptor = new FileStreamDescriptor(raf);
+            int fd = nextFd++;
+            fdTable.put(fd, descriptor);
+            return fd;
+        } catch (IOException e) {
+            throw new SimulationException(String.format("Unable to open file '%s': %s", path, e.getMessage()));
+        }
+    }
+
+    /**
+     * Closes the given file descriptor.
+     *
+     * @param fd the file descriptor to close.
+     * @throws SimulationException if the fd is invalid or closing fails.
+     */
+    public void closeFile(int fd) throws SimulationException {
+        FileDescriptor descriptor = fdTable.remove(fd);
+        if (descriptor == null) {
+            throw new SimulationException(String.format("Invalid file descriptor %d", fd));
+        }
+        try {
+            descriptor.close();
+        } catch (IOException e) {
+            throw new SimulationException(String.format("Unable to close file descriptor %d: %s", fd, e.getMessage()));
+        }
+    }
+
+    /**
+     * Writes the given content to a file. Path resolution is relative to the simulator execution directory.
+     *
+     * @param path    the desired file path (relative or absolute)
+     * @param content the contents to write into the file
+     * @throws SimulationException if an IO error occurs
+     */
+    public void writeFile(String path, String content) throws SimulationException {
+        String absoluteFilePath = executionDirectory.isEmpty() ? path : executionDirectory + File.separator + path;
+        try {
+            FileIO.writeFile(new File(absoluteFilePath), content);
+        } catch (IOException e) {
+            throw new SimulationException(String.format("Unable to write file '%s': %s", path, e.getMessage()));
+        }
+    }
+
+    /**
+     * Executes an external program and returns two file descriptors: one for stdin and one for stdout. The program path
+     * is resolved relative to the execution directory.
+     *
+     * @param command the command and arguments to execute (program path + args).
+     * @return a pair of file descriptors (stdin_fd, stdout_fd) for communicating with the process.
+     * @throws SimulationException if the process cannot be started.
+     */
+    public Pair<Integer, Integer> executeProcess(String[] command) throws SimulationException {
+        try {
+            // Resolve first argument (program path) relative to execution directory if not absolute
+            if (command.length > 0 && !new File(command[0]).isAbsolute()) {
+                String resolvedPath = executionDirectory.isEmpty() ? command[0]
+                        : executionDirectory + File.separator + command[0];
+                command[0] = resolvedPath;
+            }
+
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.directory(executionDirectory.isEmpty() ? null : new File(executionDirectory));
+            Process process = pb.start();
+            ProcessPipe pipe = new ProcessPipe(process);
+
+            // Allocate two file descriptors: stdin and stdout
+            int stdinFd = nextFd++;
+            int stdoutFd = nextFd++;
+
+            fdTable.put(stdinFd, new ProcessStdinDescriptor(pipe));
+            fdTable.put(stdoutFd, new ProcessStdoutDescriptor(pipe));
+            processTable.put(stdinFd, pipe); // track the process by stdin fd
+
+            return new ImmutablePair<>(stdinFd, stdoutFd);
+        } catch (IOException e) {
+            throw new SimulationException(
+                    String.format("Unable to execute process '%s': %s", String.join(" ", command), e.getMessage()));
+        }
+    }
+
+    /**
+     * Reads bytes from a file descriptor into a byte array.
+     *
+     * @param fd     the file descriptor to read from.
+     * @param buffer the buffer to read into.
+     * @param offset the offset in the buffer to start writing.
+     * @param length the maximum number of bytes to read.
+     * @return the number of bytes actually read, or -1 if end of stream.
+     * @throws SimulationException if the fd is invalid or reading fails.
+     */
+    public int readFromFd(int fd, byte[] buffer, int offset, int length) throws SimulationException {
+        FileDescriptor descriptor = fdTable.get(fd);
+        if (descriptor == null) {
+            throw new SimulationException(String.format("Invalid file descriptor %d", fd));
+        }
+        java.io.InputStream is = descriptor.getInputStream();
+        if (is == null) {
+            throw new SimulationException(String.format("File descriptor %d does not support reading", fd));
+        }
+        try {
+            return is.read(buffer, offset, length);
+        } catch (IOException e) {
+            throw new SimulationException(
+                    String.format("Error reading from file descriptor %d: %s", fd, e.getMessage()));
+        }
+    }
+
+    /**
+     * Writes bytes from a byte array to a file descriptor.
+     *
+     * @param fd     the file descriptor to write to.
+     * @param buffer the buffer containing data to write.
+     * @param offset the offset in the buffer to start reading from.
+     * @param length the number of bytes to write.
+     * @throws SimulationException if the fd is invalid or writing fails.
+     */
+    public void writeToFd(int fd, byte[] buffer, int offset, int length) throws SimulationException {
+        FileDescriptor descriptor = fdTable.get(fd);
+        if (descriptor == null) {
+            throw new SimulationException(String.format("Invalid file descriptor %d", fd));
+        }
+        java.io.OutputStream os = descriptor.getOutputStream();
+        if (os == null) {
+            throw new SimulationException(String.format("File descriptor %d does not support writing", fd));
+        }
+        try {
+            os.write(buffer, offset, length);
+            os.flush();
+        } catch (IOException e) {
+            throw new SimulationException(String.format("Error writing to file descriptor %d: %s", fd, e.getMessage()));
+        }
+    }
+
+    /**
+     * Gets the file descriptor table for direct access (used by instructions).
+     *
+     * @return the file descriptor table.
+     */
+    public Map<Integer, FileDescriptor> getFdTable() {
+        return fdTable;
     }
 
 }

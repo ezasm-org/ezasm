@@ -1,0 +1,84 @@
+# File I/O Example
+# Demonstrates open, write, and close instructions for file operations
+
+# === Example 1: Write to file using 'write' instruction ===
+# write takes two arguments: pointer to filename, pointer to data
+
+# Push filename string "output.txt" onto stack (null-terminated)
+push 0
+push 't'
+push 'x'
+push 't'
+push '.'
+push 't'
+push 'u'
+push 'p'
+push 't'
+push 'u'
+push 'o'
+add $t0 $sp 0  # save filename pointer in $t0
+
+# Push data string "Hello, File!\n" onto stack (null-terminated)
+push 0
+push '\n'
+push '!'
+push 'e'
+push 'l'
+push 'i'
+push 'F'
+push ' '
+push ','
+push 'o'
+push 'l'
+push 'l'
+push 'e'
+push 'H'
+add $t1 $sp 0  # save data pointer in $t1
+
+# Write data to file (creates/overwrites file)
+write $t0 $t1
+
+# === Example 2: Open and close file using file descriptors ===
+# Open the file we just created
+open $t0      # opens "output.txt", stores FD in $fd register
+
+# At this point you could use readfd to read from the file
+# (readfd not shown in this example - see process_pipe.ez)
+
+# Close the file descriptor
+close         # closes file in $fd register, sets $fd to 0
+
+# === Example 3: File descriptor based I/O (writefd) ===
+# This demonstrates writing to a file using FD-based operations
+
+# Open a new file for writing
+push 0
+push 't'
+push 'x'
+push 't'
+push '.'
+push '2'
+push 'e'
+push 'l'
+push 'i'
+push 'f'
+add $t2 $sp 0  # filename "file2.txt"
+
+open $t2      # open file, FD in $fd
+
+# Prepare data to write (bytes in memory)
+push 0x21     # '!'
+push 0x64     # 'd'
+push 0x6C     # 'l'
+push 0x72     # 'r'
+push 0x6F     # 'o'
+push 0x57     # 'W'
+add $t3 $sp 0  # data pointer
+add $t4 0 6    # length = 6 bytes
+
+# Write bytes to file using file descriptor
+writefd $fd $t3 $t4
+
+# Close the file
+close
+
