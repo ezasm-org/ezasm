@@ -21,7 +21,6 @@ public class AlternatingHighlightTable extends AlternatingColorTable implements 
     private Color changedTextColor;
     private final Set<Integer> flashingRows = new HashSet<>();
 
-
     /**
      * Constructs a JTable where the color alternates based on whether the line number is even or odd given a theme.
      *
@@ -73,24 +72,24 @@ public class AlternatingHighlightTable extends AlternatingColorTable implements 
     /**
      * Adds the given row to the subcomponents that should be highlighted
      *
-     * @param row        a row to be highlighted
+     * @param row a row to be highlighted
      */
     public void flashRow(int row) {
         flashingRows.add(row);
         repaint(getCellRect(row, 0, true));
     }
 
-     /**
+    /**
      * Removes the given row from the subcomponents that should be highlighted
      *
-     * @param row        a row to be unhighlighted
+     * @param row a row to be unhighlighted
      */
     public void clearFlash(int row) {
         flashingRows.remove(row);
         repaint(getCellRect(row, 0, true));
     }
 
-     /**
+    /**
      * After all steps have finished, clears all highlighted rolws
      *
      */

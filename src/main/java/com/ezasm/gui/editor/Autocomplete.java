@@ -15,17 +15,15 @@ import javax.swing.event.DocumentListener;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
- * Autocomplete listener for EzASM label names in the text editor.
- * Scans the document for labels (identifiers ending with ':') and completes them as the user types.
- * Maintains a sorted keyword list and uses binary search for prefix matching.
- * Two modes: INSERT (normal typing) and COMPLETION (label completion active).
+ * Autocomplete listener for EzASM label names in the text editor. Scans the document for labels (identifiers ending
+ * with ':') and completes them as the user types. Maintains a sorted keyword list and uses binary search for prefix
+ * matching. Two modes: INSERT (normal typing) and COMPLETION (label completion active).
  */
 public class Autocomplete implements DocumentListener {
 
     /**
-     * Represents the autocomplete mode state.
-     * INSERT: normal typing, Tab inserts a tab character.
-     * COMPLETION: label completion active, Tab accepts it.
+     * Represents the autocomplete mode state. INSERT: normal typing, Tab inserts a tab character. COMPLETION: label
+     * completion active, Tab accepts it.
      */
     private enum Mode {
         INSERT, COMPLETION
@@ -38,8 +36,9 @@ public class Autocomplete implements DocumentListener {
 
     /**
      * Constructs an Autocomplete listener.
+     *
      * @param textField the RSyntaxTextArea to apply autocomplete to.
-     * @param keywords a mutable list of keywords (labels) to maintain and search.
+     * @param keywords  a mutable list of keywords (labels) to maintain and search.
      */
     public Autocomplete(RSyntaxTextArea textField, List<String> keywords) {
         this.textField = textField;
@@ -49,6 +48,7 @@ public class Autocomplete implements DocumentListener {
 
     /**
      * Called when document style attributes change. No-op for this listener.
+     *
      * @param ev the DocumentEvent (unused).
      */
     @Override
@@ -56,8 +56,9 @@ public class Autocomplete implements DocumentListener {
     }
 
     /**
-     * Called when text is removed from the document.
-     * Rebuilds the keyword list by scanning the entire document for labels.
+     * Called when text is removed from the document. Rebuilds the keyword list by scanning the entire document for
+     * labels.
+     *
      * @param ev the DocumentEvent (position and length of removed text).
      */
     @Override
@@ -74,8 +75,9 @@ public class Autocomplete implements DocumentListener {
     }
 
     /**
-     * Called when text is inserted into the document.
-     * Updates the keyword list and attempts to complete the current word if it matches a label prefix.
+     * Called when text is inserted into the document. Updates the keyword list and attempts to complete the current
+     * word if it matches a label prefix.
+     *
      * @param ev the DocumentEvent (position, length, and type of inserted text).
      */
     @Override
@@ -145,9 +147,8 @@ public class Autocomplete implements DocumentListener {
     }
 
     /**
-     * Action triggered by the Tab key.
-     * If mode is COMPLETION: accepts the completion and inserts a space, then switches to INSERT.
-     * Otherwise: inserts a tab character.
+     * Action triggered by the Tab key. If mode is COMPLETION: accepts the completion and inserts a space, then switches
+     * to INSERT. Otherwise: inserts a tab character.
      */
     public class CommitAction extends AbstractAction {
 
@@ -171,8 +172,8 @@ public class Autocomplete implements DocumentListener {
     }
 
     /**
-     * Runnable task that inserts the completion text into the document on the EDT.
-     * Sets caret and selection to highlight the inserted text, then switches to COMPLETION mode.
+     * Runnable task that inserts the completion text into the document on the EDT. Sets caret and selection to
+     * highlight the inserted text, then switches to COMPLETION mode.
      */
     private class CompletionTask implements Runnable {
         private final String completion;
@@ -180,8 +181,9 @@ public class Autocomplete implements DocumentListener {
 
         /**
          * Constructs a CompletionTask.
+         *
          * @param completion the text to insert (remainder of matched label).
-         * @param position the position in the document to insert at.
+         * @param position   the position in the document to insert at.
          */
         CompletionTask(String completion, int position) {
             this.completion = completion;
@@ -189,8 +191,7 @@ public class Autocomplete implements DocumentListener {
         }
 
         /**
-         * Inserts the completion text and selects it.
-         * Switches the mode to COMPLETION.
+         * Inserts the completion text and selects it. Switches the mode to COMPLETION.
          */
         @Override
         public void run() {
