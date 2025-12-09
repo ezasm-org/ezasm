@@ -1,5 +1,6 @@
 package com.ezasm.simulation;
 
+import com.ezasm.gui.settings.Config;
 import com.ezasm.simulation.exception.*;
 import com.ezasm.util.RawData;
 
@@ -13,7 +14,7 @@ import java.util.*;
  * float size).
  */
 public class Memory {
-
+    private Config config;
     /**
      * The default number of words possible to store in the system.
      */
@@ -45,6 +46,7 @@ public class Memory {
      * Constructs memory with the default parameters.
      */
     public Memory() {
+        this.config = new Config();
         this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
         this.disallowedBytes = wordSize * DEFAULT_OFFSET;
         this.memorySize = offsetBytes + DEFAULT_MEMORY_WORDS * wordSize;
@@ -64,6 +66,7 @@ public class Memory {
      * @param memorySize the memory size in words.
      */
     public Memory(int wordSize, int memorySize) {
+        this.config = new Config();
         Memory.wordSize = wordSize;
         this.offsetBytes = wordSize * (DEFAULT_OFFSET + STRING_OFFSET);
         this.disallowedBytes = wordSize * DEFAULT_OFFSET;
@@ -90,7 +93,6 @@ public class Memory {
      * Resets the memory by setting all values to zero and returning the allocation pointer to zero.
      */
     public void reset() {
-        Arrays.fill(memory, (byte) 0);
         alloc = offsetBytes;
         stringAlloc = STRING_OFFSET * wordSize;
         stringAddressMap.clear();
@@ -100,15 +102,22 @@ public class Memory {
     }
 
     /**
-     * Randomize the memory so that it is not all zeroes.
+     * Reset the memory to either be randomized or be all zeroes, depending on the config setting.
      */
-    private void randomizeMemory() {
-        Random random = new Random();
-        random.setSeed(System.nanoTime());
-        byte[] bytes = new byte[1];
-        for (int i = offsetBytes; i < memory.length; ++i) {
-            random.nextBytes(bytes);
-            memory[i] = bytes[0];
+    private void resetMemory() {
+        // resetting randomizes each byte of memory
+        if (config.getMemoryRandomizeOnReset()) {
+            byte[] bytes = new byte[1];
+            Random random = new Random();
+            random.setSeed(System.nanoTime());
+            for (int i = offsetBytes; i < memory.length; ++i) {
+                random.nextBytes(bytes);
+                memory[i] = bytes[0];
+            }
+        }
+        // resetting sets each byte of memory to 0
+        else {
+            Arrays.fill(memory, (byte) 0);
         }
     }
 

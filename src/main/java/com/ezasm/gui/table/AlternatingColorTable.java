@@ -1,11 +1,14 @@
 package com.ezasm.gui.table;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
+
 import com.ezasm.gui.util.EditorTheme;
 import com.ezasm.gui.util.IThemeable;
-
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 
 /**
  * An extension of JTable with colors that alternate based on whether a row has an even index or an odd index.
