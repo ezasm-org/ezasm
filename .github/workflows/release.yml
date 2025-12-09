@@ -1,0 +1,139 @@
+name: Release
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  release-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout EzASM
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Install innosetup
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: install innosetup --no-progress
+      - name: Build with Maven
+        run: mvn -B -U package
+      - name: Move artifact
+        id: stage
+        shell: bash
+        run: |
+          ID="EzASM"
+          FULL_JAR_NAME="$(basename $(find target -name '*-full.jar'))"
+          BASE_NAME="${FULL_JAR_NAME%-full.jar}"
+          VERSION="${BASE_NAME#${ID}-}"
+          EXE_NAME="${BASE_NAME}-windows.exe"
+          ZIP_NAME="${BASE_NAME}-windows.zip"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "exe_name=${EXE_NAME}" >> $GITHUB_OUTPUT
+          echo "zip_name=${ZIP_NAME}" >> $GITHUB_OUTPUT
+          mkdir staging
+          cp ./target/${ID}_*.exe "./staging/${EXE_NAME}"
+          cp ./target/${ID}-*windows.zip "./staging/${ZIP_NAME}"
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: EzASM-${{ steps.stage.outputs.version }}
+          tag_name: v${{ steps.stage.outputs.version }}
+          files: |
+            ./staging/${{ steps.stage.outputs.exe_name }}
+            ./staging/${{ steps.stage.outputs.zip_name }}
+
+
+  release-macosx:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout EzASM
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B -U package
+      - name: Move artifact
+        id: stage
+        run: |
+          ID="EzASM"
+          FULL_JAR_NAME="$(basename $(find target -name '*-full.jar'))"
+          BASE_NAME="${FULL_JAR_NAME%-full.jar}"
+          VERSION="${BASE_NAME#${ID}-}"
+          DMG_NAME="${BASE_NAME}-mac.dmg"
+          TAR_NAME="${BASE_NAME}-mac.tar.gz"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "dmg_name=${DMG_NAME}" >> $GITHUB_OUTPUT
+          echo "tar_name=${TAR_NAME}" >> $GITHUB_OUTPUT
+          mkdir staging
+          cp ./target/${ID}_*.dmg "./staging/${DMG_NAME}"
+          cp ./target/${ID}-*.tar.gz "./staging/${TAR_NAME}"
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: EzASM-${{ steps.stage.outputs.version }}
+          tag_name: v${{ steps.stage.outputs.version }}
+          files: |
+            ./staging/${{ steps.stage.outputs.dmg_name }}
+            ./staging/${{ steps.stage.outputs.tar_name }}
+          
+
+  release-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout EzASM
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven  
+      - name: Build with Maven
+        run: mvn -B -U package
+      - name: Move artifact
+        id: stage
+        run: |
+          ID="EzASM"
+          FULL_JAR_NAME="$(basename $(find target -name '*-full.jar'))"
+          BASE_NAME="${FULL_JAR_NAME%-full.jar}"
+          VERSION="${BASE_NAME#${ID}-}"
+          DEB_NAME="${BASE_NAME}-linux.deb"
+          RPM_NAME="${BASE_NAME}-linux.rpm"
+          TAR_NAME="${BASE_NAME}-linux.tar.gz"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "deb_name=${DEB_NAME}" >> $GITHUB_OUTPUT
+          echo "rpm_name=${RPM_NAME}" >> $GITHUB_OUTPUT
+          echo "tar_name=${TAR_NAME}" >> $GITHUB_OUTPUT
+          echo "full_name=${FULL_JAR_NAME}" >> $GITHUB_OUTPUT
+          mkdir staging
+          cp ./target/${ID}_*.deb "./staging/${DEB_NAME}"
+          cp ./target/${ID}_*.rpm "./staging/${RPM_NAME}"
+          cp ./target/${ID}-*.tar.gz "./staging/${TAR_NAME}"
+          ./src/shell/combine_files.sh ./src/shell/stub.sh ./target/${FULL_JAR_NAME} "./staging/${FULL_JAR_NAME}"
+          echo "jar_sha256=$(sha256sum ./staging/${FULL_JAR_NAME} | cut -d " " -f1)" >> $GITHUB_OUTPUT
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: EzASM-${{ steps.stage.outputs.version }}
+          tag_name: v${{ steps.stage.outputs.version }}
+          files: |
+            ./staging/${{ steps.stage.outputs.rpm_name }} 
+            ./staging/${{ steps.stage.outputs.deb_name }}
+            ./staging/${{ steps.stage.outputs.tar_name }}
+            ./staging/${{ steps.stage.outputs.full_name }}
+   
+      - name: Release Homebrew
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ezasm-org/homebrew-ezasm
+          event-type: release
+          client-payload: '{"version": "${{ steps.stage.outputs.version }}", "jar_sha256": "${{ steps.stage.outputs.jar_sha256 }}"}'
