@@ -23,8 +23,8 @@ public class Arguments {
         Option helpOption = new Option("h", "help", false, "Display this information");
         options.addOption(helpOption);
 
-        Option verionOption = new Option("v", "version", false, "Display the program version");
-        options.addOption(verionOption);
+        Option versionOption = new Option("v", "version", false, "Display the program version");
+        options.addOption(versionOption);
 
         Option windowlessOption = new Option("w", "windowless", false,
                 "Starts the program in windowless mode\n(default: disabled)");
@@ -67,7 +67,7 @@ public class Arguments {
             System.exit(0);
         }
 
-        if (commandLine.hasOption(verionOption)) {
+        if (commandLine.hasOption(versionOption)) {
             SystemStreams.out.printf(String.format("%s %s\n", MavenProperties.NAME, MavenProperties.VERSION));
             System.exit(0);
         }
