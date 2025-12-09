@@ -56,7 +56,7 @@ public class Memory {
         this.stringAddressMap = new HashMap<>();
         this.allocationsMap = new HashMap<>();
         this.freeList = new TreeSet<>(Comparator.comparingLong(b -> b.addr));
-        randomizeMemory();
+        resetMemory();
     }
 
     /**
@@ -77,7 +77,7 @@ public class Memory {
         this.stringAddressMap = new HashMap<>();
         this.allocationsMap = new HashMap<>();
         this.freeList = new TreeSet<>(Comparator.comparingLong(b -> b.addr));
-        randomizeMemory();
+        resetMemory();
     }
 
     /**
@@ -96,7 +96,7 @@ public class Memory {
         alloc = offsetBytes;
         stringAlloc = STRING_OFFSET * wordSize;
         stringAddressMap.clear();
-        randomizeMemory();
+        resetMemory();
         this.allocationsMap.clear();
         this.freeList.clear();
     }
