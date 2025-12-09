@@ -1,23 +1,30 @@
 package com.ezasm.gui.editor;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.util.regex.*;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
- * Implements autocomplete for EzASM labels.
+ * Autocomplete listener for EzASM label names in the text editor. Scans the document for labels (identifiers ending
+ * with ':') and completes them as the user types. Maintains a sorted keyword list and uses binary search for prefix
+ * matching. Two modes: INSERT (normal typing) and COMPLETION (label completion active).
  */
 public class Autocomplete implements DocumentListener {
 
+    /**
+     * Represents the autocomplete mode state. INSERT: normal typing, Tab inserts a tab character. COMPLETION: label
+     * completion active, Tab accepts it.
+     */
     private enum Mode {
         INSERT, COMPLETION
     };
@@ -27,16 +34,33 @@ public class Autocomplete implements DocumentListener {
     private final Pattern lineRegex = Pattern.compile("[ \\t]*[_a-zA-Z][_a-zA-Z0-9]*:");
     private Mode mode = Mode.INSERT;
 
+    /**
+     * Constructs an Autocomplete listener.
+     *
+     * @param textField the RSyntaxTextArea to apply autocomplete to.
+     * @param keywords  a mutable list of keywords (labels) to maintain and search.
+     */
     public Autocomplete(RSyntaxTextArea textField, List<String> keywords) {
         this.textField = textField;
         this.keywords = keywords;
         Collections.sort(keywords);
     }
 
+    /**
+     * Called when document style attributes change. No-op for this listener.
+     *
+     * @param ev the DocumentEvent (unused).
+     */
     @Override
     public void changedUpdate(DocumentEvent ev) {
     }
 
+    /**
+     * Called when text is removed from the document. Rebuilds the keyword list by scanning the entire document for
+     * labels.
+     *
+     * @param ev the DocumentEvent (position and length of removed text).
+     */
     @Override
     public void removeUpdate(DocumentEvent ev) {
         keywords.clear();
@@ -50,6 +74,12 @@ public class Autocomplete implements DocumentListener {
         Collections.sort(keywords);
     }
 
+    /**
+     * Called when text is inserted into the document. Updates the keyword list and attempts to complete the current
+     * word if it matches a label prefix.
+     *
+     * @param ev the DocumentEvent (position, length, and type of inserted text).
+     */
     @Override
     public void insertUpdate(DocumentEvent ev) {
         String content = textField.getText();
@@ -116,6 +146,10 @@ public class Autocomplete implements DocumentListener {
         }
     }
 
+    /**
+     * Action triggered by the Tab key. If mode is COMPLETION: accepts the completion and inserts a space, then switches
+     * to INSERT. Otherwise: inserts a tab character.
+     */
     public class CommitAction extends AbstractAction {
 
         @Serial
@@ -137,15 +171,29 @@ public class Autocomplete implements DocumentListener {
         }
     }
 
+    /**
+     * Runnable task that inserts the completion text into the document on the EDT. Sets caret and selection to
+     * highlight the inserted text, then switches to COMPLETION mode.
+     */
     private class CompletionTask implements Runnable {
         private final String completion;
         private final int position;
 
+        /**
+         * Constructs a CompletionTask.
+         *
+         * @param completion the text to insert (remainder of matched label).
+         * @param position   the position in the document to insert at.
+         */
         CompletionTask(String completion, int position) {
             this.completion = completion;
             this.position = position;
         }
 
+        /**
+         * Inserts the completion text and selects it. Switches the mode to COMPLETION.
+         */
+        @Override
         public void run() {
             StringBuffer sb = new StringBuffer(textField.getText());
             sb.insert(position, completion);

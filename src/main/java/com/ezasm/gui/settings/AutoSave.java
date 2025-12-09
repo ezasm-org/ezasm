@@ -1,11 +1,11 @@
 package com.ezasm.gui.settings;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.ezasm.gui.Window;
 import com.ezasm.gui.editor.EzEditorPane;
 import com.ezasm.gui.menubar.MenuActions;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * An automatic file saver that supports saving the user's currently open file if it is not anonymous.
