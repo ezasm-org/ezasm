@@ -14,6 +14,84 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MemoryInstructionsTest {
+    @Test
+    public void TestMallocAndFreeOne() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateFour).apply();
+        memoryInstructions.free(register);
+        memoryInstructions.malloc(register, immediateTwo).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(before + sim.getMemory().initialHeapPointer(), after-2);
+    }
+
+    @Test
+    public void TestMallocAndFreeTwo() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateTwo).apply();
+        memoryInstructions.free(register);
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        System.out.println(before + sim.getMemory().initialHeapPointer());
+        System.out.println(after);
+        assertEquals(before + sim.getMemory().initialHeapPointer(), after);
+    }
+
+    @Test
+    public void TestFreeInstruction() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
+
+        long listBefore = sim.getMemory().getFreeList().size();
+        long mapBefore = sim.getMemory().getAllocations().size();
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long listDuring = sim.getMemory().getFreeList().size();
+        long mapDuring = sim.getMemory().getAllocations().size();
+        memoryInstructions.free(register).apply();
+        long listAfter = sim.getMemory().getFreeList().size();
+        long mapAfter = sim.getMemory().getAllocations().size();
+
+        // list tests
+        assertEquals(0, listBefore);
+        assertEquals(0, listDuring);
+        assertEquals(1, listAfter);
+
+        // map tests
+        assertEquals(0, mapBefore);
+        assertEquals(1, mapDuring);
+        assertEquals(0, mapAfter);
+    }
+
+    @Test
+    public void TestMallocInstruction() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(before + sim.getMemory().initialHeapPointer(), after);
+        assertEquals(1, sim.getMemory().getAllocations().size());
+
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long afterSecond = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(after + 4, afterSecond);
+    }
 
     @Test
     public void TestAllocInstruction() throws SimulationException {

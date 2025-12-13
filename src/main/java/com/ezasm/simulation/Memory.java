@@ -39,6 +39,9 @@ public class Memory {
 
     private final Map<String, RawData> stringAddressMap;
 
+    private final Map<Long, Long> allocationsMap; // map the starting address of a alloc'd block to it's size
+    private final TreeSet<Block> freeList;
+
     /**
      * Constructs memory with the default parameters.
      */
@@ -51,6 +54,8 @@ public class Memory {
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
+        this.allocationsMap = new HashMap<>();
+        this.freeList = new TreeSet<>(Comparator.comparingLong(b -> b.addr));
         resetMemory();
     }
 
@@ -70,6 +75,8 @@ public class Memory {
         this.alloc = offsetBytes;
         this.stringAlloc = STRING_OFFSET * wordSize;
         this.stringAddressMap = new HashMap<>();
+        this.allocationsMap = new HashMap<>();
+        this.freeList = new TreeSet<>(Comparator.comparingLong(b -> b.addr));
         resetMemory();
     }
 
@@ -90,6 +97,8 @@ public class Memory {
         stringAlloc = STRING_OFFSET * wordSize;
         stringAddressMap.clear();
         resetMemory();
+        this.allocationsMap.clear();
+        this.freeList.clear();
     }
 
     /**
@@ -155,6 +164,83 @@ public class Memory {
      */
     public int currentHeapPointer() {
         return alloc;
+    }
+
+    /**
+     * Gets the currently allocated heap memory
+     *
+     * @return the currently allocations map
+     */
+    public Map<Long, Long> getAllocations() { return allocationsMap; }
+
+    /**
+     * Gets the list of free blocks of memory up to heap pointer
+     *
+     * @return the list of blocks
+     */
+    public TreeSet<Block> getFreeList() { return freeList; }
+
+    /**
+     * Gets (the first) free address in the free list that is at least min bytes
+     *  and updates the free list
+     *
+     * @param need the number of bytes needed
+     * @return Block of size
+     */
+    public Block getFreeBlock(long need) {
+        for (Iterator<Block> it = freeList.iterator(); it.hasNext();) {
+            Block block = it.next();
+            if (block.size >= need) {
+                long addr = block.addr; // found a block!
+                if (block.size == need) {
+                    // no left-over space (free list is decremented)
+                    it.remove();
+                } else {
+                    // (block.size - min) bytes starting at (block.addr + min) left after allocation
+                    block.size -= need;
+                    block.addr += need;
+                }
+                return new Block(addr, need);
+            }
+        }
+        // check last element, if it's up against the hp, return it
+        if (!freeList.isEmpty()) {
+            Block last = freeList.last();
+            if (last.addr + last.size == alloc) {
+                freeList.remove(last);
+                return last;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Insert a new block into the free list
+     *  also check neighbors and merges if possible
+     *
+     * @param addr the base address of an alloc'd block
+     * @param size the size of the alloc'd block
+     */
+    public void addToFreeList(long addr, long size) {
+        Block curr = new Block(addr, size);
+        Block before = freeList.lower(curr);
+        Block after = freeList.higher(curr);
+
+        // check adj to prior block
+        if (before != null && before.addr + before.size == curr.addr) {
+            curr.addr = before.addr; // merge to prior
+            curr.size += before.size;
+            freeList.remove(before);
+        }
+
+        // check adj to subsequent block
+        if (after != null && curr.addr + curr.size == after.addr) {
+            curr.size += after.size; // merge to subsequent
+            freeList.remove(after);
+        }
+
+        freeList.add(curr);
     }
 
     /**
