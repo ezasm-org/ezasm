@@ -171,18 +171,21 @@ public class Memory {
      *
      * @return the currently allocations map
      */
-    public Map<Long, Long> getAllocations() { return allocationsMap; }
+    public Map<Long, Long> getAllocations() {
+        return allocationsMap;
+    }
 
     /**
      * Gets the list of free blocks of memory up to heap pointer
      *
      * @return the list of blocks
      */
-    public TreeSet<Block> getFreeList() { return freeList; }
+    public TreeSet<Block> getFreeList() {
+        return freeList;
+    }
 
     /**
-     * Gets (the first) free address in the free list that is at least min bytes
-     *  and updates the free list
+     * Gets (the first) free address in the free list that is at least min bytes and updates the free list
      *
      * @param need the number of bytes needed
      * @return Block of size
@@ -216,8 +219,7 @@ public class Memory {
     }
 
     /**
-     * Insert a new block into the free list
-     *  also check neighbors and merges if possible
+     * Insert a new block into the free list also check neighbors and merges if possible
      *
      * @param addr the base address of an alloc'd block
      * @param size the size of the alloc'd block

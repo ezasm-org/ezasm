@@ -20,14 +20,14 @@ public class MemoryInstructionsTest {
         MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
         IAbstractInputOutput register = new RegisterInputOutput("t0");
         IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
-        IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
 
         long before = sim.getRegisters().getRegister("t0").getLong();
         memoryInstructions.malloc(register, immediateFour).apply();
         memoryInstructions.free(register);
         memoryInstructions.malloc(register, immediateTwo).apply();
         long after = sim.getRegisters().getRegister("t0").getLong();
-        assertEquals(before + sim.getMemory().initialHeapPointer(), after-2);
+        assertEquals(before + sim.getMemory().initialHeapPointer(), after - 2);
     }
 
     @Test
@@ -36,7 +36,7 @@ public class MemoryInstructionsTest {
         MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
         IAbstractInputOutput register = new RegisterInputOutput("t0");
         IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
-        IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
 
         long before = sim.getRegisters().getRegister("t0").getLong();
         memoryInstructions.malloc(register, immediateTwo).apply();
@@ -80,7 +80,7 @@ public class MemoryInstructionsTest {
         Simulator sim = new Simulator(8, 16);
         MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
         IAbstractInputOutput register = new RegisterInputOutput("t0");
-        IAbstractInput immediateFour = new ImmediateInput(new RawData (4));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
 
         long before = sim.getRegisters().getRegister("t0").getLong();
         memoryInstructions.malloc(register, immediateFour).apply();

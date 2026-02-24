@@ -126,7 +126,7 @@ public class MemoryInstructions {
      * Dynamically allocates heap memory updating hp as needed
      *
      * @param output the place to store the start of alloc'd memory
-     * @param input the number of bytes of memory
+     * @param input  the number of bytes of memory
      * @throws SimulationException
      */
     @Instruction
@@ -151,15 +151,15 @@ public class MemoryInstructions {
             // result from free list wasn't enough, increment hp by difference
             alloc.put(prior.addr, size);
             long difference = size - prior.size;
-            Transformation t1 = new Transformation(h, h.get(),
-                    new RawData(h.get().intValue() + difference)); // incr hp by diff
+            Transformation t1 = new Transformation(h, h.get(), new RawData(h.get().intValue() + difference)); // incr hp
+                                                                                                              // by diff
             Transformation t2 = io.transformation(new RawData(prior.addr)); // store addr in register
             return new TransformationSequence(t1, t2);
         } else {
             // standard alloc (should separate alloc even exist?)
             alloc.put(currHP, size);
-            Transformation t1 = new Transformation(h, h.get(),
-                    new RawData(h.get().intValue() + size)); // increment the heap pointer
+            Transformation t1 = new Transformation(h, h.get(), new RawData(h.get().intValue() + size)); // increment the
+                                                                                                        // heap pointer
             Transformation t2 = io.transformation(t1.from()); // store address in register
             return new TransformationSequence(t1, t2);
         }
@@ -177,7 +177,8 @@ public class MemoryInstructions {
         long addr = input.get(simulator).intValue();
         Long size = allocations.remove(addr);
 
-        if (size == null) throw new SimulationException("Invalid free");
+        if (size == null)
+            throw new SimulationException("Invalid free");
 
         simulator.getMemory().addToFreeList(addr, size);
         return new TransformationSequence();
