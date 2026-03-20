@@ -29,8 +29,9 @@ public class MemoryInstructionsTest {
         long after = sim.getRegisters().getRegister("t0").getLong();
         assertEquals(before + sim.getMemory().initialHeapPointer(), after - 2);
     }
-    
-    //Same test as the first but removed sim.getMemory().initialHeapPointer() from the assert statement to see if that is what causes the descrepency for the first test fail
+
+    // Same test as the first but removed sim.getMemory().initialHeapPointer() from the assert statement to see if that
+    // is what causes the descrepency for the first test fail
     @Test
     public void TestMallocAndFreeOnePointOne() throws SimulationException {
         Simulator sim = new Simulator(8, 16);
@@ -46,8 +47,9 @@ public class MemoryInstructionsTest {
         long after = sim.getRegisters().getRegister("t0").getLong();
         assertEquals(before, after - 2);
     }
-    
-    //Same test as the first but removed the hard coded from the assert statement to see if the value is redundant and if removding it will cause the test to pass
+
+    // Same test as the first but removed the hard coded from the assert statement to see if the value is redundant and
+    // if removding it will cause the test to pass
     @Test
     public void TestMallocAndFreeOnePointTwo() throws SimulationException {
         Simulator sim = new Simulator(8, 16);
@@ -81,7 +83,7 @@ public class MemoryInstructionsTest {
         System.out.println(after);
         assertEquals(before + sim.getMemory().initialHeapPointer(), after);
     }
-    
+
     @Test
     public void TestMallocAndFreeTwoPointOne() throws SimulationException {
         Simulator sim = new Simulator(8, 16);
