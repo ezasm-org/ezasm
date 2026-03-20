@@ -1,17 +1,17 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
-import com.ezasm.simulation.Registers;
-import com.ezasm.simulation.exception.SimulationException;
-import com.ezasm.instructions.targets.input.IAbstractInput;
-import com.ezasm.instructions.targets.input.ImmediateInput;
-import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
-import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
-import com.ezasm.simulation.Simulator;
-import com.ezasm.util.RawData;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.ezasm.instructions.targets.input.IAbstractInput;
+import com.ezasm.instructions.targets.input.ImmediateInput;
+import com.ezasm.instructions.targets.inputoutput.DereferenceInputOutput;
+import com.ezasm.instructions.targets.inputoutput.IAbstractInputOutput;
+import com.ezasm.instructions.targets.inputoutput.RegisterInputOutput;
+import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.Simulator;
+import com.ezasm.simulation.exception.SimulationException;
+import com.ezasm.util.RawData;
 
 public class MemoryInstructionsTest {
     @Test
@@ -28,6 +28,40 @@ public class MemoryInstructionsTest {
         memoryInstructions.malloc(register, immediateTwo).apply();
         long after = sim.getRegisters().getRegister("t0").getLong();
         assertEquals(before + sim.getMemory().initialHeapPointer(), after - 2);
+    }
+    
+    //Same test as the first but removed sim.getMemory().initialHeapPointer() from the assert statement to see if that is what causes the descrepency for the first test fail
+    @Test
+    public void TestMallocAndFreeOnePointOne() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateFour).apply();
+        memoryInstructions.free(register);
+        memoryInstructions.malloc(register, immediateTwo).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(before, after - 2);
+    }
+    
+    //Same test as the first but removed the hard coded from the assert statement to see if the value is redundant and if removding it will cause the test to pass
+    @Test
+    public void TestMallocAndFreeOnePointTwo() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateFour).apply();
+        memoryInstructions.free(register);
+        memoryInstructions.malloc(register, immediateTwo).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(before + sim.getMemory().initialHeapPointer(), after);
     }
 
     @Test
@@ -46,6 +80,24 @@ public class MemoryInstructionsTest {
         System.out.println(before + sim.getMemory().initialHeapPointer());
         System.out.println(after);
         assertEquals(before + sim.getMemory().initialHeapPointer(), after);
+    }
+    
+    @Test
+    public void TestMallocAndFreeTwoPointOne() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateTwo).apply();
+        memoryInstructions.free(register);
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        System.out.println(before + sim.getMemory().initialHeapPointer());
+        System.out.println(after);
+        assertEquals(before + 4, after);
     }
 
     @Test
@@ -91,6 +143,24 @@ public class MemoryInstructionsTest {
         memoryInstructions.malloc(register, immediateFour).apply();
         long afterSecond = sim.getRegisters().getRegister("t0").getLong();
         assertEquals(after + 4, afterSecond);
+    }
+
+    @Test
+    public void TestMallocInstructionPointOne() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(before + sim.getMemory().initialHeapPointer(), after);
+        assertEquals(1, sim.getMemory().getAllocations().size());
+
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long afterSecond = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(after + sim.getMemory().initialHeapPointer(), afterSecond);
     }
 
     @Test
