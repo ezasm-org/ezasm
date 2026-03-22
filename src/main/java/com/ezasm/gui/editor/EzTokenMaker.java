@@ -92,10 +92,8 @@ public class EzTokenMaker extends AbstractTokenMaker {
         expectBinary = false;
         hasDecimalPoint = false;
 
-        resetTokenList();
-
+        // insert null token
         if (count == 0) {
-            addToken(text, 0, 0, Token.WHITESPACE, startOffset);
             addNullToken();
             return firstToken;
         }
