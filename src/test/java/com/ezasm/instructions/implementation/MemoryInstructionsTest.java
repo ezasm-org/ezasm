@@ -49,6 +49,38 @@ public class MemoryInstructionsTest {
     }
 
     @Test
+    public void TestMallocAndFreeThree() throws SimulationException {
+        Simulator sim = new Simulator(8, 16);
+        MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
+        IAbstractInputOutput register = new RegisterInputOutput("t0");
+        IAbstractInput immediateTwo = new ImmediateInput(new RawData(2));
+        IAbstractInput immediateFour = new ImmediateInput(new RawData(4));
+
+        long before = sim.getRegisters().getRegister("t0").getLong();
+        memoryInstructions.malloc(register, immediateFour).apply();
+        memoryInstructions.free(register);
+        memoryInstructions.malloc(register, immediateTwo).apply();
+        long after = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(before + sim.getMemory().initialHeapPointer(), after);
+
+        memoryInstructions.free(register);
+        long afterSecond = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(before + sim.getMemory().initialHeapPointer(), afterSecond);
+
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long afterThird = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(afterSecond, afterThird);
+
+        memoryInstructions.malloc(register, immediateFour).apply();
+        long afterFourth = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(afterThird + 4, afterFourth);
+
+        memoryInstructions.free(register);
+        long afterFifth = sim.getRegisters().getRegister("t0").getLong();
+        assertEquals(afterFourth, afterFifth);
+    }
+
+    @Test
     public void TestFreeInstruction() throws SimulationException {
         Simulator sim = new Simulator(8, 16);
         MemoryInstructions memoryInstructions = new MemoryInstructions(sim);
