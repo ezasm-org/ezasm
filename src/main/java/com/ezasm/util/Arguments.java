@@ -124,23 +124,20 @@ public class Arguments {
             outputpath = commandLine.getOptionValue(outputOption);
         }
 
-        boolean debugMode = false;
-        if (commandLine.hasOption(debugOption)) {
-            debugMode = true;
-        }
+        boolean debugMode = commandLine.hasOption(debugOption);
 
         if (commandLine.hasOption(windowlessOption)) {
             CommandLineInterface cli;
-            if (filepath.equals("")) {
+            if (filepath.isEmpty()) {
                 cli = new CommandLineInterface(sim);
-            } else if (inputpath.equals("") && outputpath.equals("")) {
+            } else if (inputpath.isEmpty() && outputpath.isEmpty()) {
                 cli = new CommandLineInterface(sim, filepath);
             } else {
                 cli = new CommandLineInterface(sim, filepath, inputpath, outputpath);
             }
             cli.startSimulation();
         } else {
-            if (!inputpath.equals("") || !outputpath.equals("")) {
+            if (!inputpath.isEmpty() || !outputpath.isEmpty()) {
                 Window.instantiate(sim, config, debugMode, inputpath, outputpath);
             } else {
                 Window.instantiate(sim, config, debugMode);
