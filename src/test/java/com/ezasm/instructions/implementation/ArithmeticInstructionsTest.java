@@ -1,20 +1,16 @@
 package com.ezasm.instructions.implementation;
 
-import com.ezasm.parsing.Lexer;
-import com.ezasm.parsing.Line;
-import com.ezasm.parsing.ParseException;
-import com.ezasm.simulation.Memory;
-import com.ezasm.simulation.Register;
-import com.ezasm.simulation.Registers;
-import com.ezasm.simulation.Simulator;
-import com.ezasm.simulation.exception.SimulationException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import com.ezasm.parsing.Lexer;
+import com.ezasm.simulation.Memory;
+import com.ezasm.simulation.Registers;
+import com.ezasm.simulation.Simulator;
 
-public class ArithmaticInstructionTest {
+public class ArithmeticInstructionsTest {
 
     private static Simulator simulator;
 
