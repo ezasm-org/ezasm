@@ -23,7 +23,7 @@ public class Memory {
     /**
      * The default word size of the system.
      */
-    public static final int DEFAULT_WORD_SIZE = 4;
+    public static final int DEFAULT_WORD_SIZE = 8;
 
     private static int wordSize = DEFAULT_WORD_SIZE;
 
