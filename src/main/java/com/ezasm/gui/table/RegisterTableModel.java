@@ -62,19 +62,28 @@ class RegisterTableModel extends AbstractTableModel {
     }
 
     /**
-     * Manually update the value at the given cell.
+     * Change the value at rowIndex, columnIndex to be the specified value. 
+     * Value of register is set to 0 if the inputted value cannot be parsed.
      *
-     * @param aValue      ignored.
+     * @param value       value to update register to.
      * @param rowIndex    the row of the cell to update.
      * @param columnIndex the column of the cell to update.
      */
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        long val;
+        try {
+            val = Long.parseLong(value.toString());
+        } catch (NumberFormatException e) {
+            val = 0L;
+        }
+        registers.getRegister(rowIndex).setLong(val);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     /**
-     * Forces cells to not be editable.
+     * Allows for certain registers to be updated. Assumes special registers (i.e. $sp, $pc) consist of the first 6
+     * rows.
      *
      * @param row ignored.
      * @param col ignored.
@@ -82,7 +91,8 @@ class RegisterTableModel extends AbstractTableModel {
      */
     @Override
     public boolean isCellEditable(int row, int col) {
-        return false;
+        // TODO: only enable editing during paused process
+        return col == 1 && row > 6;
     }
 
     /**
