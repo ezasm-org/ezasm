@@ -2,6 +2,8 @@ package com.ezasm.gui.table;
 
 import com.ezasm.simulation.Registers;
 
+import java.util.Set;
+
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -10,6 +12,11 @@ import javax.swing.table.AbstractTableModel;
 class RegisterTableModel extends AbstractTableModel {
 
     private static final String[] columns = { "Register", "Value" };
+    
+    // See Registers.java
+    private static final Set<String> UNEDITABLE_REGISTERS = Set.of(
+        "zero", "pid", "fid", "fd", "pc", "sp", "ra", "lo", "hi"
+    );
 
     private final Registers registers;
 
@@ -92,7 +99,8 @@ class RegisterTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int row, int col) {
         // TODO: only enable editing during paused process
-        return col == 1 && row > 6;
+        String name = Registers.getRegisterName(row).toLowerCase();
+        return col == 1 && !UNEDITABLE_REGISTERS.contains(name);
     }
 
     /**
